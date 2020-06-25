@@ -27,6 +27,8 @@ class HomePage extends Component {
 
     this.setState({ studio })
 
+    document.title = `${studio.name} Check In List`;
+
     await createCometRoom(studio._id)
 
     let cometAuthScript = document.createElement('script')

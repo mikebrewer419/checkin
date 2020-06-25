@@ -1,8 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const Login = ({ onSubmit, error }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    document.title = `Check In | Login`;
+  }, [])
   return (
     <div className="d-flex align-items-center justify-content-center vh-100">
       <div>
