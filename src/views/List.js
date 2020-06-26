@@ -9,8 +9,8 @@ import {
 import './List.css'
 
 const messages = [
-  "It's now your turn to audition, please enter STUDIO_NAME",
-  "Please come to the waiting area inside Southpaw Studios for STUDIO_NAME. You are on deck!",
+  "It's now your turn to audition, please enter 'BCBS' into the app and click 'create/join",
+  "You are on deck! We'll text you shortly to join the casting.",
   "Please head to Southpaw Studios and wait on the patio. You are 2nd in line",
   "Be prepared, you are next in line to head to Southpaw Studios. We will contact you shortly",
 ]
@@ -66,7 +66,7 @@ class List extends Component {
       skipped: true
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p.id === id) + 1
-      for(let i = 1; i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
+      for(let i = 1; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
         if (!vm.state.candidates[idx].dont_Message) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
@@ -98,7 +98,7 @@ class List extends Component {
           }, this.state.studio_id, this.state.studio)
         }
       } else {
-        for(let i = 0; i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
+        for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
           if (!vm.state.candidates[idx].dont_Message) {
             sendMessage({
               to: vm.state.candidates[idx].phone,
@@ -132,7 +132,7 @@ class List extends Component {
         }, this.state.studio_id, this.state.studio)
         let idx = vm.state.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.state.candidates.length
         for(let i = 1;
-            i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length
+            i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length
             && removedIdx <= idx;
             i ++, idx ++) {
           if (!vm.state.candidates[idx].dont_Message) {

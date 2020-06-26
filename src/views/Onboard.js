@@ -50,7 +50,7 @@ const Onboard = () => {
   if (showAlert) {
     return (
       <div className="alert">
-        Thank you {firstName} {lasttName}. You are successfully checked in to {studio.name}. We will send a text when we're ready for you to come to Southpaw Studios.
+        Thank you {firstName} {lasttName}. You are successfully checked in to {studio.name}. We will send a text shortly.
       </div>
     )
   }
