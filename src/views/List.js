@@ -65,9 +65,9 @@ class List extends Component {
     updateRecordField(id, {
       skipped: true
     }).then(data => {
-      let idx = vm.state.candidates.findIndex(p => p.id === id) + 1
+      let idx = vm.state.candidates.findIndex(p => p._id === id) + 1
       for(let i = 1; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].dont_Message) {
+        if (!vm.state.candidates[idx].dont_message) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: messages[i]
@@ -89,9 +89,9 @@ class List extends Component {
     updateRecordField(id, {
       seen: true
     }).then(data => {
-      let idx = vm.state.candidates.findIndex(p => p.id === id)
+      let idx = vm.state.candidates.findIndex(p => p._id === id)
       if (vm.state.candidates[idx].skipped) {
-        if (!vm.state.candidates[idx].dont_Message) {
+        if (!vm.state.candidates[idx].dont_message) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: messages[0]
@@ -99,7 +99,7 @@ class List extends Component {
         }
       } else {
         for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-          if (!vm.state.candidates[idx].dont_Message) {
+          if (!vm.state.candidates[idx].dont_message) {
             sendMessage({
               to: vm.state.candidates[idx].phone,
               body: messages[i]
@@ -135,7 +135,7 @@ class List extends Component {
             i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length
             && removedIdx <= idx;
             i ++, idx ++) {
-          if (!vm.state.candidates[idx].dont_Message) {
+          if (!vm.state.candidates[idx].dont_message) {
             sendMessage({
               to: vm.state.candidates[idx].phone,
               body: messages[i]
@@ -209,7 +209,7 @@ class List extends Component {
               return (
                 <PersonCard
                   key={idx}
-                  id={person.id}
+                  id={person._id}
                   idx={idx}
                   showCallIn={showCallIn}
                   {...person}
