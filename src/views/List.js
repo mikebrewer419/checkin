@@ -9,7 +9,7 @@ import {
 import './List.css'
 
 const messages = [
-  "It's now your turn to audition, please enter 'BCBS' into the app and click 'create/join",
+  "It's now your turn to audition, please enter 'STUDIO_NAME' into the app and click 'create/join",
   "You are on deck! We'll text you shortly to join the casting.",
   "Please head to Southpaw Studios and wait on the patio. You are 2nd in line",
   "Be prepared, you are next in line to head to Southpaw Studios. We will contact you shortly",
