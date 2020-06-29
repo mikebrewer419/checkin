@@ -11,6 +11,9 @@ function App() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    if (window.location.pathname.indexOf('/onboard') !== -1) {
+      return
+    }
     verityToken().then((email) => {
       window.localStorage.setItem('email', email)
       if (window.location.pathname === '/login') {
