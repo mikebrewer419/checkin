@@ -1,0 +1,42 @@
+.video-app {
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.video-logo img {
+  height: 45px;
+}
+.row {
+  display: flex;
+  margin: 20px;
+}
+.item {
+  cursor: pointer;
+}
+.item.active {
+  border: 1px solid #777;
+}
+.active-row {
+  display: flex;
+  margin: 20px;
+}
+.active-row video {
+  width: 50vw;
+}
+.active-row .info {
+  margin-left: 20px;
+}
+.dummy-player {
+  pointer-events: none;
+}
+.preview-wrapper {
+  position: relative;
+  padding-top: 56.25% /* Player ratio: 100 / (1280 / 720) */
+}
+
+.preview-wrapper .dummy-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid #ccc;
+}

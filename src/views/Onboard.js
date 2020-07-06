@@ -18,6 +18,7 @@ const Onboard = () => {
   const { match } = useReactRouter();
   const studio_uri = match.params.uri
   const [studio, setStudio] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     getStudioByUri(studio_uri).then(studio => {
@@ -28,13 +29,15 @@ const Onboard = () => {
 
   const onSubmjit = (ev) => {
     ev.preventDefault()
+    setSubmitting(true)
     onboardUser({
       first_name: firstName,
       last_name: lasttName,
       email: email,
       phone: phoneNumber,
       sagnumber: sagNumber,
-      studio: studio._id
+      studio: studio._id,
+      jitsi_meeting_id: match.params.meeting_id
     }).then(result => {
     console.log("onSubmjit -> result", result)
       if (result.record && result.record._id) {
@@ -129,7 +132,7 @@ const Onboard = () => {
             </p>
 
             <p className="full">
-              <button type="submit">
+              <button type="submit" disabled={submitting}>
                 Submit
               </button>
             </p>

@@ -5,7 +5,9 @@ import { loginApi, verityToken } from './api'
 import Login from './views/Login'
 import HomePage from './views/HomePage'
 import Onboard from './views/Onboard'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import VideoPage from './views/Video'
+import StudioList from './views/studio/list'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
   const [error, setError] = useState('')
@@ -53,8 +55,10 @@ function App() {
           onSubmit={doLogin}
           error={error}
         />} exact />
-        <Route path="/studio/:uri" component={HomePage} />
-        <Route path="/onboard/:uri" component={Onboard} />
+        <Route path="/studio/:uri/:meeting_id" component={HomePage} />
+        <Route path="/onboard/:uri/:meeting_id" component={Onboard} />
+        <Route path="/video/:uri/:meeting_id" component={VideoPage} />
+        <Route path="/" component={StudioList} />
       </Switch>
     </Router>
   );

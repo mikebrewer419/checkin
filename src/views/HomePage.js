@@ -14,22 +14,24 @@ class HomePage extends Component {
     this.state = {
       studio: null,
       showChat: true,
-      showList: true
+      showList: true,
+      jitsiKey: 0
     }
   }
 
   async componentDidMount() {
     const studio_uri = this.props.match.params.uri
+    const meeting_id = this.props.match.params.meeting_id
     const studio = await getStudioByUri(studio_uri)
 
     console.log("HomePage -> componentDidMount -> studio", studio)
-    if (!studio) { return }
+    if (!studio || !studio.jitsi_meeting_ids.includes(meeting_id)) { return }
 
     this.setState({ studio })
 
     document.title = `${studio.name} Check In List`;
 
-    await createCometRoom(studio._id)
+    await createCometRoom(studio._id, meeting_id)
 
     let cometAuthScript = document.createElement('script')
     cometAuthScript.innerHTML = `
@@ -68,7 +70,7 @@ class HomePage extends Component {
       var iframeObj = {};
       iframeObj.module="chatrooms";
       iframeObj.style="min-height:420px;min-width:300px;";
-      iframeObj.src="https://54561.cometondemand.net/cometchat_embedded.php?guid=${studio._id}";
+      iframeObj.src="https://54561.cometondemand.net/cometchat_embedded.php?guid=${studio._id}-${meeting_id}";
       iframeObj.width="100%";
       iframeObj.height="100%";
       if(typeof(addEmbedIframeExternal)=="function") {
@@ -92,8 +94,15 @@ class HomePage extends Component {
     })
   }
 
+  reloadJitsi = () => {
+    this.setState({
+      jitsiKey: this.state.jitsiKey + 1
+    })
+  }
+
   render() {
-    const { studio, showChat, showList } = this.state
+    const { studio, showChat, showList, jitsiKey } = this.state
+    const meeting_id = this.props.match.params.meeting_id
     if (!studio) {
       return <div>Loading...</div>
     }
@@ -105,6 +114,8 @@ class HomePage extends Component {
               studio_id={studio._id}
               studio={studio.name}
               studio_logo={studio.logo}
+              messages={studio.messages}
+              meeting_id={meeting_id}
             />
           </div>
           <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
@@ -112,11 +123,17 @@ class HomePage extends Component {
           </button>
         </div>
         <div id="jitsi-frame">
+          <button
+            id="reload-jitsi"
+            title="Reload Meeting frame"
+            onClick={this.reloadJitsi}
+          >⟳</button>
           <iframe
+            key={jitsiKey}
             title="Meeting"
             width="100%"
             height="100%"
-            src={`https://meet.heyjoe.io/${studio.jitsi_meeting_id}`}
+            src={`https://meet.heyjoe.io/${meeting_id}`}
             allow="microphone,camera"
             allowfullscreen="allowfullscreen">
           </iframe>

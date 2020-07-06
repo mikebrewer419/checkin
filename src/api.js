@@ -17,9 +17,18 @@ const sendMessage = (message, studio_id, studio) => {
   }).then(res => res.json())
 }
 
-const fetchCheckInList = (studio_id) => {
+const fetchCheckInList = (studio_id, meeting_id) => {
   const token = window.localStorage.getItem('token')
-  return fetch(`${api_host}/records/${studio_id}`, {
+  return fetch(`${api_host}/records/${studio_id}/${meeting_id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
+const getOneRecord = (record_id) => {
+  const token = window.localStorage.getItem('token')
+  return fetch(`${api_host}/records/one/${record_id}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -126,19 +135,9 @@ const getStudioByUri = (studio_name) => {
   }).then((resp) => resp.json())
 }
 
-const getAllStudios = () => {
+const createCometRoom = (id, meeting_id) => {
   const token = window.localStorage.getItem('token')
-  return fetch(`${api_host}/studio/list`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    }
-  }).then((resp) => resp.json())
-}
-
-const createCometRoom = (id) => {
-  const token = window.localStorage.getItem('token')
-  return fetch(`${api_host}/studio/comet-chat/${id}`, {
+  return fetch(`${api_host}/studio/comet-chat/${id}/${meeting_id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -147,9 +146,20 @@ const createCometRoom = (id) => {
   }).then((resp) => resp.text())
 }
 
+const getStudioVideosByDate = (studio_id, meeting_id, date) => {
+  const token = window.localStorage.getItem('token')
+  return fetch(`${api_host}/videos/${studio_id}/${meeting_id}/${date}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
 export {
   getStudioInfo,
   sendMessage,
+  getOneRecord,
   fetchCheckInList,
   updateRecordField,
   removeCheckinRecord,
@@ -157,7 +167,7 @@ export {
   loginApi,
   verityToken,
   getStudioByUri,
-  getAllStudios,
   createCometRoom,
+  getStudioVideosByDate,
   static_root
 }

@@ -37,9 +37,11 @@ class List extends Component {
       studio_logo: this.props.studio_logo
     }
     this.interval = 30000 // query api every 30 seconds
+    this.messages = this.props.messages || messages
   }
 
   componentDidMount() {
+    this.meeting_id = this.props.meeting_id
     this.fetchData()
     setInterval(() => {
       this.fetchData()
@@ -47,7 +49,7 @@ class List extends Component {
   }
 
   fetchData = () => {
-    return fetchCheckInList(this.state.studio_id).then(data => {
+    return fetchCheckInList(this.state.studio_id, this.meeting_id).then(data => {
         this.setState({
           candidates: data,
           loading: false
@@ -70,7 +72,7 @@ class List extends Component {
         if (!vm.state.candidates[idx].dont_message) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
-            body: messages[i]
+            body: this.messages[i]
           }, this.state.studio_id, this.state.studio)
         }
       }
@@ -87,14 +89,15 @@ class List extends Component {
       loading: true
     })
     updateRecordField(id, {
-      seen: true
+      seen: true,
+      call_in_time: new Date().toISOString()
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
       if (vm.state.candidates[idx].skipped) {
         if (!vm.state.candidates[idx].dont_message) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
-            body: messages[0]
+            body: this.messages[0]
           }, this.state.studio_id, this.state.studio)
         }
       } else {
@@ -102,7 +105,7 @@ class List extends Component {
           if (!vm.state.candidates[idx].dont_message) {
             sendMessage({
               to: vm.state.candidates[idx].phone,
-              body: messages[i]
+              body: this.messages[i]
             }, this.state.studio_id, this.state.studio)
           }
         }
@@ -138,7 +141,7 @@ class List extends Component {
           if (!vm.state.candidates[idx].dont_message) {
             sendMessage({
               to: vm.state.candidates[idx].phone,
-              body: messages[i]
+              body: this.messages[i]
             }, this.state.studio_id, this.state.studio)
           }
         }
@@ -180,7 +183,8 @@ class List extends Component {
 
   signOut = (id) => {
     updateRecordField(id, {
-      signed_out: true
+      signed_out: true,
+      signed_out_time: new Date().toISOString()
     }).then(() => {
       this.fetchData()
     })
