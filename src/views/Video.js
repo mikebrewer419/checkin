@@ -147,7 +147,7 @@ class VideoPage extends Component {
                     >
                       <div className="preview-wrapper">
                         <ReactPlayer
-                          light
+                          light={`${static_root}${item.thumbnail}`}
                           controls={false}
                           url={item.url}
                           className="dummy-player"
