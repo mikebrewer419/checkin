@@ -114,7 +114,7 @@ class HomePage extends Component {
               studio_id={studio._id}
               studio={studio.name}
               studio_logo={studio.logo}
-              messages={studio.messages}
+              messages={studio.position_messages}
               meeting_id={meeting_id}
             />
           </div>
