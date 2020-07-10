@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import {
   sendMessage,
   fetchCheckInList,
@@ -199,7 +200,9 @@ class List extends Component {
         <div className="d-flex flex-column">
           <div className="studio-header">
             <div className="logo">
-              <img src={static_root+this.state.studio_logo} alt={this.state.studio}/>
+              <Link to="/">
+                <img src={static_root+this.state.studio_logo} alt={this.state.studio}/>
+              </Link>
             </div>
             <h2 style={{textAlign: "center"}}> {this.state.studio}</h2>
           </div>

@@ -6,9 +6,9 @@
 .video-logo img {
   height: 45px;
 }
-.row {
+.video-row {
   display: flex;
-  margin: 20px;
+  margin: 20px auto;
 }
 .item {
   cursor: pointer;

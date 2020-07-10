@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import {
   static_root,
   getStudioByUri,
@@ -8,6 +9,9 @@ import {
 import './Video.css'
 import ReactPlayer from 'react-player'
 import DatePicker from "react-datepicker"
+import JSZip from 'jszip'
+import JSZipUtils from 'jszip-utils'
+import { saveAs } from 'file-saver'
 import "react-datepicker/dist/react-datepicker.css"
 
 const itemWidth = 250
@@ -40,6 +44,13 @@ class VideoPage extends Component {
     })
     const date_string = this.state.date.toISOString().split('T')[0]
     const videos = await getStudioVideosByDate(this.state.studio._id, this.meeting_id, date_string)
+    await Promise.all(videos.map(async (video) => {
+      if (video.record) {
+        const record = await this.getOneRecord(video.record)
+        video.record_item = record
+      }
+      return
+    }))
     this.setState({
       videos,
       loading: false
@@ -68,6 +79,18 @@ class VideoPage extends Component {
     }, this.loadVideos)
   }
 
+  downloadAllVideos = () => {
+    const { videos } = this.state
+    const date_string = this.state.date.toISOString().split('T')[0]
+    videos.forEach(video => {
+      saveAs(video.url, video.uri)
+    })
+  }
+
+  downloadOneVideo = (video) => {
+    saveAs(video.url, video.uri)
+  }
+
   async componentDidMount() {
     this.setCount()
     this.meeting_id = this.props.match.params.meeting_id
@@ -82,7 +105,18 @@ class VideoPage extends Component {
       await this.loadVideos()
     })
 
-    window.addEventListener('resize', this.setCount);
+    window.addEventListener('resize', this.setCount)
+  }
+
+  componentDidUpdate() {
+    if (this.state.activeItem) {
+      setTimeout(() => {
+        const video = document.querySelector('#active-player video')
+        if (video) {
+          video.play()
+        }
+      }, 1000)
+    }
   }
 
   render() {
@@ -103,6 +137,8 @@ class VideoPage extends Component {
       activeItemRecord = this.state.records[activeItem.record] || {}
     }
 
+    const rowWidth = countPerRow * (itemWidth + 32)
+
     return (
       <div className="video-app px-5">
         <div className={`loading ${this.state.loading?'show':''}`}>
@@ -110,20 +146,23 @@ class VideoPage extends Component {
         </div>
         <div className="video-header d-flex align-items-center">
           <div className="video-logo mr-2">
-            <img src={static_root+studio.logo} alt={studio.name}/>
+            <Link to="/">
+              <img src={static_root+studio.logo} alt={studio.name}/>
+            </Link>
           </div>
           <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name} videos</h2>
           <DatePicker
             selected={this.state.date}
             onChange={this.handleDateChange}
           />
+          {/* <a className="ml-2" onClick={() => this.downloadAllVideos()} >🠋</a> */}
         </div>
         <div>
           {rows.length === 0 && <div>No videos available </div>}
           {rows.map((row, ridx) => {
             return (
               [
-                <div className="row" key={ridx}>
+                <div className="video-row" key={ridx} style={{width: `${rowWidth}px`}}>
                   {row.map(item => {
                     return <div
                       key={item._id}
@@ -155,21 +194,25 @@ class VideoPage extends Component {
                           height='100%'
                         />
                       </div>
-                      <span>{item.ctime}</span> &nbsp;
-                      <a
-                        href={`https://meet.heyjoe.io/${this.meeting_id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {item.uri}
-                      </a>
+                      <div className="d-flex">
+                        <a className="mr-2" onClick={() => this.downloadOneVideo(item)} >🠋</a>
+                        {item.record_item ? <div>
+                          {item.record_item.first_name} {item.record_item.last_name}
+                        </div> : <div>No talent info available</div>}
+                      </div>
                     </div>
                   })}
                 </div>,
                 ridx === activeRidx && activeItem ?
                 <div className="active-row" key="active-video">
                   {activeItem? [
-                    <ReactPlayer controls={true} url={activeItem.url} key="video" autoPlay />,
+                    <ReactPlayer
+                      controls={true}
+                      url={activeItem.url}
+                      key="video"
+                      autoPlay
+                      id="active-player"
+                    />,
                     <div key="info" className="info">
                       <a
                         href={`https://meet.heyjoe.io/${this.meeting_id}`}
@@ -223,24 +266,15 @@ const PersonCard = ({
   return (
     <div className="card">
       <div className="card-body px-0">
-        <h5 className="card-title mb-0">
+        <h5 className="card-title mb-2">
           <span className={seen?'text-success':'text-danger'} >
             ⬤
           </span>&nbsp;&nbsp;
           {first_name} {last_name}
           {skipped && <small>&nbsp;&nbsp;skipped</small>}
         </h5>
-        <p className="card-text">
-          <small>{_id}</small>
-        </p>
         <p className="card-text">Phone: {phone}</p>
         <p className="card-text">Email: {email}</p>
-        <p className="card-text">Checked In: {checkInDateString}</p>
-        <p className="card-text">Called in at: {callInDateString}</p>
-        {signed_out &&
-          <p className="card-text">Deleted at: {signedOutDateString}</p>}
-        {is_deleted &&
-          <p className="card-text">Deleted at: {deleteAtDateString}</p>}
       </div>
     </div>
   )
