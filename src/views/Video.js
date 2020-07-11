@@ -4,13 +4,12 @@ import {
   static_root,
   getStudioByUri,
   getOneRecord,
-  getStudioVideosByDate
+  getStudioVideosByDate,
+  createZipAndSendMail
 } from '../api'
 import './Video.css'
 import ReactPlayer from 'react-player'
 import DatePicker from "react-datepicker"
-import JSZip from 'jszip'
-import JSZipUtils from 'jszip-utils'
 import { saveAs } from 'file-saver'
 import "react-datepicker/dist/react-datepicker.css"
 
@@ -28,7 +27,8 @@ class VideoPage extends Component {
       activeItem: null,
       videos: [],
       records: {},
-      loading: false
+      loading: false,
+      selectedForUploads: []
     }
   }
   
@@ -80,11 +80,22 @@ class VideoPage extends Component {
   }
 
   downloadAllVideos = () => {
-    const { videos } = this.state
     const date_string = this.state.date.toISOString().split('T')[0]
-    videos.forEach(video => {
-      saveAs(video.url, video.uri)
-    })
+    const { selectedForUploads } = this.state
+    const email = window.prompt(
+      `You are downloading ${selectedForUploads.length} videos.\nSpecify your email address to get download link`,
+      window.localStorage.getItem('email')
+    )
+    if (!email) {
+      return
+    }
+    createZipAndSendMail(selectedForUploads, date_string, email)
+      .then(() => {
+        alert(`You will get an email with the download link once the archive is completed`)
+        this.setState({
+          selectedForUploads: []
+        })
+      })
   }
 
   downloadOneVideo = (video) => {
@@ -120,7 +131,7 @@ class VideoPage extends Component {
   }
 
   render() {
-    const { studio, videos, countPerRow, activeItem, activeRidx } = this.state
+    const { studio, videos, countPerRow, activeItem, activeRidx, selectedForUploads } = this.state
     let rows = []
 
     if (!studio) {
@@ -155,7 +166,8 @@ class VideoPage extends Component {
             selected={this.state.date}
             onChange={this.handleDateChange}
           />
-          {/* <a className="ml-2" onClick={() => this.downloadAllVideos()} >🠋</a> */}
+          {selectedForUploads.length > 0 &&
+          <label className="ml-2" onClick={() => this.downloadAllVideos()} >🠋 Download Selected</label>}
         </div>
         <div>
           {rows.length === 0 && <div>No videos available </div>}
@@ -167,24 +179,26 @@ class VideoPage extends Component {
                     return <div
                       key={item._id}
                       className={`mx-3 item ${activeItem && (activeItem.uri === item.uri)?'active':''}`}
-                      onClick={() => {
-                        if (!activeItem || activeItem.uri !== item.uri) {
-                          this.setState({
-                            activeItem: item,
-                            activeRidx: ridx
-                          })
-                        } else {
-                          this.setState({
-                            activeItem: null,
-                            activeRidx: -1
-                          })
-                        }
-                      }}
                       style={{
                         width: itemWidth
                       }}
                     >
-                      <div className="preview-wrapper">
+                      <div
+                        className="preview-wrapper"
+                        onClick={() => {
+                          if (!activeItem || activeItem.uri !== item.uri) {
+                            this.setState({
+                              activeItem: item,
+                              activeRidx: ridx
+                            })
+                          } else {
+                            this.setState({
+                              activeItem: null,
+                              activeRidx: -1
+                            })
+                          }
+                        }}
+                      >
                         <ReactPlayer
                           light={`${static_root}${item.thumbnail}`}
                           controls={false}
@@ -195,7 +209,20 @@ class VideoPage extends Component {
                         />
                       </div>
                       <div className="d-flex">
-                        <a className="mr-2" onClick={() => this.downloadOneVideo(item)} >🠋</a>
+                        <input
+                          type="checkbox"
+                          checked={selectedForUploads.includes(item.uri)}
+                          className="mr-2 mt-1"
+                          onChange={() => {
+                            const newUploads = Object.assign([], selectedForUploads)
+                            selectedForUploads.includes(item.uri)
+                              ? newUploads.splice(selectedForUploads.findIndex(u => u === item.uri), 1)
+                              : newUploads.push(item.uri)
+                            this.setState({
+                              selectedForUploads: newUploads
+                            })
+                          }}
+                        />
                         {item.record_item ? <div>
                           {item.record_item.first_name} {item.record_item.last_name}
                         </div> : <div>No talent info available</div>}
@@ -244,25 +271,13 @@ class VideoPage extends Component {
 
 
 const PersonCard = ({
-  _id,
   first_name,
   last_name,
   email,
   phone,
   skipped,
-  seen,
-  signed_out,
-  is_deleted,
-  checked_in_time,
-  call_in_time,
-  signed_out_time,
-  deleted_at
+  seen
 }) => {
-  const checkInDateString = new Date(checked_in_time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
-  const callInDateString = new Date(call_in_time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
-  const signedOutDateString = new Date(signed_out_time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
-  const deleteAtDateString = new Date(deleted_at).toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
-
   return (
     <div className="card">
       <div className="card-body px-0">

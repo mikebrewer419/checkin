@@ -39,6 +39,7 @@ class List extends Component {
     }
     this.interval = 30000 // query api every 30 seconds
     this.messages = this.props.messages || messages
+    this.deletedMessageText = this.props.delete_message || deletedMessageText
   }
 
   componentDidMount() {
@@ -130,10 +131,12 @@ class List extends Component {
     removeCheckinRecord(id).then(data => {
       this.fetchData().then(() => {
         console.log('removed ', data)
-        sendMessage({
-          to: Phone,
-          body: deletedMessageText
-        }, this.state.studio_id, this.state.studio)
+        if (!data.seen) {
+          sendMessage({
+            to: Phone,
+            body: this.deletedMessageText
+          }, this.state.studio_id, this.state.studio)
+        }
         let idx = vm.state.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.state.candidates.length
         for(let i = 1;
             i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length

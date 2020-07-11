@@ -15,6 +15,7 @@ const StudioForm = ({
   comet_api_key = '',
   thankyou_message = '',
   position_messages = [],
+  delete_message,
   logo = '',
 }) => {
   const [meeting_ids, setMeetingIds] = useState(jitsi_meeting_ids)
@@ -98,6 +99,11 @@ const StudioForm = ({
         <label htmlFor="position_messages4">Position_messages 4</label>
         <input className="form-control form-control-sm"  type="text" name="position_messages[3]" id="position_messages4"
           defaultValue={position_messages[3] || `Be prepared, you are next in line to head to Southpaw Studios. We will contact you shortly`} />
+      </div>
+      <div className="form-group">
+        <label htmlFor="delete_message">Position_messages 1</label>
+        <input className="form-control form-control-sm"  type="text" name="delete_message" id="delete_message"
+          defaultValue={delete_message || `You arrived at the wrong time. Please come back at the correct call time and check in again.`} />
       </div>
       <div className="form-group">
         <label htmlFor="logo">Logo</label>

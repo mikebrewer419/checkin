@@ -1,5 +1,4 @@
 const api_host = process.env.REACT_APP_API_HOST
-const static_root = process.env.REACT_APP_API_HOST + '/static/'
 
 const getAllStudios = () => {
   const token = window.localStorage.getItem('token')
