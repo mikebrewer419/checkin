@@ -194,6 +194,41 @@ class List extends Component {
     })
   }
 
+  downloadCSV = () => {
+    const row_headers = [
+      'first_name',
+      'last_name',
+      'email',
+      'phone',
+      'skipped',
+      'seen',
+      'signed_out',
+      'checked_in_time',
+      'dont_message',
+      'sagnumber',
+      'jitsi_meeting_id',
+      'call_in_time',
+      'signed_out_time',
+      'is_deleted',
+      'deleted_at',
+      'studio',
+    ]
+    let csvContent = "data:text/csv;charset=utf-8," +row_headers.join(',')+'\n'
+      + this.state.candidates
+        .map(candidate => (
+          row_headers.map(key => key === 'studio' ? this.state.studio: candidate[key]).join(',')
+        )).join('\n')
+
+    const encodedUri = encodeURI(csvContent)
+    var link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `${this.state.studio}-${(new Date()).toISOString()}.csv`)
+    document.body.appendChild(link)
+    
+    link.click()
+    document.body.removeChild(link)
+  }
+
   render() {
     return (
       <div className="list-view">
@@ -207,7 +242,10 @@ class List extends Component {
                 <img src={static_root+this.state.studio_logo} alt={this.state.studio}/>
               </Link>
             </div>
-            <h2 style={{textAlign: "center"}}> {this.state.studio}</h2>
+            <h2 style={{textAlign: "center"}}>
+              {this.state.studio}
+              <label title="Download CSV" className="ml-3 download-csv" onClick={this.downloadCSV}>⭳</label>
+            </h2>
           </div>
           <ul className="list-group">
             {this.state.candidates && this.state.candidates.map((person, idx) => {

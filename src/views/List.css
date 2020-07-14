@@ -78,3 +78,6 @@
   opacity: 1;
   pointer-events: all;
 }
+.download-csv {
+  cursor: pointer;
+}
