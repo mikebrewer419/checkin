@@ -17,6 +17,7 @@ const StudioForm = ({
   position_messages = [],
   delete_message,
   logo = '',
+  errors = {}
 }) => {
   const [meeting_ids, setMeetingIds] = useState(jitsi_meeting_ids)
   return (
@@ -108,6 +109,13 @@ const StudioForm = ({
       <div className="form-group">
         <label htmlFor="logo">Logo</label>
         <input className="form-control"  type="file" name="logo" id="logo"/>
+      </div>
+      <div className="form-group">
+        {errors.uri &&
+          <p className="text-danger mb-1">Studio uri <strong>{errors.uri}</strong> already used!</p>}
+        {errors.meeting_id && errors.meeting_id.map((mid, idx) => (
+          <p key={idx} className="text-danger mb-1">Meeting id <strong>{mid}</strong> already used!</p>
+        ))}
       </div>
       <button type="submit" className="btn btn-primary">
         {_id? 'Update': 'Create'}

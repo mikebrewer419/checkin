@@ -11,6 +11,7 @@ import './style.css'
 const StudioList = () => {
   const [studios, setStudios] = useState([])
   const [selectedStudio, setSelectedStudio] = useState(null)
+  const [errors, setErrors] = useState({})
 
   const fetchAll = async () => {
     const studios = await getAllStudios()
@@ -27,8 +28,14 @@ const StudioList = () => {
 
   const handleStudioSubmit = async (event) => {
     event.preventDefault()
+    setErrors({})
+
+    const studio_uris = studios.map(s => s.uri)
+    const meeting_ids = studios.map(s => s.jitsi_meeting_ids).flat()
+
     const form_data = new FormData(event.target)
-    var object = {}
+    let error = {}
+    let object = {}
     form_data.forEach(function(value, key){
       if (!value) return
       const parsed = /(.*)\[(\d+)\]/.exec(key)
@@ -41,11 +48,25 @@ const StudioList = () => {
           object[k] = []
           object[k][idx] = value
         }
+
+        if (
+          k === 'jitsi_meeting_ids' &&
+          meeting_ids.includes(value) &&
+          !(selectedStudio.jitsi_meeting_ids || []).includes(value)
+        ) {
+          error['meeting_id'] = (error['meeting_id'] || []).concat(value)
+        }
+
       } else {
+        if (key === 'uri' && studio_uris.includes(value) && selectedStudio.uri !== value) {
+          error['uri'] = value
+        }
         object[key] = value
       }
     })
-    console.log("handleStudioSubmit -> object", object)
+
+    setErrors(error)
+    if (Object.keys(error).length > 0) { return }
     await createOrUpdateStudio(object)
     await fetchAll()
     setSelectedStudio(null)
@@ -96,7 +117,11 @@ const StudioList = () => {
         <StudioForm
           {...selectedStudio}
           onSubmit={handleStudioSubmit}
-          onCancel={() => setSelectedStudio(null)}
+          errors={errors}
+          onCancel={() => {
+            setSelectedStudio(null)
+            setErrors({})
+          }}
         />}
     </div>
   )
