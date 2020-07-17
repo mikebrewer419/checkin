@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   static_root,
@@ -241,13 +241,6 @@ class VideoPage extends Component {
                       id="active-player"
                     />,
                     <div key="info" className="info">
-                      <a
-                        href={`https://meet.heyjoe.io/${this.meeting_id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {`https://meet.heyjoe.io/${this.meeting_id}`}
-                      </a><br/>
                       {activeItemRecord ?
                         <div className="talent-summary">
                           <PersonCard {...activeItemRecord} />
@@ -278,18 +271,20 @@ const PersonCard = ({
   skipped,
   seen
 }) => {
+  const [showContact, setShowContact] = useState(false)
   return (
-    <div className="card">
+    <div className="card px-4 py-1">
       <div className="card-body px-0">
         <h5 className="card-title mb-2">
-          <span className={seen?'text-success':'text-danger'} >
-            ⬤
-          </span>&nbsp;&nbsp;
           {first_name} {last_name}
           {skipped && <small>&nbsp;&nbsp;skipped</small>}
         </h5>
-        <p className="card-text">Phone: {phone}</p>
-        <p className="card-text">Email: {email}</p>
+        <label onClick={() => setShowContact(!showContact)}>Contact</label>
+        {showContact &&
+        <div className="">
+          <p className="card-text mb-1">P: <small>{phone}</small></p>
+          <p className="card-text mb-1">E: <small>{email}</small></p>
+        </div>}
       </div>
     </div>
   )
