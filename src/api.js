@@ -156,6 +156,16 @@ const getStudioVideosByDate = (studio_id, meeting_id, date) => {
   }).then((resp) => resp.json())
 }
 
+const getStudioVideoDates = (studio_id, meeting_id) => {
+  const token = window.localStorage.getItem('token')
+  return fetch(`${api_host}/videos/dates/${studio_id}/${meeting_id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
 const createZipAndSendMail = (video_ids, date, email) => {
   const token = window.localStorage.getItem('token')
   return fetch(`${api_host}/videos/get-zip`, {
@@ -185,6 +195,7 @@ export {
   getStudioByUri,
   createCometRoom,
   getStudioVideosByDate,
+  getStudioVideoDates,
   createZipAndSendMail,
   static_root
 }

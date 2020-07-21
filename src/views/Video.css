@@ -14,7 +14,11 @@
   cursor: pointer;
 }
 .item.active {
-  border: 1px solid #777;
+  background-color: #f3f3f3;
+  box-shadow: 0 0 2px 1px #777;
+}
+.active-group-row {
+  background-color: #f7f7f7;
 }
 .active-row {
   display: flex;
@@ -31,7 +35,7 @@
 }
 .preview-wrapper {
   position: relative;
-  padding-top: 56.25% /* Player ratio: 100 / (1280 / 720) */
+  padding-top: 56.25%;
 }
 
 .preview-wrapper .dummy-player {
@@ -39,4 +43,9 @@
   top: 0;
   left: 0;
   border: 1px solid #ccc;
+}
+.group-videos-wrapper {
+  max-height: 360px;
+  overflow-y: auto;
+  background-color: white;
 }

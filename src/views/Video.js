@@ -5,6 +5,7 @@ import {
   getStudioByUri,
   getOneRecord,
   getStudioVideosByDate,
+  getStudioVideoDates,
   createZipAndSendMail
 } from '../api'
 import './Video.css'
@@ -24,10 +25,13 @@ class VideoPage extends Component {
       date: new Date(),
       countPerRow: 5,
       activeRidx: -1,
+      activeGidx: -1,
       activeItem: null,
       videos: [],
+      groups: [],
       records: {},
       loading: false,
+      videoDates: [],
       selectedForUploads: []
     }
   }
@@ -51,8 +55,35 @@ class VideoPage extends Component {
       }
       return
     }))
+    let groups = [], gidx = {}, idx = 0
+    videos.forEach(video => {
+      if (isNaN(gidx[video.group])) {
+        gidx[video.group] = idx
+        groups[gidx[video.group]] = {
+          name: video.group,
+          idx,
+          url: video.url,
+          thumbnail: video.thumbnail,
+          videos: []
+        }
+        idx ++
+      }
+      groups[gidx[video.group]].videos.push(video)
+    })
     this.setState({
       videos,
+      groups,
+      loading: false
+    })
+  }
+
+  getStudioVideoDates = async () => {
+    this.setState({
+      loading: true
+    })
+    const videoDates = await getStudioVideoDates(this.state.studio._id, this.meeting_id)
+    this.setState({
+      videoDates,
       loading: false
     })
   }
@@ -102,6 +133,50 @@ class VideoPage extends Component {
     saveAs(video.url, video.uri)
   }
 
+  handleGroupItemClick = (ridx, gidx) => {
+    if (gidx === this.state.activeGidx) {
+      this.setState({
+        activeRidx: -1,
+        activeGidx: -1,
+        activeItem: null
+      })
+    }
+    this.setState({
+      activeRidx: ridx,
+      activeGidx: gidx,
+      activeItem: this.state.groups[gidx].videos[0]
+    })
+  }
+
+  groupSelectedForDownload = (gidx) => {
+    const { selectedForUploads } = this.state
+    return !this.state.groups[gidx].videos.filter(v => !selectedForUploads.includes(v.uri)).length
+  }
+
+  toggleGroupSelectedForDownload = (gidx, checked) => {
+    const { selectedForUploads } = this.state
+    const newUploads = Object.assign([], selectedForUploads)
+    this.state.groups[gidx].videos.forEach(v => {
+      const vIdx = newUploads.findIndex(s => s === v.uri)
+      if(checked && !newUploads.includes(v.uri)) { newUploads.push(v.uri) }
+      if(!checked && newUploads.includes(v.uri)) { newUploads.splice(vIdx, 1) }
+    })
+    this.setState({
+      selectedForUploads: newUploads
+    })
+  }
+
+  toggleVideoSelectedForDownload = (uri, checked) => {
+    const { selectedForUploads } = this.state
+    const newUploads = Object.assign([], selectedForUploads)
+    const vIdx = selectedForUploads.findIndex(s => s === uri)
+    if(checked && !newUploads.includes(uri)) { newUploads.push(uri) }
+    if(!checked && newUploads.includes(uri)) { newUploads.splice(vIdx, 1) }
+    this.setState({
+      selectedForUploads: newUploads
+    })
+  }
+
   async componentDidMount() {
     this.setCount()
     this.meeting_id = this.props.match.params.meeting_id
@@ -114,13 +189,15 @@ class VideoPage extends Component {
       studio
     }, async () => {
       await this.loadVideos()
+      await this.getStudioVideoDates()
     })
 
     window.addEventListener('resize', this.setCount)
   }
 
   componentDidUpdate() {
-    if (this.state.activeItem) {
+    if (this.state.activeItem && this.played !== this.state.activeItem.uri) {
+      this.played = this.state.activeItem.uri
       setTimeout(() => {
         const video = document.querySelector('#active-player video')
         if (video) {
@@ -131,15 +208,25 @@ class VideoPage extends Component {
   }
 
   render() {
-    const { studio, videos, countPerRow, activeItem, activeRidx, selectedForUploads } = this.state
+    const {
+      studio,
+      groups,
+      countPerRow,
+      activeItem,
+      activeRidx,
+      activeGidx,
+      videoDates,
+      selectedForUploads
+    } = this.state
+    
     let rows = []
 
     if (!studio) {
       return <div>Loading...</div>
     }
 
-    for(let i = 0, l = videos.length; i < l; i += countPerRow) {
-      rows.push(videos.slice(i, i + countPerRow))
+    for(let i = 0, l = groups.length; i < l; i += countPerRow) {
+      rows.push(groups.slice(i, i + countPerRow))
     }
 
     let activeItemRecord = null
@@ -149,6 +236,7 @@ class VideoPage extends Component {
     }
 
     const rowWidth = countPerRow * (itemWidth + 32)
+    const activeGroup = groups[activeGidx]
 
     return (
       <div className="video-app px-5">
@@ -162,97 +250,134 @@ class VideoPage extends Component {
             </Link>
           </div>
           <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name} videos</h2>
-          <DatePicker
-            selected={this.state.date}
-            onChange={this.handleDateChange}
-          />
-          {selectedForUploads.length > 0 &&
-          <label className="ml-2" onClick={() => this.downloadAllVideos()} >🠋 Download Selected</label>}
+          <div class="d-flex align-items-center">
+            <select
+              className="mr-2 d-none"
+              value={this.state.date}
+              onChange={(ev) => this.handleDateChange(new Date(ev.target.value))}
+            >
+              <option>---</option>
+              {videoDates.map(date => <option key={date} value={date}>{date}</option>)}
+            </select>
+            <DatePicker
+              selected={this.state.date}
+              onChange={this.handleDateChange}
+            />
+            {selectedForUploads.length > 0 &&
+            <label className="ml-2 mb-0" onClick={() => this.downloadAllVideos()} >🠋 Download Selected</label>}
+          </div>
         </div>
         <div>
           {rows.length === 0 && <div>No videos available </div>}
           {rows.map((row, ridx) => {
             return (
               [
-                <div className="video-row" key={ridx} style={{width: `${rowWidth}px`}}>
-                  {row.map(item => {
-                    return <div
-                      key={item._id}
-                      className={`mx-3 item ${activeItem && (activeItem.uri === item.uri)?'active':''}`}
-                      style={{
-                        width: itemWidth
-                      }}
-                    >
+                <div className="video-row" key={ridx}  style={{width: `${rowWidth}px`}}>
+                  {row.map(group => {
+                    return (
                       <div
-                        className="preview-wrapper"
-                        onClick={() => {
-                          if (!activeItem || activeItem.uri !== item.uri) {
-                            this.setState({
-                              activeItem: item,
-                              activeRidx: ridx
-                            })
-                          } else {
-                            this.setState({
-                              activeItem: null,
-                              activeRidx: -1
-                            })
-                          }
+                        key={group.idx}
+                        className={`mx-3 item ${activeGidx === group.idx?'active':''}`}
+                        style={{
+                          width: itemWidth
                         }}
                       >
-                        <ReactPlayer
-                          light={`${static_root}${item.thumbnail}`}
-                          controls={false}
-                          url={item.url}
-                          className="dummy-player"
-                          width='100%'
-                          height='100%'
-                        />
-                      </div>
-                      <div className="d-flex">
-                        <input
-                          type="checkbox"
-                          checked={selectedForUploads.includes(item.uri)}
-                          className="mr-2 mt-1"
-                          onChange={() => {
-                            const newUploads = Object.assign([], selectedForUploads)
-                            selectedForUploads.includes(item.uri)
-                              ? newUploads.splice(selectedForUploads.findIndex(u => u === item.uri), 1)
-                              : newUploads.push(item.uri)
-                            this.setState({
-                              selectedForUploads: newUploads
-                            })
+                        <div
+                          className="preview-wrapper"
+                          onClick={() => {
+                            this.handleGroupItemClick(ridx, group.idx)
                           }}
-                        />
-                        {item.record_item ? <div>
-                          {item.record_item.first_name} {item.record_item.last_name}
-                        </div> : <div>No talent info available</div>}
+                        >
+                          <ReactPlayer
+                            light={`${static_root}${group.thumbnail}`}
+                            controls={false}
+                            url={group.url}
+                            className="dummy-player"
+                            width='100%'
+                            height='100%'
+                          />
+                        </div>
+                        <div className="d-flex">
+                          <input
+                            type="checkbox"
+                            checked={this.groupSelectedForDownload(group.idx)}
+                            className="mr-2 mt-1"
+                            onChange={(ev) => this.toggleGroupSelectedForDownload(group.idx, ev.target.checked) }
+                          />
+                          <div>{group.name}</div>
+                        </div>
                       </div>
-                    </div>
+                    )
                   })}
                 </div>,
-                ridx === activeRidx && activeItem ?
-                <div className="active-row" key="active-video">
-                  {activeItem? [
-                    <ReactPlayer
-                      controls={true}
-                      url={activeItem.url}
-                      key="video"
-                      autoPlay
-                      id="active-player"
-                    />,
-                    <div key="info" className="info">
-                      {activeItemRecord ?
-                        <div className="talent-summary">
-                          <PersonCard {...activeItemRecord} />
-                        </div> :
-                        <div className="talent-summary">
-                          No talent information available
-                        </div>
-                      }
+                ridx === activeRidx && activeGroup ?
+                  <div className="row active-group-row py-3" key="active-field">
+                    {activeItem? [
+                      <ReactPlayer
+                        controls={true}
+                        url={activeItem.url}
+                        key="video"
+                        autoPlay
+                        id="active-player"
+                        className="col-auto"
+                      />,
+                      <div key="info" className="info col-auto">
+                        {activeItemRecord ?
+                          <div className="talent-summary">
+                            <PersonCard {...activeItemRecord} />
+                          </div> :
+                          <div className="talent-summary">
+                            No talent information available
+                          </div>
+                        }
+                      </div>
+                    ]: null}
+                    <div className="col d-flex flex-column group-videos-wrapper py-2">
+                      {activeGroup.videos.map(video => {
+                        return (
+                          <div
+                            key={video.uri}
+                            className={`mx-0 mb-2 row item ${activeItem.uri === video.uri? 'active': ''}`}
+                          >
+                            <div
+                              style={{
+                                width: itemWidth
+                              }}
+                            >
+                              <div
+                                className="preview-wrapper"
+                                onClick={() => this.setState({ activeItem: video })}
+                              >
+                                <ReactPlayer
+                                  light={`${static_root}${video.thumbnail}`}
+                                  controls={false}
+                                  url={video.url}
+                                  className="dummy-player dummy-video"
+                                  width="100%"
+                                  height="100%"
+                                />
+                              </div>
+                            </div>
+                            <div className="col">
+                              {video.record_item ? <div>
+                                {video.record_item.first_name} {video.record_item.last_name}
+                              </div> : <div>No talent info available</div>}
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  className="mr-2"
+                                  checked={selectedForUploads.includes(video.uri)}
+                                  onChange={(ev) => this.toggleVideoSelectedForDownload(video.uri, ev.target.checked)}
+                                />
+                                <small>Check to download</small>
+                              </label>
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
-                  ]: null}
-                </div>
-                :null
+                  </div>
+                : null
               ]
             )
           })}
