@@ -58,6 +58,14 @@ const Onboard = () => {
     )
   }
 
+  if (submitting) {
+    return (
+      <div className="">
+        Processing... Please wait for a moment.
+      </div>
+    )
+  }
+
   return (
     <div className="container">
       <img

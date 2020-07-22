@@ -182,6 +182,20 @@ const createZipAndSendMail = (video_ids, date, email) => {
   }).then((resp) => resp.text())
 }
 
+const setRecordsGroup = (data) => {
+  const token = window.localStorage.getItem('token')
+  return fetch(`${api_host}/records/set-group`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      data
+    })
+  }).then((resp) => resp.text())
+}
+
 export {
   getStudioInfo,
   sendMessage,
@@ -197,5 +211,6 @@ export {
   getStudioVideosByDate,
   getStudioVideoDates,
   createZipAndSendMail,
+  setRecordsGroup,
   static_root
 }

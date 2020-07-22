@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import cometInject from '../comet-inject'
-import List from './List'
+import List, { PersonCard } from './List'
 import {
   getStudioByUri,
   createCometRoom
@@ -15,7 +15,8 @@ class HomePage extends Component {
       studio: null,
       showChat: true,
       showList: true,
-      jitsiKey: 0
+      jitsiKey: 0,
+      groupCandidates: []
     }
   }
 
@@ -100,8 +101,16 @@ class HomePage extends Component {
     })
   }
 
+  leaveCurrentGroup = () => {
+    this.listRef.finishCurrentGroup()
+  }
+
+  setListRef = (elem) => {
+    this.listRef = elem
+  }
+
   render() {
-    const { studio, showChat, showList, jitsiKey } = this.state
+    const { studio, showChat, showList, jitsiKey, groupCandidates } = this.state
     const meeting_id = this.props.match.params.meeting_id
     if (!studio) {
       return <div>Loading...</div>
@@ -111,12 +120,14 @@ class HomePage extends Component {
         <div id="checkin-list" className={`${showList?'show':''}`}>
           <div id="list">
             <List
+              ref={this.setListRef}
               studio_id={studio._id}
               studio={studio.name}
               studio_logo={studio.logo}
               messages={studio.position_messages}
               delete_message={studio.delete_message}
               meeting_id={meeting_id}
+              setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
             />
           </div>
           <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
@@ -134,10 +145,30 @@ class HomePage extends Component {
             title="Meeting"
             width="100%"
             height="100%"
+            id="jitsi-meeting-frame"
             src={`https://meet.heyjoe.io/${meeting_id}`}
             allow="microphone,camera"
-            allowfullscreen="allowfullscreen">
+            allowFullScreen="allowfullscreen">
           </iframe>
+          <div id="current-group" className="px-2">
+            <h4>Current Group  (<small> {groupCandidates[0] && groupCandidates[0].group} </small>)</h4>
+            <div className="d-flex flex-wrap">
+              {groupCandidates.map(person => (
+                <PersonCard
+                  key={person._id}
+                  id={person._id}
+                  idx={person._id}
+                  showCallIn={false}
+                  {...person}
+                  hideDelete={true}
+                />
+              ))}
+            </div>
+            {groupCandidates.length > 0 &&
+            <button className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
+              Finish Group
+            </button>}
+          </div>
         </div>
         <div id="comet-chat" className={`${showChat?'show':''}`}>
           <button className="btn px-1 py-0 border-right-0" onClick={() => this.setshowChat(!showChat)}>

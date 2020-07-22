@@ -4,6 +4,7 @@ import {
   sendMessage,
   fetchCheckInList,
   updateRecordField,
+  setRecordsGroup,
   removeCheckinRecord,
   static_root
 } from '../api'
@@ -35,7 +36,8 @@ class List extends Component {
       error: false,
       studio_id: this.props.studio_id,
       studio: this.props.studio,
-      studio_logo: this.props.studio_logo
+      studio_logo: this.props.studio_logo,
+      currentGroup: ''
     }
     this.interval = 30000 // query api every 30 seconds
     this.messages = this.props.messages || messages
@@ -52,9 +54,21 @@ class List extends Component {
 
   fetchData = () => {
     return fetchCheckInList(this.state.studio_id, this.meeting_id).then(data => {
+        const { group } = data.filter((candidate, idx) => {
+          return !candidate.seen &&
+          (idx === 0 ||
+            (data[idx - 1] &&
+              (data[idx - 1].seen || data[idx - 1].skipped)
+            )
+          )
+        })[0] || {}
         this.setState({
           candidates: data,
+          currentGroup: this.state.currentGroup || group || '',
           loading: false
+        }, () => {
+          const inGroupCandidates = this.state.candidates.filter(c => c.group && (c.group === this.state.currentGroup))
+          this.props.setGroupCandidates(inGroupCandidates)
         })
       }).catch(err => {
         console.log("App -> componentDidMount -> err", err)
@@ -194,6 +208,73 @@ class List extends Component {
     })
   }
 
+  addToGroup = (_id) => {
+    const { currentGroup } = this.state
+    const currentCandidate = this.state.candidates.filter(c => c._id === _id)[0]
+    let newGroup = this.state.currentGroup
+    let newCandidates = JSON.parse(JSON.stringify(this.state.candidates))
+    const cname = `${currentCandidate.first_name} ${currentCandidate.last_name}`
+    newGroup = currentGroup.split(',').concat(cname).filter(s => s).join(',')
+
+    newCandidates = this.state.candidates.map(candidate => {
+      if (candidate._id === _id || (this.state.currentGroup && candidate.group === this.state.currentGroup)) {
+        return {
+          ...candidate,
+          group: newGroup
+        }
+      }
+      return candidate
+    })
+
+    this.setState({
+      currentGroup: newGroup,
+      candidates: newCandidates
+    }, this.saveCurrentGroupInfo)
+  }
+
+  leaveFromGroup = (_id) => {
+    let currentCandidate = this.state.candidates.filter(c => c._id === _id)[0]
+    const cname = `${currentCandidate.first_name} ${currentCandidate.last_name}`
+    const newGroup = this.state.currentGroup.split(',').filter(g => g !== cname).join(',')
+    let newCandidates = this.state.candidates.map(c => {
+      if (c._id === _id) {
+        return {
+          ...c,
+          group: ''
+        }
+      }
+      return {
+        ...c,
+        group: c.group === this.state.currentGroup ? newGroup : c.group
+      }
+    })
+    this.setState({
+      candidates: newCandidates,
+      currentGroup: newGroup
+    }, this.saveCurrentGroupInfo)
+  }
+
+  saveCurrentGroupInfo = async () => {
+    this.setState({ loading: true })
+    const data = this.state.candidates.map(c => ({ _id: c._id, group: c.group }))
+    await setRecordsGroup(data)
+    await this.fetchData()
+    this.setState({ loading: false })
+  }
+
+  finishCurrentGroup = () => {
+    if (!this.state.currentGroup) return
+    const remainingCandidates = this.state.candidates.filter(c => c.group === this.state.currentGroup && !c.seen)
+    if (remainingCandidates.length > 0) {
+      window.alert('You still have not seen candidates!')
+      return
+    }
+    this.setState({
+      currentGroup: ''
+    })
+    this.props.setGroupCandidates([])
+  }
+
   downloadCSV = () => {
     const row_headers = [
       'first_name',
@@ -254,6 +335,8 @@ class List extends Component {
                 (this.state.candidates[idx - 1] &&
                   (this.state.candidates[idx - 1].seen ||
                   this.state.candidates[idx - 1].skipped)))
+              const addToGroup = !person.group ? this.addToGroup : null
+              const leaveFromGroup = person.group && person.group === this.state.currentGroup ? this.leaveFromGroup : null
               return (
                 <PersonCard
                   key={idx}
@@ -265,6 +348,8 @@ class List extends Component {
                   setSkipped={this.setSkipped}
                   removeRecord={this.removeRecord}
                   signOut={this.signOut}
+                  addToGroup={addToGroup}
+                  leaveFromGroup={leaveFromGroup}
                 />
               )
             })}
@@ -304,10 +389,11 @@ class List extends Component {
 
 export default List
 
-const PersonCard = ({
+export const PersonCard = ({
   idx,
   _id,
   showCallIn,
+  group,
   first_name,
   last_name,
   email,
@@ -320,7 +406,10 @@ const PersonCard = ({
   setSeen,
   setSkipped,
   signOut,
-  removeRecord
+  removeRecord,
+  addToGroup,
+  leaveFromGroup,
+  hideDelete
 }) => {
   const dateString = new Date(checked_in_time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
 
@@ -336,11 +425,12 @@ const PersonCard = ({
           <small>&nbsp;&nbsp;no message</small>}
           {skipped &&
           <small>&nbsp;&nbsp;skipped</small>}
+          {!hideDelete &&
           <button
             className="btn px-2 py-0 btn-outline-dark float-right"
             onClick={() => removeRecord(_id, phone, idx)}
-          >Delete</button>
-          {seen && !signed_out && (
+          >Delete</button>}
+          {seen && !signed_out && signOut && (
             <button
               className="btn px-2 py-0 btn-outline-dark"
               onClick={() => signOut(_id)}
@@ -355,15 +445,26 @@ const PersonCard = ({
         <p className="card-text">Phone: {phone}</p>
         <p className="card-text">Email: {email}</p>
         <p className="card-text">Checked In: {dateString}</p>
-        {(!!showCallIn || skipped) &&
+        <p className="card-text">Group: {group}</p>
+        {(!!showCallIn || skipped) && setSeen &&
         <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
           Call In
         </button>}
         &nbsp;&nbsp;
-        {!!showCallIn && !skipped &&
+        {!!showCallIn && !skipped && setSkipped &&
         <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSkipped(_id)}>
           Skip
         </button>}
+        <div className="ml-auto">
+          {addToGroup &&
+          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
+            Add to Group
+          </button>}
+          {leaveFromGroup &&
+          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
+            Remove from group
+          </button>}
+        </div>
       </div>
     </div>
   )

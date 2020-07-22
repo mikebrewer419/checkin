@@ -12,6 +12,22 @@
   position: relative;
 }
 
+#jitsi-meeting-frame {
+  max-height: 60vh;
+}
+
+#current-group {
+  height: 40vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+#current-group .leave-group-btn {
+  position: sticky;
+  bottom: 10px;
+  float: right;
+}
+
 #list {
   overflow-y: auto;
 }
