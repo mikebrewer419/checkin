@@ -6,7 +6,8 @@ import {
   getOneRecord,
   getStudioVideosByDate,
   getStudioVideoDates,
-  createZipAndSendMail
+  createZipAndSendMail,
+  getStudioGroupRecords
 } from '../api'
 import './Video.css'
 import ReactPlayer from 'react-player'
@@ -32,7 +33,8 @@ class VideoPage extends Component {
       records: {},
       loading: false,
       videoDates: [],
-      selectedForUploads: []
+      selectedForUploads: [],
+      groupRecords: []
     }
   }
   
@@ -133,7 +135,7 @@ class VideoPage extends Component {
     saveAs(video.url, video.uri)
   }
 
-  handleGroupItemClick = (ridx, gidx) => {
+  handleGroupItemClick = async (ridx, gidx) => {
     if (gidx === this.state.activeGidx) {
       this.setState({
         activeRidx: -1,
@@ -141,10 +143,16 @@ class VideoPage extends Component {
         activeItem: null
       })
     }
+    let grs = []
+    try {
+      const group = this.state.groups[gidx].videos[0].group
+      grs = await getStudioGroupRecords(this.state.studio._id, this.meeting_id, group)
+    } catch(e) { }
     this.setState({
       activeRidx: ridx,
       activeGidx: gidx,
-      activeItem: this.state.groups[gidx].videos[0]
+      activeItem: this.state.groups[gidx].videos[0],
+      groupRecords: grs
     })
   }
 
@@ -216,8 +224,10 @@ class VideoPage extends Component {
       activeRidx,
       activeGidx,
       videoDates,
+      groupRecords,
       selectedForUploads
     } = this.state
+    console.log("VideoPage -> render -> groupRecords", groupRecords, groupRecords.map)
     
     let rows = []
 
@@ -250,9 +260,9 @@ class VideoPage extends Component {
             </Link>
           </div>
           <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name} videos</h2>
-          <div class="d-flex align-items-center">
+          <div className="d-flex align-items-center">
             <select
-              className="mr-2 d-none"
+              className="mr-2"
               value={this.state.date}
               onChange={(ev) => this.handleDateChange(new Date(ev.target.value))}
             >
@@ -322,22 +332,27 @@ class VideoPage extends Component {
                         className="col-auto"
                       />,
                       <div key="info" className="info col-auto">
-                        {activeItemRecord ?
+                        {groupRecords.map(record => (
+                          <div className="talent-summary" key={record._id}>
+                            <PersonCard {...record} />
+                          </div>
+                        ))}
+                        { groupRecords.length === 0 && activeItemRecord &&
                           <div className="talent-summary">
                             <PersonCard {...activeItemRecord} />
-                          </div> :
+                          </div> }
+                        { groupRecords.length === 0 && !activeItemRecord &&
                           <div className="talent-summary">
                             No talent information available
-                          </div>
-                        }
+                          </div> }
                       </div>
                     ]: null}
-                    <div className="col d-flex flex-column group-videos-wrapper py-2">
+                    <div className="col d-flex flex-wrap align-items-start group-videos-wrapper py-2">
                       {activeGroup.videos.map(video => {
                         return (
                           <div
                             key={video.uri}
-                            className={`mx-0 mb-2 row item ${activeItem.uri === video.uri? 'active': ''}`}
+                            className={`mx-0 mb-2  mr-2 item ${activeItem.uri === video.uri? 'active': ''}`}
                           >
                             <div
                               style={{
@@ -357,20 +372,17 @@ class VideoPage extends Component {
                                   height="100%"
                                 />
                               </div>
-                            </div>
-                            <div className="col">
-                              {video.record_item ? <div>
-                                {video.record_item.first_name} {video.record_item.last_name}
-                              </div> : <div>No talent info available</div>}
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  className="mr-2"
-                                  checked={selectedForUploads.includes(video.uri)}
-                                  onChange={(ev) => this.toggleVideoSelectedForDownload(video.uri, ev.target.checked)}
-                                />
-                                <small>Check to download</small>
-                              </label>
+                              <div>
+                                <label className="mb-0">
+                                  <input
+                                    type="checkbox"
+                                    className="mr-2"
+                                    checked={selectedForUploads.includes(video.uri)}
+                                    onChange={(ev) => this.toggleVideoSelectedForDownload(video.uri, ev.target.checked)}
+                                  />
+                                  Check to download
+                                </label>
+                              </div>
                             </div>
                           </div>
                         )

@@ -196,6 +196,16 @@ const setRecordsGroup = (data) => {
   }).then((resp) => resp.text())
 }
 
+const getStudioGroupRecords = (studio, meeting_id, group) => {
+  const token = window.localStorage.getItem('token')
+  return fetch(`${api_host}/records/${studio}/${meeting_id}/${group}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
 export {
   getStudioInfo,
   sendMessage,
@@ -212,5 +222,6 @@ export {
   getStudioVideoDates,
   createZipAndSendMail,
   setRecordsGroup,
+  getStudioGroupRecords,
   static_root
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import jwtDecode from 'jwt-decode'
 import { Link } from 'react-router-dom'
 import {
   getAllStudios,
@@ -12,6 +13,7 @@ const StudioList = () => {
   const [studios, setStudios] = useState([])
   const [selectedStudio, setSelectedStudio] = useState(null)
   const [errors, setErrors] = useState({})
+  const [sessionUser, setSessionUser] = useState(false)
 
   const fetchAll = async () => {
     const studios = await getAllStudios()
@@ -73,8 +75,20 @@ const StudioList = () => {
   }
 
   useEffect(() => {
-    fetchAll()
+    const token = window.localStorage.getItem('token')
+    const decoded = jwtDecode(token)
+    if (decoded.session_user) {
+      setSessionUser(true)
+    } else {
+      fetchAll()
+    }
   }, [])
+
+  if (sessionUser) {
+    return <div>
+      Oops! You don't have access to this page. Please contact your admin to get the correct link.
+    </div>
+  }
 
   return (
     <div className="p-5 w-100 studios-list">
