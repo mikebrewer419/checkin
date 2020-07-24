@@ -84,9 +84,19 @@ const StudioList = () => {
     }
   }, [])
 
+  const LogOut = ({ className }) => <label className={className} onClick={() => {
+    window.localStorage.removeItem('token')
+    window.location.reload(true)
+  }}>
+    Logout
+  </label>
+
   if (sessionUser) {
-    return <div>
-      Oops! You don't have access to this page. Please contact your admin to get the correct link.
+    return <div className="p-2 d-flex justify-content-between">
+      <p>
+        Oops! You don't have access to this page. Please contact your admin to get the correct link.
+      </p>
+      <LogOut />
     </div>
   }
 
@@ -94,10 +104,13 @@ const StudioList = () => {
     <div className="p-5 w-100 studios-list">
       <div className="d-flex justify-content-between mb-5">
         <h3>Heyjoe</h3>
-        <button
-          className="btn btn-primary"
-          onClick={() => setSelectedStudio({})}
-        >Create Studio</button>
+        <div className="d-flex">
+          <button
+            className="btn btn-primary mr-2"
+            onClick={() => setSelectedStudio({})}
+          >Create Studio</button>
+          <LogOut className="mr-n4" />
+        </div>
       </div>
       <label>All Studios</label>
       <ul className="list-group">

@@ -190,7 +190,6 @@ class VideoPage extends Component {
     this.meeting_id = this.props.match.params.meeting_id
     const studio_uri = this.props.match.params.uri
     const studio = await getStudioByUri(studio_uri)
-    console.log("VideoPage -> componentDidMount -> studio", studio)
 
     if (!studio) { return }
     this.setState({
@@ -210,6 +209,17 @@ class VideoPage extends Component {
         const video = document.querySelector('#active-player video')
         if (video) {
           video.play()
+          video.addEventListener('ended', () => {
+            const activeGroup = this.state.groups[this.state.activeGidx]
+            const nextVideoIdx = activeGroup.videos.findIndex(v => v.uri === this.state.activeItem.uri) + 1
+            if (nextVideoIdx < activeGroup.videos.length) {
+              setTimeout(() => {
+                this.setState({
+                  activeItem: activeGroup.videos[nextVideoIdx]
+                })
+              }, 1200)
+            }
+          })
         }
       }, 1000)
     }
@@ -227,7 +237,6 @@ class VideoPage extends Component {
       groupRecords,
       selectedForUploads
     } = this.state
-    console.log("VideoPage -> render -> groupRecords", groupRecords, groupRecords.map)
     
     let rows = []
 
@@ -262,7 +271,7 @@ class VideoPage extends Component {
           <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name} videos</h2>
           <div className="d-flex align-items-center">
             <select
-              className="mr-2"
+              className="mr-2 d-none"
               value={this.state.date}
               onChange={(ev) => this.handleDateChange(new Date(ev.target.value))}
             >
