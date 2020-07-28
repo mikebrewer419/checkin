@@ -9,6 +9,7 @@
     "bootstrap": "^4.5.0",
     "file-saver": "^2.0.2",
     "jwt-decode": "^2.2.0",
+    "moment": "^2.27.0",
     "react": "^16.13.1",
     "react-datepicker": "^3.0.0",
     "react-dom": "^16.13.1",

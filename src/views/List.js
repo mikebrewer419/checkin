@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
 import {
   sendMessage,
   fetchCheckInList,
@@ -18,6 +19,13 @@ const messages = [
 ]
 
 const deletedMessageText = 'You arrived at the wrong time. Please come back at the correct call time and check in again.'
+
+const formatTime = (time) => {
+  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+  if (date.isValid())
+    return date.format('YYYY-MM-DD HH:mm:ss A')
+  return ''
+}
 
 class List extends Component {
 
@@ -290,14 +298,26 @@ class List extends Component {
       'jitsi_meeting_id',
       'call_in_time',
       'signed_out_time',
-      'is_deleted',
-      'deleted_at',
       'studio',
     ]
     let csvContent = "data:text/csv;charset=utf-8," +row_headers.join(',')+'\n'
       + this.state.candidates
         .map(candidate => (
-          row_headers.map(key => key === 'studio' ? this.state.studio: candidate[key]).join(',')
+          row_headers.map(key => {
+            switch(key) {
+              case 'studio':
+                return this.state.studio;
+              case 'call_in_time':
+              case 'signed_out_time':
+              case 'checked_in_time':
+                const dateString = formatTime(candidate[key])
+                console.log("List -> downloadCSV -> key", key)
+                console.log("List -> downloadCSV -> candidate[key]", candidate[key])
+                return dateString
+              default:
+                return candidate[key]
+            }
+          }).join(',')
         )).join('\n')
 
     const encodedUri = encodeURI(csvContent)
@@ -411,7 +431,7 @@ export const PersonCard = ({
   leaveFromGroup,
   hideDelete
 }) => {
-  const dateString = new Date(checked_in_time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
+  const dateString = formatTime(checked_in_time)
 
   return (
     <div className="card">
