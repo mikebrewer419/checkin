@@ -102,7 +102,7 @@ const StudioForm = ({
           defaultValue={position_messages[3] || `Be prepared, you are next in line to head to Southpaw Studios. We will contact you shortly`} />
       </div>
       <div className="form-group">
-        <label htmlFor="delete_message">Position_messages 1</label>
+        <label htmlFor="delete_message">Delete message</label>
         <input className="form-control form-control-sm"  type="text" name="delete_message" id="delete_message"
           defaultValue={delete_message || `You arrived at the wrong time. Please come back at the correct call time and check in again.`} />
       </div>
