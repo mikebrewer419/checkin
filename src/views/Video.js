@@ -258,7 +258,7 @@ class VideoPage extends Component {
     const activeGroup = groups[activeGidx]
 
     return (
-      <div className="video-app px-5">
+      <div className="video-app px-5 py-3">
         <div className={`loading ${this.state.loading?'show':''}`}>
           Processing...
         </div>

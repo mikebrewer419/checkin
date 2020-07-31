@@ -93,7 +93,7 @@ class List extends Component {
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id) + 1
       for(let i = 1; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].dont_message) {
+        if (!vm.state.candidates[idx].skipped) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
@@ -117,21 +117,12 @@ class List extends Component {
       call_in_time: new Date().toISOString()
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
-      if (vm.state.candidates[idx].skipped) {
-        if (!vm.state.candidates[idx].dont_message) {
+      for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
+        if (!vm.state.candidates[idx].skipped) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
-            body: this.messages[0]
+            body: this.messages[i]
           }, this.state.studio_id, this.state.studio)
-        }
-      } else {
-        for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-          if (!vm.state.candidates[idx].dont_message) {
-            sendMessage({
-              to: vm.state.candidates[idx].phone,
-              body: this.messages[i]
-            }, this.state.studio_id, this.state.studio)
-          }
         }
       }
       console.log('updated ', data)
@@ -164,7 +155,7 @@ class List extends Component {
             i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length
             && removedIdx <= idx;
             i ++, idx ++) {
-          if (!vm.state.candidates[idx].dont_message) {
+          if (!vm.state.candidates[idx].skipped) {
             sendMessage({
               to: vm.state.candidates[idx].phone,
               body: this.messages[i]
@@ -293,7 +284,6 @@ class List extends Component {
       'seen',
       'signed_out',
       'checked_in_time',
-      'dont_message',
       'sagnumber',
       'jitsi_meeting_id',
       'call_in_time',
@@ -422,7 +412,6 @@ export const PersonCard = ({
   seen,
   signed_out,
   checked_in_time,
-  dont_message,
   setSeen,
   setSkipped,
   signOut,
@@ -435,21 +424,21 @@ export const PersonCard = ({
 
   return (
     <div className="card">
-      <div className="card-body">
+      <div className="card-body pr-1">
         <h5 className="card-title mb-0">
           <span className={seen?'text-success':'text-danger'} >
             ⬤
           </span>&nbsp;&nbsp;
-          {first_name} {last_name}
-          {dont_message &&
-          <small>&nbsp;&nbsp;no message</small>}
+          <label className="mr-2">
+            {first_name} {last_name}
+          </label>
           {skipped &&
           <small>&nbsp;&nbsp;skipped</small>}
           {!hideDelete &&
           <button
-            className="btn px-2 py-0 btn-outline-dark float-right"
+            className="btn px-2 py-0 float-right btn-sm"
             onClick={() => removeRecord(_id, phone, idx)}
-          >Delete</button>}
+          >🗑</button>}
           {seen && !signed_out && signOut && (
             <button
               className="btn px-2 py-0 btn-outline-dark"
@@ -459,31 +448,32 @@ export const PersonCard = ({
           {signed_out &&
             <small className="float-right mr-3 mt-1">Signed out</small>}
         </h5>
-        <p className="card-text">
+        <p className="card-text d-none">
           <small>{_id}</small>
         </p>
-        <p className="card-text">Phone: {phone}</p>
-        <p className="card-text">Email: {email}</p>
-        <p className="card-text">Checked In: {dateString}</p>
-        <p className="card-text">Group: {group}</p>
-        {(!!showCallIn || skipped) && setSeen &&
-        <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
-          Call In
-        </button>}
-        &nbsp;&nbsp;
-        {!!showCallIn && !skipped && setSkipped &&
-        <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSkipped(_id)}>
-          Skip
-        </button>}
-        <div className="ml-auto">
-          {addToGroup &&
-          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
-            Add to Group
+        <p className="card-text mb-0">Phone: <span className="ml-2">{phone}</span></p>
+        <p className="card-text mb-0">Email: <span className="ml-2">{email}</span></p>
+        <p className="card-text mb-0">Checked In: <span className="ml-2">{dateString}</span></p>
+        <p className="card-text mb-0">Group: <span className="ml-2">{group || 'no group'}</span></p>
+        <div className="d-flex mt-1">
+          {(!!showCallIn || (!seen && skipped)) && setSeen &&
+          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
+            Call In
           </button>}
-          {leaveFromGroup &&
-          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
-            Remove from group
+          {!!showCallIn && !skipped && setSkipped &&
+          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSkipped(_id)}>
+            Skip
           </button>}
+          <div className="ml-auto">
+            {addToGroup &&
+            <button className="btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
+              Add to Group
+            </button>}
+            {leaveFromGroup &&
+            <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
+              Remove from group
+            </button>}
+          </div>
         </div>
       </div>
     </div>

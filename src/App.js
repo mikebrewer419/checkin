@@ -8,6 +8,7 @@ import Onboard from './views/Onboard'
 import VideoPage from './views/Video'
 import StudioList from './views/studio/list'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import LogOut from './Logout'
 
 function App() {
   const [error, setError] = useState('')
@@ -27,9 +28,9 @@ function App() {
       chatScriptDom.src = '//fast.cometondemand.net/54561x_x782c3x_xcorex_xembedcode.js?v=7.48.6.1'
       document.body.appendChild(chatScriptDom)
     }, () => {
-      window.localStorage.setItem('prev_url', window.location.href)
-      window.localStorage.removeItem('email')
       if (window.location.pathname !== '/login') {
+        window.localStorage.setItem('prev_url', window.location.href)
+        window.localStorage.removeItem('email')
         window.location.href = '/login'
       }
     })
@@ -49,18 +50,21 @@ function App() {
   }
 
   return (
-    <Router>
-      <Switch>
-        <Route path="/login" component={() => <Login
-          onSubmit={doLogin}
-          error={error}
-        />} exact />
-        <Route path="/studio/:uri/:meeting_id" component={HomePage} />
-        <Route path="/onboard/:uri/:meeting_id" component={Onboard} />
-        <Route path="/video/:uri/:meeting_id" component={VideoPage} />
-        <Route path="/" component={StudioList} />
-      </Switch>
-    </Router>
+    <div>
+      <LogOut />
+      <Router>
+        <Switch>
+          <Route path="/login" component={() => <Login
+            onSubmit={doLogin}
+            error={error}
+          />} exact />
+          <Route path="/studio/:uri/:meeting_id" component={HomePage} />
+          <Route path="/onboard/:uri/:meeting_id" component={Onboard} />
+          <Route path="/video/:uri/:meeting_id" component={VideoPage} />
+          <Route path="/" component={StudioList} />
+        </Switch>
+      </Router>
+    </div>
   );
 }
 

@@ -13,7 +13,7 @@ const StudioList = () => {
   const [studios, setStudios] = useState([])
   const [selectedStudio, setSelectedStudio] = useState(null)
   const [errors, setErrors] = useState({})
-  const [sessionUser, setSessionUser] = useState(false)
+  const [userType, setUserType] = useState('')
 
   const fetchAll = async () => {
     const studios = await getAllStudios()
@@ -75,28 +75,19 @@ const StudioList = () => {
   }
 
   useEffect(() => {
-    const token = window.localStorage.getItem('token')
-    const decoded = jwtDecode(token)
-    if (decoded.session_user) {
-      setSessionUser(true)
-    } else {
+    if (window.localStorage.getItem('token')) {
+      const token = window.localStorage.getItem('token')
+      const decoded = jwtDecode(token)
+      setUserType(decoded.user_type)
       fetchAll()
     }
   }, [])
 
-  const LogOut = ({ className }) => <label className={className} onClick={() => {
-    window.localStorage.removeItem('token')
-    window.location.reload(true)
-  }}>
-    Logout
-  </label>
-
-  if (sessionUser) {
+  if (['client', 'session_director'].includes(userType)) {
     return <div className="p-2 d-flex justify-content-between">
       <p>
         Oops! You don't have access to this page. Please contact your admin to get the correct link.
       </p>
-      <LogOut />
     </div>
   }
 
@@ -108,11 +99,10 @@ const StudioList = () => {
           <button
             className="btn btn-primary mr-2"
             onClick={() => setSelectedStudio({})}
-          >Create Studio</button>
-          <LogOut className="mr-n4" />
+          >Create Project</button>
         </div>
       </div>
-      <label>All Studios</label>
+      <label>All Projects</label>
       <ul className="list-group">
         {studios.map(studio => (
           <li className="list-group-item d-flex" key={studio._id}>

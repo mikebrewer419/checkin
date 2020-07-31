@@ -1,0 +1,10 @@
+.logout-button {
+  position: absolute;
+  right: 0;
+  background-color: wheat;
+  z-index: 100;
+}
+.logout-button .logout:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
