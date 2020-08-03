@@ -51,6 +51,7 @@ class HomePage extends Component {
     `
     document.body.appendChild(cometAuthScript)
 
+    if (!document.getElementById('chat')) return
     document.getElementById('chat').innerHTML = `
       <div
         id="cometchat_embed_chatrooms_container"
@@ -151,7 +152,9 @@ class HomePage extends Component {
             allowFullScreen="allowfullscreen">
           </iframe>
           <div id="current-group" className="px-2">
-            <h4>Current Group  (<small> {groupCandidates[0] && groupCandidates[0].group} </small>)</h4>
+            <h4 className="mx-n2 px-2">
+              Current Group  (<small> {groupCandidates[0] && groupCandidates[0].group} </small>)
+            </h4>
             <div className="d-flex flex-wrap">
               {groupCandidates.map(person => (
                 <PersonCard

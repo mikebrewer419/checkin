@@ -301,8 +301,6 @@ class List extends Component {
               case 'signed_out_time':
               case 'checked_in_time':
                 const dateString = formatTime(candidate[key])
-                console.log("List -> downloadCSV -> key", key)
-                console.log("List -> downloadCSV -> candidate[key]", candidate[key])
                 return dateString
               default:
                 return candidate[key]
@@ -333,9 +331,14 @@ class List extends Component {
                 <img src={static_root+this.state.studio_logo} alt={this.state.studio}/>
               </Link>
             </div>
-            <h2 style={{textAlign: "center"}}>
-              {this.state.studio}
-              <label title="Download CSV" className="ml-3 download-csv" onClick={this.downloadCSV}>⭳</label>
+            <h2 className="mb-3 text-center">
+              <span>{this.state.studio}</span>
+              <span className="d-inline-block ml-2">Video Chat</span>
+              <small
+                title="Download CSV"
+                className="ml-3 download-csv"
+                onClick={this.downloadCSV}
+              >Download CSV ⭳</small>
             </h2>
           </div>
           <ul className="list-group">

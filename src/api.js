@@ -198,7 +198,7 @@ const setRecordsGroup = (data) => {
 
 const getStudioGroupRecords = (studio, meeting_id, group) => {
   const token = window.localStorage.getItem('token')
-  return fetch(`${api_host}/records/${studio}/${meeting_id}/${group}`, {
+  return fetch(`${api_host}/records/${studio}/${meeting_id}/${encodeURI(group)}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

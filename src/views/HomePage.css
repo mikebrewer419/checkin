@@ -10,6 +10,8 @@
 #jitsi-frame {
   flex: 1;
   position: relative;
+  border-left: 2px solid #dfdfdf;
+  border-right: 2px solid #dfdfdf;
 }
 
 #jitsi-meeting-frame {
@@ -20,6 +22,11 @@
   height: 40vh;
   overflow-y: auto;
   position: relative;
+}
+
+#current-group h4 {
+  border-bottom: 2px solid #dfdfdf;
+  padding-bottom: 10px;
 }
 
 #current-group .leave-group-btn {

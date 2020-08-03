@@ -268,7 +268,7 @@ class VideoPage extends Component {
               <img src={static_root+studio.logo} alt={studio.name}/>
             </Link>
           </div>
-          <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name} videos</h2>
+          <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name} Video review</h2>
           <div className="d-flex align-items-center">
             <select
               className="mr-2 d-none"

@@ -79,5 +79,9 @@
   pointer-events: all;
 }
 .download-csv {
+  position: absolute;
+  bottom: 3px;
+  right: 2px;
   cursor: pointer;
+  font-size: 13px;
 }
