@@ -30,7 +30,7 @@ class HomePage extends Component {
 
     this.setState({ studio })
 
-    document.title = `${studio.name} Check In List`;
+    document.title = `${studio.name} Video Chat`;
 
     await createCometRoom(studio._id, meeting_id)
 

@@ -192,6 +192,7 @@ class VideoPage extends Component {
     const studio = await getStudioByUri(studio_uri)
 
     if (!studio) { return }
+    document.title = `${studio.name} Video Review`;
     this.setState({
       studio
     }, async () => {

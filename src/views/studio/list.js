@@ -80,6 +80,7 @@ const StudioList = () => {
       const decoded = jwtDecode(token)
       setUserType(decoded.user_type)
       fetchAll()
+      document.title = `Heyjoe`;
     }
   }, [])
 
