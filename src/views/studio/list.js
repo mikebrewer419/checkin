@@ -133,6 +133,7 @@ const StudioList = () => {
 
       {selectedStudio &&
         <StudioForm
+          key={selectedStudio._id}
           {...selectedStudio}
           onSubmit={handleStudioSubmit}
           errors={errors}

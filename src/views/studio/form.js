@@ -96,10 +96,10 @@ const StudioForm = ({
           defaultValue={position_messages[1] || `You are on deck! We'll text you shortly to join the casting.`} />
         <label htmlFor="position_messages3">Position_messages 3</label>
         <input className="form-control form-control-sm"  type="text" name="position_messages[2]" id="position_messages3"
-          defaultValue={position_messages[2] || `Please head to Southpaw Studios and wait on the patio. You are 2nd in line`} />
+          defaultValue={position_messages[2] || `Be ready. You're second in line.`} />
         <label htmlFor="position_messages4">Position_messages 4</label>
         <input className="form-control form-control-sm"  type="text" name="position_messages[3]" id="position_messages4"
-          defaultValue={position_messages[3] || `Be prepared, you are next in line to head to Southpaw Studios. We will contact you shortly`} />
+          defaultValue={position_messages[3] || ``} />
       </div>
       <div className="form-group">
         <label htmlFor="delete_message">Delete message</label>
