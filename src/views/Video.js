@@ -48,7 +48,10 @@ class VideoPage extends Component {
     this.setState({
       loading: true
     })
-    const date_string = this.state.date.toISOString().split('T')[0]
+    const year = this.state.date.getFullYear()
+    const month = `0${(this.state.date.getMonth() + 1)}`.slice(-2)
+    const date = `0${this.state.date.getDate()}`.slice(-2)
+    const date_string = `${year}-${month}-${date}`
     const videos = await getStudioVideosByDate(this.state.studio._id, this.meeting_id, date_string)
     await Promise.all(videos.map(async (video) => {
       if (video.record) {

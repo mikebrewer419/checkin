@@ -280,15 +280,15 @@ class List extends Component {
       'last_name',
       'email',
       'phone',
-      'skipped',
+      // 'skipped',
       'seen',
       'signed_out',
       'checked_in_time',
       'sagnumber',
-      'jitsi_meeting_id',
+      // 'jitsi_meeting_id',
       'call_in_time',
       'signed_out_time',
-      'studio',
+      // 'studio',
     ]
     let csvContent = "data:text/csv;charset=utf-8," +row_headers.join(',')+'\n'
       + this.state.candidates
