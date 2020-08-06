@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import cometInject from '../comet-inject'
-import List, { PersonCard } from './List'
+import cometInject from './comet-inject'
+import List, { PersonCard } from '../CheckinList'
 import {
   getStudioByUri,
+  getOneSession,
   createCometRoom
-} from '../api'
-import './HomePage.css'
+} from '../../services'
+import './style.css'
 
 class HomePage extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class HomePage extends Component {
 
     this.state = {
       studio: null,
+      session: null,
       showChat: true,
       showList: true,
       jitsiKey: 0,
@@ -22,17 +24,15 @@ class HomePage extends Component {
 
   async componentDidMount() {
     const studio_uri = this.props.match.params.uri
-    const meeting_id = this.props.match.params.meeting_id
+    const session_id = this.props.match.params.session_id
     const studio = await getStudioByUri(studio_uri)
+    const session = await getOneSession(session_id)
 
-    console.log("HomePage -> componentDidMount -> studio", studio)
-    if (!studio || !studio.jitsi_meeting_ids.includes(meeting_id)) { return }
-
-    this.setState({ studio })
+    this.setState({ studio, session })
 
     document.title = `${studio.name} Video Chat`;
 
-    await createCometRoom(studio._id, meeting_id)
+    await createCometRoom(studio._id, session._id)
 
     let cometAuthScript = document.createElement('script')
     cometAuthScript.innerHTML = `
@@ -72,7 +72,7 @@ class HomePage extends Component {
       var iframeObj = {};
       iframeObj.module="chatrooms";
       iframeObj.style="min-height:420px;min-width:300px;";
-      iframeObj.src="https://54561.cometondemand.net/cometchat_embedded.php?guid=${studio._id}-${meeting_id}";
+      iframeObj.src="https://54561.cometondemand.net/cometchat_embedded.php?guid=${studio._id}-${session._id}";
       iframeObj.width="100%";
       iframeObj.height="100%";
       if(typeof(addEmbedIframeExternal)=="function") {
@@ -111,23 +111,21 @@ class HomePage extends Component {
   }
 
   render() {
-    const { studio, showChat, showList, jitsiKey, groupCandidates } = this.state
-    const meeting_id = this.props.match.params.meeting_id
+    const { studio, session, showChat, showList, jitsiKey, groupCandidates } = this.state
     if (!studio) {
       return <div>Loading...</div>
     }
+    const meeting_id = studio.jitsi_meeting_id
     return (
       <div className="homepage">
         <div id="checkin-list" className={`${showList?'show':''}`}>
           <div id="list">
             <List
               ref={this.setListRef}
-              studio_id={studio._id}
-              studio={studio.name}
-              studio_logo={studio.logo}
+              studio={studio}
+              session={session}
               messages={studio.position_messages}
               delete_message={studio.delete_message}
-              meeting_id={meeting_id}
               setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
             />
           </div>

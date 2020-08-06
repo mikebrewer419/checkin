@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import useReactRouter from 'use-react-router'
 import {
   getStudioByUri,
+  getOneSession,
   onboardUser,
   static_root
-} from '../api'
+} from '../../services'
 
-import './Onboard.css'
+import './style.css'
 
 const Onboard = () => {
   const [firstName, setFirstName] = useState('')
@@ -17,15 +18,21 @@ const Onboard = () => {
   const [showAlert, setShowAlert] = useState(false)
   const { match } = useReactRouter();
   const studio_uri = match.params.uri
+  const session_id = match.params.session_id
   const [studio, setStudio] = useState(null)
+  const [session, setSession] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    getStudioByUri(studio_uri).then(studio => {
+    const process = async () => {
+      const studio = await getStudioByUri(studio_uri)
+      const session = await getOneSession(session_id)
       document.title = `${studio.name} Check In`;
       setStudio(studio)
-    })
-  }, [studio_uri])
+      setSession(session)
+    }
+    process()
+  }, [studio_uri, session_id])
 
   const onSubmjit = (ev) => {
     ev.preventDefault()
@@ -36,8 +43,7 @@ const Onboard = () => {
       email: email,
       phone: phoneNumber,
       sagnumber: sagNumber,
-      studio: studio._id,
-      jitsi_meeting_id: match.params.meeting_id
+      session: session._id
     }).then(result => {
     console.log("onSubmjit -> result", result)
       if (result.record && result.record._id) {
@@ -48,6 +54,9 @@ const Onboard = () => {
 
   if (!studio) {
     return <div>No Studio found</div>
+  }
+  if (!session) {
+    return <div>No Session found</div>
   }
 
   if (showAlert) {
@@ -73,7 +82,7 @@ const Onboard = () => {
         src={static_root+studio.logo}
         alt={studio.name}
       />
-      <h3 className="brand mt-4 mb-3">Welcome to {studio.name} Virtual Check In</h3>
+      <h3 className="brand mt-4 mb-3">Welcome to {studio.name}/{session.name} Virtual Check In</h3>
 
       <div className="wrapper">
         <div className="company-info">

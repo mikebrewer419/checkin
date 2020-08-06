@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import './App.css'
-import { loginApi, verityToken } from './api'
-import Login from './views/Login'
+import { loginApi, verityToken } from './services'
+import Login from './views/Auth/Login'
 import HomePage from './views/HomePage'
 import Onboard from './views/Onboard'
-import VideoPage from './views/Video'
+import VideoPage from './views/VideoReview'
 import StudioList from './views/studio/list'
+import LogOut from './views/Auth/Logout'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import LogOut from './Logout'
 
 function App() {
   const [error, setError] = useState('')
@@ -58,9 +58,9 @@ function App() {
             onSubmit={doLogin}
             error={error}
           />} exact />
-          <Route path="/studio/:uri/:meeting_id" component={HomePage} />
-          <Route path="/onboard/:uri/:meeting_id" component={Onboard} />
-          <Route path="/video/:uri/:meeting_id" component={VideoPage} />
+          <Route path="/studio/:uri/:session_id" component={HomePage} />
+          <Route path="/onboard/:uri/:session_id" component={Onboard} />
+          <Route path="/video/:uri/:session_id" component={VideoPage} />
           <Route path="/" component={StudioList} />
         </Switch>
       </Router>
