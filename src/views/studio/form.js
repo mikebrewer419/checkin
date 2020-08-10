@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 const StudioForm = ({
   onSubmit,
@@ -9,7 +9,7 @@ const StudioForm = ({
   twilio_account_sid = '',
   twilio_auth_token = '',
   twilio_from_number = '',
-  jitsi_meeting_ids = [],
+  jitsi_meeting_id = '',
   comet_chat_appid = '',
   comet_chat_auth = '',
   comet_api_key = '',
@@ -19,7 +19,6 @@ const StudioForm = ({
   logo = '',
   errors = {}
 }) => {
-  const [meeting_ids, setMeetingIds] = useState(jitsi_meeting_ids)
   return (
     <form onSubmit={onSubmit} id="studio-form">
       <h4>{_id? `Update ${name}`: 'Create New Project'}</h4>
@@ -35,19 +34,8 @@ const StudioForm = ({
             <input required className="form-control form-control-sm"  type="text" name="uri" id="uri" defaultValue={uri} />
           </div>
           <div className="form-group">
-            <label htmlFor="jitsi_meeting_ids">Jitsi_meeting_ids</label>
-            {meeting_ids.map((meeting_id, idx) => (
-              <input key={idx} required className="form-control form-control-sm"  type="text" name={`jitsi_meeting_ids[${idx}]`} defaultValue={meeting_id} />
-            ))}
-            <input
-              key={meeting_ids.length}
-              className="form-control form-control-sm"
-              type="text"
-              name={`jitsi_meeting_ids[${meeting_ids.length}]`}
-              id="jitsi_meeting_ids"
-              defaultValue={''}
-              onBlur={ev => ev.target.value && setMeetingIds(meeting_ids.concat(ev.target.value))}
-            />
+            <label htmlFor="jitsi_meeting_ids">Jitsi_meeting_id</label>
+            <input required className="form-control form-control-sm"  type="text" name="jitsi_meeting_id" defaultValue={jitsi_meeting_id} />
           </div>
         </div>
         <div className="col-4">
@@ -113,9 +101,9 @@ const StudioForm = ({
       <div className="form-group">
         {errors.uri &&
           <p className="text-danger mb-1">Studio uri <strong>{errors.uri}</strong> already used!</p>}
-        {errors.meeting_id && errors.meeting_id.map((mid, idx) => (
-          <p key={idx} className="text-danger mb-1">Meeting id <strong>{mid}</strong> already used!</p>
-        ))}
+        {errors.meeting_id &&
+          <p className="text-danger mb-1">Meeting id <strong>{errors.meeting_id}</strong> already used!</p>
+        }
       </div>
       <button type="submit" className="btn btn-primary">
         {_id? 'Update': 'Create'}

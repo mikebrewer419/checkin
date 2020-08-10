@@ -8,8 +8,8 @@ import {
   setRecordsGroup,
   removeCheckinRecord,
   static_root
-} from '../api'
-import './List.css'
+} from '../../services'
+import './style.css'
 
 const messages = [
   "It's now your turn to audition, please enter 'STUDIO_NAME' into the app and click 'create/join",
@@ -42,9 +42,8 @@ class List extends Component {
       },
       submitting: false,
       error: false,
-      studio_id: this.props.studio_id,
       studio: this.props.studio,
-      studio_logo: this.props.studio_logo,
+      session: this.props.session,
       currentGroup: ''
     }
     this.interval = 30000 // query api every 30 seconds
@@ -53,7 +52,6 @@ class List extends Component {
   }
 
   componentDidMount() {
-    this.meeting_id = this.props.meeting_id
     this.fetchData()
     setInterval(() => {
       this.fetchData()
@@ -61,30 +59,32 @@ class List extends Component {
   }
 
   fetchData = () => {
-    return fetchCheckInList(this.state.studio_id, this.meeting_id).then(data => {
-        const { group } = data.filter((candidate, idx) => {
-          return !candidate.seen &&
-          (idx === 0 ||
-            (data[idx - 1] &&
-              (data[idx - 1].seen || data[idx - 1].skipped)
-            )
+    const { session } = this.props
+    return fetchCheckInList(session._id).then(data => {
+      const { group } = data.filter((candidate, idx) => {
+        return !candidate.seen &&
+        (idx === 0 ||
+          (data[idx - 1] &&
+            (data[idx - 1].seen || data[idx - 1].skipped)
           )
-        })[0] || {}
-        this.setState({
-          candidates: data,
-          currentGroup: this.state.currentGroup || group || '',
-          loading: false
-        }, () => {
-          const inGroupCandidates = this.state.candidates.filter(c => c.group && (c.group === this.state.currentGroup))
-          this.props.setGroupCandidates(inGroupCandidates)
-        })
-      }).catch(err => {
-        console.log("App -> componentDidMount -> err", err)
+        )
+      })[0] || {}
+      this.setState({
+        candidates: data,
+        currentGroup: this.state.currentGroup || group || '',
+        loading: false
+      }, () => {
+        const inGroupCandidates = this.state.candidates.filter(c => c.group && (c.group === this.state.currentGroup))
+        this.props.setGroupCandidates(inGroupCandidates)
       })
+    }).catch(err => {
+      console.log("App -> componentDidMount -> err", err)
+    })
   }
 
   setSkipped = (id) => {
     const vm = this
+    const { studio } = this.props
     this.setState({
       loading: true
     })
@@ -97,7 +97,7 @@ class List extends Component {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
-          }, this.state.studio_id, this.state.studio)
+          }, studio._id, studio.name)
         }
       }
       console.log('skipped ', data)
@@ -109,6 +109,7 @@ class List extends Component {
 
   setSeen = (id) => {
     const vm = this
+    const { studio } = this.props
     this.setState({
       loading: true
     })
@@ -122,7 +123,7 @@ class List extends Component {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
-          }, this.state.studio_id, this.state.studio)
+          }, studio._id, studio.name)
         }
       }
       console.log('updated ', data)
@@ -138,6 +139,7 @@ class List extends Component {
       return
     }
     const vm = this
+    const { studio } = this.props
     this.setState({
       loading: true
     })
@@ -148,7 +150,7 @@ class List extends Component {
           sendMessage({
             to: Phone,
             body: this.deletedMessageText
-          }, this.state.studio_id, this.state.studio)
+          }, studio._id, studio.name)
         }
         let idx = vm.state.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.state.candidates.length
         for(let i = 1;
@@ -159,7 +161,7 @@ class List extends Component {
             sendMessage({
               to: vm.state.candidates[idx].phone,
               body: this.messages[i]
-            }, this.state.studio_id, this.state.studio)
+            }, studio._id, studio.name)
           }
         }
       })
@@ -178,7 +180,8 @@ class List extends Component {
   onMessageSend = (event) => {
     event.preventDefault()
     this.setState({ submitting: true })
-    sendMessage(this.state.message, this.state.studio_id, this.state.studio)
+    const { studio } = this.props
+    sendMessage(this.state.message, studio._id, studio.name)
       .then(data => {
         if (data.success) {
           this.setState({
@@ -275,6 +278,7 @@ class List extends Component {
   }
 
   downloadCSV = () => {
+    const { studio, session } = this.props
     const row_headers = [
       'first_name',
       'last_name',
@@ -296,7 +300,9 @@ class List extends Component {
           row_headers.map(key => {
             switch(key) {
               case 'studio':
-                return this.state.studio;
+                return studio.name;
+              case 'session': 
+                return session.name;
               case 'call_in_time':
               case 'signed_out_time':
               case 'checked_in_time':
@@ -319,6 +325,7 @@ class List extends Component {
   }
 
   render() {
+    const { studio, session } = this.props
     return (
       <div className="list-view">
         <div className={`loading ${this.state.loading?'show':''}`}>
@@ -328,11 +335,12 @@ class List extends Component {
           <div className="studio-header">
             <div className="logo">
               <Link to="/">
-                <img src={static_root+this.state.studio_logo} alt={this.state.studio}/>
+                <img src={static_root + studio.logo} alt={studio.name}/>
               </Link>
             </div>
             <h2 className="mb-3 text-center">
-              <span>{this.state.studio}</span>
+              <span>{studio.name}</span>
+              <span>{session.name}</span>
               <span className="d-inline-block ml-2">Video Chat</span>
               <small
                 title="Download CSV"

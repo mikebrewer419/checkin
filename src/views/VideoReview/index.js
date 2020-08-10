@@ -4,16 +4,15 @@ import {
   static_root,
   getStudioByUri,
   getOneRecord,
-  getStudioVideosByDate,
-  getStudioVideoDates,
+  getOneSession,
+  getSessionVideos,
+  getSessionVideoDates,
   createZipAndSendMail,
-  getStudioGroupRecords
-} from '../api'
-import './Video.css'
+  getSessionGroupRecords
+} from '../../services'
+import './style.css'
 import ReactPlayer from 'react-player'
-import DatePicker from "react-datepicker"
 import { saveAs } from 'file-saver'
-import "react-datepicker/dist/react-datepicker.css"
 
 const itemWidth = 250
 
@@ -23,7 +22,7 @@ class VideoPage extends Component {
 
     this.state = {
       studio: null,
-      date: new Date(),
+      session: null,
       countPerRow: 5,
       activeRidx: -1,
       activeGidx: -1,
@@ -48,11 +47,7 @@ class VideoPage extends Component {
     this.setState({
       loading: true
     })
-    const year = this.state.date.getFullYear()
-    const month = `0${(this.state.date.getMonth() + 1)}`.slice(-2)
-    const date = `0${this.state.date.getDate()}`.slice(-2)
-    const date_string = `${year}-${month}-${date}`
-    const videos = await getStudioVideosByDate(this.state.studio._id, this.meeting_id, date_string)
+    const videos = await getSessionVideos(this.session_id)
     await Promise.all(videos.map(async (video) => {
       if (video.record) {
         const record = await this.getOneRecord(video.record)
@@ -82,11 +77,11 @@ class VideoPage extends Component {
     })
   }
 
-  getStudioVideoDates = async () => {
+  getSessionVideoDates = async () => {
     this.setState({
       loading: true
     })
-    const videoDates = await getStudioVideoDates(this.state.studio._id, this.meeting_id)
+    const videoDates = await getSessionVideoDates(this.session_id)
     this.setState({
       videoDates,
       loading: false
@@ -107,17 +102,8 @@ class VideoPage extends Component {
     return record
   }
 
-  handleDateChange = date => {
-    this.setState({
-      date,
-      activeItem: null,
-      activeRidx: -1
-    }, this.loadVideos)
-  }
-
   downloadAllVideos = () => {
-    const date_string = this.state.date.toISOString().split('T')[0]
-    const { selectedForUploads } = this.state
+    const { selectedForUploads, session } = this.state
     const email = window.prompt(
       `You are downloading ${selectedForUploads.length} videos.\nSpecify your email address to get download link`,
       window.localStorage.getItem('email')
@@ -125,7 +111,7 @@ class VideoPage extends Component {
     if (!email) {
       return
     }
-    createZipAndSendMail(selectedForUploads, date_string, email)
+    createZipAndSendMail(selectedForUploads, session.name, email)
       .then(() => {
         alert(`You will get an email with the download link once the archive is completed`)
         this.setState({
@@ -149,7 +135,7 @@ class VideoPage extends Component {
     let grs = []
     try {
       const group = this.state.groups[gidx].videos[0].group
-      grs = await getStudioGroupRecords(this.state.studio._id, this.meeting_id, group)
+      grs = await getSessionGroupRecords(this.session_id, group)
     } catch(e) { }
     this.setState({
       activeRidx: ridx,
@@ -190,17 +176,19 @@ class VideoPage extends Component {
 
   async componentDidMount() {
     this.setCount()
-    this.meeting_id = this.props.match.params.meeting_id
+    this.session_id = this.props.match.params.session_id
     const studio_uri = this.props.match.params.uri
     const studio = await getStudioByUri(studio_uri)
+    const session = await getOneSession(this.session_id)
 
     if (!studio) { return }
     document.title = `${studio.name} Video Review`;
     this.setState({
-      studio
+      studio,
+      session
     }, async () => {
       await this.loadVideos()
-      await this.getStudioVideoDates()
+      await this.getSessionVideoDates()
     })
 
     window.addEventListener('resize', this.setCount)
@@ -232,6 +220,7 @@ class VideoPage extends Component {
   render() {
     const {
       studio,
+      session,
       groups,
       countPerRow,
       activeItem,
@@ -272,7 +261,7 @@ class VideoPage extends Component {
               <img src={static_root+studio.logo} alt={studio.name}/>
             </Link>
           </div>
-          <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name} Video review</h2>
+          <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name}/{session.name} Video review</h2>
           <div className="d-flex align-items-center">
             <select
               className="mr-2 d-none"
@@ -282,10 +271,6 @@ class VideoPage extends Component {
               <option>---</option>
               {videoDates.map(date => <option key={date} value={date}>{date}</option>)}
             </select>
-            <DatePicker
-              selected={this.state.date}
-              onChange={this.handleDateChange}
-            />
             {selectedForUploads.length > 0 &&
             <label className="ml-2 mb-0" onClick={() => this.downloadAllVideos()} >🠋 Download Selected</label>}
           </div>
