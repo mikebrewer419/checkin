@@ -25,7 +25,7 @@ const generateArray = (s, e) => {
 const StudioList = () => {
   const [studios, setStudios] = useState([])
   const [page, setPage] = useState(0)
-  const [pageSize, setPageSize] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [pageCount, setPageCount] = useState(1)
   const [sessions, setSessions] = useState({})
   const [selectedStudio, setSelectedStudio] = useState(null)
