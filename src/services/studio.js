@@ -1,7 +1,6 @@
 import { api_host, token } from './index'
 
 export const getAllStudios = () => {
-  const token = window.localStorage.getItem('token')
   return fetch(`${api_host}/studio/list`, {
     headers: {
       'Content-Type': 'application/json',
@@ -10,8 +9,25 @@ export const getAllStudios = () => {
   }).then((resp) => resp.json())
 }
 
+export const getManyStudios = (page = 0, page_size = 10) => {
+  return fetch(`${api_host}/studio/get-many?skip=${page * page_size}&take=${page_size}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
+export const generateNewJitsiKey = () => {
+  return fetch(`${api_host}/studio/generate-jitsi-key`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
 export const createOrUpdateStudio = (studio) => {
-  const token = window.localStorage.getItem('token')
   const formData = new FormData()
   if (studio.logo) {
     formData.append('logo', studio.logo)
@@ -35,7 +51,6 @@ export const createOrUpdateStudio = (studio) => {
 }
 
 export const deleteStudio = (studio_id) => {
-  const token = window.localStorage.getItem('token')
   return fetch(`${api_host}/studio/${studio_id}`, {
     method: 'DELETE',
     headers: {

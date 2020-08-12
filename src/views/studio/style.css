@@ -2,3 +2,6 @@
   overflow-y: auto;
   max-height: 100vh;
 }
+.page-item {
+  cursor: pointer;
+}

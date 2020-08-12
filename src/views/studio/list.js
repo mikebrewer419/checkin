@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import jwtDecode from 'jwt-decode'
 import { Link } from 'react-router-dom'
 import {
-  getAllStudios,
+  getManyStudios,
+  generateNewJitsiKey,
   deleteStudio,
   createOrUpdateStudio,
   getStudioSessions,
@@ -13,16 +14,28 @@ import {
 import StudioForm from './form'
 import './style.css'
 
+const generateArray = (s, e) => {
+  let result = []
+  for(let i = s; i < e; i ++) {
+    result.push(i)
+  }
+  return result
+}
+
 const StudioList = () => {
   const [studios, setStudios] = useState([])
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(1)
+  const [pageCount, setPageCount] = useState(1)
   const [sessions, setSessions] = useState({})
   const [selectedStudio, setSelectedStudio] = useState(null)
   const [errors, setErrors] = useState({})
   const [userType, setUserType] = useState('')
 
-  const fetchAllStudios = async () => {
-    const studios = await getAllStudios()
+  const fetchManyStudios = async () => {
+    const {studios, count} = await getManyStudios(page, pageSize)
     setStudios(studios)
+    setPageCount(Math.ceil(count / pageSize))
   }
 
   const fetchStudioSession = async (studio_id) => {
@@ -38,7 +51,7 @@ const StudioList = () => {
     if (result) {
       setSelectedStudio(null)
       await deleteStudio(studio._id)
-      await fetchAllStudios()
+      await fetchManyStudios()
     }
   }
 
@@ -84,7 +97,7 @@ const StudioList = () => {
     setErrors(error)
     if (Object.keys(error).length > 0) { return }
     await createOrUpdateStudio(object)
-    await fetchAllStudios()
+    await fetchManyStudios()
     setSelectedStudio(null)
   }
 
@@ -120,10 +133,10 @@ const StudioList = () => {
       const token = window.localStorage.getItem('token')
       const decoded = jwtDecode(token)
       setUserType(decoded.user_type)
-      fetchAllStudios()
+      fetchManyStudios()
       document.title = `Heyjoe`;
     }
-  }, [])
+  }, [page, pageSize])
 
   useEffect(() => {
     const fetchAllSessions = async () => {
@@ -146,6 +159,15 @@ const StudioList = () => {
     </div>
   }
 
+  const newProjectClick = async () => {
+    const { jitsi_meeting_id } = await generateNewJitsiKey()
+    setSelectedStudio({
+      jitsi_meeting_id
+    })
+  }
+
+  const pages = generateArray(page - 2, page + 3).filter(p => p >= 0 && p < (pageCount))
+
   return (
     <div className="p-5 w-100 studios-list">
       <div className="d-flex justify-content-between mb-5">
@@ -153,17 +175,42 @@ const StudioList = () => {
         <div className="d-flex">
           <button
             className="btn btn-primary mr-2"
-            onClick={() => setSelectedStudio({})}
+            onClick={newProjectClick}
           >Create Project</button>
         </div>
       </div>
-      <label>All Projects</label>
+      <div className="d-flex justify-content-between">
+        <label>
+          <span className="mr-2">Projects</span>
+          <small>{page + 1}/{pageCount} pages</small>
+        </label>
+        <ul className="pagination">
+          <li className="page-item" onClick={() => setPage(0)}>
+            <a className="page-link">{'<<'}</a>
+          </li>
+          <li className="page-item" onClick={() => setPage(Math.max(page - 1, 0))}>
+            <a className="page-link">{'<'}</a>
+          </li>
+          {pages.map(p => (
+            <li className={`page-item ${p === page && 'active'}`} key={p} onClick={() => setPage(p)}>
+              <a className="page-link">{p + 1}</a>
+            </li>
+          ))}
+          <li className="page-item" onClick={() => setPage(Math.min(page + 1, pageCount - 1))}>
+            <a className="page-link">{'>'}</a>
+          </li>
+          <li className="page-item" onClick={() => setPage(pageCount - 1)}>
+            <a className="page-link">{'>>'}</a>
+          </li>
+        </ul>
+      </div>
       <ul className="list-group">
         {studios.map(studio => (
           <li className="list-group-item row d-flex" key={studio._id}>
             <div className="col">
               <div className="d-flex align-items-lg-baseline">
                 <h4 className="mr-3">{studio.name}</h4>
+                <label className="mr-3">{studio.jitsi_meeting_id}</label>
                 <small onClick={() => handleSessionSubmit({}, studio._id)} >Add New Session</small>
               </div>
               <div className="d-flex flex-column">
@@ -195,7 +242,6 @@ const StudioList = () => {
           </li>
         ))}
       </ul>
-
       {selectedStudio &&
         <StudioForm
           key={selectedStudio._id}

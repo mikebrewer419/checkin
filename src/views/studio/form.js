@@ -35,7 +35,7 @@ const StudioForm = ({
           </div>
           <div className="form-group">
             <label htmlFor="jitsi_meeting_ids">Jitsi_meeting_id</label>
-            <input required className="form-control form-control-sm"  type="text" name="jitsi_meeting_id" defaultValue={jitsi_meeting_id} />
+            <input required disabled className="form-control form-control-sm"  type="text" name="jitsi_meeting_id" defaultValue={jitsi_meeting_id} />
           </div>
         </div>
         <div className="col-4">
