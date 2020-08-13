@@ -184,25 +184,33 @@ const StudioList = () => {
           <span className="mr-2">Projects</span>
           <small>{page + 1}/{pageCount} pages</small>
         </label>
-        <ul className="pagination">
-          <li className="page-item" onClick={() => setPage(0)}>
-            <a className="page-link">{'<<'}</a>
-          </li>
-          <li className="page-item" onClick={() => setPage(Math.max(page - 1, 0))}>
-            <a className="page-link">{'<'}</a>
-          </li>
-          {pages.map(p => (
-            <li className={`page-item ${p === page && 'active'}`} key={p} onClick={() => setPage(p)}>
-              <a className="page-link">{p + 1}</a>
+        <div className="d-flex align-items-center mb-4">
+          <select value={pageSize} onChange={ev => setPageSize(parseInt(ev.target.value))}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+          </select>
+          <span className="mx-2">Per page</span>
+          <ul className="pagination mb-0">
+            <li className="page-item" onClick={() => setPage(0)}>
+              <span className="page-link">{'<<'}</span>
             </li>
-          ))}
-          <li className="page-item" onClick={() => setPage(Math.min(page + 1, pageCount - 1))}>
-            <a className="page-link">{'>'}</a>
-          </li>
-          <li className="page-item" onClick={() => setPage(pageCount - 1)}>
-            <a className="page-link">{'>>'}</a>
-          </li>
-        </ul>
+            <li className="page-item" onClick={() => setPage(Math.max(page - 1, 0))}>
+              <span className="page-link">{'<'}</span>
+            </li>
+            {pages.map(p => (
+              <li className={`page-item ${p === page && 'active'}`} key={p} onClick={() => setPage(p)}>
+                <span className="page-link">{p + 1}</span>
+              </li>
+            ))}
+            <li className="page-item" onClick={() => setPage(Math.min(page + 1, pageCount - 1))}>
+              <span className="page-link">{'>'}</span>
+            </li>
+            <li className="page-item" onClick={() => setPage(pageCount - 1)}>
+              <span className="page-link">{'>>'}</span>
+            </li>
+          </ul>
+        </div>
       </div>
       <ul className="list-group">
         {studios.map(studio => (

@@ -97,7 +97,7 @@ class List extends Component {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
-          }, studio._id, studio.name)
+          }, studio._id, studio.name, vm.state.candidates[idx]._id)
         }
       }
       console.log('skipped ', data)
@@ -123,7 +123,7 @@ class List extends Component {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
-          }, studio._id, studio.name)
+          }, studio._id, studio.name, vm.state.candidates[idx]._id)
         }
       }
       console.log('updated ', data)
@@ -150,7 +150,7 @@ class List extends Component {
           sendMessage({
             to: Phone,
             body: this.deletedMessageText
-          }, studio._id, studio.name)
+          }, studio._id, studio.name, id)
         }
         let idx = vm.state.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.state.candidates.length
         for(let i = 1;
@@ -161,7 +161,7 @@ class List extends Component {
             sendMessage({
               to: vm.state.candidates[idx].phone,
               body: this.messages[i]
-            }, studio._id, studio.name)
+            }, studio._id, studio.name, vm.state.candidates[idx]._id)
           }
         }
       })

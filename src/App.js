@@ -4,6 +4,7 @@ import './App.css'
 import { loginApi, verityToken } from './services'
 import Login from './views/Auth/Login'
 import HomePage from './views/HomePage'
+import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
 import StudioList from './views/studio/list'
@@ -15,6 +16,9 @@ function App() {
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
+      return
+    }
+    if (window.location.pathname.indexOf('/message') !== -1) {
       return
     }
     verityToken().then((email) => {
@@ -58,6 +62,7 @@ function App() {
             onSubmit={doLogin}
             error={error}
           />} exact />
+          <Route path="/message/:record_id" component={RecordMessagePage} />
           <Route path="/studio/:uri/:session_id" component={HomePage} />
           <Route path="/onboard/:uri/:session_id" component={Onboard} />
           <Route path="/video/:uri/:session_id" component={VideoPage} />

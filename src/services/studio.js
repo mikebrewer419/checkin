@@ -88,7 +88,7 @@ export const createCometRoom = (id, session_id) => {
 }
 
 
-export const sendMessage = (message, studio_id, studio_name) => {
+export const sendMessage = (message, studio_id, studio_name, record_id = '') => {
   return fetch(api_host+`/studio/message/${studio_id}`, {
     method: 'POST',
     headers: {
@@ -97,7 +97,8 @@ export const sendMessage = (message, studio_id, studio_name) => {
     },
     body: JSON.stringify({
       ...message,
-      body: message.body.replace('STUDIO_NAME', studio_name)
+      body: message.body.replace('STUDIO_NAME', studio_name),
+      record_id
     })
   }).then(res => res.json())
 }
