@@ -12,7 +12,7 @@ import {
 import './style.css'
 
 const messages = [
-  "It's now your turn to audition, please enter 'STUDIO_NAME' into the app and click 'create/join",
+  "It's now your turn to audition, please enter 'MEETING_ID' into the app and click 'create/join",
   "You are on deck! We'll text you shortly to join the casting.",
   "Please head to Southpaw Studios and wait on the patio. You are 2nd in line",
   "Be prepared, you are next in line to head to Southpaw Studios. We will contact you shortly",
@@ -97,7 +97,7 @@ class List extends Component {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
-          }, studio._id, studio.name, vm.state.candidates[idx]._id)
+          }, studio._id, vm.state.candidates[idx]._id)
         }
       }
       console.log('skipped ', data)
@@ -123,7 +123,7 @@ class List extends Component {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
-          }, studio._id, studio.name, vm.state.candidates[idx]._id)
+          }, studio._id, vm.state.candidates[idx]._id)
         }
       }
       console.log('updated ', data)
@@ -150,7 +150,7 @@ class List extends Component {
           sendMessage({
             to: Phone,
             body: this.deletedMessageText
-          }, studio._id, studio.name, id)
+          }, studio._id, id)
         }
         let idx = vm.state.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.state.candidates.length
         for(let i = 1;
@@ -161,7 +161,7 @@ class List extends Component {
             sendMessage({
               to: vm.state.candidates[idx].phone,
               body: this.messages[i]
-            }, studio._id, studio.name, vm.state.candidates[idx]._id)
+            }, studio._id, vm.state.candidates[idx]._id)
           }
         }
       })
@@ -181,7 +181,7 @@ class List extends Component {
     event.preventDefault()
     this.setState({ submitting: true })
     const { studio } = this.props
-    sendMessage(this.state.message, studio._id, studio.name)
+    sendMessage(this.state.message, studio._id)
       .then(data => {
         if (data.success) {
           this.setState({

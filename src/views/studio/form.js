@@ -34,7 +34,7 @@ const StudioForm = ({
             <input required className="form-control form-control-sm"  type="text" name="uri" id="uri" defaultValue={uri} />
           </div>
           <div className="form-group">
-            <label htmlFor="jitsi_meeting_id">Jitsi_meeting_id</label>
+            <label htmlFor="jitsi_meeting_id">meeting_id</label>
             <input required readOnly id="jitsi_meeting_id" className="form-control form-control-sm"  type="text" name="jitsi_meeting_id" defaultValue={jitsi_meeting_id} />
           </div>
         </div>
@@ -73,12 +73,12 @@ const StudioForm = ({
       <div className="form-group">
         <label htmlFor="thankyou_message">Thankyou_message</label>
         <input required className="form-control form-control-sm"  type="text" name="thankyou_message" id="thankyou_message"
-          defaultValue={thankyou_message || `Thank you for checking in to STUDIO_NAME, we will text you shortly with instructions. Reply with word 'p' to check your place in line now`} />
+          defaultValue={thankyou_message || `Thank you for checking in to MEETING_ID, we will text you shortly with instructions. Reply with word 'p' to check your place in line now`} />
       </div>
       <div className="form-group">
         <label htmlFor="position_messages1">Position_messages 1</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[0]" id="position_messages1"
-          defaultValue={position_messages[0] || `It's now your turn to audition, please enter 'STUDIO_NAME' into the app and click 'create/join`} />
+          defaultValue={position_messages[0] || `It's now your turn to audition, please enter 'MEETING_ID' into the app and click 'create/join`} />
         <label htmlFor="position_messages2">Position_messages 2</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[1]" id="position_messages2"
           defaultValue={position_messages[1] || `You are on deck! We'll text you shortly to join the casting.`} />
