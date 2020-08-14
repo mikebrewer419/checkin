@@ -8,13 +8,21 @@ import {
   getSessionVideos,
   getSessionVideoDates,
   createZipAndSendMail,
-  getSessionGroupRecords
+  getSessionGroupRecords,
+  getArchivedSessionVideos,
+  deleteVideo,
+  updateVideo
 } from '../../services'
 import './style.css'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
 
 const itemWidth = 250
+
+const TABS = {
+  VIDEOS: 'Videos',
+  ARCHIVED: 'Archived'
+}
 
 class VideoPage extends Component {
   constructor(props) {
@@ -33,7 +41,9 @@ class VideoPage extends Component {
       loading: false,
       videoDates: [],
       selectedForUploads: [],
-      groupRecords: []
+      groupRecords: [],
+      archivedVideos: [],
+      tab: TABS.VIDEOS
     }
   }
   
@@ -47,7 +57,10 @@ class VideoPage extends Component {
     this.setState({
       loading: true
     })
-    const videos = await getSessionVideos(this.session_id)
+    let loadFunc = null
+    if (this.state.tab === TABS.VIDEOS) loadFunc = getSessionVideos
+    if (this.state.tab === TABS.ARCHIVED) loadFunc = getArchivedSessionVideos
+    const videos = await loadFunc(this.session_id)
     await Promise.all(videos.map(async (video) => {
       if (video.record) {
         const record = await this.getOneRecord(video.record)
@@ -174,6 +187,28 @@ class VideoPage extends Component {
     })
   }
 
+  changeTab = (tab) => {
+    if (this.state.tab === tab) { return }
+    this.setState({
+      tab,
+      activeRidx: -1,
+      activeGidx: -1
+    }, this.loadVideos)
+  }
+
+  handleArchiveVideo = async (video_id, archive) => {
+    await updateVideo(video_id, { is_archived: archive })
+    this.loadVideos()
+  }
+
+  handleVideoDelete = async (video_id) => {
+    const result = window.confirm(`Are you sure?`)
+    if (result) {
+      await deleteVideo(video_id)
+      this.loadVideos()
+    }
+  }
+
   async componentDidMount() {
     this.setCount()
     this.session_id = this.props.match.params.session_id
@@ -220,6 +255,7 @@ class VideoPage extends Component {
   render() {
     const {
       studio,
+      tab,
       session,
       groups,
       countPerRow,
@@ -230,7 +266,7 @@ class VideoPage extends Component {
       groupRecords,
       selectedForUploads
     } = this.state
-    
+
     let rows = []
 
     if (!studio) {
@@ -275,6 +311,26 @@ class VideoPage extends Component {
             <label className="ml-2 mb-0" onClick={() => this.downloadAllVideos()} >🠋 Download Selected</label>}
           </div>
         </div>
+        <ul className="nav nav-tabs mt-2">
+          <li className="nav-item">
+            <a
+              className={`nav-link ${tab === TABS.VIDEOS ?'active':''}`}
+              href="#"
+              onClick={() => this.changeTab(TABS.VIDEOS)}
+            >
+              Videos
+            </a>
+          </li>
+          <li className="nav-item">
+            <a
+              className={`nav-link ${tab === TABS.ARCHIVED ?'active':''}`}
+              href="#"
+              onClick={() => this.changeTab(TABS.ARCHIVED)}
+            >
+              Achived
+            </a>
+          </li>
+        </ul>
         <div>
           {rows.length === 0 && <div>No videos available </div>}
           {rows.map((row, ridx) => {
@@ -370,7 +426,7 @@ class VideoPage extends Component {
                                   height="100%"
                                 />
                               </div>
-                              <div>
+                              <div className="d-flex">
                                 <label className="mb-0">
                                   <input
                                     type="checkbox"
@@ -380,6 +436,24 @@ class VideoPage extends Component {
                                   />
                                   Check to download
                                 </label>
+                                <label
+                                  className="mb-0 ml-auto"
+                                  onClick={() => {
+                                    this.handleArchiveVideo(video._id, !video.is_archived)
+                                  }}
+                                  title={video.is_archived ? 'Restore': 'Archive'}
+                                >
+                                  {video.is_archived ? '📜': '📦'}
+                                </label>
+                                {video.is_archived && (
+                                  <label
+                                    className="ml-2"
+                                    onClick={() => this.handleVideoDelete(video._id)}
+                                    title="Delete"
+                                  >
+                                    🗑
+                                  </label>
+                                )}
                               </div>
                             </div>
                           </div>
