@@ -26,7 +26,7 @@ const StudioForm = ({
       <div className="row">
         <div className="col-4">
           <div className="form-group">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">Project Name</label>
             <input required className="form-control form-control-sm"  type="text" name="name" id="name" defaultValue={name} />
           </div>
           <div className="form-group">
