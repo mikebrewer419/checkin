@@ -39,6 +39,20 @@ export const updateVideo = (video_id, fields) => {
   }).then((resp) => resp.json())
 }
 
+export const updateManyVideo = (video_ids, fields) => {
+  return fetch(`${api_host}/videos/update-many`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      ids: video_ids,
+      fields
+    })
+  }).then((resp) => resp.json())
+}
+
 export const getSessionVideoDates = (session_id) => {
   const token = window.localStorage.getItem('token')
   return fetch(`${api_host}/videos/dates/${session_id}`, {

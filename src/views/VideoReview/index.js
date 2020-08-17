@@ -11,7 +11,8 @@ import {
   getSessionGroupRecords,
   getArchivedSessionVideos,
   deleteVideo,
-  updateVideo
+  updateVideo,
+  updateManyVideo
 } from '../../services'
 import './style.css'
 import ReactPlayer from 'react-player'
@@ -209,6 +210,11 @@ class VideoPage extends Component {
     }
   }
 
+  handleGroupArchive = async (video_ids, archive) => {
+    await updateManyVideo(video_ids, { is_archived: archive })
+    this.loadVideos()
+  }
+
   async componentDidMount() {
     this.setCount()
     this.session_id = this.props.match.params.session_id
@@ -338,6 +344,8 @@ class VideoPage extends Component {
               [
                 <div className="video-row" key={ridx}  style={{width: `${rowWidth}px`}}>
                   {row.map(group => {
+                    const groupVideos = group.videos.map(v => v._id)
+                    const toArchive = !(tab === TABS.ARCHIVED)
                     return (
                       <div
                         key={group.idx}
@@ -369,6 +377,16 @@ class VideoPage extends Component {
                             onChange={(ev) => this.toggleGroupSelectedForDownload(group.idx, ev.target.checked) }
                           />
                           <div>{group.name}</div>
+
+                          <label
+                            className="mb-0 ml-auto"
+                            onClick={() => {
+                              this.handleGroupArchive(groupVideos, toArchive)
+                            }}
+                            title={toArchive ? 'Archive': 'Restore'}
+                          >
+                            {toArchive ? '📦': '📜'}
+                          </label>
                         </div>
                       </div>
                     )
