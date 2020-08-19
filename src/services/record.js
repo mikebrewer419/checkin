@@ -68,3 +68,17 @@ export const getSessionGroupRecords = (session_id, group) => {
     }
   }).then((resp) => resp.json())
 }
+
+export const updateManyRecords = (ids, fields) => {
+  return fetch(`${api_host}/records/update-many`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      ids,
+      fields
+    })
+  }).then((resp) => resp.json())
+}

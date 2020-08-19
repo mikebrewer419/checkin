@@ -6,6 +6,7 @@ import {
   fetchCheckInList,
   updateRecordField,
   setRecordsGroup,
+  updateManyRecords,
   removeCheckinRecord,
   static_root
 } from '../../services'
@@ -118,6 +119,34 @@ class List extends Component {
       call_in_time: new Date().toISOString()
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
+      for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
+        if (!vm.state.candidates[idx].skipped) {
+          sendMessage({
+            to: vm.state.candidates[idx].phone,
+            body: this.messages[i]
+          }, studio._id, vm.state.candidates[idx]._id)
+        }
+      }
+      console.log('updated ', data)
+      this.fetchData()
+    }).catch(err => {
+      console.log("App -> updateSeen -> err", err)
+    })
+  }
+
+  callInCurrentGroup = () => {
+    const vm = this
+    const { studio } = this.props
+    this.setState({
+      loading: true
+    })
+    if (!this.state.currentGroup) return
+    const groupRecordIds = this.state.candidates.filter(c => c.group === this.state.currentGroup)
+      .map(record => record._id)
+    updateManyRecords(groupRecordIds, {
+      seen: true
+    }).then(data => {
+      let idx = vm.state.candidates.findIndex(p => !p.seen)
       for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
         if (!vm.state.candidates[idx].skipped) {
           sendMessage({

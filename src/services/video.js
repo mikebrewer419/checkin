@@ -53,6 +53,20 @@ export const updateManyVideo = (video_ids, fields) => {
   }).then((resp) => resp.json())
 }
 
+export const uploadNewVideo = (file, session_id, group) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('session', session_id)
+  formData.append('group', group)
+  return  fetch(`${api_host}/videos/upload-video`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    body: formData
+  }).then((resp) => resp.json())
+}
+
 export const getSessionVideoDates = (session_id) => {
   const token = window.localStorage.getItem('token')
   return fetch(`${api_host}/videos/dates/${session_id}`, {

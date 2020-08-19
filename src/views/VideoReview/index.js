@@ -12,7 +12,8 @@ import {
   getArchivedSessionVideos,
   deleteVideo,
   updateVideo,
-  updateManyVideo
+  updateManyVideo,
+  uploadNewVideo
 } from '../../services'
 import './style.css'
 import ReactPlayer from 'react-player'
@@ -212,6 +213,12 @@ class VideoPage extends Component {
 
   handleGroupArchive = async (video_ids, archive) => {
     await updateManyVideo(video_ids, { is_archived: archive })
+    this.loadVideos()
+  }
+
+  uploadNewVideo = async (file) => {
+    const activeGroup = this.state.groups[this.state.activeGidx]
+    await uploadNewVideo(file, this.session_id, activeGroup.name)
     this.loadVideos()
   }
 
@@ -477,6 +484,23 @@ class VideoPage extends Component {
                           </div>
                         )
                       })}
+                      <div
+                        style={{
+                          width: itemWidth
+                        }}
+                      >
+                        <div className="preview-wrapper pt-5">
+                          <span>Upload New Video</span>
+                          <input
+                            key={activeGroup.videos.length}
+                            type="file"
+                            accept="video/*"
+                            onChange={ev => {
+                              this.uploadNewVideo(ev.target.files[0])
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 : null

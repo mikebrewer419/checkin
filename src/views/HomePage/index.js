@@ -106,6 +106,10 @@ class HomePage extends Component {
     this.listRef.finishCurrentGroup()
   }
 
+  callInCurrentGroup = () => {
+    this.listRef.callInCurrentGroup()
+  }
+
   setListRef = (elem) => {
     this.listRef = elem
   }
@@ -165,10 +169,14 @@ class HomePage extends Component {
                 />
               ))}
             </div>
-            {groupCandidates.length > 0 &&
-            <button className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
-              Finish Group
-            </button>}
+            {groupCandidates.length > 0 && [
+              <button key="callin" className="btn btn-sm btn-primary d-none" onClick={this.callInCurrentGroup}>
+                Call In Group
+              </button>,
+              <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
+                Finish Group
+              </button>
+            ]}
           </div>
         </div>
         <div id="comet-chat" className={`${showChat?'show':''}`}>
