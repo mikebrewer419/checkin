@@ -251,11 +251,13 @@ class VideoPage extends Component {
           video.play()
           video.addEventListener('ended', () => {
             const activeGroup = this.state.groups[this.state.activeGidx]
-            const nextVideoIdx = activeGroup.videos.findIndex(v => v.uri === this.state.activeItem.uri) + 1
+            const currentTabVideos = activeGroup.videos
+              .filter(v => (v.is_archived === (TABS.ARCHIVED === this.state.tab)))
+            const nextVideoIdx = currentTabVideos.findIndex(v => v.uri === this.state.activeItem.uri) + 1
             if (nextVideoIdx < activeGroup.videos.length) {
               setTimeout(() => {
                 this.setState({
-                  activeItem: activeGroup.videos[nextVideoIdx]
+                  activeItem: currentTabVideos[nextVideoIdx]
                 })
               }, 1200)
             }
@@ -452,27 +454,18 @@ class VideoPage extends Component {
                                 />
                               </div>
                               <div className="d-flex">
-                                <label className="mb-0">
-                                  <input
-                                    type="checkbox"
-                                    className="mr-2"
-                                    checked={selectedForUploads.includes(video.uri)}
-                                    onChange={(ev) => this.toggleVideoSelectedForDownload(video.uri, ev.target.checked)}
-                                  />
-                                  Check to download
-                                </label>
                                 <label
-                                  className="mb-0 ml-auto"
+                                  className="mb-0 ml-2"
                                   onClick={() => {
                                     this.handleArchiveVideo(video._id, !video.is_archived)
                                   }}
                                   title={video.is_archived ? 'Restore': 'Archive'}
                                 >
-                                  {video.is_archived ? '📜': '📦'}
+                                  {video.is_archived ? '📜 Restore': '📦 Archive'}
                                 </label>
                                 {video.is_archived && (
                                   <label
-                                    className="ml-2"
+                                    className="ml-auto mb-0"
                                     onClick={() => this.handleVideoDelete(video._id)}
                                     title="Delete"
                                   >
@@ -484,23 +477,25 @@ class VideoPage extends Component {
                           </div>
                         )
                       })}
-                      <div
-                        style={{
-                          width: itemWidth
-                        }}
-                      >
-                        <div className="preview-wrapper pt-5">
-                          <span>Upload New Video</span>
-                          <input
-                            key={activeGroup.videos.length}
-                            type="file"
-                            accept="video/*"
-                            onChange={ev => {
-                              this.uploadNewVideo(ev.target.files[0])
-                            }}
-                          />
+                      {tab !== TABS.ARCHIVED && (
+                        <div
+                          style={{
+                            width: itemWidth
+                          }}
+                        >
+                          <div className="preview-wrapper pt-5">
+                            <span>Upload New Video</span>
+                            <input
+                              key={activeGroup.videos.length}
+                              type="file"
+                              accept="video/*"
+                              onChange={ev => {
+                                this.uploadNewVideo(ev.target.files[0])
+                              }}
+                            />
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 : null
