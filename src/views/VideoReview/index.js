@@ -252,9 +252,9 @@ class VideoPage extends Component {
           video.addEventListener('ended', () => {
             const activeGroup = this.state.groups[this.state.activeGidx]
             const currentTabVideos = activeGroup.videos
-              .filter(v => (v.is_archived === (TABS.ARCHIVED === this.state.tab)))
+              .filter(v => (!!v.is_archived === (TABS.ARCHIVED === this.state.tab)))
             const nextVideoIdx = currentTabVideos.findIndex(v => v.uri === this.state.activeItem.uri) + 1
-            if (nextVideoIdx < activeGroup.videos.length) {
+            if (nextVideoIdx < currentTabVideos.length) {
               setTimeout(() => {
                 this.setState({
                   activeItem: currentTabVideos[nextVideoIdx]
