@@ -1,4 +1,5 @@
 import { api_host, token } from './index'
+import jwtDecode from 'jwt-decode'
 
 export const loginApi = (email, password) => {
   return new Promise((resolve, reject) => {
@@ -46,4 +47,14 @@ export const verityToken = () => {
       reject()
     }
   })
+}
+
+export const getUser = () => {
+  try {
+    const token = window.localStorage.getItem('token')
+    const user = token ? jwtDecode(token) : null
+    return user
+  } catch(e) {
+    return null
+  }
 }

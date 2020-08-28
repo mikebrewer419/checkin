@@ -21,7 +21,6 @@ const StudioForm = ({
 }) => {
   return (
     <form onSubmit={onSubmit} id="studio-form">
-      <h4>{_id? `Update ${name}`: 'Create New Project'}</h4>
       <input type="hidden" name="_id" value={_id} />
       <div className="row">
         <div className="col-4">

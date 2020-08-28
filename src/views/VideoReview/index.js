@@ -1,5 +1,6 @@
 import React, { Component, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { FaArchive, FaTeethOpen } from 'react-icons/fa';
 import {
   static_root,
   getStudioByUri,
@@ -15,7 +16,7 @@ import {
   updateManyVideo,
   uploadNewVideo
 } from '../../services'
-import './style.css'
+import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
 
@@ -323,13 +324,13 @@ class VideoPage extends Component {
               {videoDates.map(date => <option key={date} value={date}>{date}</option>)}
             </select>
             {selectedForUploads.length > 0 &&
-            <label className="ml-2 mb-0" onClick={() => this.downloadAllVideos()} >🠋 Download Selected</label>}
+            <label className="ml-2 mb-0 btn btn-primary" onClick={() => this.downloadAllVideos()} >🠋 Download Selected</label>}
           </div>
         </div>
-        <ul className="nav nav-tabs mt-2">
+        <ul className="nav nav-tabs mt-2 border-bottom-0">
           <li className="nav-item">
             <a
-              className={`nav-link ${tab === TABS.VIDEOS ?'active':''}`}
+              className={`nav-link h5 mb-0 ${tab === TABS.VIDEOS ?'active':'text-danger'}`}
               href="#"
               onClick={() => this.changeTab(TABS.VIDEOS)}
             >
@@ -338,7 +339,7 @@ class VideoPage extends Component {
           </li>
           <li className="nav-item">
             <a
-              className={`nav-link ${tab === TABS.ARCHIVED ?'active':''}`}
+              className={`nav-link h5 mb-0 ${tab === TABS.ARCHIVED ?'active':'text-danger'}`}
               href="#"
               onClick={() => this.changeTab(TABS.ARCHIVED)}
             >
@@ -346,8 +347,8 @@ class VideoPage extends Component {
             </a>
           </li>
         </ul>
-        <div>
-          {rows.length === 0 && <div>No videos available </div>}
+        <div className="video-wrapper">
+          {rows.length === 0 && <div className="p-5">No videos available </div>}
           {rows.map((row, ridx) => {
             return (
               [
@@ -394,7 +395,7 @@ class VideoPage extends Component {
                             }}
                             title={toArchive ? 'Archive': 'Restore'}
                           >
-                            {toArchive ? '📦': '📜'}
+                            {toArchive ? <FaArchive />: <FaTeethOpen />}
                           </label>
                         </div>
                       </div>
@@ -402,7 +403,7 @@ class VideoPage extends Component {
                   })}
                 </div>,
                 ridx === activeRidx && activeGroup ?
-                  <div className="row active-group-row py-3" key="active-field">
+                  <div className="row active-group-row p-3" key="active-field">
                     {activeItem? [
                       <ReactPlayer
                         controls={true}
@@ -461,7 +462,7 @@ class VideoPage extends Component {
                                   }}
                                   title={video.is_archived ? 'Restore': 'Archive'}
                                 >
-                                  {video.is_archived ? '📜 Restore': '📦 Archive'}
+                                  {video.is_archived ? <FaTeethOpen />: <FaArchive />}
                                 </label>
                                 {video.is_archived && (
                                   <label

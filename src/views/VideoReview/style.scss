@@ -1,0 +1,64 @@
+@import "../../values.scss";
+
+.video-app {
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  .nav-link.active {
+    background-color: $lightgray;
+    border-bottom: 0;
+  }
+  .video-logo img {
+    height: 45px;
+  }
+  .video-wrapper {
+    background-color: $lightgray;
+  }
+  .video-row {
+    display: flex;
+    margin: 0 auto;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+  .item {
+    cursor: pointer;
+  }
+  .item.active {
+    background-color: $lightgray;
+    box-shadow: 0 0 2px 1px #777;
+  }
+  .active-group-row {
+    background-color: $lightgray;
+  }
+  .active-row {
+    display: flex;
+    margin: 20px;
+  }
+  .active-row video {
+    width: 50vw;
+  }
+  .active-row .info {
+    margin-left: 20px;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .dummy-player {
+    pointer-events: none;
+  }
+  .preview-wrapper {
+    position: relative;
+    padding-top: 56.25%;
+  }
+  
+  .preview-wrapper .dummy-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid #ccc;
+  }
+  .group-videos-wrapper {
+    max-height: 360px;
+    overflow-y: auto;
+    background-color: white;
+  }
+}

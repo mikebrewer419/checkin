@@ -10,7 +10,7 @@ import {
   removeCheckinRecord,
   static_root
 } from '../../services'
-import './style.css'
+import './style.scss'
 
 const messages = [
   "It's now your turn to audition, please enter 'MEETING_ID' into the app and click 'create/join",

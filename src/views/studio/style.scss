@@ -1,0 +1,33 @@
+@import "../../values.scss";
+
+.studios-list {
+  overflow-y: auto;
+  max-height: 100vh;
+}
+.page-item {
+  cursor: pointer;
+}
+.list-group {
+  >div:nth-child(odd) {
+    background-color: $lightgray;
+  }
+}
+.action-wrap {
+  > * {
+    cursor: pointer;
+  }
+}
+.pagination li {
+  cursor: pointer;
+}
+.project-item {
+  .action-wrap {
+    opacity: 0;
+  }
+  &:hover .action-wrap {
+    opacity: 1;
+  }
+}
+.new-session-btn {
+  cursor: pointer;
+}

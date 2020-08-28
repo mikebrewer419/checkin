@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import './App.css'
+import { IconContext } from "react-icons";
+import './App.scss'
 import { loginApi, verityToken } from './services'
 import Login from './views/Auth/Login'
 import HomePage from './views/HomePage'
@@ -8,8 +9,7 @@ import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
 import StudioList from './views/studio/list'
-import LogOut from './views/Auth/Logout'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import Header from './components/Header'
 
 function App() {
   const [error, setError] = useState('')
@@ -54,9 +54,9 @@ function App() {
   }
 
   return (
-    <div>
-      <LogOut />
+    <IconContext.Provider value={{ className: "global-class-name" }}>
       <Router>
+        <Header />
         <Switch>
           <Route path="/login" component={() => <Login
             onSubmit={doLogin}
@@ -69,7 +69,7 @@ function App() {
           <Route path="/" component={StudioList} />
         </Switch>
       </Router>
-    </div>
+    </IconContext.Provider>
   );
 }
 

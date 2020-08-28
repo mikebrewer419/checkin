@@ -1,0 +1,69 @@
+.list-view {
+  .studio-header {
+    position: sticky;
+    top: -100px;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid #ccc;
+  }
+  .logo {
+    height: 100px;
+  }
+  .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 5%;
+  }
+  .list-group {
+    padding-bottom: 250px;
+  }
+  .sms-form {
+    text-align: left;
+    padding: 1em;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(150px);
+    transition: .2s;
+    border-top: 1px solid #ccc;
+  }
+  .sms-form:hover {
+    transform: translateY(0);
+  }
+  .sms-form label {
+    display: block;
+  }
+  .sms-form input,
+  .sms-form textarea {
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .sms-form div {
+    margin-bottom: 0.5em;
+  }
+  .sms-form button {
+    font-size: 1em;
+  }
+  .sms-form.error {
+    outline: 2px solid #f00;
+  }
+  .delete-button {
+    float: right;
+  }
+  .signout-btn,
+  .logout-btn {
+    float: right;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .download-csv {
+    position: absolute;
+    bottom: 3px;
+    right: 2px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+}

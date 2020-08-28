@@ -7,7 +7,7 @@ import {
   static_root
 } from '../../services'
 
-import './style.css'
+import './style.scss'
 
 const Onboard = () => {
   const [firstName, setFirstName] = useState('')
@@ -76,7 +76,7 @@ const Onboard = () => {
   }
 
   return (
-    <div className="container">
+    <div className="onboard-container">
       <img
         className="logo d-block m-auto"
         src={static_root+studio.logo}
