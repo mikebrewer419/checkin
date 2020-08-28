@@ -1,7 +1,7 @@
 @import "../../values.scss";
 
 .video-app {
-  max-height: calc(100vh - $header-height);
+  max-height: calc(100vh - #{$headerheight});
   overflow-x: hidden;
   overflow-y: auto;
   .nav-link.active {

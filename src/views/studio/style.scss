@@ -2,7 +2,7 @@
 
 .studios-list {
   overflow-y: auto;
-  max-height: calc(100vh - $header-height);
+  max-height: calc(100vh - #{$headerheight});
 }
 .page-item {
   cursor: pointer;
