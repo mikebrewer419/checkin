@@ -18,6 +18,10 @@ const Header = (props) => {
     return null
   }
 
+  if (!user) {
+    return null
+  }
+
   return (
     <Navbar className="py-4 px-5" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
