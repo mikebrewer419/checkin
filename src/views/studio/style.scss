@@ -3,31 +3,18 @@
 .studios-list {
   overflow-y: auto;
   max-height: calc(100vh - #{$headerheight});
-}
-.page-item {
-  cursor: pointer;
-}
-.list-group {
-  >div:nth-child(odd) {
-    background-color: $lightgray;
-  }
-}
-.action-wrap {
-  > * {
+  .page-item {
     cursor: pointer;
   }
-}
-.pagination li {
-  cursor: pointer;
-}
-.project-item {
-  .action-wrap {
-    opacity: 0;
+  .project-item {
+    .action-wrap {
+      opacity: 0;
+    }
+    &:hover .action-wrap {
+      opacity: 1;
+    }
   }
-  &:hover .action-wrap {
-    opacity: 1;
+  .new-session-btn {
+    cursor: pointer;
   }
-}
-.new-session-btn {
-  cursor: pointer;
 }

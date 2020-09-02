@@ -101,3 +101,14 @@ export const sendMessage = (message, studio_id, record_id = '') => {
     })
   }).then(res => res.json())
 }
+
+export const assignCastingDirector = (id, director_id) => {
+  return fetch(api_host+`/studio/assign-director/${id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({casting_director: director_id})
+  })
+}

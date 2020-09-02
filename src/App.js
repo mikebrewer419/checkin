@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import './App.scss'
-import { loginApi, verityToken } from './services'
+import { loginApi, verityToken, getUser } from './services'
 import Login from './views/Auth/Login'
 import HomePage from './views/HomePage'
 import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
 import StudioList from './views/studio/list'
+import SessionList from './views/Sessions'
 import Header from './components/Header'
+import { USER_TYPES } from './constants';
 
 function App() {
   const [error, setError] = useState('')
@@ -47,6 +49,8 @@ function App() {
         if (pUrl) {
           window.localStorage.removeItem('prev_url')
           window.location.href = pUrl
+        } else {
+          window.location.href = '/'
         }
       }, (error) => {
         setError(error)
@@ -66,11 +70,23 @@ function App() {
           <Route path="/studio/:uri/:session_id" component={HomePage} />
           <Route path="/onboard/:uri/:session_id" component={Onboard} />
           <Route path="/video/:uri/:session_id" component={VideoPage} />
-          <Route path="/" component={StudioList} />
+          <Route path="/" component={HomeBomponent} />
         </Switch>
       </Router>
     </IconContext.Provider>
   );
+}
+
+const HomeBomponent = (props) => {
+  const user = getUser()
+  if (!user) {
+    return null
+  }
+  if (user.user_type === USER_TYPES.SESSION_MANAGER) {
+    return <SessionList {...props} />
+  } else {
+    return <StudioList {...props} />
+  }
 }
 
 export default App;

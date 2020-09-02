@@ -58,3 +58,11 @@ export const getUser = () => {
     return null
   }
 }
+
+export const searchUsers = (email, type) => {
+  return fetch(`${api_host}/auth/users?email=${email}&type=${type}`,{
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
