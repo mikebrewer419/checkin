@@ -118,6 +118,10 @@ class HomePage extends Component {
     this.listRef.finishCurrentGroup()
   }
 
+  leaveFromGroup = (id) => {
+    this.listRef.leaveFromGroup(id)
+  }
+
   callInCurrentGroup = () => {
     this.listRef.callInCurrentGroup()
   }
@@ -176,10 +180,15 @@ class HomePage extends Component {
             </button>
             <div>
               <div id="current-group" className="px-2">
-                <h4 className="mx-n2 px-2">
-                  Current Group  (<small> {groupCandidates[0] && groupCandidates[0].group} </small>)
-                </h4>
-                <div className="d-flex flex-wrap">
+                <h6 className="mx-n2 px-2">
+                  Current Group 
+                  <ul>
+                    {groupCandidates[0] && groupCandidates[0].group.split(',').map(gname => (
+                      <li><small>{gname}</small></li>
+                    ))}
+                  </ul>
+                </h6>
+                <div className="d-flex flex-column">
                   {groupCandidates.map(person => (
                     <PersonCard
                       key={person._id}
@@ -188,6 +197,8 @@ class HomePage extends Component {
                       showCallIn={false}
                       {...person}
                       hideDelete={true}
+                      leaveFromGroup={this.leaveFromGroup}
+                      showLeave
                     />
                   ))}
                 </div>

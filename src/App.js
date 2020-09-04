@@ -11,6 +11,7 @@ import VideoPage from './views/VideoReview'
 import StudioList from './views/studio/list'
 import SessionList from './views/Sessions'
 import Header from './components/Header'
+import Footer from './components/Footer'
 import { USER_TYPES } from './constants';
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
           <Route path="/video/:uri/:session_id" component={VideoPage} />
           <Route path="/" component={HomeBomponent} />
         </Switch>
+        <Footer />
       </Router>
     </IconContext.Provider>
   );

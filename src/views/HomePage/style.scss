@@ -10,8 +10,8 @@
     flex: 1;
     position: relative;
     #current-group {
-      width: 25vw;
-      > h4 {
+      width: 420px;
+      > h6 {
         position: sticky;
         top: 0;
         z-index: 1;
@@ -35,7 +35,7 @@
       }
       transition: .2s;
       &.show{
-        height: 40vh;
+        height: 400px;
       }
       height: 0;
     }
@@ -90,9 +90,8 @@
     z-index: 10;
   }
   
-  #checkin-list.show,
-  #comet-chat {
-    width: 25vw;
+  #checkin-list.show {
+    width: 420px;
   }
   
   #reload-jitsi {

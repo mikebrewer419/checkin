@@ -39,3 +39,14 @@ body {
 .pagination li {
   cursor: pointer;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.footer-logo {
+  height: 40px;
+  padding-right: 20px;
+  border-right: 1px solid $primary;
+  margin-right: 20px;
+}

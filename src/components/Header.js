@@ -1,7 +1,7 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { Dropdown, Navbar, Image, NavDropdown } from 'react-bootstrap'
+import { Dropdown, Navbar } from 'react-bootstrap'
 import { getUser } from '../services/auth'
 import './Header.scss'
 
@@ -22,11 +22,11 @@ const Header = (props) => {
   }
 
   return (
-    <Navbar className="py-4 px-5" bg="danger">
+    <Navbar className="py-4 px-5 global-header" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
         <Link to="/">
           {/* <Image src="https://loremflickr.com/140/80" /> */}
-          <label className="mb-0 h1 text-white">HeyJoe</label>
+          <label className="mb-0 h3 text-white">HeyJoe</label>
         </Link>
       </Navbar.Brand>
       <Dropdown className="ml-auto">

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaTimes, FaDownload } from 'react-icons/fa'
+import { FaTimes, FaDownload, FaMinus } from 'react-icons/fa'
 import moment from 'moment'
 import {
   sendMessage,
@@ -465,7 +465,8 @@ export const PersonCard = ({
   removeRecord,
   addToGroup,
   leaveFromGroup,
-  hideDelete
+  hideDelete,
+  showLeave
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -473,7 +474,12 @@ export const PersonCard = ({
     <div className="card text-primary border-0">
       <div className="card-body pr-1">
         <div className="card-title d-flex align-items-center mb-0">
-          <h4 className="mr-2">
+          <h4 className="mr-2 cursor-pointer" onClick={() => {
+            if (addToGroup) {
+              addToGroup(_id)
+            }
+          }}>
+            {!seen && <small className="mr-2">🔴</small>}
             {first_name} {last_name}
           </h4>
           {skipped &&
@@ -491,7 +497,10 @@ export const PersonCard = ({
             <span className="ml-2">{dateString}</span>
           </small>
           {!hideDelete && (
-            <FaTimes className="text-danger ml-auto" onClick={() => removeRecord(_id, phone, idx)} />
+            <FaTimes className="text-danger ml-auto mr-3 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
+          )}
+          {showLeave && leaveFromGroup && (
+            <FaMinus className="text-danger ml-auto mr-3 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
           )}
         </div>
         <p className="card-text d-none">
@@ -508,7 +517,7 @@ export const PersonCard = ({
               <strong className="ml-2">{email}</strong>
             </p>
           </div>
-          <p className="card-text mb-0 d-flex flex-wrap">
+          <p className="card-text mb-0 flex-wrap d-none">
             <span>Group:</span>
             <strong className="ml-2">{group || 'no group'}</strong>
           </p>
@@ -516,18 +525,18 @@ export const PersonCard = ({
         <div className="d-flex mt-1">
           {(!!showCallIn || (!seen && skipped)) && setSeen &&
           <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
-            Call In
+            Call In SMS
           </button>}
           {!!showCallIn && !skipped && setSkipped &&
-          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSkipped(_id)}>
+          <button className="btn px-2 py-0 btn-outline-dark d-none" onClick={() => setSkipped(_id)}>
             Skip
           </button>}
-          <div className="ml-auto">
+          <div className="ml-auto d-none">
             {addToGroup &&
-            <button className="btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
+            <button className="d-none btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
               Add to Group
             </button>}
-            {leaveFromGroup &&
+            {leaveFromGroup && showLeave &&
             <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
               Remove from group
             </button>}
