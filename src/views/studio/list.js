@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import jwtDecode from 'jwt-decode'
+import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
 import {
+  assignCastingDirector,
+  assignManagers,
+  getManagers,
+  searchUsers,
   getManyStudios,
   generateNewJitsiKey,
   deleteStudio,
@@ -11,10 +15,13 @@ import {
   getStudioSessions,
   createSession,
   updateSession,
-  deleteSession
+  deleteSession,
+  getUser
 } from '../../services'
 import StudioForm from './form'
 import './style.scss'
+import { USER_TYPES } from '../../constants'
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const generateArray = (s, e) => {
   let result = []
@@ -24,7 +31,10 @@ const generateArray = (s, e) => {
   return result
 }
 
+let fnTimeoutHandler = null
+
 const StudioList = () => {
+  const [user, setUser] = useState({})
   const [studios, setStudios] = useState([])
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -33,8 +43,20 @@ const StudioList = () => {
   const [selectedStudio, setSelectedStudio] = useState(null)
   const [selectedSession, setSelectedSession] = useState(null)
   const [errors, setErrors] = useState({})
-  const [userType, setUserType] = useState('')
   const [studioId, setStudioId] = useState(null)
+  const [sessionUsers, setSessionUsers] = useState([])
+  const [loadingSessionUsers, setLoadingSessionUsers] = useState(false)
+  const [selectedSessionManagers, setSelectedSessionManagers] = useState([])
+
+  const searchSessionUsers = async (email) => {
+    if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
+    fnTimeoutHandler = setTimeout(async () => {
+      setLoadingSessionUsers(true)
+      const sessionUsers = await searchUsers(email, USER_TYPES.SESSION_MANAGER)
+      setSessionUsers(sessionUsers)
+      setLoadingSessionUsers(false)
+    }, 1000)
+  }
 
   const fetchManyStudios = async () => {
     const {studios, count} = await getManyStudios(page, pageSize)
@@ -100,7 +122,10 @@ const StudioList = () => {
 
     setErrors(error)
     if (Object.keys(error).length > 0) { return }
-    await createOrUpdateStudio(object)
+    const result = await createOrUpdateStudio(object)
+    if (user.user_type === USER_TYPES.CASTING_DIRECTOR) {
+      await assignCastingDirector(result._id, user.id)
+    }
     await fetchManyStudios()
     setSelectedStudio(null)
   }
@@ -108,17 +133,22 @@ const StudioList = () => {
   const handleSessionSubmit = async (session = {}, studio_id) => {
     const name = session.name
     const names = sessions[studio_id].map(s => s.name)
-    if (names.includes(name)) {
+    const originalStudio = sessions[studio_id].find(s => s._id === session._id)
+    if (names.includes(name) && sessions[studio_id]
+     && (!originalStudio || originalStudio && originalStudio.name !== session.name)
+    ) {
       window.alert(`You already have the session ${name}`)
       return
     }
     if (session._id) {
       await updateSession(session._id, { name })
+      await assignManagers(session._id, selectedSessionManagers.map(m => m._id))
     } else {
-      await createSession({
+      const newSession = await createSession({
         name,
         studio: studio_id
       })
+      await assignManagers(newSession._id, selectedSessionManagers.map(m => m._id))
     }
     await fetchStudioSession(studio_id)
     setSelectedSession(null)
@@ -133,12 +163,13 @@ const StudioList = () => {
   }
 
   useEffect(() => {
+    document.title = `Heyjoe`;
+    setUser(getUser())
+  }, [])
+
+  useEffect(() => {
     if (window.localStorage.getItem('token')) {
-      const token = window.localStorage.getItem('token')
-      const decoded = jwtDecode(token)
-      setUserType(decoded.user_type)
       fetchManyStudios()
-      document.title = `Heyjoe`;
     }
   }, [page, pageSize])
 
@@ -155,13 +186,17 @@ const StudioList = () => {
     fetchAllSessions()
   }, [studios])
 
-  if (['client', 'session_director'].includes(userType)) {
-    return <div className="p-2 d-flex justify-content-between">
-      <p>
-        Oops! You don't have access to this page. Please contact your admin to get the correct link.
-      </p>
-    </div>
-  }
+  useEffect(() => {
+    const fetchSessionManagers = async () => {
+      setLoadingSessionUsers(true)
+      const managers = await getManagers(selectedSession._id)
+      setSelectedSessionManagers(managers)
+      setLoadingSessionUsers(false)
+    }
+    if (selectedSession && selectedSession._id) {
+      fetchSessionManagers()
+    }
+  }, [selectedSession])
 
   const newProjectClick = async () => {
     const { jitsi_meeting_id } = await generateNewJitsiKey()
@@ -264,14 +299,14 @@ const StudioList = () => {
       >
         <Modal.Header closeButton>
           <h5 className="mb-0">
-            {selectedSession && selectedSession.name? 'Update Session': 'Create Session'}
+            {selectedSession && selectedSession.name? 'Edit Session': 'Create Session'}
           </h5>
         </Modal.Header>
         {selectedSession && 
           <Modal.Body>
             <input
               type="text"
-              className="form-control"
+              className="form-control mb-3"
               value={selectedSession.name}
               onChange={ev => {
                 setSelectedSession({
@@ -279,6 +314,20 @@ const StudioList = () => {
                   name: ev.target.value
                 })
               }}
+            />
+            <AsyncTypeahead
+              id="session-user-select"
+              multiple
+              selected={selectedSessionManagers}
+              onChange={value => {
+                setSelectedSessionManagers(value)
+              }}
+              isLoading={loadingSessionUsers}
+              labelKey="email"
+              minLength={2}
+              onSearch={searchSessionUsers}
+              options={sessionUsers}
+              placeholder="Search for a Session user..."
             />
           </Modal.Body>
         }
@@ -301,10 +350,16 @@ const StudioList = () => {
           setSelectedStudio(null)
         }}
       >
-        <Modal.Header closeButton>
-          <h4 className="mb-0">
+        <Modal.Header closeButton className="align-items-baseline">
+          <h4 className="mb-0 mr-3">
             {selectedStudio && selectedStudio._id? `Update ${selectedStudio.name}`: 'Create New Project'}
           </h4>
+          {selectedStudio && selectedStudio.casting_directors.length > 0 && (
+            <label className="mb-0">
+              <span className="mr-1">Director: </span>
+              {selectedStudio.casting_directors.map(director => director.email).join(',')}
+            </label>
+          )}
         </Modal.Header>
         <Modal.Body>
           {selectedStudio &&
