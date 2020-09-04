@@ -221,7 +221,7 @@ const StudioList = () => {
         </div>
       </div>
       <div className="list-group mb-4">
-        {studios.map(studio => (
+        {(studios || []).map(studio => (
           <div className="col px-5 py-2 project-item" key={studio._id}>
             <div className="d-flex align-items-lg-baseline">
               <h4 className="mr-3">{studio.name}</h4>
@@ -244,22 +244,22 @@ const StudioList = () => {
                   <div className="col-2">
                     {session.name}
                   </div>
-                  <div className="col-1">
+                  <div className="col-auto">
                     <Link to={`/studio/${studio.uri}/${session._id}`} className="text-danger" >
                       Checkin
                     </Link>
                   </div>
-                  <div className="col-1">
+                  <div className="col-auto">
                     <Link to={`/onboard/${studio.uri}/${session._id}`} className="text-danger" >
                       Onboard
                     </Link>
                   </div>
-                  <div className="col-1">
+                  <div className="col-auto">
                     <Link to={`/video/${studio.uri}/${session._id}`}  className="text-danger">
                       Video Review
                     </Link>
                   </div>
-                  <div className="col-1 action-wrap">
+                  <div className="col-auto action-wrap">
                     <FaPen className="mr-2" onClick={() => {
                       setSelectedSession(session)
                       setStudioId(studio._id)

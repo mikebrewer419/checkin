@@ -7,8 +7,7 @@ import './Header.scss'
 
 const user = getUser()
 const excludePaths = [
-  '/onboard',
-  '/studio'
+  '/onboard'
 ]
 
 const Header = (props) => {

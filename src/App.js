@@ -29,6 +29,7 @@ function App() {
         const pUrl = window.localStorage.getItem('prev_url') || '/'
         window.localStorage.removeItem('prev_url')
         window.location.href = pUrl
+        return
       }
       let chatScriptDom = document.createElement('script')
       chatScriptDom.src = '//fast.cometondemand.net/54561x_x782c3x_xcorex_xembedcode.js?v=7.48.6.1'

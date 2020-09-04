@@ -33,17 +33,17 @@ const SessionList = () => {
               <h5 className="mb-0">{session.name}</h5>
               <label className="mb-0 small">{session.studio.name}</label>
             </div>
-            <div className="col-1">
+            <div className="col-auto">
               <Link to={`/studio/${session.studio.uri}/${session._id}`} className="text-danger" >
                 Checkin
               </Link>
             </div>
-            <div className="col-1">
+            <div className="col-auto">
               <Link to={`/onboard/${session.studio.uri}/${session._id}`} className="text-danger" >
                 Onboard
               </Link>
             </div>
-            <div className="col-1">
+            <div className="col-auto">
               <Link to={`/video/${session.studio.uri}/${session._id}`}  className="text-danger">
                 Video Review
               </Link>

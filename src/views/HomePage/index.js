@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import cometInject from './comet-inject'
 import List, { PersonCard } from '../CheckinList'
 import {
@@ -6,7 +7,7 @@ import {
   getOneSession,
   createCometRoom
 } from '../../services'
-import './style.css'
+import './style.scss'
 
 class HomePage extends Component {
   constructor(props) {
@@ -19,6 +20,15 @@ class HomePage extends Component {
       showList: true,
       jitsiKey: 0,
       groupCandidates: []
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.cometAuthScript) {
+      this.cometAuthScript.parentElement.removeChild(this.cometAuthScript)
+    }
+    if (this.chatScriptSecondDom) {
+      this.chatScriptSecondDom.parentElement.removeChild(this.chatScriptSecondDom)
     }
   }
 
@@ -50,6 +60,7 @@ class HomePage extends Component {
       ${cometInject}
     `
     document.body.appendChild(cometAuthScript)
+    this.cometAuthScript = cometAuthScript
 
     if (!document.getElementById('chat')) return
     document.getElementById('chat').innerHTML = `
@@ -71,7 +82,7 @@ class HomePage extends Component {
 
       var iframeObj = {};
       iframeObj.module="chatrooms";
-      iframeObj.style="min-height:420px;min-width:300px;";
+      iframeObj.style="min-height:120px;min-width:300px;";
       iframeObj.src="https://54561.cometondemand.net/cometchat_embedded.php?guid=${studio._id}-${session._id}";
       iframeObj.width="100%";
       iframeObj.height="100%";
@@ -82,6 +93,7 @@ class HomePage extends Component {
       }
     `
     document.body.appendChild(chatScriptSecondDom)
+    this.chatScriptSecondDom = chatScriptSecondDom
   }
 
   setshowChat = (v) => {
@@ -137,53 +149,82 @@ class HomePage extends Component {
             {!showList ? '〉' :'〈' }
           </button>
         </div>
-        <div id="jitsi-frame">
-          <button
-            id="reload-jitsi"
-            title="Reload Meeting frame"
-            onClick={this.reloadJitsi}
-          >⟳</button>
-          <iframe
-            key={jitsiKey}
-            title="Meeting"
-            width="100%"
-            height="100%"
-            id="jitsi-meeting-frame"
-            src={`https://meet.heyjoe.io/${meeting_id}`}
-            allow="microphone,camera"
-            allowFullScreen="allowfullscreen">
-          </iframe>
-          <div id="current-group" className="px-2">
-            <h4 className="mx-n2 px-2">
-              Current Group  (<small> {groupCandidates[0] && groupCandidates[0].group} </small>)
-            </h4>
-            <div className="d-flex flex-wrap">
-              {groupCandidates.map(person => (
-                <PersonCard
-                  key={person._id}
-                  id={person._id}
-                  idx={person._id}
-                  showCallIn={false}
-                  {...person}
-                  hideDelete={true}
-                />
-              ))}
-            </div>
-            {groupCandidates.length > 0 && [
-              <button key="callin" className="btn btn-sm btn-primary d-none" onClick={this.callInCurrentGroup}>
-                Call In Group
-              </button>,
-              <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
-                Finish Group
-              </button>
-            ]}
+        <div className="right-frame">
+          <div id="jitsi-frame">
+            <button
+              id="reload-jitsi"
+              title="Reload Meeting frame"
+              onClick={this.reloadJitsi}
+            >⟳</button>
+            <iframe
+              key={jitsiKey}
+              title="Meeting"
+              width="100%"
+              height="100%"
+              id="jitsi-meeting-frame"
+              src={`https://meet.heyjoe.io/${meeting_id}`}
+              allow="microphone,camera"
+              allowFullScreen="allowfullscreen">
+            </iframe>
           </div>
-        </div>
-        <div id="comet-chat" className={`${showChat?'show':''}`}>
-          <button className="btn px-1 py-0 border-right-0" onClick={() => this.setshowChat(!showChat)}>
-            {showChat ? '〉' :'〈' }
-          </button>
-          <div id="chat"></div>
+          <div className={`d-flex bottom-panel ${showChat?'show':''}`}>
+            <button
+              className="btn px-1 border-bottom-0 toggle-bottom"
+              onClick={() => this.setshowChat(!showChat)}
+            >
+              {!showChat ? '〉' :'〈' }
+            </button>
+            <div>
+              <div id="current-group" className="px-2">
+                <h4 className="mx-n2 px-2">
+                  Current Group  (<small> {groupCandidates[0] && groupCandidates[0].group} </small>)
+                </h4>
+                <div className="d-flex flex-wrap">
+                  {groupCandidates.map(person => (
+                    <PersonCard
+                      key={person._id}
+                      id={person._id}
+                      idx={person._id}
+                      showCallIn={false}
+                      {...person}
+                      hideDelete={true}
+                    />
+                  ))}
+                </div>
+                {groupCandidates.length > 0 && [
+                  <button key="callin" className="btn btn-sm btn-primary d-none" onClick={this.callInCurrentGroup}>
+                    Call In Group
+                  </button>,
+                  <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
+                    Finish Group
+                  </button>
+                ]}
+              </div>
+              <div className="d-flex ml-3">
+                <Link
+                  to={`/video/${studio.uri}/${session._id}`} 
+                  className="text-white btn-danger btn-sm mx-2 py-1 px-4"
+                >
+                  Video Review
+                </Link>
+                <Link
+                  to={`/onboard/${studio.uri}/${session._id}`}
+                  className="text-white btn-danger btn-sm mx-2 py-1 px-4"
+                >
+                  Onboard
+                </Link>
+                <Link
+                  to={`#`}
+                  className="text-white btn-danger btn-sm mx-2 py-1 px-4"
+                >
+                  Client Page
+                </Link>
+              </div>
+            </div>
+            <div id="comet-chat">
+              <div id="chat"></div>
+            </div>
+          </div>
         </div>
       </div>
     )

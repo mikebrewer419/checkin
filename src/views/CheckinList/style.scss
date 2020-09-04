@@ -4,7 +4,6 @@
     top: -100px;
     z-index: 10;
     background-color: rgba(255, 255, 255, 0.9);
-    border-bottom: 1px solid #ccc;
   }
   .logo {
     height: 100px;
@@ -61,9 +60,9 @@
   }
   .download-csv {
     position: absolute;
-    bottom: 3px;
-    right: 2px;
+    bottom: 22px;
+    right: 22px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 26px;
   }
 }

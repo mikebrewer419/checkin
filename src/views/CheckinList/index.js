@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { FaTimes, FaDownload } from 'react-icons/fa'
 import moment from 'moment'
 import {
   sendMessage,
@@ -24,7 +25,7 @@ const deletedMessageText = 'You arrived at the wrong time. Please come back at t
 const formatTime = (time) => {
   const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
   if (date.isValid())
-    return date.format('YYYY-MM-DD HH:mm:ss A')
+    return date.format('M/D/YYYY H:mm: a')
   return ''
 }
 
@@ -314,8 +315,8 @@ class List extends Component {
       'email',
       'phone',
       // 'skipped',
-      'seen',
-      'signed_out',
+      // 'seen',
+      // 'signed_out',
       'checked_in_time',
       'sagnumber',
       // 'jitsi_meeting_id',
@@ -367,16 +368,16 @@ class List extends Component {
                 <img src={static_root + studio.logo} alt={studio.name}/>
               </Link>
             </div>
-            <h2 className="mb-3 text-center">
+            <h2 className="mb-3 text-center pr-3">
               <span>{studio.name}</span>
               &nbsp;
               <span>{session.name}</span>
               <span className="d-inline-block ml-2">Video Chat</span>
-              <small
+              <FaDownload
                 title="Download CSV"
-                className="ml-3 download-csv"
+                className="ml-3 download-csv text-danger"
                 onClick={this.downloadCSV}
-              >Download CSV ⭳</small>
+              />
             </h2>
           </div>
           <ul className="list-group">
@@ -464,38 +465,49 @@ export const PersonCard = ({
   const dateString = formatTime(checked_in_time)
 
   return (
-    <div className="card">
+    <div className="card text-primary border-0">
       <div className="card-body pr-1">
-        <h5 className="card-title mb-0">
-          <span className={seen?'text-success':'text-danger'} >
-            ⬤
-          </span>&nbsp;&nbsp;
-          <label className="mr-2">
+        <div className="card-title d-flex align-items-center mb-0">
+          <h4 className="mr-2">
             {first_name} {last_name}
-          </label>
+          </h4>
           {skipped &&
           <small>&nbsp;&nbsp;skipped</small>}
-          {!hideDelete &&
-          <button
-            className="btn px-2 py-0 float-right btn-sm"
-            onClick={() => removeRecord(_id, phone, idx)}
-          >🗑</button>}
-          {seen && !signed_out && signOut && (
+          {/* {seen && !signed_out && signOut && (
             <button
               className="btn px-2 py-0 btn-outline-dark"
               onClick={() => signOut(_id)}
             >SignOut</button>
           )}
           {signed_out &&
-            <small className="float-right mr-3 mt-1">Signed out</small>}
-        </h5>
+            <small className="float-right mr-3 mt-1">Signed out</small>} */}
+          <small className="card-text mb-0">
+            <small>Checked In:</small>
+            <span className="ml-2">{dateString}</span>
+          </small>
+          {!hideDelete && (
+            <FaTimes className="text-danger ml-auto" onClick={() => removeRecord(_id, phone, idx)} />
+          )}
+        </div>
         <p className="card-text d-none">
           <small>{_id}</small>
         </p>
-        <p className="card-text mb-0">Phone: <span className="ml-2">{phone}</span></p>
-        <p className="card-text mb-0">Email: <span className="ml-2">{email}</span></p>
-        <p className="card-text mb-0">Checked In: <span className="ml-2">{dateString}</span></p>
-        <p className="card-text mb-0">Group: <span className="ml-2">{group || 'no group'}</span></p>
+        <div className="d-flex">
+          <div>
+            <p className="card-text mb-0">
+              <span>Phone:</span>
+              <strong className="ml-2">{phone}</strong>
+            </p>
+            <p className="card-text mb-0">
+              <span>Email:</span>
+              <strong className="ml-2">{email}</strong>
+            </p>
+          </div>
+          <p className="card-text mb-0 d-flex flex-wrap">
+            <span>Group:</span>
+            <strong className="ml-2">{group || 'no group'}</strong>
+          </p>
+        </div>
         <div className="d-flex mt-1">
           {(!!showCallIn || (!seen && skipped)) && setSeen &&
           <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
