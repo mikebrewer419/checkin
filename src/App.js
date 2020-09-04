@@ -60,6 +60,9 @@ function App() {
 
   return (
     <IconContext.Provider value={{ className: "global-class-name" }}>
+      <div className={`loading`}>
+        Processing...
+      </div>
       <Router>
         <Header />
         <Switch>

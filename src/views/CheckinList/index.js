@@ -60,6 +60,14 @@ class List extends Component {
     }, this.interval)
   }
 
+  componentDidUpdate() {
+    if (this.state.loading) {
+      document.querySelector('.loading').classList.add('show')
+    } else {
+      document.querySelector('.loading').classList.remove('show')
+    }
+  }
+
   fetchData = () => {
     const { session } = this.props
     return fetchCheckInList(session._id).then(data => {
@@ -358,9 +366,6 @@ class List extends Component {
     const { studio, session } = this.props
     return (
       <div className="list-view">
-        <div className={`loading ${this.state.loading?'show':''}`}>
-          Processing...
-        </div>
         <div className="d-flex flex-column">
           <div className="studio-header">
             <div className="logo">
