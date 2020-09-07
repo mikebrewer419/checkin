@@ -354,7 +354,7 @@ const StudioList = () => {
           <h4 className="mb-0 mr-3">
             {selectedStudio && selectedStudio._id? `Update ${selectedStudio.name}`: 'Create New Project'}
           </h4>
-          {selectedStudio && selectedStudio.casting_directors.length > 0 && (
+          {selectedStudio && selectedStudio.casting_directors && selectedStudio.casting_directors.length > 0 && (
             <label className="mb-0">
               <span className="mr-1">Director: </span>
               {selectedStudio.casting_directors.map(director => director.email).join(',')}
