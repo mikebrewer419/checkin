@@ -13,7 +13,7 @@ const Footer = (props) => {
   }
 
   return (
-    <div className="text-center text-primary">
+    <div className="text-center text-primary mt-5">
       <img src="https://heyjoe.io/wp-content/uploads/2019/06/heyjoe.png" className="footer-logo"/>
       &copy; 2020 North Shore Media, LLC. All Rights Reserved
     </div>

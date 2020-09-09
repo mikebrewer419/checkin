@@ -1,8 +1,9 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { Dropdown, Navbar } from 'react-bootstrap'
+import { Dropdown, Navbar, Image } from 'react-bootstrap'
 import { getUser } from '../services/auth'
+import { static_root } from '../services'
 import './Header.scss'
 
 const user = getUser()
@@ -25,8 +26,10 @@ const Header = (props) => {
     <Navbar className="py-4 px-5 global-header" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
         <Link to="/">
-          {/* <Image src="https://loremflickr.com/140/80" /> */}
-          <label className="mb-0 h3 text-white">HeyJoe</label>
+          {props.logo
+            ? <Image height="40" src={static_root+props.logo} />
+            : <label className="mb-0 h3 text-white">HeyJoe</label>
+          }
         </Link>
       </Navbar.Brand>
       <Dropdown className="ml-auto">

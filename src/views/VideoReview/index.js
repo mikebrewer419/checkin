@@ -16,6 +16,7 @@ import {
   updateManyVideo,
   uploadNewVideo
 } from '../../services'
+import Footer from '../../components/Footer'
 import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
@@ -232,6 +233,7 @@ class VideoPage extends Component {
 
     if (!studio) { return }
     document.title = `${studio.name} Video Review`;
+    this.props.setLogo(studio.logo)
     this.setState({
       studio,
       session
@@ -307,14 +309,17 @@ class VideoPage extends Component {
         <div className={`loading ${this.state.loading?'show':''}`}>
           Processing...
         </div>
-        <div className="video-header d-flex align-items-center">
-          <div className="video-logo mr-2">
+        <div className="video-header d-flex align-items-center justify-content-center">
+          <div className="video-logo mr-2 d-none">
             <Link to="/">
               <img src={static_root+studio.logo} alt={studio.name}/>
             </Link>
           </div>
-          <h2 style={{textAlign: "center"}} className="mr-auto mb-0"> {studio.name}/{session.name} Video review</h2>
-          <div className="d-flex align-items-center">
+          <h2 style={{textAlign: "center"}} className="mb-0">
+            {studio.name}<br/>
+            <small>{session.name} Video review</small>
+          </h2>
+          <div className="d-flex align-items-center download-selected">
             <select
               className="mr-2 d-none"
               value={this.state.date}
@@ -504,6 +509,7 @@ class VideoPage extends Component {
             )
           })}
         </div>
+        <Footer/>
       </div>
     )
   }

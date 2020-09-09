@@ -222,7 +222,7 @@ class HomePage extends Component {
                   to={`/onboard/${studio.uri}/${session._id}`}
                   className="text-white btn-danger btn-sm mx-2 py-1 px-4"
                 >
-                  Onboard
+                  Session Check-In
                 </Link>
                 <Link
                   to={`#`}

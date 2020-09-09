@@ -20,6 +20,7 @@ import {
 } from '../../services'
 import StudioForm from './form'
 import './style.scss'
+import Footer from '../../components/Footer'
 import { USER_TYPES } from '../../constants'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
@@ -246,12 +247,12 @@ const StudioList = () => {
                   </div>
                   <div className="col-auto">
                     <Link to={`/studio/${studio.uri}/${session._id}`} className="text-danger" target="_blank">
-                      Checkin
+                      Session Video Chat
                     </Link>
                   </div>
                   <div className="col-auto">
                     <Link to={`/onboard/${studio.uri}/${session._id}`} className="text-danger"  target="_blank">
-                      Onboard
+                      Session Check-In
                     </Link>
                   </div>
                   <div className="col-auto">
@@ -375,6 +376,7 @@ const StudioList = () => {
             />}
         </Modal.Body>
       </Modal>
+      <Footer/>
     </div>
   )
 }

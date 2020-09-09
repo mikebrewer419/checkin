@@ -129,7 +129,7 @@ class List extends Component {
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
       for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].skipped && i !== 0) {
+        if (!vm.state.candidates[idx].skipped || i === 0) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
@@ -373,17 +373,18 @@ class List extends Component {
                 <img src={static_root + studio.logo} alt={studio.name}/>
               </Link>
             </div>
-            <h2 className="mb-3 text-center pr-3">
+            <h4 className="mb-3 text-center pr-3">
               <span>{studio.name}</span>
               &nbsp;
               <span>{session.name}</span>
               <span className="d-inline-block ml-2">Video Chat</span>
               <FaDownload
+                size="22"
                 title="Download CSV"
                 className="ml-3 download-csv text-danger"
                 onClick={this.downloadCSV}
               />
-            </h2>
+            </h4>
           </div>
           <ul className="list-group">
             {this.state.candidates && this.state.candidates.map((person, idx) => {
@@ -474,14 +475,14 @@ export const PersonCard = ({
     <div className="card text-primary border-0">
       <div className="card-body pr-1">
         <div className="card-title d-flex align-items-center mb-0">
-          <h4 className="mr-2 cursor-pointer" onClick={() => {
+          <h5 className="mr-2 cursor-pointer" onClick={() => {
             if (addToGroup) {
               addToGroup(_id)
             }
           }}>
             {!seen && <small className="mr-2">🔴</small>}
             {first_name} {last_name}
-          </h4>
+          </h5>
           {skipped &&
           <small>&nbsp;&nbsp;skipped</small>}
           {/* {seen && !signed_out && signOut && (
@@ -493,7 +494,7 @@ export const PersonCard = ({
           {signed_out &&
             <small className="float-right mr-3 mt-1">Signed out</small>} */}
           <small className="card-text mb-0">
-            <small>Checked In:</small>
+            Checked In:
             <span className="ml-2">{dateString}</span>
           </small>
           {!hideDelete && (

@@ -11,11 +11,11 @@ import VideoPage from './views/VideoReview'
 import StudioList from './views/studio/list'
 import SessionList from './views/Sessions'
 import Header from './components/Header'
-import Footer from './components/Footer'
 import { USER_TYPES } from './constants';
 
 function App() {
   const [error, setError] = useState('')
+  const [logo, setLogo] = useState('')
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -65,7 +65,7 @@ function App() {
         Processing...
       </div>
       <Router>
-        <Header />
+        <Header logo={logo} />
         <Switch>
           <Route path="/login" component={() => <Login
             onSubmit={doLogin}
@@ -74,10 +74,9 @@ function App() {
           <Route path="/message/:record_id" component={RecordMessagePage} />
           <Route path="/studio/:uri/:session_id" component={HomePage} />
           <Route path="/onboard/:uri/:session_id" component={Onboard} />
-          <Route path="/video/:uri/:session_id" component={VideoPage} />
+          <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
           <Route path="/" component={HomeBomponent} />
         </Switch>
-        <Footer />
       </Router>
     </IconContext.Provider>
   );
