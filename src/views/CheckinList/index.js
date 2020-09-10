@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaTimes, FaDownload, FaMinus } from 'react-icons/fa'
+import { FaCircle, FaTimes, FaDownload, FaMinus, FaForward, FaSignOutAlt } from 'react-icons/fa'
 import moment from 'moment'
 import {
   sendMessage,
@@ -475,34 +475,36 @@ export const PersonCard = ({
     <div className="card text-primary border-0">
       <div className="card-body pr-1">
         <div className="card-title d-flex align-items-center mb-0">
-          <h5 className="mr-2 cursor-pointer" onClick={() => {
+          <h5 className="mr-2 cursor-pointer d-flex align-items-center cursor-pointer" onClick={() => {
             if (addToGroup) {
               addToGroup(_id)
             }
           }}>
-            {!seen && <small className="mr-2">🔴</small>}
+            {!seen && <FaCircle className="text-danger mr-2" />}
             {first_name} {last_name}
           </h5>
-          {skipped &&
-          <small>&nbsp;&nbsp;skipped</small>}
-          {/* {seen && !signed_out && signOut && (
-            <button
-              className="btn px-2 py-0 btn-outline-dark"
-              onClick={() => signOut(_id)}
-            >SignOut</button>
-          )}
-          {signed_out &&
-            <small className="float-right mr-3 mt-1">Signed out</small>} */}
           <small className="card-text mb-0">
             Checked In:
             <span className="ml-2">{dateString}</span>
           </small>
-          {!hideDelete && (
-            <FaTimes className="text-danger ml-auto mr-3 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
-          )}
-          {showLeave && leaveFromGroup && (
-            <FaMinus className="text-danger ml-auto mr-3 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
-          )}
+          <div className="d-flex align-items-center ml-auto">
+            {skipped &&
+              <small className="mr-1">skipped</small>}
+            {signed_out &&
+              <small className="float-right mr-1">Signed out</small>}
+            {seen && !signed_out && signOut && (
+              <FaSignOutAlt
+                className="text-danger ml-auto mr-1 cursor-pointer"
+                onClick={() => signOut(_id)}
+              />
+            )}
+            {!hideDelete && (
+              <FaTimes className="text-danger mx-1 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
+            )}
+            {showLeave && leaveFromGroup && (
+              <FaMinus className="text-danger mx-1 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
+            )}
+          </div>
         </div>
         <p className="card-text d-none">
           <small>{_id}</small>
@@ -529,7 +531,7 @@ export const PersonCard = ({
             Call In SMS
           </button>}
           {!!showCallIn && !skipped && setSkipped &&
-          <button className="btn px-2 py-0 btn-outline-dark d-none" onClick={() => setSkipped(_id)}>
+          <button className="btn px-2 py-0 btn-outline-dark ml-2" onClick={() => setSkipped(_id)}>
             Skip
           </button>}
           <div className="ml-auto d-none">

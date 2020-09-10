@@ -214,18 +214,21 @@ class HomePage extends Component {
               <div className="d-flex ml-3">
                 <Link
                   to={`/video/${studio.uri}/${session._id}`} 
+                  target="_blank"
                   className="text-white btn-danger btn-sm mx-2 py-1 px-4"
                 >
                   Video Review
                 </Link>
                 <Link
                   to={`/onboard/${studio.uri}/${session._id}`}
+                  target="_blank"
                   className="text-white btn-danger btn-sm mx-2 py-1 px-4"
                 >
                   Session Check-In
                 </Link>
                 <Link
                   to={`#`}
+                  target="_blank"
                   className="text-white btn-danger btn-sm mx-2 py-1 px-4"
                 >
                   Client Page
