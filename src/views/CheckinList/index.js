@@ -399,7 +399,7 @@ class List extends Component {
                 </Link>
                 <a
                   title="Client Page"
-                  href={`https://live.heyjoe.io/${studio.client_link}`}
+                  href={`https://live.heyjoe.io/project/${studio.client_link}`}
                   target="_blank"
                   className="mx-3"
                 >
