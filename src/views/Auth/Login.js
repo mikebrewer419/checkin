@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import './Login.scss'
 
 const Login = ({ onSubmit, error }) => {
   const [email, setEmail] = useState('')
@@ -8,15 +9,19 @@ const Login = ({ onSubmit, error }) => {
     document.title = `Check In | Login`;
   }, [])
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100">
-      <div>
-        <h1> Login </h1>
+    <div className="d-flex align-items-center flex-column vh-100 login-page">
+      <div className="bg-danger vw-100 p-3 d-flex justify-content-center">
+        <img src="https://heyjoe.io/wp-content/uploads/2019/06/heyjoe.png" className="heyjoe-logo white"/>
+      </div>
+      <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
+        <h2 className=" text-center"> WELCOME BACK.</h2>
+        <h2 className=" text-center mb-5"> LOGIN HERE. </h2>
         <div className="form-group">
-          <label htmlFor="exampleInputEmail1">Email address</label>
+          <label htmlFor="email">Email address</label>
           <input
             type="email"
             className="form-control"
-            id="exampleInputEmail1"
+            id="email"
             aria-describedby="emailHelp"
             value={email}
             onChange={ev => setEmail(ev.target.value)}
@@ -24,21 +29,31 @@ const Login = ({ onSubmit, error }) => {
           <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
         <div className="form-group">
-          <label htmlFor="exampleInputPassword1">Password</label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             className="form-control"
-            id="exampleInputPassword1"
+            id="password"
             value={password}
             onChange={ev => setPassword(ev.target.value)}
           />
         </div>
+        <div className="form-group d-flex align-items-center mb-1">
+          <input className="mr-1" id="keep-login" type="checkbox" />
+          <label htmlFor="keep-login" className="mb-0">
+            Keep me logged in.
+          </label>
+        </div>
         <p className="text-danger">{`${error || ''}`}</p>
         <button
           type="submit"
-          className="btn btn-primary"
+          className="btn btn-danger"
           onClick={() => onSubmit(email, password)}
-        >Submit</button>
+        >LOG IN</button>
+        <div className="form-group d-flex justify-content-between mt-2">
+          <a className="font-weight-bold" href="#">Reset my password</a>
+          <a className="font-weight-bold" href="#">Create Account</a>
+        </div>
       </div>
     </div>
   )

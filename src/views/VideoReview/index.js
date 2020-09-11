@@ -317,7 +317,7 @@ class VideoPage extends Component {
           </div>
           <h2 style={{textAlign: "center"}} className="mb-0">
             {studio.name}<br/>
-            <small>{session.name} Video review</small>
+            <small><small>{session.name} Video review</small></small>
           </h2>
           <div className="d-flex align-items-center download-selected">
             <select

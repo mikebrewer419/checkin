@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaCircle, FaTimes, FaDownload, FaMinus, FaForward, FaSignOutAlt } from 'react-icons/fa'
+import { FaCircle, FaTimes, FaDownload, FaMinus,
+  FaSignOutAlt, FaFilm, FaListOl, FaUserFriends } from 'react-icons/fa'
 import moment from 'moment'
 import {
   sendMessage,
@@ -373,17 +374,48 @@ class List extends Component {
                 <img src={static_root + studio.logo} alt={studio.name}/>
               </Link>
             </div>
-            <h4 className="mb-3 text-center pr-3">
+            <h4 className="mb-3 text-center">
               <span>{studio.name}</span>
               &nbsp;
               <span>{session.name}</span>
               <span className="d-inline-block ml-2">Video Chat</span>
-              <FaDownload
-                size="22"
-                title="Download CSV"
-                className="ml-3 download-csv text-danger"
-                onClick={this.downloadCSV}
-              />
+
+              <div className="d-flex justify-content-center">
+                <Link
+                  title="Video Review"
+                  to={`/video/${studio.uri}/${session._id}`} 
+                  target="_blank"
+                  className="mx-3"
+                >
+                  <FaFilm size="16" className="text-danger" />
+                </Link>
+                <Link
+                  title="Session Check-In"
+                  to={`/onboard/${studio.uri}/${session._id}`}
+                  target="_blank"
+                  className="mx-3"
+                >
+                  <FaListOl size="16" className="text-danger" />
+                </Link>
+                <a
+                  title="Client Page"
+                  href={`https://live.heyjoe.io/${studio.client_link}`}
+                  target="_blank"
+                  className="mx-3"
+                >
+                  <FaUserFriends size="20" className="text-danger" />
+                </a>
+                <a
+                  title="Download CSV"
+                  className="mx-3"
+                >
+                  <FaDownload
+                    size="16"
+                    className="text-danger cursor-pointer"
+                    onClick={this.downloadCSV}
+                  />
+                </a>
+              </div>
             </h4>
           </div>
           <ul className="list-group">

@@ -48,6 +48,8 @@ const StudioList = () => {
   const [sessionUsers, setSessionUsers] = useState([])
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false)
   const [selectedSessionManagers, setSelectedSessionManagers] = useState([])
+  const [confirmMessage, setConfirmMessage] = useState('')
+  const [confirmCallback, setConfirmCallback] = useState(null)
 
   const searchSessionUsers = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -74,12 +76,13 @@ const StudioList = () => {
   }
 
   const deleteStudioHandle = async (studio) => {
-    const result = window.confirm(`Want to delete ${studio.name}?`)
-    if (result) {
+    const callback = async () => {
       setSelectedStudio(null)
       await deleteStudio(studio._id)
       await fetchManyStudios()
     }
+    setConfirmMessage(`Want to delete ${studio.name}?`)
+    setConfirmCallback(() => callback)
   }
 
   const handleStudioSubmit = async (event) => {
@@ -156,11 +159,12 @@ const StudioList = () => {
   }
 
   const handleSessionDelete = async (session, studio_id) => {
-    const result = window.confirm(`Want to delete ${session.name}?`)
-    if (result) {
+    const callback = async () => {
       await deleteSession(session._id)
       await fetchStudioSession(studio_id)
     }
+    setConfirmMessage(`Want to delete ${session.name}?`)
+    setConfirmCallback(() => callback)
   }
 
   useEffect(() => {
@@ -204,6 +208,16 @@ const StudioList = () => {
     setSelectedStudio({
       jitsi_meeting_id
     })
+  }
+
+  const confirmCancel = () => {
+    setConfirmCallback(null)
+    setConfirmMessage('')
+  }
+
+  const confirmYes = () => {
+    confirmCallback()
+    confirmCancel()
   }
 
   const pages = generateArray(page - 2, page + 3).filter(p => p >= 0 && p < (pageCount))
@@ -292,6 +306,26 @@ const StudioList = () => {
           </li>
         </ul>
       </div>
+      <Modal
+        show={!!confirmMessage}
+        onHide = {confirmCancel}
+      >
+        <Modal.Header closeButton>
+          <h5 className="mb-0">
+            {confirmMessage}
+          </h5>
+        </Modal.Header>
+        <Modal.Footer>
+          <button
+            className="btn btn-danger"
+            onClick={confirmYes}
+          >Yes.</button>
+          <button
+            className="btn btn-link"
+            onClick={confirmCancel}
+          >Cancel</button>
+        </Modal.Footer>
+      </Modal>
       <Modal
         show={!!selectedSession}
         onHide = {() => {

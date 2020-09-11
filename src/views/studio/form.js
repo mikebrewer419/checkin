@@ -6,13 +6,8 @@ const StudioForm = ({
   _id,
   name = '',
   uri = '',
-  twilio_account_sid = '',
-  twilio_auth_token = '',
-  twilio_from_number = '',
   jitsi_meeting_id = '',
-  comet_chat_appid = '',
-  comet_chat_auth = '',
-  comet_api_key = '',
+  client_link = '',
   thankyou_message = '',
   position_messages = [],
   delete_message,
@@ -23,49 +18,28 @@ const StudioForm = ({
     <form onSubmit={onSubmit} id="studio-form">
       <input type="hidden" name="_id" value={_id} />
       <div className="row">
-        <div className="col-4">
+        <div className="col-3">
           <div className="form-group">
             <label htmlFor="name">Project Name</label>
             <input required className="form-control form-control-sm"  type="text" name="name" id="name" defaultValue={name} />
           </div>
+        </div>
+        <div className="col-3">
           <div className="form-group">
             <label htmlFor="uri">Uri</label>
             <input required className="form-control form-control-sm"  type="text" name="uri" id="uri" defaultValue={uri} />
           </div>
+        </div>
+        <div className="col-3">
           <div className="form-group">
             <label htmlFor="jitsi_meeting_id">meeting_id</label>
             <input required id="jitsi_meeting_id" className="form-control form-control-sm"  type="text" name="jitsi_meeting_id" defaultValue={jitsi_meeting_id} />
           </div>
         </div>
-        <div className="col-4">
+        <div className="col-3">
           <div className="form-group">
-            <label htmlFor="twilio_account_sid">Twilio_account_sid</label>
-            <input required className="form-control form-control-sm"  type="text" name="twilio_account_sid" id="twilio_account_sid" defaultValue={twilio_account_sid} />
-          </div>
-          <div className="form-group">
-            <label htmlFor="twilio_auth_token">Twilio_auth_token</label>
-            <input required className="form-control form-control-sm"  type="text" name="twilio_auth_token" id="twilio_auth_token" defaultValue={twilio_auth_token} />
-          </div>
-          <div className="form-group">
-            <label htmlFor="twilio_from_number">Twilio_from_number</label>
-            <input required className="form-control form-control-sm"  type="text" name="twilio_from_number" id="twilio_from_number" defaultValue={twilio_from_number} />
-          </div>
-        </div>
-        <div className="col-4">
-          <div className="form-group">
-            <label htmlFor="comet_chat_appid">Comet_chat_appid</label>
-            <input required className="form-control form-control-sm"  type="text" name="comet_chat_appid" id="comet_chat_appid"
-              defaultValue={comet_chat_appid || `54561`} />
-          </div>
-          <div className="form-group">
-            <label htmlFor="comet_chat_auth">Comet_chat_auth</label>
-            <input required className="form-control form-control-sm"  type="text" name="comet_chat_auth" id="comet_chat_auth"
-              defaultValue={comet_chat_auth || `850e238c248ea33bccd59722a16d3823`} />
-          </div>
-          <div className="form-group">
-            <label htmlFor="comet_api_key">Comet_api_key</label>
-            <input required className="form-control form-control-sm"  type="text" name="comet_api_key" id="comet_api_key"
-              defaultValue={comet_api_key || `54561x492113bb62aa70fc91b6d3136965bfb5`} />
+            <label htmlFor="client_link">client_link</label>
+            <input required id="client_link" className="form-control form-control-sm"  type="text" name="client_link" defaultValue={client_link} />
           </div>
         </div>
       </div>

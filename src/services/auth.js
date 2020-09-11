@@ -66,3 +66,19 @@ export const searchUsers = (email, type) => {
     }
   }).then((resp) => resp.json())
 }
+
+export const getUserById = (id) => {
+  return fetch(`${api_host}/auth/user/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then(resp => resp.json())
+}
+export const updateUserCredentials = (id, fields) => {
+  return fetch(`${api_host}/auth/user/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(fields)
+  }).then(resp => resp.json())
+}

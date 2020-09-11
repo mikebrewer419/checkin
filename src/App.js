@@ -32,6 +32,11 @@ function App() {
         window.location.href = pUrl
         return
       }
+      const user = getUser()
+      console.log("App -> user", user)
+      if (user.logo) {
+        setLogo(user.logo)
+      }
       let chatScriptDom = document.createElement('script')
       chatScriptDom.src = '//fast.cometondemand.net/54561x_x782c3x_xcorex_xembedcode.js?v=7.48.6.1'
       document.body.appendChild(chatScriptDom)

@@ -27,7 +27,7 @@ const Header = (props) => {
       <Navbar.Brand href="#home" className="my-n4">
         <Link to="/">
           {props.logo
-            ? <Image height="40" src={static_root+props.logo} />
+            ? <Image className="mt-n2" height="65" src={static_root+props.logo} />
             : <label className="mb-0 h3 text-white">HeyJoe</label>
           }
         </Link>

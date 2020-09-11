@@ -45,9 +45,14 @@ body {
   cursor: pointer;
 }
 
-.footer-logo {
+.heyjoe-logo {
   height: 40px;
   padding-right: 20px;
-  border-right: 1px solid $primary;
   margin-right: 20px;
+  &.white {
+    filter: brightness(1000);
+  }
+  &.br {
+    border-right: 1px solid $primary;
+  }
 }

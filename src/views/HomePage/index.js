@@ -8,6 +8,7 @@ import {
   createCometRoom
 } from '../../services'
 import './style.scss'
+import { FaMinus } from 'react-icons/fa'
 
 class HomePage extends Component {
   constructor(props) {
@@ -173,7 +174,7 @@ class HomePage extends Component {
           </div>
           <div className={`d-flex bottom-panel ${showChat?'show':''}`}>
             <button
-              className="btn px-1 border-bottom-0 toggle-bottom"
+              className="btn border-bottom-0 toggle-bottom"
               onClick={() => this.setshowChat(!showChat)}
             >
               {!showChat ? '〉' :'〈' }
@@ -182,26 +183,19 @@ class HomePage extends Component {
               <div id="current-group" className="px-2">
                 <h6 className="mx-n2 px-2">
                   Current Group 
-                  <ul>
-                    {groupCandidates[0] && groupCandidates[0].group.split(',').map(gname => (
-                      <li><small>{gname}</small></li>
-                    ))}
-                  </ul>
                 </h6>
-                <div className="d-flex flex-column">
-                  {groupCandidates.map(person => (
-                    <PersonCard
-                      key={person._id}
-                      id={person._id}
-                      idx={person._id}
-                      showCallIn={false}
-                      {...person}
-                      hideDelete={true}
-                      leaveFromGroup={this.leaveFromGroup}
-                      showLeave
-                    />
+                <ul>
+                  {groupCandidates[0] && groupCandidates[0].group.split(',').map((gname, pidx) => (
+                    <li>
+                      <div className="d-flex align-items-center">
+                        <span className="mr-5">{gname}</span>
+                        <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
+                          this.leaveFromGroup(groupCandidates[pidx]._id)
+                        }}/>
+                      </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
                 {groupCandidates.length > 0 && [
                   <button key="callin" className="btn btn-sm btn-primary d-none" onClick={this.callInCurrentGroup}>
                     Call In Group
@@ -210,29 +204,6 @@ class HomePage extends Component {
                     Finish Group
                   </button>
                 ]}
-              </div>
-              <div className="d-flex ml-3">
-                <Link
-                  to={`/video/${studio.uri}/${session._id}`} 
-                  target="_blank"
-                  className="text-white btn-danger btn-sm mx-2 py-1 px-4"
-                >
-                  Video Review
-                </Link>
-                <Link
-                  to={`/onboard/${studio.uri}/${session._id}`}
-                  target="_blank"
-                  className="text-white btn-danger btn-sm mx-2 py-1 px-4"
-                >
-                  Session Check-In
-                </Link>
-                <Link
-                  to={`#`}
-                  target="_blank"
-                  className="text-white btn-danger btn-sm mx-2 py-1 px-4"
-                >
-                  Client Page
-                </Link>
               </div>
             </div>
             <div id="comet-chat">
