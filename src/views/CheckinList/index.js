@@ -71,7 +71,6 @@ class List extends Component {
   }
 
   fetchData = async () => {
-    this.setState({ loading: true })
     const { session } = this.props
     const candidates = await fetchCheckInList(session._id)
     const currentGroup = await getCurrentGroup(session._id) || {}
@@ -202,6 +201,7 @@ class List extends Component {
   }
 
   signOut = (id) => {
+    this.setState({ loading: true })
     updateRecordField(id, {
       signed_out: true,
       signed_out_time: new Date().toISOString()
