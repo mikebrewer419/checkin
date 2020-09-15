@@ -258,7 +258,10 @@ const StudioList = () => {
               <div className="action-wrap">
                 <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
                 <FaTrash onClick={() => deleteStudioHandle(studio)}/>
-                <FaLink className="ml-4" title="Assign Director" onClick={() => setStudioCastingDirector(studio._id)} />
+                <FaLink className="ml-4" title="Assign Director" onClick={() => {
+                  setStudioCastingDirector(studio._id)
+                  setSelectedCastingDirector(studio.casting_directors)
+                }} />
               </div>
               <label
                 className="ml-auto text-danger new-session-btn"
@@ -398,6 +401,7 @@ const StudioList = () => {
         show={!!studioCastingDirector}
         onHide = {() => {
           setStudioCastingDirector(0)
+          setSelectedCastingDirector([])
         }}
       >
         <Modal.Header closeButton className="align-items-baseline">
@@ -429,6 +433,7 @@ const StudioList = () => {
               await assignCastingDirector(studioCastingDirector, selectedCastingDirector[0]._id)
               await fetchManyStudios()
               setStudioCastingDirector(0)
+              setSelectedCastingDirector([])
             }}
           >
             Submit
