@@ -69,7 +69,7 @@ const StudioForm = ({
       </div>
       <div className="form-group">
         <label htmlFor="logo">Logo</label>
-        <input className="form-control"  type="file" name="logo" id="logo"/>
+        <input className="form-control"  type="file" name="logo" id="logo" accept=".png, .jpg, .jpeg"/>
       </div>
       <div className="form-group">
         {errors.uri &&

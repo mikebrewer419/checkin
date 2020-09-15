@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash, FaLink } from 'react-icons/fa';
 import {
   assignCastingDirector,
   assignManagers,
@@ -51,12 +51,26 @@ const StudioList = () => {
   const [confirmMessage, setConfirmMessage] = useState('')
   const [confirmCallback, setConfirmCallback] = useState(null)
 
+  const [castingDirectors, setCastingDirectors] = useState([])
+  const [studioCastingDirector, setStudioCastingDirector] = useState(0)
+  const [selectedCastingDirector, setSelectedCastingDirector] = useState(null)
+
   const searchSessionUsers = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
     fnTimeoutHandler = setTimeout(async () => {
       setLoadingSessionUsers(true)
       const sessionUsers = await searchUsers(email, USER_TYPES.SESSION_MANAGER)
       setSessionUsers(sessionUsers)
+      setLoadingSessionUsers(false)
+    }, 1000)
+  }
+
+  const searchCastingDirectors = async (email) => {
+    if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
+    fnTimeoutHandler = setTimeout(async () => {
+      setLoadingSessionUsers(true)
+      const users = await searchUsers(email, USER_TYPES.CASTING_DIRECTOR)
+      setCastingDirectors(users)
       setLoadingSessionUsers(false)
     }, 1000)
   }
@@ -244,6 +258,7 @@ const StudioList = () => {
               <div className="action-wrap">
                 <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
                 <FaTrash onClick={() => deleteStudioHandle(studio)}/>
+                <FaLink className="ml-4" title="Assign Director" onClick={() => setStudioCastingDirector(studio._id)} />
               </div>
               <label
                 className="ml-auto text-danger new-session-btn"
@@ -372,6 +387,48 @@ const StudioList = () => {
             className="btn btn-primary"
             onClick={() => {
               handleSessionSubmit(selectedSession, studioId)
+            }}
+          >
+            Submit
+          </button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        size="xl"
+        show={!!studioCastingDirector}
+        onHide = {() => {
+          setStudioCastingDirector(0)
+        }}
+      >
+        <Modal.Header closeButton className="align-items-baseline">
+          <h4 className="mb-0 mr-3">
+            Assign Casting Director
+          </h4>
+        </Modal.Header>
+        <Modal.Body>
+            <AsyncTypeahead
+              id="casting-director-select"
+              multiple
+              selected={selectedCastingDirector}
+              onChange={value => {
+                setSelectedCastingDirector(value)
+              }}
+              isLoading={loadingSessionUsers}
+              labelKey="email"
+              minLength={2}
+              onSearch={searchCastingDirectors}
+              options={castingDirectors}
+              placeholder="Search for a Session user..."
+            />
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            disabled={!selectedCastingDirector}
+            className="btn btn-primary"
+            onClick={async () => {
+              await assignCastingDirector(studioCastingDirector, selectedCastingDirector[0]._id)
+              await fetchManyStudios()
+              setStudioCastingDirector(0)
             }}
           >
             Submit

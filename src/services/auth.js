@@ -34,10 +34,11 @@ export const verityToken = () => {
         }
       })
         .then(res => res.json())
-        .then(user => {
-          console.log(user)
-          if (user.email) {
-            resolve(user.email)
+        .then(data => {
+          console.log(data.user)
+          if (data.user.email) {
+            window.localStorage.setItem('token', data.token)
+            resolve(data.user.email)
           } else {
             reject()
           }
@@ -74,11 +75,13 @@ export const getUserById = (id) => {
     }
   }).then(resp => resp.json())
 }
-export const updateUserCredentials = (id, fields) => {
+
+export const updateUserFields = (id, formData) => {
   return fetch(`${api_host}/auth/user/${id}`, {
+    method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(fields)
+    body: formData
   }).then(resp => resp.json())
 }

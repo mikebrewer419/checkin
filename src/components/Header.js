@@ -1,18 +1,23 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { Dropdown, Navbar, Image } from 'react-bootstrap'
+import { Dropdown, Navbar, Image, Modal } from 'react-bootstrap'
 import { getUser } from '../services/auth'
 import { static_root } from '../services'
+import UserForm from './userForm'
 import './Header.scss'
 
-const user = getUser()
 const excludePaths = [
   '/onboard'
 ]
 
 const Header = (props) => {
-  console.log("Header -> match", props)
+  const [user, setUser] = useState(null)
+  const [editUser, setEditUser] = useState(false)
+
+  useEffect(() => {
+    setUser(getUser())
+  }, [editUser])
 
   if (excludePaths.find(path => props.location.pathname.startsWith(path))) {
     return null
@@ -22,12 +27,16 @@ const Header = (props) => {
     return null
   }
 
+  const closeUserEdit = () => {
+    setEditUser(false)
+  }
+
   return (
     <Navbar className="py-4 px-5 global-header" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
         <Link to="/">
-          {props.logo
-            ? <Image className="mt-n2" height="65" src={static_root+props.logo} />
+          {user.logo
+            ? <Image className="mt-n2" height="65" src={static_root+user.logo} />
             : <label className="mb-0 h3 text-white">HeyJoe</label>
           }
         </Link>
@@ -41,11 +50,33 @@ const Header = (props) => {
         <Dropdown.Menu>
           <Dropdown.Item className="text-secondary">{user.user_type}</Dropdown.Item>
           <Dropdown.Item onClick={() => {
+            setEditUser(!editUser)
+          }}>
+            Credentials
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => {
             window.localStorage.removeItem('token')
             window.location.reload(true)
           }}>Logout</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
+
+      <Modal
+        show={!!editUser}
+        onHide = {closeUserEdit}
+      >
+        <Modal.Header closeButton>
+          <h5 className="mb-0">
+            Edit User Credentials / Logo
+          </h5>
+        </Modal.Header>
+        <Modal.Body>
+          <UserForm
+            key={editUser}
+            onClose={closeUserEdit}
+          />
+        </Modal.Body>
+      </Modal>
     </Navbar>
   )
 }
