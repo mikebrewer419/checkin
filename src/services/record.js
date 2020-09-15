@@ -82,3 +82,53 @@ export const updateManyRecords = (ids, fields) => {
     })
   }).then((resp) => resp.json())
 }
+
+
+export const getGroupRecords = (group_id) => {
+  return fetch(`${api_host}/records/group-records/${group_id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then(resp => resp.json())
+}
+
+export const addRecordToCurentGroup = (record_id) => {
+  return fetch(`${api_host}/records/add-to-group/${record_id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
+export const removeRecordFromCurrentGroup = (record_id) => {
+  return fetch(`${api_host}/records/remove-from-group/${record_id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
+export const getCurrentGroup = (session_id) => {
+  return fetch(`${api_host}/records/current-group/${session_id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+
+export const finishCurrentGroup = (session_id) => {
+  return fetch(`${api_host}/records/finish-group/${session_id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }).then((resp) => resp.json())
+}
+

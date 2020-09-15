@@ -7,9 +7,13 @@ import {
   sendMessage,
   fetchCheckInList,
   updateRecordField,
-  setRecordsGroup,
-  updateManyRecords,
   removeCheckinRecord,
+
+  addRecordToCurentGroup,
+  removeRecordFromCurrentGroup,
+  getCurrentGroup,
+  finishCurrentGroup,
+
   static_root
 } from '../../services'
 import './style.scss'
@@ -45,9 +49,6 @@ class List extends Component {
       },
       submitting: false,
       error: false,
-      studio: this.props.studio,
-      session: this.props.session,
-      currentGroup: ''
     }
     this.interval = 30000 // query api every 30 seconds
     this.messages = this.props.messages || messages
@@ -69,27 +70,15 @@ class List extends Component {
     }
   }
 
-  fetchData = () => {
+  fetchData = async () => {
+    this.setState({ loading: true })
     const { session } = this.props
-    return fetchCheckInList(session._id).then(data => {
-      const { group } = data.filter((candidate, idx) => {
-        return !candidate.seen &&
-        (idx === 0 ||
-          (data[idx - 1] &&
-            (data[idx - 1].seen || data[idx - 1].skipped)
-          )
-        )
-      })[0] || {}
-      this.setState({
-        candidates: data,
-        currentGroup: this.state.currentGroup || group || '',
-        loading: false
-      }, () => {
-        const inGroupCandidates = this.state.candidates.filter(c => c.group && (c.group === this.state.currentGroup))
-        this.props.setGroupCandidates(inGroupCandidates)
-      })
-    }).catch(err => {
-      console.log("App -> componentDidMount -> err", err)
+    const candidates = await fetchCheckInList(session._id)
+    const currentGroup = await getCurrentGroup(session._id) || {}
+    this.props.setGroupCandidates(currentGroup.records || [])
+    this.setState({
+      candidates,
+      loading: false
     })
   }
 
@@ -131,34 +120,6 @@ class List extends Component {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
       for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
         if (!vm.state.candidates[idx].skipped || i === 0) {
-          sendMessage({
-            to: vm.state.candidates[idx].phone,
-            body: this.messages[i]
-          }, studio._id, vm.state.candidates[idx]._id)
-        }
-      }
-      console.log('updated ', data)
-      this.fetchData()
-    }).catch(err => {
-      console.log("App -> updateSeen -> err", err)
-    })
-  }
-
-  callInCurrentGroup = () => {
-    const vm = this
-    const { studio } = this.props
-    this.setState({
-      loading: true
-    })
-    if (!this.state.currentGroup) return
-    const groupRecordIds = this.state.candidates.filter(c => c.group === this.state.currentGroup)
-      .map(record => record._id)
-    updateManyRecords(groupRecordIds, {
-      seen: true
-    }).then(data => {
-      let idx = vm.state.candidates.findIndex(p => !p.seen)
-      for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].skipped) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
@@ -249,71 +210,23 @@ class List extends Component {
     })
   }
 
-  addToGroup = (_id) => {
-    const { currentGroup } = this.state
-    const currentCandidate = this.state.candidates.filter(c => c._id === _id)[0]
-    let newGroup = this.state.currentGroup
-    let newCandidates = JSON.parse(JSON.stringify(this.state.candidates))
-    const cname = `${currentCandidate.first_name} ${currentCandidate.last_name}`
-    newGroup = currentGroup.split(',').concat(cname).filter(s => s).join(',')
-
-    newCandidates = this.state.candidates.map(candidate => {
-      if (candidate._id === _id || (this.state.currentGroup && candidate.group === this.state.currentGroup)) {
-        return {
-          ...candidate,
-          group: newGroup
-        }
-      }
-      return candidate
-    })
-
-    this.setState({
-      currentGroup: newGroup,
-      candidates: newCandidates
-    }, this.saveCurrentGroupInfo)
-  }
-
-  leaveFromGroup = (_id) => {
-    let currentCandidate = this.state.candidates.filter(c => c._id === _id)[0]
-    const cname = `${currentCandidate.first_name} ${currentCandidate.last_name}`
-    const newGroup = this.state.currentGroup.split(',').filter(g => g !== cname).join(',')
-    let newCandidates = this.state.candidates.map(c => {
-      if (c._id === _id) {
-        return {
-          ...c,
-          group: ''
-        }
-      }
-      return {
-        ...c,
-        group: c.group === this.state.currentGroup ? newGroup : c.group
-      }
-    })
-    this.setState({
-      candidates: newCandidates,
-      currentGroup: newGroup
-    }, this.saveCurrentGroupInfo)
-  }
-
-  saveCurrentGroupInfo = async () => {
+  addToGroup = async (_id) => {
     this.setState({ loading: true })
-    const data = this.state.candidates.map(c => ({ _id: c._id, group: c.group }))
-    await setRecordsGroup(data)
+    await addRecordToCurentGroup(_id)
     await this.fetchData()
-    this.setState({ loading: false })
   }
 
-  finishCurrentGroup = () => {
-    if (!this.state.currentGroup) return
-    const remainingCandidates = this.state.candidates.filter(c => c.group === this.state.currentGroup && !c.seen)
-    if (remainingCandidates.length > 0) {
-      window.alert('You still have not seen candidates!')
-      return
-    }
-    this.setState({
-      currentGroup: ''
-    })
-    this.props.setGroupCandidates([])
+  leaveFromGroup = async (_id) => {
+    this.setState({ loading: true })
+    await removeRecordFromCurrentGroup(_id)
+    await this.fetchData()
+  }
+
+  finishCurrentGroup = async () => {
+    const { session } = this.props
+    this.setState({ loading: true })
+    await finishCurrentGroup(session._id)
+    await this.fetchData()
   }
 
   downloadCSV = () => {
@@ -356,7 +269,7 @@ class List extends Component {
     const encodedUri = encodeURI(csvContent)
     var link = document.createElement("a")
     link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `${this.state.studio}-${(new Date()).toISOString()}.csv`)
+    link.setAttribute("download", `${studio.name}-${(new Date()).toISOString()}.csv`)
     document.body.appendChild(link)
     
     link.click()
@@ -425,8 +338,6 @@ class List extends Component {
                 (this.state.candidates[idx - 1] &&
                   (this.state.candidates[idx - 1].seen ||
                   this.state.candidates[idx - 1].skipped)))
-              const addToGroup = !person.group ? this.addToGroup : null
-              const leaveFromGroup = person.group && person.group === this.state.currentGroup ? this.leaveFromGroup : null
               return (
                 <PersonCard
                   key={idx}
@@ -438,8 +349,8 @@ class List extends Component {
                   setSkipped={this.setSkipped}
                   removeRecord={this.removeRecord}
                   signOut={this.signOut}
-                  addToGroup={addToGroup}
-                  leaveFromGroup={leaveFromGroup}
+                  addToGroup={this.addToGroup}
+                  leaveFromGroup={this.leaveFromGroup}
                 />
               )
             })}
@@ -499,7 +410,8 @@ export const PersonCard = ({
   addToGroup,
   leaveFromGroup,
   hideDelete,
-  showLeave
+  showLeave,
+  groups
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -512,7 +424,7 @@ export const PersonCard = ({
               addToGroup(_id)
             }
           }}>
-            {!seen && <FaCircle className="text-danger mr-2" />}
+            {!groups.length && <FaCircle className="text-danger mr-2" />}
             {first_name} {last_name}
           </h5>
           <small className="card-text mb-0">

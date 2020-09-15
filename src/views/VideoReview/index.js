@@ -4,12 +4,10 @@ import { FaArchive, FaTeethOpen } from 'react-icons/fa';
 import {
   static_root,
   getStudioByUri,
-  getOneRecord,
+  getGroupRecords,
   getOneSession,
   getSessionVideos,
-  getSessionVideoDates,
   createZipAndSendMail,
-  getSessionGroupRecords,
   getArchivedSessionVideos,
   deleteVideo,
   updateVideo,
@@ -65,19 +63,13 @@ class VideoPage extends Component {
     if (this.state.tab === TABS.VIDEOS) loadFunc = getSessionVideos
     if (this.state.tab === TABS.ARCHIVED) loadFunc = getArchivedSessionVideos
     const videos = await loadFunc(this.session_id)
-    await Promise.all(videos.map(async (video) => {
-      if (video.record) {
-        const record = await this.getOneRecord(video.record)
-        video.record_item = record
-      }
-      return
-    }))
     let groups = [], gidx = {}, idx = 0
     videos.forEach(video => {
-      if (isNaN(gidx[video.group])) {
-        gidx[video.group] = idx
-        groups[gidx[video.group]] = {
-          name: video.group,
+      const groupName = video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',')
+      if (isNaN(gidx[groupName])) {
+        gidx[groupName] = idx
+        groups[gidx[groupName]] = {
+          name: groupName,
           idx,
           url: video.url,
           thumbnail: video.thumbnail,
@@ -85,38 +77,13 @@ class VideoPage extends Component {
         }
         idx ++
       }
-      groups[gidx[video.group]].videos.push(video)
+      groups[gidx[groupName]].videos.push(video)
     })
     this.setState({
       videos,
       groups,
       loading: false
     })
-  }
-
-  getSessionVideoDates = async () => {
-    this.setState({
-      loading: true
-    })
-    const videoDates = await getSessionVideoDates(this.session_id)
-    this.setState({
-      videoDates,
-      loading: false
-    })
-  }
-
-  getOneRecord = async (record_id) => {
-    if (this.state.records[record_id]) {
-      return this.state.records[record_id]
-    }
-    const record = await getOneRecord(record_id)
-    this.setState({
-      records: {
-        ...this.state.records,
-        [record_id]: record
-      }
-    })
-    return record
   }
 
   downloadAllVideos = () => {
@@ -152,7 +119,7 @@ class VideoPage extends Component {
     let grs = []
     try {
       const group = this.state.groups[gidx].videos[0].group
-      grs = await getSessionGroupRecords(this.session_id, group)
+      grs = await getGroupRecords(group)
     } catch(e) { }
     this.setState({
       activeRidx: ridx,
@@ -239,7 +206,6 @@ class VideoPage extends Component {
       session
     }, async () => {
       await this.loadVideos()
-      await this.getSessionVideoDates()
     })
 
     window.addEventListener('resize', this.setCount)
@@ -293,12 +259,6 @@ class VideoPage extends Component {
 
     for(let i = 0, l = groups.length; i < l; i += countPerRow) {
       rows.push(groups.slice(i, i + countPerRow))
-    }
-
-    let activeItemRecord = null
-    if (activeItem && activeItem.record) {
-      this.getOneRecord(activeItem.record)
-      activeItemRecord = this.state.records[activeItem.record] || {}
     }
 
     const rowWidth = countPerRow * (itemWidth + 32)
@@ -424,11 +384,7 @@ class VideoPage extends Component {
                             <PersonCard {...record} />
                           </div>
                         ))}
-                        { groupRecords.length === 0 && activeItemRecord &&
-                          <div className="talent-summary">
-                            <PersonCard {...activeItemRecord} />
-                          </div> }
-                        { groupRecords.length === 0 && !activeItemRecord &&
+                        { groupRecords.length === 0 &&
                           <div className="talent-summary">
                             No talent information available
                           </div> }

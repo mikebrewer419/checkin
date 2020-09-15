@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import cometInject from './comet-inject'
-import List, { PersonCard } from '../CheckinList'
+import List from '../CheckinList'
 import {
   getStudioByUri,
   getOneSession,
@@ -123,10 +122,6 @@ class HomePage extends Component {
     this.listRef.leaveFromGroup(id)
   }
 
-  callInCurrentGroup = () => {
-    this.listRef.callInCurrentGroup()
-  }
-
   setListRef = (elem) => {
     this.listRef = elem
   }
@@ -185,21 +180,18 @@ class HomePage extends Component {
                   Current Group 
                 </h6>
                 <ul>
-                  {groupCandidates[0] && groupCandidates[0].group.split(',').map((gname, pidx) => (
+                  {groupCandidates.map(person => (
                     <li>
                       <div className="d-flex align-items-center">
-                        <span className="mr-5">{gname}</span>
+                        <span className="mr-5">{person.first_name} ${person.last_name}</span>
                         <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
-                          this.leaveFromGroup(groupCandidates[pidx]._id)
+                          this.leaveFromGroup(person._id)
                         }}/>
                       </div>
                     </li>
                   ))}
                 </ul>
                 {groupCandidates.length > 0 && [
-                  <button key="callin" className="btn btn-sm btn-primary d-none" onClick={this.callInCurrentGroup}>
-                    Call In Group
-                  </button>,
                   <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
                     Finish Group
                   </button>
