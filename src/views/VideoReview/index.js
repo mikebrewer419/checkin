@@ -65,7 +65,7 @@ class VideoPage extends Component {
     const videos = await loadFunc(this.session_id)
     let groups = [], gidx = {}, idx = 0
     videos.forEach(video => {
-      const groupName = video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',')
+      const groupName = video.group ? video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',') : 'Unknown'
       if (isNaN(gidx[groupName])) {
         gidx[groupName] = idx
         groups[gidx[groupName]] = {
