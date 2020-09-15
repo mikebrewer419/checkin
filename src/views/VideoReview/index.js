@@ -119,7 +119,9 @@ class VideoPage extends Component {
     let grs = []
     try {
       const group = this.state.groups[gidx].videos[0].group
-      grs = await getGroupRecords(group)
+      if (group) {
+        grs = await getGroupRecords(group)
+      }
     } catch(e) { }
     this.setState({
       activeRidx: ridx,
