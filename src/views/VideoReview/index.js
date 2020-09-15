@@ -120,7 +120,7 @@ class VideoPage extends Component {
     try {
       const group = this.state.groups[gidx].videos[0].group
       if (group) {
-        grs = await getGroupRecords(group)
+        grs = await getGroupRecords(group._id)
       }
     } catch(e) { }
     this.setState({
