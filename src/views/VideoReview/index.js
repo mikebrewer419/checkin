@@ -304,7 +304,7 @@ class VideoPage extends Component {
               href="#"
               onClick={() => this.changeTab(TABS.ARCHIVED)}
             >
-              Achived
+              Archived
             </a>
           </li>
         </ul>
