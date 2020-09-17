@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaCircle, FaTimes, FaDownload, FaMinus,
-  FaSignOutAlt, FaFilm, FaListOl, FaUserFriends } from 'react-icons/fa'
+import { FaCircle, FaDownload, FaMinus, FaUserSlash,
+  FaFilm, FaListOl, FaUserFriends, FaTimes } from 'react-icons/fa'
 import moment from 'moment'
 import {
   sendMessage,
@@ -282,12 +282,12 @@ class List extends Component {
       <div className="list-view">
         <div className="d-flex flex-column">
           <div className="studio-header">
-            <div className="logo">
+            <div className="logo d-none">
               <Link to="/">
                 <img src={static_root + studio.logo} alt={studio.name}/>
               </Link>
             </div>
-            <h4 className="mb-3 text-center">
+            <h4 className="my-3 text-center">
               <span>{studio.name}</span>
               &nbsp;
               <span>{session.name}</span>
@@ -437,7 +437,7 @@ export const PersonCard = ({
             {signed_out &&
               <small className="float-right mr-1">Signed out</small>}
             {seen && !signed_out && signOut && (
-              <FaSignOutAlt
+              <FaUserSlash
                 className="text-danger ml-auto mr-1 cursor-pointer"
                 onClick={() => signOut(_id)}
               />

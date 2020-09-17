@@ -34,7 +34,7 @@ const Header = (props) => {
   return (
     <Navbar className="py-4 px-5 global-header" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
-        <Link to="/">
+        <Link to="/" target="_blank">
           {user.logo
             ? <Image className="mt-n2" height="65" src={static_root+user.logo} />
             : <label className="mb-0 h3 text-white">HeyJoe</label>
