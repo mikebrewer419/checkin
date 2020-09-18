@@ -430,7 +430,7 @@ const StudioList = () => {
             disabled={!selectedCastingDirector}
             className="btn btn-primary"
             onClick={async () => {
-              await assignCastingDirector(studioCastingDirector, selectedCastingDirector[0]._id)
+              await assignCastingDirector(studioCastingDirector, selectedCastingDirector.map(c => c._id))
               await fetchManyStudios()
               setStudioCastingDirector(0)
               setSelectedCastingDirector([])
