@@ -121,7 +121,7 @@ class VideoPage extends Component {
       activeRidx: ridx,
       activeGidx: gidx,
       activeItem: this.state.groups[gidx].videos[0],
-      groupRecords: group.records || []
+      groupRecords: (group && group.records) || []
     })
   }
 
