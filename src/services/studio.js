@@ -1,33 +1,36 @@
 import { api_host, token } from './index'
 
-export const getAllStudios = () => {
-  return fetch(`${api_host}/studio/list`, {
+export const getAllStudios = async () => {
+  const resp = await fetch(`${api_host}/studio/list`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const getManyStudios = (page = 0, page_size = 10) => {
-  return fetch(`${api_host}/studio/get-many?skip=${page * page_size}&take=${page_size}`, {
+export const getManyStudios = async (page = 0, page_size = 10) => {
+  const resp = await fetch(`${api_host}/studio/get-many?skip=${page * page_size}&take=${page_size}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const generateNewJitsiKey = () => {
-  return fetch(`${api_host}/studio/generate-jitsi-key`, {
+export const generateNewJitsiKey = async () => {
+  const resp = await fetch(`${api_host}/studio/generate-jitsi-key`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const createOrUpdateStudio = (studio) => {
+export const createOrUpdateStudio = async (studio) => {
   const formData = new FormData()
   if (studio.logo) {
     formData.append('logo', studio.logo)
@@ -41,55 +44,60 @@ export const createOrUpdateStudio = (studio) => {
   const url = studio._id
     ? `${api_host}/studio/${studio._id}`
     : `${api_host}/studio/`
-  return fetch(url, {
+  const resp = await fetch(url, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
     },
     body: formData
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const deleteStudio = (studio_id) => {
-  return fetch(`${api_host}/studio/${studio_id}`, {
+export const deleteStudio = async (studio_id) => {
+  const resp = await fetch(`${api_host}/studio/${studio_id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const getStudioInfo = (studio_id) => {
-  return fetch(`${api_host}/studio/${studio_id}`, {
+export const getStudioInfo = async (studio_id) => {
+  const resp = await fetch(`${api_host}/studio/${studio_id}`, {
     headers: {
       'Content-Type': 'application/json',
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const getStudioByUri = (studio_name) => {
-  return fetch(`${api_host}/studio/uri/${studio_name}`, {
+export const getStudioByUri = async (studio_name) => {
+  const resp = await fetch(`${api_host}/studio/uri/${studio_name}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const createCometRoom = (id, session_id) => {
-  return fetch(`${api_host}/studio/comet-chat/${id}/${session_id}`, {
+export const createCometRoom = async (id, session_id) => {
+  const resp = await fetch(`${api_host}/studio/comet-chat/${id}/${session_id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.text())
+  })
+  return await resp.text()
 }
 
 
-export const sendMessage = (message, studio_id, record_id = '') => {
-  return fetch(api_host+`/studio/message/${studio_id}`, {
+export const sendMessage = async (message, studio_id, record_id = '') => {
+  const res = await fetch(api_host + `/studio/message/${studio_id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -99,7 +107,8 @@ export const sendMessage = (message, studio_id, record_id = '') => {
       ...message,
       record_id
     })
-  }).then(res => res.json())
+  })
+  return await res.json()
 }
 
 export const assignCastingDirector = (id, director_ids) => {

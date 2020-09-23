@@ -21,7 +21,7 @@ import {
 import StudioForm from './form'
 import './style.scss'
 import Footer from '../../components/Footer'
-import { USER_TYPES } from '../../constants'
+import { USER_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const generateArray = (s, e) => {
@@ -219,8 +219,10 @@ const StudioList = () => {
 
   const newProjectClick = async () => {
     const { jitsi_meeting_id } = await generateNewJitsiKey()
+    const { jitsi_meeting_id: test_meeting_id } = await generateNewJitsiKey()
     setSelectedStudio({
-      jitsi_meeting_id
+      jitsi_meeting_id,
+      test_meeting_id
     })
   }
 
@@ -258,10 +260,16 @@ const StudioList = () => {
               <div className="action-wrap">
                 <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
                 <FaTrash onClick={() => deleteStudioHandle(studio)}/>
-                <FaLink className="ml-4" title="Assign Director" onClick={() => {
-                  setStudioCastingDirector(studio._id)
-                  setSelectedCastingDirector(studio.casting_directors)
-                }} />
+                <label
+                  className="ml-4 mb-0"
+                  onClick={() => {
+                    setStudioCastingDirector(studio._id)
+                    setSelectedCastingDirector(studio.casting_directors)
+                  }} 
+                >
+                  <FaLink title="Assign Director"/>
+                  <span className="ml-1">{studio.casting_directors.map(c => c.email).join(',')}</span>
+                </label>
               </div>
               <label
                 className="ml-auto text-danger new-session-btn"
@@ -282,16 +290,18 @@ const StudioList = () => {
                       Session Video Chat
                     </Link>
                   </div>
+                  {STUDIO_LIST_PERMISSIONS.CAN_VIEW_ONBOARD() &&
                   <div className="col-auto">
                     <Link to={`/onboard/${studio.uri}/${session._id}`} className="text-danger"  target="_blank">
                       Session Check-In
                     </Link>
-                  </div>
+                  </div>}
+                  {STUDIO_LIST_PERMISSIONS.CAN_VIEW_VIDEO_REVIEW() &&
                   <div className="col-auto">
                     <Link to={`/video/${studio.uri}/${session._id}`}  className="text-danger" target="_blank">
                       Video Review
                     </Link>
-                  </div>
+                  </div>}
                   <div className="col-auto action-wrap">
                     <FaPen className="mr-2" onClick={() => {
                       setSelectedSession(session)

@@ -7,6 +7,7 @@ const StudioForm = ({
   name = '',
   uri = '',
   jitsi_meeting_id = '',
+  test_meeting_id = '',
   client_link = '',
   thankyou_message = '',
   position_messages = [],
@@ -18,25 +19,31 @@ const StudioForm = ({
     <form onSubmit={onSubmit} id="studio-form">
       <input type="hidden" name="_id" value={_id} />
       <div className="row">
-        <div className="col-3">
+        <div className="col">
           <div className="form-group">
             <label htmlFor="name">Project Name</label>
             <input required className="form-control form-control-sm"  type="text" name="name" id="name" defaultValue={name} />
           </div>
         </div>
-        <div className="col-3">
+        <div className="col">
           <div className="form-group">
             <label htmlFor="uri">Uri</label>
             <input required className="form-control form-control-sm"  type="text" name="uri" id="uri" defaultValue={uri} />
           </div>
         </div>
-        <div className="col-3">
+        <div className="col">
           <div className="form-group">
             <label htmlFor="jitsi_meeting_id">meeting_id</label>
             <input required id="jitsi_meeting_id" className="form-control form-control-sm"  type="text" name="jitsi_meeting_id" defaultValue={jitsi_meeting_id} />
           </div>
         </div>
-        <div className="col-3">
+        <div className="col">
+          <div className="form-group">
+            <label htmlFor="test_meeting_id">test_meeting_id</label>
+            <input required id="test_meeting_id" className="form-control form-control-sm"  type="text" name="test_meeting_id" defaultValue={test_meeting_id} />
+          </div>
+        </div>
+        <div className="col">
           <div className="form-group">
             <label htmlFor="client_link">client_link</label>
             <input required id="client_link" className="form-control form-control-sm"  type="text" name="client_link" defaultValue={client_link} />

@@ -1,6 +1,7 @@
 import React, { Component, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FaArchive, FaTeethOpen } from 'react-icons/fa';
+import { Modal } from 'react-bootstrap'
+import { FaArchive, FaTeethOpen, FaPenAlt } from 'react-icons/fa';
 import {
   static_root,
   getStudioByUri,
@@ -12,12 +13,14 @@ import {
   deleteVideo,
   updateVideo,
   updateManyVideo,
-  uploadNewVideo
+  uploadNewVideo,
+  updateGroup
 } from '../../services'
 import Footer from '../../components/Footer'
 import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
+import { VIDEO_REVIEW_PERMISSIONS } from '../../constants'
 
 const itemWidth = 250
 
@@ -45,7 +48,8 @@ class VideoPage extends Component {
       selectedForUploads: [],
       groupRecords: [],
       archivedVideos: [],
-      tab: TABS.VIDEOS
+      tab: TABS.VIDEOS,
+      selectedGroup: {}
     }
   }
   
@@ -65,14 +69,18 @@ class VideoPage extends Component {
     const videos = await loadFunc(this.session_id)
     let groups = [], gidx = {}, idx = 0
     videos.forEach(video => {
-      const groupName = video.group ? video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',') : 'Unknown'
+      let groupName = video.group ? video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',') : 'Unknown'
+      if (video.group.name && !video.group.name.includes('reserved field')) {
+        groupName = video.group.name
+      }
       if (isNaN(gidx[groupName])) {
         gidx[groupName] = idx
         groups[gidx[groupName]] = {
+          _id: video.group._id,
           name: groupName,
           idx,
           url: video.url,
-          thumbnail: video.thumbnail,
+          thumbnail: video.group.thumbnail || video.thumbnail,
           videos: []
         }
         idx ++
@@ -244,7 +252,8 @@ class VideoPage extends Component {
       activeGidx,
       videoDates,
       groupRecords,
-      selectedForUploads
+      selectedForUploads,
+      selectedGroup
     } = this.state
 
     let rows = []
@@ -298,6 +307,7 @@ class VideoPage extends Component {
               Videos
             </a>
           </li>
+          {VIDEO_REVIEW_PERMISSIONS.CAN_VIEW_ARCHIVE() &&
           <li className="nav-item">
             <a
               className={`nav-link h5 mb-0 ${tab === TABS.ARCHIVED ?'active':'text-danger'}`}
@@ -306,7 +316,7 @@ class VideoPage extends Component {
             >
               Archived
             </a>
-          </li>
+          </li>}
         </ul>
         <div className="video-wrapper">
           {rows.length === 0 && <div className="p-5">No videos available </div>}
@@ -348,7 +358,20 @@ class VideoPage extends Component {
                             onChange={(ev) => this.toggleGroupSelectedForDownload(group.idx, ev.target.checked) }
                           />
                           <div>{group.name}</div>
-
+                          {VIDEO_REVIEW_PERMISSIONS.CAN_UPDATE_GROUP() &&
+                          <label
+                            className="mb-0 ml-2"
+                            onClick={ev => {
+                              ev.stopPropagation()
+                              ev.preventDefault()
+                              this.setState({
+                                selectedGroup: group
+                              })
+                            }}
+                          >
+                            <FaPenAlt />
+                          </label>}
+                          {VIDEO_REVIEW_PERMISSIONS.CAN_ARCHIVE() &&
                           <label
                             className="mb-0 ml-auto"
                             onClick={() => {
@@ -357,7 +380,7 @@ class VideoPage extends Component {
                             title={toArchive ? 'Archive': 'Restore'}
                           >
                             {toArchive ? <FaArchive />: <FaTeethOpen />}
-                          </label>
+                          </label>}
                         </div>
                       </div>
                     )
@@ -462,6 +485,63 @@ class VideoPage extends Component {
           })}
         </div>
         <Footer/>
+        <Modal
+          show={!!selectedGroup._id}
+          onHide = {() => {
+            this.setState({
+              selectedGroup: {}
+            })
+          }}
+        >
+          <Modal.Header closeButton>
+            <h5 className="mb-0">
+              Edit group
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            <input
+              type="text"
+              className="form-control mb-2"
+              placeholder="Group Name"
+              value={selectedGroup.name}
+              onChange={ev => {
+                this.setState({
+                  selectedGroup: {
+                    ...this.state.selectedGroup,
+                    name: ev.target.value
+                  }
+                })
+              }}
+            />
+            <input
+              type="file"
+              className="form-control"
+              onChange={ev => {
+                this.setState({
+                  selectedGroup: {
+                    ...this.state.selectedGroup,
+                    thumbnail: ev.target.files[0]
+                  }
+                })
+              }}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              disabled={selectedGroup && !selectedGroup.name}
+              className="btn btn-primary"
+              onClick={async () => {
+                await updateGroup(selectedGroup._id, selectedGroup)
+                this.setState({
+                  selectedGroup: {}
+                })
+                await this.loadVideos()
+              }}
+            >
+              Submit
+            </button>
+          </Modal.Footer>
+        </Modal>
       </div>
     )
   }

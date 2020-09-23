@@ -1,46 +1,50 @@
 import { api_host, token } from './index'
 
-export const getSessionVideos = (session_id) => {
-  return fetch(`${api_host}/videos/${session_id}`, {
+export const getSessionVideos = async (session_id) => {
+  const resp = await fetch(`${api_host}/videos/${session_id}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const getArchivedSessionVideos = (session_id) => {
-  return fetch(`${api_host}/videos/archived/${session_id}`, {
+export const getArchivedSessionVideos = async (session_id) => {
+  const resp = await fetch(`${api_host}/videos/archived/${session_id}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const deleteVideo = (video_id) => {
-  return fetch(`${api_host}/videos/${video_id}`, {
+export const deleteVideo = async (video_id) => {
+  const resp = await fetch(`${api_host}/videos/${video_id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const updateVideo = (video_id, fields) => {
-  return fetch(`${api_host}/videos/${video_id}`, {
+export const updateVideo = async (video_id, fields) => {
+  const resp = await fetch(`${api_host}/videos/${video_id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify(fields)
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const updateManyVideo = (video_ids, fields) => {
-  return fetch(`${api_host}/videos/update-many`, {
+export const updateManyVideo = async (video_ids, fields) => {
+  const resp = await fetch(`${api_host}/videos/update-many`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -50,25 +54,27 @@ export const updateManyVideo = (video_ids, fields) => {
       ids: video_ids,
       fields
     })
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const uploadNewVideo = (file, session_id, group) => {
+export const uploadNewVideo = async (file, session_id, group) => {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('session', session_id)
   formData.append('group', group)
-  return  fetch(`${api_host}/videos/upload-video`, {
+  const resp = await fetch(`${api_host}/videos/upload-video`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
     },
     body: formData
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const createZipAndSendMail = (video_ids, date, email) => {
-  return fetch(`${api_host}/videos/get-zip`, {
+export const createZipAndSendMail = async (video_ids, date, email) => {
+  const resp = await fetch(`${api_host}/videos/get-zip`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -79,5 +85,6 @@ export const createZipAndSendMail = (video_ids, date, email) => {
       email,
       keys: video_ids
     })
-  }).then((resp) => resp.text())
+  })
+  return await resp.text()
 }

@@ -60,28 +60,31 @@ export const getUser = () => {
   }
 }
 
-export const searchUsers = (email, type) => {
-  return fetch(`${api_host}/auth/users?email=${email}&type=${type}`,{
+export const searchUsers = async (email, type) => {
+  const resp = await fetch(`${api_host}/auth/users?email=${email}&type=${type}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
-  }).then((resp) => resp.json())
+  })
+  return await resp.json()
 }
 
-export const getUserById = (id) => {
-  return fetch(`${api_host}/auth/user/${id}`, {
+export const getUserById = async (id) => {
+  const resp = await fetch(`${api_host}/auth/user/${id}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
-  }).then(resp => resp.json())
+  })
+  return await resp.json()
 }
 
-export const updateUserFields = (id, formData) => {
-  return fetch(`${api_host}/auth/user/${id}`, {
+export const updateUserFields = async (id, formData) => {
+  const resp = await fetch(`${api_host}/auth/user/${id}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
     },
     body: formData
-  }).then(resp => resp.json())
+  })
+  return await resp.json()
 }
