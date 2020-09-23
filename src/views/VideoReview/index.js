@@ -70,6 +70,9 @@ class VideoPage extends Component {
     let groups = [], gidx = {}, idx = 0
     videos.forEach(video => {
       let groupName = video.group ? video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',') : 'Unknown'
+      if (!video.group) {
+        video.group = {}
+      }
       if (video.group.name && !video.group.name.includes('reserved field')) {
         groupName = video.group.name
       }
@@ -358,7 +361,7 @@ class VideoPage extends Component {
                             onChange={(ev) => this.toggleGroupSelectedForDownload(group.idx, ev.target.checked) }
                           />
                           <div>{group.name}</div>
-                          {VIDEO_REVIEW_PERMISSIONS.CAN_UPDATE_GROUP() &&
+                          {VIDEO_REVIEW_PERMISSIONS.CAN_UPDATE_GROUP() && group._id &&
                           <label
                             className="mb-0 ml-2"
                             onClick={ev => {
