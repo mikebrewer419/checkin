@@ -236,8 +236,6 @@ const StudioList = () => {
     confirmCancel()
   }
 
-  const pages = generateArray(page - 2, page + 3).filter(p => p >= 0 && p < (pageCount))
-
   return (
     <div className="p-5 w-100 studios-list">
       <div className="d-flex align-items-center justify-content-between mb-5">
@@ -327,7 +325,7 @@ const StudioList = () => {
             {'<'}
           </li>
           <li className="mx-2">
-            Page {page + 1} / {pages.length}
+            Page {page + 1} / {pageCount}
           </li>
           <li onClick={() => setPage(Math.min(page + 1, pageCount - 1))}>
             {'>'}
