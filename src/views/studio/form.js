@@ -46,7 +46,7 @@ const StudioForm = ({
         <div className="col">
           <div className="form-group">
             <label htmlFor="client_link">client_link</label>
-            <input required id="client_link" className="form-control form-control-sm"  type="text" name="client_link" defaultValue={client_link} />
+            <input id="client_link" className="form-control form-control-sm"  type="text" name="client_link" defaultValue={client_link} />
           </div>
         </div>
       </div>
