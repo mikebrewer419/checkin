@@ -53,12 +53,12 @@ const StudioForm = ({
       <div className="form-group">
         <label htmlFor="thankyou_message">Thankyou_message</label>
         <input required className="form-control form-control-sm"  type="text" name="thankyou_message" id="thankyou_message"
-          defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME, we will text you shortly with instructions. Reply with word 'p' to check your place in line now`} />
+          defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME, to join the waiting room please enter 'TEST_MEETING_ID' into the app or click TEST_MEETING_ILINK`} />
       </div>
       <div className="form-group">
         <label htmlFor="position_messages1">Position_messages 1</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[0]" id="position_messages1"
-          defaultValue={position_messages[0] || `It's now your turn to audition, please enter 'MEETING_ID' into the app and click 'create/join`} />
+          defaultValue={position_messages[0] || ` It's now your turn to audition, please enter 'MEETING_ID' or click MEETING_LINK`} />
         <label htmlFor="position_messages2">Position_messages 2</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[1]" id="position_messages2"
           defaultValue={position_messages[1] || `You are on deck! We'll text you shortly to join the casting.`} />
