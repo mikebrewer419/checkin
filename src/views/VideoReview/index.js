@@ -193,8 +193,9 @@ class VideoPage extends Component {
   }
 
   uploadNewVideo = async (file) => {
+    this.setState({ loading: true })
     const activeGroup = this.state.groups[this.state.activeGidx]
-    await uploadNewVideo(file, this.session_id, activeGroup.name)
+    await uploadNewVideo(file, this.session_id, activeGroup.id)
     this.loadVideos()
   }
 
