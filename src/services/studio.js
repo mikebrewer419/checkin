@@ -30,6 +30,16 @@ export const generateNewJitsiKey = async () => {
   return await resp.json()
 }
 
+export const generateNewProjectUri = async () => {
+  const resp = await fetch(`${api_host}/studio/generate-project-uri`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}
+
 export const createOrUpdateStudio = async (studio) => {
   const formData = new FormData()
   if (studio.logo) {

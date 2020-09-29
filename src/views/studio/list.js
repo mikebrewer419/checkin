@@ -10,6 +10,7 @@ import {
   searchUsers,
   getManyStudios,
   generateNewJitsiKey,
+  generateNewProjectUri,
   deleteStudio,
   createOrUpdateStudio,
   getStudioSessions,
@@ -220,9 +221,11 @@ const StudioList = () => {
   const newProjectClick = async () => {
     const { jitsi_meeting_id } = await generateNewJitsiKey()
     const { jitsi_meeting_id: test_meeting_id } = await generateNewJitsiKey()
+    const { project_uri } = await generateNewProjectUri()
     setSelectedStudio({
       jitsi_meeting_id,
-      test_meeting_id
+      test_meeting_id,
+      uri: project_uri
     })
   }
 
