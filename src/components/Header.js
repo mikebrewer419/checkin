@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Dropdown, Navbar, Image, Modal } from 'react-bootstrap'
-import { getUser } from '../services/auth'
+import { FaInfoCircle } from 'react-icons/fa';
+import { getUser, getUserById } from '../services/auth'
 import { static_root } from '../services'
 import UserForm from './userForm'
+import { USER_TYPES } from '../constants'
 import './Header.scss'
 
 const excludePaths = [
@@ -14,9 +16,22 @@ const excludePaths = [
 const Header = (props) => {
   const [user, setUser] = useState(null)
   const [editUser, setEditUser] = useState(false)
+  const [needCredentials, setNeedCredentials] = useState(false)
 
   useEffect(() => {
-    setUser(getUser())
+    const u = getUser()
+    setUser(u)
+    if (!u) return
+    getUserById(u.id).then(data => {
+      const need = [USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(data.user_type) &&
+        (!data.twilio_account_sid ||
+        !data.twilio_auth_token ||
+        !data.twilio_from_number ||
+        !data.comet_chat_appid ||
+        !data.comet_chat_auth ||
+        !data.comet_api_key)
+      setNeedCredentials(need)
+    })
   }, [editUser])
 
   if (excludePaths.find(path => props.location.pathname.startsWith(path))) {
@@ -44,7 +59,14 @@ const Header = (props) => {
       <Dropdown className="ml-auto">
         <Dropdown.Toggle variant="danger" id="dropdown-basic">
           {/* <Image src="https://loremflickr.com/50/50" roundedCircle /> */}
-          <span className="ml-4 h5">{user.email}</span>
+          <span className="ml-2 h5">{user.email}</span>
+          {needCredentials &&
+          <FaInfoCircle
+            color="white"
+            size="22"
+            className="mt-n1 ml-2 fade-alert"
+            title="Credentials are required"
+          />}
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
@@ -53,6 +75,13 @@ const Header = (props) => {
             setEditUser(!editUser)
           }}>
             Credentials
+            {needCredentials &&
+            <FaInfoCircle
+              color="red"
+              size="18"
+              className="mt-n1 ml-2 fade-alert"
+              title="Credentials are required"
+            />}
           </Dropdown.Item>
           <Dropdown.Item onClick={() => {
             window.localStorage.removeItem('token')

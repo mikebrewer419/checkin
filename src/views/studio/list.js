@@ -461,6 +461,9 @@ const StudioList = () => {
         <Modal.Header closeButton className="align-items-baseline">
           <h4 className="mb-0 mr-3">
             {selectedStudio && selectedStudio._id? `Update ${selectedStudio.name}`: 'Create New Project'}
+            {!selectedStudio || !selectedStudio._id && <p className="h6 font-weight-normal mt-1">
+              Please make sure all credentials are preperly configured for your account.
+            </p>}
           </h4>
           {selectedStudio && selectedStudio.casting_directors && selectedStudio.casting_directors.length > 0 && (
             <label className="mb-0">
