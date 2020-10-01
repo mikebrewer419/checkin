@@ -57,7 +57,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="p-5">
+    <div className="p-5 page-content">
       <div className="d-flex align-items-center mb-3">
         <div>
           <input
@@ -144,7 +144,7 @@ const Admin = () => {
       </div>
       <div className="text-center mt-3">
         {pages.map(page => {
-          return <label key={page} onClick={() => {
+          return <label className="mx-3" key={page} onClick={() => {
             setPage(page)
           }}>{page + 1}</label>
         })}

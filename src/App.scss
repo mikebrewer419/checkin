@@ -56,3 +56,8 @@ body {
     border-right: 1px solid $primary;
   }
 }
+
+.page-content {
+  overflow-y: auto;
+  max-height: calc(100vh - #{$headerheight});
+}
