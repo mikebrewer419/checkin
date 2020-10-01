@@ -9,6 +9,7 @@ import {
   deleteUser
 } from '../../services'
 import UserForm from './UserForm'
+import { USER_TYPES } from '../../constants'
 import './style.scss'
 
 let delayHandle = null
@@ -45,7 +46,7 @@ const Admin = () => {
   }, [query])
 
   let pages = []
-  for(let i = 0; i <= count / perPage; i ++) {
+  for(let i = 0; i < Math.ceil(count / perPage); i ++) {
     pages.push(i)
   }
 
@@ -109,10 +110,10 @@ const Admin = () => {
               </Accordion.Toggle>
               <Accordion.Collapse eventKey={user._id}>
                 <div className="row px-5 py-3">
-                  {user.logo &&
+                  {user.logo ?
                   <div className="col-auto">
                     <Image height="105" src={static_root+user.logo} />
-                  </div>}
+                  </div> : <span className="mr-5">No Logo</span>}
                   <div className="col">
                     {[USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(user.user_type) &&
                     <table>
