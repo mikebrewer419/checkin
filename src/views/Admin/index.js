@@ -114,6 +114,7 @@ const Admin = () => {
                     <Image height="105" src={static_root+user.logo} />
                   </div>}
                   <div className="col">
+                    {[USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(user.user_type) &&
                     <table>
                       <tbody>
                         <tr>
@@ -141,7 +142,7 @@ const Admin = () => {
                         <td><strong>{user.comet_api_key}</strong></td>
                       </tr>
                       </tbody>
-                    </table>
+                    </table>}
                   </div>
                   <div className="col-auto">
                     <FaPencilAlt
