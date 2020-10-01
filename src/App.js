@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import './App.scss'
-import { loginApi, verityToken, getUser } from './services'
+import { loginApi, verityToken, getUser, super_admins } from './services'
 import Login from './views/Auth/Login'
 import HomePage from './views/HomePage'
 import RecordMessagePage from './views/RecordMessagePage'
@@ -10,12 +10,14 @@ import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
 import StudioList from './views/studio/list'
 import SessionList from './views/Sessions'
+import AdminView from './views/Admin'
 import Header from './components/Header'
 import { USER_TYPES } from './constants';
 
 function App() {
   const [error, setError] = useState('')
   const [logo, setLogo] = useState('')
+  const [email, setEmail] = useState({})
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -25,6 +27,7 @@ function App() {
       return
     }
     verityToken().then((email) => {
+      setEmail(email)
       window.localStorage.setItem('email', email)
       if (window.location.pathname === '/login') {
         const pUrl = window.localStorage.getItem('prev_url') || '/'
@@ -76,6 +79,9 @@ function App() {
             onSubmit={doLogin}
             error={error}
           />} exact />
+          {super_admins.includes(email) &&
+            <Route path="/heyjoe-admin" component={AdminView} />
+          }
           <Route path="/message/:record_id" component={RecordMessagePage} />
           <Route path="/studio/:uri/:session_id" component={HomePage} />
           <Route path="/onboard/:uri/:session_id" component={Onboard} />

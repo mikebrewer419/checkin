@@ -50,6 +50,14 @@ export const verityToken = () => {
   })
 }
 
+export const register = async (formData) => {
+  const resp = await fetch(`${api_host}/auth/register`, {
+    method: 'POST',
+    body: formData
+  })
+  return await resp.json()
+}
+
 export const getUser = () => {
   try {
     const token = window.localStorage.getItem('token')
