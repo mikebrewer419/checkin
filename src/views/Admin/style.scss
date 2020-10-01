@@ -1,0 +1,6 @@
+.page-item {
+  cursor: pointer;
+  &.active {
+    font-weight: bold;
+  }
+}

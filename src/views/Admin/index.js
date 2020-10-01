@@ -11,6 +11,8 @@ import {
 import UserForm from './UserForm'
 import './style.scss'
 
+let delayHandle = null
+
 const Admin = () => {
   const [users, setUsers] = useState([])
   const [query, setQuery] = useState('')
@@ -18,16 +20,29 @@ const Admin = () => {
   const [page, setPage] = useState(0)
   const [count, setCount] = useState(0)
   const [selectedUser, setSelectedUser] = useState(null)
-  const perPage = 30
+  const perPage = 20
+
+  const load = async () => {
+    document.querySelector('.loading').classList.add('show')
+    const response = await listUsers(query, page * perPage, perPage)
+    setUsers(response.users)
+    setCount(response.count)
+    document.querySelector('.loading').classList.remove('show')
+  }
 
   useEffect(() => {
-    const load = async () => {
-      const response = await listUsers(query, page * perPage, perPage)
-      setUsers(response.users)
-      setCount(response.count)
-    }
     load()
-  }, [query, selectedUser, userToDelete])
+  }, [page])
+
+  useEffect(() => {
+    if (delayHandle) { clearTimeout(delayHandle) }
+    if (delayHandle || query) {
+      delayHandle = setTimeout(async () => {
+        if (page === 0) { load() }
+        else { setPage(0) }
+      }, 800)
+    }
+  }, [query])
 
   let pages = []
   for(let i = 0; i <= count / perPage; i ++) {
@@ -44,12 +59,14 @@ const Admin = () => {
     } else {
       await register(data)
     }
-    setSelectedUser(null)
+    await setSelectedUser(null)
+    load()
   }
 
   const userDeleteConfirm = async () => {
     await deleteUser(userToDelete._id)
-    setUserToDelete(null)
+    await setUserToDelete(null)
+    load()
   }
 
   const closeUserDelete = () => {
@@ -82,7 +99,7 @@ const Admin = () => {
             <div key={user._id}>
               <Accordion.Toggle as="div" eventKey={user._id}>
                 <div className="row py-2 align-items-center" >
-                  <div className="col-2">
+                  <div className="col-3">
                     <h5 className="ml-3 mb-0">{user.email}</h5>
                   </div>
                   <div className="col-2">
@@ -92,9 +109,10 @@ const Admin = () => {
               </Accordion.Toggle>
               <Accordion.Collapse eventKey={user._id}>
                 <div className="row px-5 py-3">
+                  {user.logo &&
                   <div className="col-auto">
-                    <Image height="105" src={user.logo ? static_root+user.logo : `https://loremflickr.com/240/240/anime?random=${user.email}`} />
-                  </div>
+                    <Image height="105" src={static_root+user.logo} />
+                  </div>}
                   <div className="col">
                     <table>
                       <tbody>
@@ -143,10 +161,10 @@ const Admin = () => {
         </Accordion>
       </div>
       <div className="text-center mt-3">
-        {pages.map(page => {
-          return <label className="mx-3" key={page} onClick={() => {
-            setPage(page)
-          }}>{page + 1}</label>
+        {pages.map(p => {
+          return <label className={`mx-3 page-item ${page === p?'active':''}`} key={p} onClick={() => {
+            setPage(p)
+          }}>{p + 1}</label>
         })}
       </div>
       <Modal
