@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { FaCircle, FaDownload, FaMinus, FaUserSlash,
-  FaFilm, FaListOl, FaUserFriends, FaTimes } from 'react-icons/fa'
+  FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt } from 'react-icons/fa'
+import { Modal } from 'react-bootstrap'
 import moment from 'moment'
 import {
   sendMessage,
@@ -34,6 +35,13 @@ const formatTime = (time) => {
   return ''
 }
 
+const formatHour = (time) => {
+  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+  if (date.isValid())
+    return date.format('H:mm: a')
+  return ''
+}
+
 class List extends Component {
 
   constructor(props) {
@@ -49,6 +57,8 @@ class List extends Component {
       },
       submitting: false,
       error: false,
+      selectedRecord: null,
+      timeOptions: []
     }
     this.interval = 30000 // query api every 30 seconds
     this.messages = this.props.messages || messages
@@ -60,6 +70,22 @@ class List extends Component {
     setInterval(() => {
       this.fetchData()
     }, this.interval)
+    let timeOptions = []
+    let time = moment().startOf('day')
+    const endDayTime = moment().endOf('day')
+    while (true) {
+      time = time.add(5, 'minutes')
+      if (endDayTime.diff(time) < 0) {
+        break
+      }
+      timeOptions.push({
+        value: time.toDate(),
+        text: time.format('HH:mm')
+      })
+    }
+    this.setState({
+      timeOptions
+    })
   }
 
   componentDidUpdate() {
@@ -229,6 +255,26 @@ class List extends Component {
     await this.fetchData()
   }
 
+  selectRecord = (record) => {
+    this.setState({
+      selectedRecord: { ...record }
+    })
+  }
+
+  updateRecord = async () => {
+    this.setState({
+      loading: true
+    })
+    const { selectedRecord } = this.state
+    await updateRecordField(selectedRecord._id, {
+      actual_call: selectedRecord.actual_call
+    })
+    await this.fetchData()
+    this.setState({
+      selectedRecord: null
+    })
+  }
+
   downloadCSV = () => {
     const { studio, session } = this.props
     const row_headers = [
@@ -243,6 +289,10 @@ class List extends Component {
       'sagnumber',
       // 'jitsi_meeting_id',
       'call_in_time',
+      'agent',
+      'actual_call',
+      'interview_no',
+      'role',
       'signed_out_time',
       // 'studio',
     ]
@@ -260,6 +310,8 @@ class List extends Component {
               case 'checked_in_time':
                 const dateString = formatTime(candidate[key])
                 return dateString
+              case 'actual_call':
+                return formatHour(candidate[key])
               default:
                 return candidate[key]
             }
@@ -278,6 +330,7 @@ class List extends Component {
 
   render() {
     const { studio, session } = this.props
+    const { timeOptions, selectedRecord } = this.state
     return (
       <div className="list-view">
         <div className="d-flex flex-column">
@@ -351,6 +404,7 @@ class List extends Component {
                   signOut={this.signOut}
                   addToGroup={this.addToGroup}
                   leaveFromGroup={this.leaveFromGroup}
+                  updateRecord={this.selectRecord}
                 />
               )
             })}
@@ -383,6 +437,53 @@ class List extends Component {
             </div>
           </form>
         </div>
+        <Modal
+          show={!!selectedRecord}
+          onHide = {() => {
+            this.setState({
+              selectedRecord: null
+            })
+          }}
+        >
+          <Modal.Header closeButton>
+            <h5 className="mb-0">
+              Update Actuall Call Time
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedRecord && (
+              <div>
+                <select
+                  value={selectedRecord.actual_call}
+                  onChange={ev => {
+                    this.setState({
+                      selectedRecord: {
+                        ...selectedRecord,
+                        actual_call: ev.target.value
+                      }
+                    })
+                  }}
+                  className="form-control"
+                  name="actualCall"
+                  id="actualCall"
+                >
+                  {timeOptions.map(time => (
+                    <option
+                      key={time.value}
+                      value={time.value}
+                    >{time.text}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="btn btn-danger"
+              onClick={this.updateRecord}
+            >Update.</button>
+          </Modal.Footer>
+        </Modal>
       </div>
     )
   }
@@ -403,6 +504,7 @@ export const PersonCard = ({
   seen,
   signed_out,
   checked_in_time,
+  actual_call,
   setSeen,
   setSkipped,
   signOut,
@@ -411,12 +513,13 @@ export const PersonCard = ({
   leaveFromGroup,
   hideDelete,
   showLeave,
+  updateRecord,
   groups
 }) => {
   const dateString = formatTime(checked_in_time)
 
   return (
-    <div className="card text-primary border-0">
+    <div className="card text-primary border-0 person-card">
       <div className="card-body pr-1">
         <div className="card-title d-flex align-items-center mb-0">
           <h5 className="mr-2 cursor-pointer d-flex align-items-center cursor-pointer" onClick={() => {
@@ -439,14 +542,15 @@ export const PersonCard = ({
             {seen && !signed_out && signOut && (
               <FaUserSlash
                 className="text-danger ml-auto mr-1 cursor-pointer"
+                title="Sign out this user"
                 onClick={() => signOut(_id)}
               />
             )}
             {!hideDelete && (
-              <FaTimes className="text-danger mx-1 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
+              <FaTimes title="Remove" className="text-danger mx-1 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
             )}
             {showLeave && leaveFromGroup && (
-              <FaMinus className="text-danger mx-1 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
+              <FaMinus title="Leave Group" className="text-danger mx-1 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
             )}
           </div>
         </div>
@@ -462,6 +566,11 @@ export const PersonCard = ({
             <p className="card-text mb-0">
               <span>Email:</span>
               <strong className="ml-2">{email}</strong>
+            </p>
+            <p className="card-text mb-0 actual-call-section">
+              <span>Actual Call:</span>
+              <strong className="mx-2">{formatHour(actual_call)}</strong>
+              <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, actual_call })} />
             </p>
           </div>
           <p className="card-text mb-0 flex-wrap d-none">

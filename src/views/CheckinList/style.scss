@@ -58,4 +58,15 @@
     cursor: pointer;
     margin-left: 10px;
   }
+
+  .person-card {
+    .edit-trigger {
+      opacity: 0;
+    }
+    &:hover {
+      .edit-trigger {
+        opacity: 1;
+      }
+    }
+  }
 }

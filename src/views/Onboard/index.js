@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import useReactRouter from 'use-react-router'
+import moment from 'moment'
 import {
   getStudioByUri,
   getOneSession,
@@ -23,6 +24,11 @@ const Onboard = () => {
   const [session, setSession] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
+  const [agent, setAgent] = useState('')
+  const [actualCall, setActualCall] = useState(new Date())
+  const [interviewNo, setInterviewNo] = useState(1)
+  const [role, setRole] = useState('')
+
   useEffect(() => {
     const process = async () => {
       const studio = await getStudioByUri(studio_uri)
@@ -43,7 +49,11 @@ const Onboard = () => {
       email: email,
       phone: phoneNumber,
       sagnumber: sagNumber,
-      session: session._id
+      session: session._id,
+      agent: agent,
+      actual_call: actualCall,
+      interview_no: interviewNo,
+      role: role
     }).then(result => {
     console.log("onSubmjit -> result", result)
       if (result.record && result.record._id) {
@@ -73,6 +83,20 @@ const Onboard = () => {
         Processing... Please wait for a moment.
       </div>
     )
+  }
+
+  let timeOptions = []
+  let time = moment().startOf('day')
+  const endDayTime = moment().endOf('day')
+  while (true) {
+    time = time.add(30, 'minutes')
+    if (endDayTime.diff(time) < 0) {
+      break
+    }
+    timeOptions.push({
+      value: time.toDate(),
+      text: time.format('HH:mm')
+    })
   }
 
   return (
@@ -134,8 +158,58 @@ const Onboard = () => {
                 id="phone"
               />
             </p>
+            <p>
+              <label>Agent</label>
+              <input
+                value={agent}
+                onChange={ev => setAgent(ev.target.value)}
+                type="text"
+                name="agent"
+                id="agent"
+              />
+            </p>
+            <p>
+              <label>Role</label>
+              <input
+                value={role}
+                onChange={ev => setRole(ev.target.value)}
+                type="text"
+                name="role"
+                id="role"
+              />
+            </p>
+            <p>
+              <label>Interview Number</label>
+              <select
+                value={interviewNo}
+                onChange={ev => setInterviewNo(ev.target.value)}
+                name="interviewNo"
+                id="interviewNo"
+              >
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+              </select>
+            </p>
+            <p>
+              <label>Actuall Call Time</label>
+              <select
+                value={actualCall}
+                onChange={ev => setActualCall(ev.target.value)}
+                name="actualCall"
+                id="actualCall"
+              >
+                {timeOptions.map(time => (
+                  <option
+                    key={time.value}
+                    value={time.value}
+                  >{time.text}</option>
+                ))}
+              </select>
+            </p>
             <p className="full">
-              <label>SAG Number</label>
+              <label>SAG Aftra Number</label>
               <input
                 value={sagNumber}
                 onChange={ev => setSagNumber(ev.target.value)}

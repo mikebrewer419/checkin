@@ -21,6 +21,9 @@ const VIDEO_REVIEW_PERMISSIONS = {
   },
   CAN_UPDATE_GROUP: () => {
     return [USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR, USER_TYPES.SESSION_MANAGER].includes(user.user_type)
+  },
+  CAN_LEAVE_FEEDBACK: () => {
+    return [USER_TYPES.CLIENT].includes(user.user_type)
   }
 }
 
@@ -33,6 +36,9 @@ const STUDIO_LIST_PERMISSIONS = {
   },
   CAN_VIEW_VIDEO_REVIEW: () => {
     return [USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR, USER_TYPES.SESSION_MANAGER, USER_TYPES.CLIENT].includes(user.user_type)
+  },
+  CAN_CREATE_STUDIO: () => {
+    return [USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(user.user_type)
   }
 }
 

@@ -246,10 +246,12 @@ const StudioList = () => {
           Projects
         </label>
         <div className="d-flex">
-          <button
-            className="btn btn-primary mr-2 d-flex align-items-center"
-            onClick={newProjectClick}
-          ><FaPlus className="mr-2"/>Create Project</button>
+          {STUDIO_LIST_PERMISSIONS.CAN_CREATE_STUDIO() && (
+            <button
+              className="btn btn-primary mr-2 d-flex align-items-center"
+              onClick={newProjectClick}
+            ><FaPlus className="mr-2"/>Create Project</button>
+          )}
         </div>
       </div>
       <div className="list-group mb-4">

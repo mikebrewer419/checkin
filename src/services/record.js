@@ -179,19 +179,19 @@ export const setFeedback = async (id, feedback) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(feedback)
+    body: JSON.stringify({ feedback })
   })
   return await resp.json()
 }
 
-export const newComment = async (id, comment) => {
+export const newComment = async (id, content) => {
   const resp = await fetch(`${api_host}/records/comment/${id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(comment)
+    body: JSON.stringify({ content })
   })
   return await resp.json()
 }
