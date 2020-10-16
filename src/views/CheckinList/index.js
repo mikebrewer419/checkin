@@ -80,7 +80,7 @@ class List extends Component {
       }
       timeOptions.push({
         value: time.toDate(),
-        text: time.format('HH:mm')
+        text: time.format('hh:mm a')
       })
     }
     this.setState({

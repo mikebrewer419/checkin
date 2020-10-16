@@ -95,7 +95,7 @@ const Onboard = () => {
     }
     timeOptions.push({
       value: time.toDate(),
-      text: time.format('HH:mm')
+      text: time.format('hh:mm a')
     })
   }
 
@@ -193,7 +193,7 @@ const Onboard = () => {
               </select>
             </p>
             <p>
-              <label>Actuall Call Time</label>
+              <label>Actual Call</label>
               <select
                 value={actualCall}
                 onChange={ev => setActualCall(ev.target.value)}
