@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaCircle, FaDownload, FaMinus, FaUserSlash,
+import { FaCircle, FaDownload, FaMinus, FaUserSlash, FaStickyNote,
   FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import moment from 'moment'
@@ -329,10 +329,10 @@ class List extends Component {
   }
 
   render() {
-    const { studio, session } = this.props
+    const { studio, session, testMode } = this.props
     const { timeOptions, selectedRecord } = this.state
     return (
-      <div className="list-view">
+      <div className={"list-view " + (testMode? 'test': '')}>
         <div className="d-flex flex-column">
           <div className="studio-header">
             <div className="logo d-none">
@@ -345,43 +345,56 @@ class List extends Component {
               &nbsp;
               <span>{session.name}</span>
               <span className="d-inline-block ml-2">Video Chat</span>
-
-              <div className="d-flex justify-content-center">
-                <Link
-                  title="Video Review"
-                  to={`/video/${studio.uri}/${session._id}`} 
-                  target="_blank"
-                  className="mx-3"
-                >
-                  <FaFilm size="16" className="text-danger" />
-                </Link>
-                <Link
-                  title="Session Check-In"
-                  to={`/onboard/${studio.uri}/${session._id}`}
-                  target="_blank"
-                  className="mx-3"
-                >
-                  <FaListOl size="16" className="text-danger" />
-                </Link>
-                <a
-                  title="Client Page"
-                  href={`https://live.heyjoe.io/project/${studio.client_link}`}
-                  target="_blank"
-                  className="mx-3"
-                >
-                  <FaUserFriends size="20" className="text-danger" />
-                </a>
-                <a
-                  title="Download CSV"
-                  className="mx-3"
-                >
-                  <FaDownload
-                    size="16"
-                    className="text-danger cursor-pointer"
-                    onClick={this.downloadCSV}
-                  />
-                </a>
-              </div>
+              {testMode ? (
+                <div className="d-flex justify-content-center">
+                  <span className="text-danger h5 mb-0 mt-2">Testing</span>
+                </div>
+              ) : (
+                <div className="d-flex justify-content-center">
+                  <Link
+                    title="Session Check-In"
+                    to={`/onboard/${studio.uri}/${session._id}`}
+                    target="_blank"
+                    className="mx-3"
+                  >
+                    <FaListOl size="16" className="text-danger" />
+                  </Link>
+                  <Link
+                    to="?test=true"
+                    target="_blank"
+                    title="Test Session"
+                    className="mx-3"
+                  >
+                    <FaStickyNote size="16" className="text-danger" />
+                  </Link>
+                  <Link
+                    title="Video Review"
+                    to={`/video/${studio.uri}/${session._id}`} 
+                    target="_blank"
+                    className="mx-3"
+                  >
+                    <FaFilm size="16" className="text-danger" />
+                  </Link>
+                  <a
+                    title="Client Page"
+                    href={`https://live.heyjoe.io/project/${studio.client_link}`}
+                    target="_blank"
+                    className="mx-3"
+                  >
+                    <FaUserFriends size="20" className="text-danger" />
+                  </a>
+                  <a
+                    title="Download CSV"
+                    className="mx-3"
+                  >
+                    <FaDownload
+                      size="16"
+                      className="text-danger cursor-pointer"
+                      onClick={this.downloadCSV}
+                    />
+                  </a>
+                </div>
+              )}
             </h4>
           </div>
           <ul className="list-group">
@@ -396,6 +409,7 @@ class List extends Component {
                   key={idx}
                   id={person._id}
                   idx={idx}
+                  testMode={testMode}
                   showCallIn={showCallIn}
                   {...person}
                   setSeen={this.setSeen}
@@ -514,7 +528,8 @@ export const PersonCard = ({
   hideDelete,
   showLeave,
   updateRecord,
-  groups
+  groups,
+  testMode
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -523,7 +538,7 @@ export const PersonCard = ({
       <div className="card-body pr-1">
         <div className="card-title d-flex align-items-center mb-0">
           <h5 className="mr-2 cursor-pointer d-flex align-items-center cursor-pointer" onClick={() => {
-            if (addToGroup) {
+            if (addToGroup && !testMode) {
               addToGroup(_id)
             }
           }}>
@@ -539,17 +554,17 @@ export const PersonCard = ({
               <small className="mr-1">skipped</small>}
             {signed_out &&
               <small className="float-right mr-1">Signed out</small>}
-            {seen && !signed_out && signOut && (
+            {seen && !signed_out && signOut && !testMode && (
               <FaUserSlash
                 className="text-danger ml-auto mr-1 cursor-pointer"
                 title="Sign out this user"
                 onClick={() => signOut(_id)}
               />
             )}
-            {!hideDelete && (
+            {!hideDelete && !testMode && (
               <FaTimes title="Remove" className="text-danger mx-1 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
             )}
-            {showLeave && leaveFromGroup && (
+            {showLeave && leaveFromGroup && !testMode && (
               <FaMinus title="Leave Group" className="text-danger mx-1 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
             )}
           </div>
@@ -570,7 +585,9 @@ export const PersonCard = ({
             <p className="card-text mb-0 actual-call-section">
               <span>Actual Call:</span>
               <strong className="mx-2">{formatHour(actual_call)}</strong>
-              <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, actual_call })} />
+              {!testMode && (
+                <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, actual_call })} />
+              )}
             </p>
           </div>
           <p className="card-text mb-0 flex-wrap d-none">
@@ -579,20 +596,20 @@ export const PersonCard = ({
           </p>
         </div>
         <div className="d-flex mt-1">
-          {(!!showCallIn || (!seen && skipped)) && setSeen &&
+          {(!!showCallIn || (!seen && skipped)) && setSeen && !testMode &&
           <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
             Call In SMS
           </button>}
-          {!!showCallIn && !skipped && setSkipped &&
+          {!!showCallIn && !skipped && setSkipped && !testMode &&
           <button className="btn px-2 py-0 btn-outline-dark ml-2" onClick={() => setSkipped(_id)}>
             Skip
           </button>}
           <div className="ml-auto d-none">
-            {addToGroup &&
+            {addToGroup && !testMode &&
             <button className="d-none btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
               Add to Group
             </button>}
-            {leaveFromGroup && showLeave &&
+            {leaveFromGroup && showLeave && !testMode &&
             <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
               Remove from group
             </button>}

@@ -12,6 +12,13 @@ import { FaMinus } from 'react-icons/fa'
 class HomePage extends Component {
   constructor(props) {
     super(props)
+    let search = window.location.search.substring(1);
+    let queryParams = {}
+    try {
+      queryParams = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+    } catch (err) {
+      queryParams = {}
+    }
 
     this.state = {
       studio: null,
@@ -19,7 +26,8 @@ class HomePage extends Component {
       showChat: true,
       showList: true,
       jitsiKey: 0,
-      groupCandidates: []
+      groupCandidates: [],
+      testMode: queryParams.test
     }
   }
 
@@ -127,17 +135,19 @@ class HomePage extends Component {
   }
 
   render() {
-    const { studio, session, showChat, showList, jitsiKey, groupCandidates } = this.state
+    const { studio, session, showChat, showList,
+      jitsiKey, groupCandidates, testMode } = this.state
     if (!studio) {
       return <div>Loading...</div>
     }
-    const meeting_id = studio.jitsi_meeting_id
+    const meeting_id = testMode ? studio.test_meeting_id : studio.jitsi_meeting_id
     return (
-      <div className="homepage">
+      <div className={"homepage " + (testMode ? 'test': '')}>
         <div id="checkin-list" className={`${showList?'show':''}`}>
           <div id="list">
             <List
               ref={this.setListRef}
+              testMode={testMode}
               studio={studio}
               session={session}
               messages={studio.position_messages}
@@ -174,30 +184,32 @@ class HomePage extends Component {
             >
               {!showChat ? '〉' :'〈' }
             </button>
-            <div>
-              <div id="current-group" className="px-2">
-                <h6 className="mx-n2 px-2">
-                  Current Group 
-                </h6>
-                <ul>
-                  {groupCandidates.map(person => (
-                    <li>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-5">{person.first_name} ${person.last_name}</span>
-                        <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
-                          this.leaveFromGroup(person._id)
-                        }}/>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                {groupCandidates.length > 0 && [
-                  <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
-                    Finish Group
-                  </button>
-                ]}
+            {!testMode && (
+              <div>
+                <div id="current-group" className="px-2">
+                  <h6 className="mx-n2 px-2">
+                    Current Group 
+                  </h6>
+                  <ul>
+                    {groupCandidates.map(person => (
+                      <li>
+                        <div className="d-flex align-items-center">
+                          <span className="mr-5">{person.first_name} ${person.last_name}</span>
+                          <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
+                            this.leaveFromGroup(person._id)
+                          }}/>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  {groupCandidates.length > 0 && [
+                    <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
+                      Finish Group
+                    </button>
+                  ]}
+                </div>
               </div>
-            </div>
+            )}
             <div id="comet-chat">
               <div id="chat"></div>
             </div>
