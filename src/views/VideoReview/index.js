@@ -25,7 +25,7 @@ import Footer from '../../components/Footer'
 import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
-import { VIDEO_REVIEW_PERMISSIONS } from '../../constants'
+import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
 
 const itemWidth = 250
 
@@ -398,29 +398,32 @@ class VideoPage extends Component {
                   })}
                 </div>,
                 ridx === activeRidx && activeGroup ?
-                  <div className="row active-group-row p-3" key="active-field">
-                    {activeItem? [
-                      <ReactPlayer
-                        controls={true}
-                        url={activeItem.url}
-                        key="video"
-                        autoPlay
-                        id="active-player"
-                        className="col-auto"
-                      />,
-                      <div key="info" className="info col-auto">
-                        {groupRecords.map(record => (
-                          <div className="talent-summary" key={record._id}>
-                            <PersonCard {...record} />
-                          </div>
-                        ))}
-                        { groupRecords.length === 0 &&
-                          <div className="talent-summary">
-                            No talent information available
-                          </div> }
+                  <div className="d-flex flex-column active-group-row p-3" key="active-field">
+                    {activeItem? (
+                      <div className="row player-row mb-2">
+                        <ReactPlayer
+                          controls={true}
+                          url={activeItem.url}
+                          key="video"
+                          autoPlay
+                          id="active-player"
+                          className="col-auto"
+                          height="100%"
+                        />
+                        <div key="info" className="info col-4">
+                          {groupRecords.map(record => (
+                            <div className="talent-summary" key={record._id}>
+                              <PersonCard {...record} />
+                            </div>
+                          ))}
+                          { groupRecords.length === 0 &&
+                            <div className="talent-summary">
+                              No talent information available
+                            </div> }
+                        </div>
                       </div>
-                    ]: null}
-                    <div className="col d-flex flex-wrap align-items-start group-videos-wrapper py-2">
+                    ): null}
+                    <div className="d-flex align-items-start group-videos-wrapper py-2">
                       {activeGroup.videos.map(video => {
                         return (
                           <div
@@ -476,7 +479,7 @@ class VideoPage extends Component {
                             width: itemWidth
                           }}
                         >
-                          <div className="preview-wrapper pt-5">
+                          <div className="preview-wrapper py-5 pl-3">
                             <span>Upload New Video</span>
                             <input
                               key={activeGroup.videos.length}
@@ -659,14 +662,14 @@ const PersonCard = ({
       <div className="card-body px-0">
         <h5 className="card-title d-flex mb-2">
           {first_name} {last_name}
-          {skipped && <small>&nbsp;&nbsp;skipped</small>}
+          {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
           <span className="ml-auto">
             {MyFeedbackIcon}
           </span>
         </h5>
         <label onClick={() => setShowContact(!showContact)}>Contact</label>
         {showContact &&
-        <div className="">
+        <div className="mb-3">
           <p className="card-text mb-1">P: <small>{phone}</small></p>
           <p className="card-text mb-1">E: <small>{email}</small></p>
         </div>}

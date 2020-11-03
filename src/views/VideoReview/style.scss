@@ -33,13 +33,17 @@
   }
   .active-group-row {
     background-color: $lightgray;
+    border-top: 5px solid white;
+    border-bottom: 5px solid white;
   }
   .active-row {
     display: flex;
     margin: 20px;
   }
-  .active-row video {
-    width: 50vw;
+  .player-row {
+    #active-player {
+      flex: 1;
+    }
   }
   .active-row .info {
     margin-left: 20px;
@@ -52,6 +56,7 @@
   .preview-wrapper {
     position: relative;
     padding-top: 56.25%;
+    background-color: $lightgray;
   }
   
   .preview-wrapper .dummy-player {
@@ -62,7 +67,7 @@
   }
   .group-videos-wrapper {
     max-height: 360px;
-    overflow-y: auto;
+    overflow-x: auto;
     background-color: white;
   }
 
