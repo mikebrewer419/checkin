@@ -293,6 +293,11 @@ const StudioList = () => {
                       Session Video Chat
                     </Link>
                   </div>
+                  <div className="col-auto">
+                    <Link to={`/studio/${studio.uri}/${session._id}?test=true`} className="text-danger" target="_blank">
+                      Virtual Lobby
+                    </Link>
+                  </div>
                   {STUDIO_LIST_PERMISSIONS.CAN_VIEW_ONBOARD() &&
                   <div className="col-auto">
                     <Link to={`/onboard/${studio.uri}/${session._id}`} className="text-danger"  target="_blank">

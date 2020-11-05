@@ -53,7 +53,7 @@ const StudioForm = ({
       <div className="form-group">
         <label htmlFor="thankyou_message">Thankyou_message</label>
         <input required className="form-control form-control-sm"  type="text" name="thankyou_message" id="thankyou_message"
-          defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME, to join the waiting room please enter 'TEST_MEETING_ID' into the app or click TEST_MEETING_LINK`} />
+          defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME, to join virtual lobby please enter 'TEST_MEETING_ID' into the app or click TEST_MEETING_LINK`} />
       </div>
       <div className="form-group">
         <label htmlFor="position_messages1">Position_messages 1</label>

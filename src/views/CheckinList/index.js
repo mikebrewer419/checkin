@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaCircle, FaDownload, FaMinus, FaUserSlash, FaStickyNote,
+import { FaCircle, FaDownload, FaMinus, FaUserSlash,
   FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import moment from 'moment'
@@ -366,14 +366,6 @@ class List extends Component {
                     className="mx-3"
                   >
                     <FaListOl size="16" className="text-danger" />
-                  </Link>
-                  <Link
-                    to="?test=true"
-                    target="_blank"
-                    title="Test Session"
-                    className="mx-3"
-                  >
-                    <FaStickyNote size="16" className="text-danger" />
                   </Link>
                   <Link
                     title="Video Review"

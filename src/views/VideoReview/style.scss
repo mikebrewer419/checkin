@@ -65,6 +65,21 @@
     left: 0;
     border: 1px solid #ccc;
   }
+
+  .video-uploader {
+    position: relative;
+    background-color: $lightgray;
+    input {
+      cursor: pointer;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+    }
+  }
+
   .group-videos-wrapper {
     max-height: 360px;
     overflow-x: auto;

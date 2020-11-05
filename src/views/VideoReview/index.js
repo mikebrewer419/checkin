@@ -28,6 +28,7 @@ import { saveAs } from 'file-saver'
 import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
 
 const itemWidth = 250
+const thumbWidth = 150
 
 const TABS = {
   VIDEOS: 'Videos',
@@ -432,7 +433,7 @@ class VideoPage extends Component {
                           >
                             <div
                               style={{
-                                width: itemWidth
+                                width: thumbWidth
                               }}
                             >
                               <div
@@ -476,11 +477,13 @@ class VideoPage extends Component {
                       {tab !== TABS.ARCHIVED && VIDEO_REVIEW_PERMISSIONS.CAN_ADD_VIDEO() && (
                         <div
                           style={{
-                            width: itemWidth
+                            width: thumbWidth,
+                            alignSelf: 'stretch'
                           }}
+                          className="pb-2"
                         >
-                          <div className="preview-wrapper py-5 pl-3">
-                            <span>Upload New Video</span>
+                          <div className="video-uploader pt-4 px-3 mr-2 h-100">
+                            <span>Click to upload New Video</span>
                             <input
                               key={activeGroup.videos.length}
                               type="file"
