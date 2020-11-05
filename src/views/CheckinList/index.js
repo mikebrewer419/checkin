@@ -9,6 +9,7 @@ import {
   fetchCheckInList,
   updateRecordField,
   removeCheckinRecord,
+  clearSessionRecords,
 
   addRecordToCurentGroup,
   removeRecordFromCurrentGroup,
@@ -226,6 +227,13 @@ class List extends Component {
       })
   }
 
+  clearRecords = async () => {
+    this.setState({ loading: true })
+    const { session } = this.props
+    await clearSessionRecords(session._id)
+    await this.fetchData()
+  }
+
   signOut = (id) => {
     this.setState({ loading: true })
     updateRecordField(id, {
@@ -391,6 +399,16 @@ class List extends Component {
                       size="16"
                       className="text-danger cursor-pointer"
                       onClick={this.downloadCSV}
+                    />
+                  </a>
+                  <a
+                    title="Clear Records"
+                    className="mx-3"
+                  >
+                    <FaTimes
+                      size="16"
+                      className="text-danger cursor-pointer"
+                      onClick={this.clearRecords}
                     />
                   </a>
                 </div>

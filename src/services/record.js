@@ -195,3 +195,14 @@ export const newComment = async (id, content) => {
   })
   return await resp.json()
 }
+
+export const clearSessionRecords = async (session_id) => {
+  const resp = await fetch(`${api_host}/records/clear-record/${session_id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}
