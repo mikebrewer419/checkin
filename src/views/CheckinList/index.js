@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaCircle, FaDownload, FaMinus, FaUserSlash,
+import { FaCircle, FaDownload, FaMinus, FaUserSlash, FaStickyNote,
   FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import moment from 'moment'
@@ -59,6 +59,7 @@ class List extends Component {
       submitting: false,
       error: false,
       selectedRecord: null,
+      confirmClearSession: false,
       timeOptions: []
     }
     this.interval = 30000 // query api every 30 seconds
@@ -227,11 +228,18 @@ class List extends Component {
       })
   }
 
+  toggleClearConfirm = () => {
+    this.setState({
+      confirmClearSession: !this.state.confirmClearSession
+    })
+  }
+
   clearRecords = async () => {
     this.setState({ loading: true })
     const { session } = this.props
     await clearSessionRecords(session._id)
     await this.fetchData()
+    this.toggleClearConfirm()
   }
 
   signOut = (id) => {
@@ -338,7 +346,7 @@ class List extends Component {
 
   render() {
     const { studio, session, testMode } = this.props
-    const { timeOptions, selectedRecord } = this.state
+    const { timeOptions, selectedRecord, confirmClearSession } = this.state
     return (
       <div className={"list-view " + (testMode? 'test': '')}>
         <div className="d-flex flex-column">
@@ -366,6 +374,14 @@ class List extends Component {
                     className="mx-3"
                   >
                     <FaListOl size="16" className="text-danger" />
+                  </Link>
+                  <Link
+                    to="?test=true"
+                    target="_blank"
+                    title="Virtual Lobby"
+                    className="mx-3"
+                  >
+                    <FaStickyNote size="16" className="text-danger" />
                   </Link>
                   <Link
                     title="Video Review"
@@ -400,7 +416,7 @@ class List extends Component {
                     <FaTimes
                       size="16"
                       className="text-danger cursor-pointer"
-                      onClick={this.clearRecords}
+                      onClick={this.toggleClearConfirm}
                     />
                   </a>
                 </div>
@@ -506,6 +522,29 @@ class List extends Component {
               className="btn btn-danger"
               onClick={this.updateRecord}
             >Update.</button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={!!confirmClearSession}
+          onHide = {this.toggleClearConfirm}
+        >
+          <Modal.Header closeButton>
+            <h5 className="mb-0">
+              Are you sure?
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            You are about to delete all session records.
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="btn"
+              onClick={this.toggleClearConfirm}
+            >Cancel.</button>
+            <button
+              className="btn btn-danger"
+              onClick={this.clearRecords}
+            >Clear.</button>
           </Modal.Footer>
         </Modal>
       </div>
