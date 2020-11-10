@@ -14,6 +14,12 @@ import {
   deleteStudio,
   createOrUpdateStudio,
   getStudioSessions,
+  getSessionsByStudios,
+  getPagesByStudio,
+  getPagesByStudios,
+  updatePage,
+  createPage,
+  deletePage,
   createSession,
   updateSession,
   deleteSession,
@@ -42,6 +48,7 @@ const StudioList = () => {
   const [pageSize, setPageSize] = useState(10)
   const [pageCount, setPageCount] = useState(1)
   const [sessions, setSessions] = useState({})
+  const [postingPages, setPostingPages] = useState({})
   const [selectedStudio, setSelectedStudio] = useState(null)
   const [selectedSession, setSelectedSession] = useState(null)
   const [errors, setErrors] = useState({})
@@ -55,6 +62,7 @@ const StudioList = () => {
   const [castingDirectors, setCastingDirectors] = useState([])
   const [studioCastingDirector, setStudioCastingDirector] = useState(0)
   const [selectedCastingDirector, setSelectedCastingDirector] = useState(null)
+  const [selectedPostingPage, setSelectedPostingPage] = useState(null)
 
   const searchSessionUsers = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -87,6 +95,14 @@ const StudioList = () => {
     setSessions({
       ...sessions,
       [studio_id]: ss
+    })
+  }
+
+  const fetchStudioPostingPage = async (studio_id) => {
+    const pp = await getPagesByStudio(studio_id)
+    setPostingPages({
+      ...postingPages,
+      [studio_id]: pp
     })
   }
 
@@ -173,6 +189,37 @@ const StudioList = () => {
     setSelectedSession(null)
   }
 
+  const handlePostingPageSubmit = async (postingPage={}, studio_id) => {
+    const name = postingPage.name
+    const names = postingPages[studio_id].map(p => p.name)
+    const originalPP = postingPages[studio_id].find(p => p._id === postingPage._id)
+    if (names.includes(name) && sessions[studio_id]
+     && (!originalPP || originalPP && originalPP.name !== postingPage.name)
+    ) {
+      window.alert(`You already have the session ${name}`)
+      return
+    }
+    if (postingPage._id) {
+      await updatePage(postingPage._id, postingPage)
+    } else {
+      const newPage = await createPage({
+        name,
+        studio: studio_id
+      })
+    }
+    await fetchStudioPostingPage(studio_id)
+    setSelectedPostingPage(null)
+  }
+
+  const handlePPDelete = async (postingPage, studio_id) => {
+    const callback = async () => {
+      await deletePage(postingPage._id)
+      await fetchStudioPostingPage(studio_id)
+    }
+    setConfirmMessage(`Want to delete ${postingPage.name}?`)
+    setConfirmCallback(() => callback)
+  }
+
   const handleSessionDelete = async (session, studio_id) => {
     const callback = async () => {
       await deleteSession(session._id)
@@ -194,16 +241,20 @@ const StudioList = () => {
   }, [page, pageSize])
 
   useEffect(() => {
-    const fetchAllSessions = async () => {
+    const fetchAllSessionsAndPPs = async () => {
       if (!studios || studios.length === 0) { return }
-      let ss = {}
+      const studioIds = studios.map(s => s._id)
+      const allSessions = await getSessionsByStudios(studioIds)
+      let ss = {}, pp = {}
+      const allPostingPages = await getPagesByStudios(studioIds)
       for(let i = 0; i < studios.length; i ++) {
-        const studioSesssions = await getStudioSessions(studios[i]._id)
-        ss[studios[i]._id] = studioSesssions
+        ss[studios[i]._id] = allSessions.filter(s => s.studio === studios[i]._id)
+        pp[studios[i]._id] = allPostingPages.filter(p => p.studio === studios[i]._id)
       }
       setSessions(ss)
+      setPostingPages(pp)
     }
-    fetchAllSessions()
+    fetchAllSessionsAndPPs()
   }, [studios])
 
   useEffect(() => {
@@ -277,6 +328,13 @@ const StudioList = () => {
               <label
                 className="ml-auto text-danger new-session-btn"
                 onClick={() => {
+                  setSelectedPostingPage({})
+                  setStudioId(studio._id)
+                }} 
+              >Add New Posting Page</label>
+              <label
+                className="ml-3 text-danger new-session-btn"
+                onClick={() => {
                   setSelectedSession({})
                   setStudioId(studio._id)
                 }} 
@@ -316,6 +374,26 @@ const StudioList = () => {
                       setStudioId(studio._id)
                     }}/>
                     <FaTrash onClick={() => handleSessionDelete(session, studio._id)}/>
+                  </div>
+                </div>
+              ))}
+              {(postingPages[studio._id] || []).length > 0 && <hr className="w-100 mt-2 mb-0" />}
+              {(postingPages[studio._id] || []).map(pp => (
+                <div key={pp._id} className="row mt-1 ml-2 mr-2">
+                  <div className="col-2">
+                    {pp.name}
+                  </div>
+                  <div className="col-auto">
+                    <Link to={`/posting-page/${studio.uri}/${pp._id}`} className="text-danger" target="_blank">
+                      View Posting Page
+                    </Link>
+                  </div>
+                  <div className="col-auto action-wrap">
+                    <FaPen className="mr-2" onClick={() => {
+                      setSelectedPostingPage(pp)
+                      setStudioId(studio._id)
+                    }}/>
+                    <FaTrash onClick={() => handlePPDelete(pp, studio._id)}/>
                   </div>
                 </div>
               ))}
@@ -428,20 +506,20 @@ const StudioList = () => {
           </h4>
         </Modal.Header>
         <Modal.Body>
-            <AsyncTypeahead
-              id="casting-director-select"
-              multiple
-              selected={selectedCastingDirector}
-              onChange={value => {
-                setSelectedCastingDirector(value)
-              }}
-              isLoading={loadingSessionUsers}
-              labelKey="email"
-              minLength={2}
-              onSearch={searchCastingDirectors}
-              options={castingDirectors}
-              placeholder="Search for a Session user..."
-            />
+          <AsyncTypeahead
+            id="casting-director-select"
+            multiple
+            selected={selectedCastingDirector}
+            onChange={value => {
+              setSelectedCastingDirector(value)
+            }}
+            isLoading={loadingSessionUsers}
+            labelKey="email"
+            minLength={2}
+            onSearch={searchCastingDirectors}
+            options={castingDirectors}
+            placeholder="Search for a Session user..."
+          />
         </Modal.Body>
         <Modal.Footer>
           <button
@@ -492,6 +570,44 @@ const StudioList = () => {
               }}
             />}
         </Modal.Body>
+      </Modal>
+      <Modal
+        show={!!selectedPostingPage}
+        onHide={() => {
+          setSelectedPostingPage(null)
+        }}
+      >
+        <Modal.Header closeButton className="align-items-baseline">
+          <h4 className="mb-0 mr-3">
+            {selectedPostingPage && selectedPostingPage._id? `Update ${selectedPostingPage.name}`: 'Create New Posting Page'}
+          </h4>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedPostingPage && (
+            <input
+              type="text"
+              className="form-control mb-3"
+              value={selectedPostingPage.name}
+              onChange={ev => {
+                setSelectedPostingPage({
+                  ...selectedPostingPage,
+                  name: ev.target.value
+                })
+              }}
+            />
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            disabled={selectedPostingPage && !selectedPostingPage.name}
+            className="btn btn-primary"
+            onClick={() => {
+              handlePostingPageSubmit(selectedPostingPage, studioId)
+            }}
+          >
+            Submit
+          </button>
+        </Modal.Footer>
       </Modal>
       <Footer/>
     </div>

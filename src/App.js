@@ -8,6 +8,7 @@ import HomePage from './views/HomePage'
 import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
+import PostingPage from './views/PostingPage'
 import StudioList from './views/studio/list'
 import SessionList from './views/Sessions'
 import AdminView from './views/Admin'
@@ -86,6 +87,7 @@ function App() {
           <Route path="/studio/:uri/:session_id" component={HomePage} />
           <Route path="/onboard/:uri/:session_id" component={Onboard} />
           <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
+          <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
           <Route path="/" component={HomeBomponent} />
         </Switch>
       </Router>

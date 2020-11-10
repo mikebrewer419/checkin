@@ -1,32 +1,27 @@
 import React, { Component, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaArchive, FaTeethOpen, FaPenAlt, FaCheck, FaTimes, FaQuestion, FaComment, FaCopy, FaDownload, FaTrash } from 'react-icons/fa';
+import { FaDownload, FaArchive, FaTeethOpen, FaPenAlt, FaTrash } from 'react-icons/fa';
 import {
   static_root,
   getStudioByUri,
-  copyGroupFromSession,
-  getPagesByStudio,
-  getOneSession,
-  getOneRecord,
-  getUserById,
-  getSessionVideos,
+  deletePageVideo,
+  getOnePage,
+  getPageVideos,
+  updatePostingVideo,
+  updatePostingManyVideo,
   createZipAndSendMail,
-  getArchivedSessionVideos,
-  deleteVideo,
-  updateVideo,
-  updateManyVideo,
-  uploadNewVideo,
-  updateGroup,
-  setFeedback,
-  getUser,
-  newComment
+  uploadNewPostingVideo,
+  updatePostingGroup,
+  updatePostingGroupOrder,
 } from '../../services'
 import Footer from '../../components/Footer'
 import './style.scss'
 import ReactPlayer from 'react-player'
+import PersonCard from './PersonCard'
+import GroupSorter from './GroupSorter'
 import { saveAs } from 'file-saver'
-import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
+import { VIDEO_REVIEW_PERMISSIONS } from '../../constants'
 
 const itemWidth = 250
 const thumbWidth = 150
@@ -36,15 +31,13 @@ const TABS = {
   ARCHIVED: 'Archived'
 }
 
-const user = getUser()
-
-class VideoPage extends Component {
+class PostingPage extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       studio: null,
-      session: null,
+      page: null,
       countPerRow: 5,
       activeRidx: -1,
       activeGidx: -1,
@@ -57,8 +50,6 @@ class VideoPage extends Component {
       selectedForUploads: [],
       groupRecords: [],
       archivedVideos: [],
-      selectedPage: null,
-      postingPages: [],
       tab: TABS.VIDEOS,
       selectedGroup: {}
     }
@@ -74,10 +65,7 @@ class VideoPage extends Component {
     this.setState({
       loading: true
     })
-    let loadFunc = null
-    if (this.state.tab === TABS.VIDEOS) loadFunc = getSessionVideos
-    if (this.state.tab === TABS.ARCHIVED) loadFunc = getArchivedSessionVideos
-    const videos = await loadFunc(this.session_id)
+    const videos = await getPageVideos(this.page_id, this.state.tab === TABS.ARCHIVED)
     let groups = [], gidx = {}, idx = 0
     videos.forEach(video => {
       let groupName = video.group ? video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',') : 'Unknown'
@@ -92,6 +80,7 @@ class VideoPage extends Component {
         groups[gidx[groupName]] = {
           _id: video.group._id,
           name: groupName,
+          order: video.group.order,
           idx,
           url: video.url,
           thumbnail: video.group.thumbnail || video.thumbnail,
@@ -101,6 +90,7 @@ class VideoPage extends Component {
       }
       groups[gidx[groupName]].videos.push(video)
     })
+    groups = groups.sort((g1, g2) => g1.order - g2.order)
     this.setState({
       videos,
       groups,
@@ -108,16 +98,8 @@ class VideoPage extends Component {
     })
   }
 
-  loadPostingPages = async () => {
-    const pages = await getPagesByStudio(this.state.studio._id)
-    this.setState({
-      postingPages: pages,
-      selectedPage: (pages[0] || {})._id
-    })
-  }
-
   downloadAllVideos = () => {
-    const { selectedForUploads, session } = this.state
+    const { selectedForUploads, page } = this.state
     const email = window.prompt(
       `You are downloading ${selectedForUploads.length} videos.\nSpecify your email address to get download link`,
       window.localStorage.getItem('email')
@@ -125,7 +107,7 @@ class VideoPage extends Component {
     if (!email) {
       return
     }
-    createZipAndSendMail(selectedForUploads, session.name, email)
+    createZipAndSendMail(selectedForUploads, page.name, email)
       .then(() => {
         alert(`You will get an email with the download link once the archive is completed`)
         this.setState({
@@ -194,43 +176,49 @@ class VideoPage extends Component {
   }
 
   handleArchiveVideo = async (video_id, archive) => {
-    await updateVideo(video_id, { is_archived: archive })
+    await updatePostingVideo(video_id, { is_archived: archive })
+    this.loadVideos()
+  }
+
+  handleGroupArchive = async (video_ids, archive) => {
+    await updatePostingManyVideo(video_ids, { is_archived: archive })
     this.loadVideos()
   }
 
   handleVideoDelete = async (video_id) => {
     const result = window.confirm(`Are you sure?`)
     if (result) {
-      await deleteVideo(video_id)
+      await deletePageVideo(video_id)
       this.loadVideos()
     }
-  }
-
-  handleGroupArchive = async (video_ids, archive) => {
-    await updateManyVideo(video_ids, { is_archived: archive })
-    this.loadVideos()
   }
 
   uploadNewVideo = async (file) => {
     this.setState({ loading: true })
     const activeGroup = this.state.groups[this.state.activeGidx]
-    await uploadNewVideo(file, this.session_id, activeGroup._id)
+    await uploadNewPostingVideo(file, this.session_id, activeGroup._id)
+    this.loadVideos()
+  }
+
+  updateGroupOrder = async (orderdGroup) => {
+    this.setState({ loading: true })
+    await updatePostingGroupOrder(orderdGroup.map(g => g._id))
     this.loadVideos()
   }
 
   async componentDidMount() {
     this.setCount()
-    this.session_id = this.props.match.params.session_id
+    this.page_id = this.props.match.params.postingpage_id
     const studio_uri = this.props.match.params.uri
     const studio = await getStudioByUri(studio_uri)
-    const session = await getOneSession(this.session_id)
+    const page = await getOnePage(this.page_id)
 
     if (!studio) { return }
-    document.title = `${studio.name} Video Review`;
+    document.title = `${studio.name} - ${page.name} Posting Page`;
     this.props.setLogo(studio.logo)
     this.setState({
       studio,
-      session
+      page
     }, async () => {
       await this.loadVideos()
     })
@@ -263,36 +251,19 @@ class VideoPage extends Component {
     }
   }
 
-  handleGroupsCopy = async () => {
-    this.setState({ loading: true })
-    const { selectedPage } = this.state
-    const selectedGroups = this.state.groups.filter((group, idx) => this.groupSelectedForDownload(idx))
-    await Promise.all(selectedGroups.map(async group => {
-      await copyGroupFromSession(group._id, selectedPage)
-    }))
-    this.setState({
-      loading: false,
-      showPageCopyModal: false
-    })
-  }
-
   render() {
     const {
       studio,
       tab,
-      session,
+      page,
       groups,
       countPerRow,
       activeItem,
       activeRidx,
       activeGidx,
-      videoDates,
-      groupRecords,
       selectedForUploads,
-      selectedGroup,
-      selectedPage,
-      showPageCopyModal,
-      postingPages
+      groupRecords,
+      selectedGroup
     } = this.state
 
     let rows = []
@@ -321,36 +292,21 @@ class VideoPage extends Component {
           </div>
           <h2 style={{textAlign: "center"}} className="mb-0">
             {studio.name}<br/>
-            <small><small>{session.name} Video review</small></small>
+            <small><small>{page.name} Video review</small></small>
           </h2>
           <div className="d-flex align-items-center download-selected">
-            <select
-              className="mr-2 d-none"
-              value={this.state.date}
-              onChange={(ev) => this.handleDateChange(new Date(ev.target.value))}
-            >
-              <option>---</option>
-              {videoDates.map(date => <option key={date} value={date}>{date}</option>)}
-            </select>
-            {selectedForUploads.length > 0 && [
-              <label
-                key="0"
-                className="ml-2 mb-0 btn btn-primary"
-                onClick={async () => {
-                  await this.loadPostingPages()
-                  this.setState({
-                    showPageCopyModal: true
-                  })
-                }}
-              >
-                <FaCopy className="mr-2 mt-n1"/>
-                Copy to Posting page
-              </label>,
+            {tab === TABS.VIDEOS && (
+              <GroupSorter
+                groups={groups}
+                update={this.updateGroupOrder}
+              />
+            )}
+            {selectedForUploads.length > 0 && (
               <label key="1" className="ml-2 mb-0 btn btn-primary" onClick={() => this.downloadAllVideos()} >
                 <FaDownload className="mr-2 mt-n1"/>
                 Download Selected
               </label>
-            ]}
+            )}
           </div>
         </div>
         <ul className="nav nav-tabs mt-2 border-bottom-0">
@@ -391,6 +347,9 @@ class VideoPage extends Component {
                           width: itemWidth
                         }}
                       >
+                        <div className="order-indicator">
+                          {group.order}
+                        </div>
                         <div
                           className="preview-wrapper"
                           onClick={() => {
@@ -593,7 +552,7 @@ class VideoPage extends Component {
               disabled={selectedGroup && !selectedGroup.name}
               className="btn btn-primary"
               onClick={async () => {
-                await updateGroup(selectedGroup._id, selectedGroup)
+                await updatePostingGroup(selectedGroup._id, selectedGroup)
                 this.setState({
                   selectedGroup: {}
                 })
@@ -604,228 +563,9 @@ class VideoPage extends Component {
             </button>
           </Modal.Footer>
         </Modal>
-        <Modal
-          show={showPageCopyModal}
-          onHide={() => {
-            this.setState({
-              showPageCopyModal: false
-            })
-          }}
-        >
-          <Modal.Header closeButton>
-            <h5 className="mb-0">
-              Copy selected group
-            </h5>
-          </Modal.Header>
-          <Modal.Body>
-            <select
-              className="form-control"
-              value={selectedPage}
-              onChange={ev => {
-                this.setState({
-                  selectedPage: ev.target.value
-                })
-              }}
-            >
-              {postingPages.map(page => (
-                <option key={page._id} value={page._id}>
-                  {page.name}
-                </option>
-              ))}
-            </select>
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              disabled={!selectedPage}
-              className="btn btn-primary"
-              onClick={this.handleGroupsCopy}
-            >
-              Submit
-            </button>
-          </Modal.Footer>
-        </Modal>
       </div>
     )
   }
 }
 
-
-const PersonCard = ({
-  _id,
-  first_name,
-  last_name,
-  email,
-  phone,
-  skipped,
-  seen
-}) => {
-  const [showContact, setShowContact] = useState(false)
-  const [record, setRecord] = useState({})
-  const [commentsVisible, setCommentsVisible] = useState(false)
-  const [content, setContent] = useState('')
-  const [recordCache, setRecordCache] = useState({})
-
-  const commentorIds = (record.comments || []).map(comment => comment.by)
-
-  const commentorDetector = JSON.stringify(commentorIds)
-  console.log('commentorDetector: ', commentorDetector);
-
-  const fetchData = () => {
-    getOneRecord(_id).then(data => {
-      setRecord(data)
-    })
-  }
-
-  useEffect(() => {
-    let cache = { ...recordCache }
-    Promise.all(commentorIds.map(async id => {
-      if (!recordCache[id] && !cache[id]) {
-        const r = await getUserById(id)
-        cache[id] = r
-      }
-    })).then(() => {
-      console.log('cache: ', cache);
-      setRecordCache(cache)
-    })
-  }, [commentorDetector])
-
-  useEffect(() => {
-    fetchData()
-    if (VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
-      setInterval(fetchData, 5000)
-    }
-  }, [])
-
-  const myFeedback = (record.feedbacks || {})[user.id]
-
-  const setMyFeedback = async (feedback) => {
-    await setFeedback(_id, feedback)
-    fetchData()
-  }
-
-  const addNewComment = async () => {
-    await newComment(_id, content)
-    setContent('')
-    fetchData()
-  }
-
-  const activeClass = (feedback) => {
-    if (myFeedback === feedback) {
-      return 'active'
-    }
-  }
-
-  let MyFeedbackIcon = null
-
-  if (VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
-    switch(myFeedback) {
-      case 'yes':
-        MyFeedbackIcon = <FaCheck className="text-success" />
-        break
-      case 'no':
-        MyFeedbackIcon = <FaTimes className="text-danger" />
-        break
-      case 'maybe':
-        MyFeedbackIcon = <FaQuestion className="" />
-        break
-    }
-  }
-
-  let feedbackCounts = {
-    yes: 0,
-    no: 0,
-    maybe: 0
-  }
-
-  Object.values((record.feedbacks || {})).forEach(value => {
-    if (isNaN(feedbackCounts[value])) {
-      return
-    }
-    feedbackCounts[value] ++
-  })
-
-  return (
-    <div className="card px-4 py-1">
-      <div className="card-body px-0">
-        <h5 className="card-title d-flex mb-2">
-          {first_name} {last_name}
-          {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
-          <span className="ml-auto">
-            {MyFeedbackIcon}
-          </span>
-        </h5>
-        <label onClick={() => setShowContact(!showContact)}>Contact</label>
-        {showContact &&
-        <div className="mb-3">
-          <p className="card-text mb-1">P: <small>{phone}</small></p>
-          <p className="card-text mb-1">E: <small>{email}</small></p>
-        </div>}
-        {VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
-          <div className="d-flex align-items-center">
-            <div className={"feedback-item " + activeClass('yes')} onClick={() => {
-              setMyFeedback('yes')
-            }}>
-              <FaCheck className={"text-success "} />
-              <span>{feedbackCounts['yes']}</span>
-            </div>
-            <div className={"feedback-item " + activeClass('no')} onClick={() => {
-              setMyFeedback('no')
-            }}>
-              <FaTimes className={"text-danger "} />
-              <span>{feedbackCounts['no']}</span>
-            </div>
-            <div className={"feedback-item " + activeClass('maybe')} onClick={() => {
-              setMyFeedback('maybe')
-            }}>
-              <FaQuestion className={""} />
-              <span>{feedbackCounts['maybe']}</span>
-            </div>
-            <div className="commentor" onClick={() => setCommentsVisible(true)}>
-              <FaComment className="ml-5" />
-              <span className="ml-1">{(record.comments || []).length}</span>
-            </div>
-          </div>
-        )}
-      </div>
-      {VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
-        <Modal
-          show={commentsVisible}
-          onHide={() => setCommentsVisible(false)}
-        >
-          <Modal.Header closeButton>
-            <h5>Comments</h5>
-          </Modal.Header>
-          <Modal.Body>
-            {(record.comments || []).map(comment => (
-              <div>
-                <label>{(recordCache[comment.by] || {}).email || comment.by}</label>
-                <p>{comment.content}</p>
-              </div>
-            ))}
-            {(record.comments || []).length === 0 && (
-              <div>
-                No comments yet.
-              </div>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <textarea
-              className="form-control"
-              value={content}
-              onChange={ev => setContent(ev.target.value)}
-            ></textarea>
-            <button
-              className="btn btn-danger"
-              onClick={addNewComment}
-              disabled={!content}
-            >
-              Comment
-            </button>
-          </Modal.Footer>
-        </Modal>
-      )}
-    </div>
-  )
-}
-
-export default VideoPage
+export default PostingPage

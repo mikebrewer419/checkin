@@ -1,5 +1,4 @@
 import { api_host, token } from './index'
-import { getUser } from './auth'
 
 export const getStudioSessions = async (studio_id) => {
   const resp = await fetch(`${api_host}/sessions/by-studio/${studio_id}`, {
@@ -7,6 +6,18 @@ export const getStudioSessions = async (studio_id) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
+  })
+  return await resp.json()
+}
+
+export const getSessionsByStudios = async (studio_ids) => {
+  const resp = await fetch(`${api_host}/sessions/by-studios`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({studio_ids})
   })
   return await resp.json()
 }
