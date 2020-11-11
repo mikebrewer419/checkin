@@ -272,7 +272,8 @@ class VideoPage extends Component {
     }))
     this.setState({
       loading: false,
-      showPageCopyModal: false
+      showPageCopyModal: false,
+      selectedForUploads: []
     })
   }
 
