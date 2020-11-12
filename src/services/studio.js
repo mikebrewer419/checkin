@@ -114,7 +114,8 @@ export const sendMessage = async (message, studio_id, record_id = '') => {
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify({
-      ...message,
+      to: message.to,
+      body: message.body + ' *Do Not Reply*',
       record_id
     })
   })

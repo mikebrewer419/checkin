@@ -89,7 +89,7 @@ const Onboard = () => {
   let time = moment().startOf('day')
   const endDayTime = moment().endOf('day')
   while (true) {
-    time = time.add(30, 'minutes')
+    time = time.add(5, 'minutes')
     if (endDayTime.diff(time) < 0) {
       break
     }
