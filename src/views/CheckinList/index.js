@@ -120,7 +120,7 @@ class List extends Component {
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id) + 1
       for(let i = 1; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].skipped) {
+        if (!vm.state.candidates[idx].skipped && !!this.messages[i]) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
@@ -146,7 +146,7 @@ class List extends Component {
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
       for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].skipped || i === 0) {
+        if ((!vm.state.candidates[idx].skipped || i === 0) && !!this.messages[i]) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
@@ -184,7 +184,7 @@ class List extends Component {
             i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length
             && removedIdx <= idx;
             i ++, idx ++) {
-          if (!vm.state.candidates[idx].skipped) {
+          if (!vm.state.candidates[idx].skipped && !!this.messages[i]) {
             sendMessage({
               to: vm.state.candidates[idx].phone,
               body: this.messages[i]
