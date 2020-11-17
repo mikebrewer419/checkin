@@ -119,7 +119,7 @@ class List extends Component {
       skipped: true
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id) + 1
-      for(let i = 1; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
+      for(let i = 1; i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
         if (!vm.state.candidates[idx].skipped && !!this.messages[i]) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
@@ -145,7 +145,7 @@ class List extends Component {
       call_in_time: new Date().toISOString()
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
-      for(let i = 0; i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
+      for(let i = 0; i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
         if ((!vm.state.candidates[idx].skipped || i === 0) && !!this.messages[i]) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
@@ -181,7 +181,7 @@ class List extends Component {
         }
         let idx = vm.state.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.state.candidates.length
         for(let i = 1;
-            i < 2 && vm.state.candidates[idx] && idx < vm.state.candidates.length
+            i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length
             && removedIdx <= idx;
             i ++, idx ++) {
           if (!vm.state.candidates[idx].skipped && !!this.messages[i]) {
