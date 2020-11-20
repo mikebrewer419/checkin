@@ -432,11 +432,14 @@ class PostingPage extends Component {
                         </div>
                       </div>
                     ): null}
-                    <div className="d-flex align-items-start group-videos-wrapper py-2">
-                      {activeGroup.videos.map(video => {
+                    <div
+                      key={activeGidx}
+                      className="d-flex align-items-start group-videos-wrapper py-2"
+                    >
+                      {activeGroup.videos.map((video, idx) => {
                         return (
                           <div
-                            key={video.uri}
+                            key={video.uri+idx}
                             className={`mx-0 mb-2  mr-2 item ${activeItem.uri === video.uri? 'active': ''}`}
                           >
                             <div
