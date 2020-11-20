@@ -17,6 +17,8 @@ const Onboard = () => {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [sagNumber, setSagNumber] = useState('')
   const [showAlert, setShowAlert] = useState(false)
+  const [showMessage, setShowMessage] = useState(false)
+  const [apiResult, setApiResult] = useState({})
   const { match } = useReactRouter();
   const studio_uri = match.params.uri
   const session_id = match.params.session_id
@@ -55,9 +57,12 @@ const Onboard = () => {
       interview_no: interviewNo,
       role: role
     }).then(result => {
-    console.log("onSubmjit -> result", result)
+      console.log("onSubmjit -> result", result)
+      setApiResult(result)
       if (result.record && result.record._id) {
         setShowAlert(true)
+      } else {
+        setShowMessage(true)
       }
     })
   }
@@ -67,6 +72,14 @@ const Onboard = () => {
   }
   if (!session) {
     return <div>No Session found</div>
+  }
+
+  if (showMessage) {
+    return (
+      <div className="alert">
+        {(apiResult || {}).message || 'Process finished.'}
+      </div>
+    )
   }
 
   if (showAlert) {
