@@ -61,7 +61,7 @@ class PostingPage extends Component {
     })
   }
 
-  loadVideos = async () => {
+  loadVideos = async (stopLoading = true) => {
     this.setState({
       loading: true
     })
@@ -95,7 +95,7 @@ class PostingPage extends Component {
     this.setState({
       videos,
       groups,
-      loading: false
+      loading: !stopLoading
     })
   }
 
@@ -183,10 +183,11 @@ class PostingPage extends Component {
 
   handleGroupArchive = async (video_ids, archive) => {
     await updatePostingManyVideo(video_ids, { is_archived: archive })
-    await this.loadVideos()
-    setTimeout(() => {
+    await this.loadVideos(false)
+    setTimeout(async () => {
       const { groups } = this.state
-      updatePostingGroupOrder(groups.map(g => g._id))
+      await updatePostingGroupOrder(groups.map(g => g._id))
+      await this.loadVideos()
     }, 100)
   }
 
