@@ -61,7 +61,7 @@ class PostingPage extends Component {
     })
   }
 
-  loadVideos = async (stopLoading = true) => {
+  loadVideos = async () => {
     this.setState({
       loading: true
     })
@@ -91,11 +91,22 @@ class PostingPage extends Component {
       groups[gidx[groupName]].videos.push(video)
     })
     groups = groups.sort((g1, g2) => g1.order - g2.order)
-    groups.forEach((g, idx) => groups[idx].idx = idx)
+    let needReorder = false
+    let gids = []
+    groups.forEach((g, idx) => {
+      groups[idx].idx = idx
+      gids.push(g._id)
+      if (g.order !== idx + 1) {
+        needReorder = true
+      }
+    })
+    if (needReorder) {
+      await updatePostingGroupOrder(gids)
+    }
     this.setState({
       videos,
       groups,
-      loading: !stopLoading
+      loading: false
     })
   }
 
@@ -183,12 +194,7 @@ class PostingPage extends Component {
 
   handleGroupArchive = async (video_ids, archive) => {
     await updatePostingManyVideo(video_ids, { is_archived: archive })
-    await this.loadVideos(false)
-    setTimeout(async () => {
-      const { groups } = this.state
-      await updatePostingGroupOrder(groups.map(g => g._id))
-      await this.loadVideos()
-    }, 100)
+    await this.loadVideos()
   }
 
   handleVideoDelete = async (video_id) => {
@@ -357,9 +363,11 @@ class PostingPage extends Component {
                           width: itemWidth
                         }}
                       >
-                        <div className="order-indicator">
-                          {group.order}
-                        </div>
+                        {toArchive && (
+                          <div className="order-indicator">
+                            {group.order}
+                          </div>
+                        )}
                         <div
                           className="preview-wrapper"
                           onClick={() => {
