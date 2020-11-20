@@ -233,7 +233,11 @@ class PostingPage extends Component {
       setTimeout(() => {
         const video = document.querySelector('#active-player video')
         if (video) {
-          video.play()
+          try {
+            video.play()
+          } catch (err) {
+            console.log("Video play interrupted.")
+          }
           video.addEventListener('ended', () => {
             const activeGroup = this.state.groups[this.state.activeGidx]
             const currentTabVideos = activeGroup.videos
