@@ -183,7 +183,11 @@ class PostingPage extends Component {
 
   handleGroupArchive = async (video_ids, archive) => {
     await updatePostingManyVideo(video_ids, { is_archived: archive })
-    this.loadVideos()
+    await this.loadVideos()
+    setTimeout(() => {
+      const { groups } = this.state
+      updatePostingGroupOrder(groups.map(g => g._id))
+    }, 100)
   }
 
   handleVideoDelete = async (video_id) => {
