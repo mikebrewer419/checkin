@@ -61,7 +61,7 @@ class PostingPage extends Component {
     })
   }
 
-  loadVideos = async () => {
+  loadVideos = async (preventRepeat = false) => {
     this.setState({
       loading: true
     })
@@ -100,14 +100,16 @@ class PostingPage extends Component {
         needReorder = true
       }
     })
-    if (needReorder) {
+    if (!preventRepeat && needReorder) {
       await updatePostingGroupOrder(gids)
+      await this.loadVideos(true)
+    } else {
+      this.setState({
+        videos,
+        groups,
+        loading: false
+      })
     }
-    this.setState({
-      videos,
-      groups,
-      loading: false
-    })
   }
 
   downloadAllVideos = () => {
