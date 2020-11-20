@@ -91,6 +91,7 @@ class PostingPage extends Component {
       groups[gidx[groupName]].videos.push(video)
     })
     groups = groups.sort((g1, g2) => g1.order - g2.order)
+    groups.forEach((g, idx) => groups[idx].idx = idx)
     this.setState({
       videos,
       groups,
