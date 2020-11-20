@@ -267,9 +267,10 @@ class VideoPage extends Component {
     this.setState({ loading: true })
     const { selectedPage } = this.state
     const selectedGroups = this.state.groups.filter((group, idx) => this.groupSelectedForDownload(idx))
-    await Promise.all(selectedGroups.map(async group => {
+    for (let i = 0; i < selectedGroups.length; i ++) {
+      const group = selectedGroups[i]
       await copyGroupFromSession(group._id, selectedPage)
-    }))
+    }
     this.setState({
       loading: false,
       showPageCopyModal: false,
