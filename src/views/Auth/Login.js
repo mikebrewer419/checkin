@@ -1,9 +1,27 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { loginApi } from '../../services'
 import './Login.scss'
 
-const Login = ({ onSubmit, error }) => {
+const Login = () => {
   const [email, setEmail] = useState('')
+  const [error, setError] = useState('')
   const [password, setPassword] = useState('')
+
+  const doLogin = (email, password) => {
+    loginApi(email, password)
+      .then(() => {
+        const pUrl = window.localStorage.getItem('prev_url')
+        if (pUrl) {
+          window.localStorage.removeItem('prev_url')
+          window.location.href = pUrl
+        } else {
+          window.location.href = '/'
+        }
+      }, (error) => {
+        setError(error)
+      })
+  }
 
   useEffect(() => {
     document.title = `Check In | Login`;
@@ -48,11 +66,14 @@ const Login = ({ onSubmit, error }) => {
         <button
           type="submit"
           className="btn btn-danger"
-          onClick={() => onSubmit(email, password)}
+          onClick={() => doLogin(email, password)}
         >LOG IN</button>
         <div className="form-group d-flex justify-content-between mt-2">
           <a className="font-weight-bold" href="#">Reset my password</a>
-          <a className="font-weight-bold" href="#">Create Account</a>
+          <Link
+            to="/register"
+            className="font-weight-bold" href="#"
+          >Create Account</Link>
         </div>
       </div>
     </div>

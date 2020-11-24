@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import './App.scss'
-import { loginApi, verityToken, getUser, super_admins } from './services'
+import { verityToken, getUser, super_admins } from './services'
 import Login from './views/Auth/Login'
+import Register from './views/Auth/Register'
 import HomePage from './views/HomePage'
 import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
@@ -16,7 +17,6 @@ import Header from './components/Header'
 import { USER_TYPES } from './constants';
 
 function App() {
-  const [error, setError] = useState('')
   const [logo, setLogo] = useState('')
   const [email, setEmail] = useState({})
 
@@ -53,21 +53,6 @@ function App() {
     })
   }, [])
 
-  const doLogin = (email, password) => {
-    loginApi(email, password)
-      .then(() => {
-        const pUrl = window.localStorage.getItem('prev_url')
-        if (pUrl) {
-          window.localStorage.removeItem('prev_url')
-          window.location.href = pUrl
-        } else {
-          window.location.href = '/'
-        }
-      }, (error) => {
-        setError(error)
-      })
-  }
-
   return (
     <IconContext.Provider value={{ className: "global-class-name" }}>
       <div className={`loading`}>
@@ -76,10 +61,8 @@ function App() {
       <Router>
         <Header logo={logo} />
         <Switch>
-          <Route path="/login" component={() => <Login
-            onSubmit={doLogin}
-            error={error}
-          />} exact />
+          <Route path="/login" component={() => <Login />} exact />
+          <Route path="/register" component={() => <Register />} exact />
           {super_admins.includes(email) &&
             <Route path="/heyjoe-admin" component={AdminView} />
           }
