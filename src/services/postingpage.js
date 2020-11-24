@@ -115,10 +115,10 @@ export const getPageVideos = async (page_id, is_archived = false) => {
   return await resp.json()
 }
 
-export const uploadNewPostingVideo = async (file, session_id, group) => {
+export const uploadNewPostingVideo = async (file, postingpage, group) => {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('session', session_id)
+  formData.append('postingpage', postingpage)
   formData.append('group', group)
   const resp = await fetch(`${api_host}/postingpage/upload-video`, {
     method: 'POST',
