@@ -210,7 +210,7 @@ class PostingPage extends Component {
   uploadNewVideo = async (file) => {
     this.setState({ loading: true })
     const activeGroup = this.state.groups[this.state.activeGidx]
-    await uploadNewPostingVideo(file, this.postingpage_id, activeGroup._id)
+    await uploadNewPostingVideo(file, this.page_id, activeGroup._id)
     this.loadVideos()
   }
 
