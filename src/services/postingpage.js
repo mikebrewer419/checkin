@@ -120,7 +120,7 @@ export const uploadNewPostingVideo = async (file, session_id, group) => {
   formData.append('file', file)
   formData.append('session', session_id)
   formData.append('group', group)
-  const resp = await fetch(`${api_host}/videos/upload-video`, {
+  const resp = await fetch(`${api_host}/postingpage/upload-video`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -134,7 +134,7 @@ export const updatePostingGroup = async (id, data) => {
   const formData = new FormData()
   if (data.name) formData.append('name', data.name)
   if (data.thumbnail) formData.append('thumbnail', data.thumbnail)
-  const resp = await fetch(`${api_host}/records/group/${id}`, {
+  const resp = await fetch(`${api_host}/postingpage/group/${id}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
