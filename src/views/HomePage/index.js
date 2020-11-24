@@ -48,7 +48,8 @@ class HomePage extends Component {
 
     this.setState({ studio, session })
 
-    document.title = `${studio.name} Video Chat`;
+    const pageTitle = this.state.testMode ? 'Virtual Lobby' : 'Video Chat'
+    document.title = `${studio.name} ${pageTitle}`;
 
     await createCometRoom(studio._id, session._id)
 
