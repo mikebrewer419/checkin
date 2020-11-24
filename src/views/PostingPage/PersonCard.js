@@ -8,7 +8,7 @@ import {
   getUser,
   newComment
 } from '../../services'
-import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
+import { POSTINGPAGE_PERMISSIONS, USER_TYPE } from '../../constants'
 
 const user = getUser()
 
@@ -53,7 +53,7 @@ const PersonCard = ({
 
   useEffect(() => {
     fetchData()
-    if (VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
+    if (POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
       setInterval(fetchData, 5000)
     }
   }, [])
@@ -79,7 +79,7 @@ const PersonCard = ({
 
   let MyFeedbackIcon = null
 
-  if (VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
+  if (POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
     switch(myFeedback) {
       case 'yes':
         MyFeedbackIcon = <FaCheck className="text-success" />
@@ -122,7 +122,7 @@ const PersonCard = ({
           <p className="card-text mb-1">P: <small>{phone}</small></p>
           <p className="card-text mb-1">E: <small>{email}</small></p>
         </div>}
-        {VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
+        {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
           <div className="d-flex align-items-center">
             <div className={"feedback-item " + activeClass('yes')} onClick={() => {
               setMyFeedback('yes')
@@ -149,7 +149,7 @@ const PersonCard = ({
           </div>
         )}
       </div>
-      {VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
+      {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
         <Modal
           show={commentsVisible}
           onHide={() => setCommentsVisible(false)}

@@ -21,7 +21,7 @@ import ReactPlayer from 'react-player'
 import PersonCard from './PersonCard'
 import GroupSorter from './GroupSorter'
 import { saveAs } from 'file-saver'
-import { VIDEO_REVIEW_PERMISSIONS } from '../../constants'
+import { POSTINGPAGE_PERMISSIONS } from '../../constants'
 
 const itemWidth = 250
 const thumbWidth = 150
@@ -75,9 +75,9 @@ class PostingPage extends Component {
       if (video.group.name && !video.group.name.includes('reserved field')) {
         groupName = video.group.name
       }
-      if (isNaN(gidx[groupName])) {
-        gidx[groupName] = idx
-        groups[gidx[groupName]] = {
+      if (isNaN(gidx[video.group._id])) {
+        gidx[video.group._id] = idx
+        groups[gidx[video.group._id]] = {
           _id: video.group._id,
           name: groupName,
           order: video.group.order,
@@ -88,7 +88,7 @@ class PostingPage extends Component {
         }
         idx ++
       }
-      groups[gidx[groupName]].videos.push(video)
+      groups[gidx[video.group._id]].videos.push(video)
     })
     groups = groups.sort((g1, g2) => g1.order - g2.order)
     let needReorder = false
@@ -313,7 +313,7 @@ class PostingPage extends Component {
             <small><small>{page.name} Video review</small></small>
           </h2>
           <div className="d-flex align-items-center download-selected">
-            {tab === TABS.VIDEOS && (
+            {tab === TABS.VIDEOS && POSTINGPAGE_PERMISSIONS.CAN_SORT_GROUPS() && (
               <GroupSorter
                 groups={groups}
                 update={this.updateGroupOrder}
@@ -337,7 +337,7 @@ class PostingPage extends Component {
               Videos
             </a>
           </li>
-          {VIDEO_REVIEW_PERMISSIONS.CAN_VIEW_ARCHIVE() &&
+          {POSTINGPAGE_PERMISSIONS.CAN_VIEW_ARCHIVE() &&
           <li className="nav-item">
             <a
               className={`nav-link h5 mb-0 ${tab === TABS.ARCHIVED ?'active':'text-danger'}`}
@@ -393,7 +393,7 @@ class PostingPage extends Component {
                             onChange={(ev) => this.toggleGroupSelectedForDownload(group.idx, ev.target.checked) }
                           />
                           <div>{group.name}</div>
-                          {VIDEO_REVIEW_PERMISSIONS.CAN_UPDATE_GROUP() && group._id &&
+                          {POSTINGPAGE_PERMISSIONS.CAN_UPDATE_GROUP() && group._id &&
                           <label
                             className="mb-0 ml-2"
                             onClick={ev => {
@@ -406,7 +406,7 @@ class PostingPage extends Component {
                           >
                             <FaPenAlt />
                           </label>}
-                          {VIDEO_REVIEW_PERMISSIONS.CAN_ARCHIVE() &&
+                          {POSTINGPAGE_PERMISSIONS.CAN_ARCHIVE() &&
                           <label
                             className="mb-0 ml-auto"
                             onClick={() => {
@@ -476,7 +476,7 @@ class PostingPage extends Component {
                                 />
                               </div>
                               <div className="d-flex">
-                                {VIDEO_REVIEW_PERMISSIONS.CAN_ARCHIVE() &&
+                                {POSTINGPAGE_PERMISSIONS.CAN_ARCHIVE() &&
                                 <label
                                   className="mb-0 ml-2"
                                   onClick={() => {
@@ -500,7 +500,7 @@ class PostingPage extends Component {
                           </div>
                         )
                       })}
-                      {tab !== TABS.ARCHIVED && VIDEO_REVIEW_PERMISSIONS.CAN_ADD_VIDEO() && (
+                      {tab !== TABS.ARCHIVED && POSTINGPAGE_PERMISSIONS.CAN_ADD_VIDEO() && (
                         <div
                           style={{
                             width: thumbWidth,

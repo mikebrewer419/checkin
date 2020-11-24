@@ -87,9 +87,9 @@ class VideoPage extends Component {
       if (video.group.name && !video.group.name.includes('reserved field')) {
         groupName = video.group.name
       }
-      if (isNaN(gidx[groupName])) {
-        gidx[groupName] = idx
-        groups[gidx[groupName]] = {
+      if (isNaN(gidx[video.group._id])) {
+        gidx[video.group._id] = idx
+        groups[gidx[video.group._id]] = {
           _id: video.group._id,
           name: groupName,
           idx,
@@ -99,7 +99,7 @@ class VideoPage extends Component {
         }
         idx ++
       }
-      groups[gidx[groupName]].videos.push(video)
+      groups[gidx[video.group._id]].videos.push(video)
     })
     this.setState({
       videos,
