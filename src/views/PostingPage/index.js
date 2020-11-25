@@ -376,13 +376,9 @@ class PostingPage extends Component {
                             this.handleGroupItemClick(ridx, group.idx)
                           }}
                         >
-                          <ReactPlayer
-                            light={`${static_root}${group.thumbnail}`}
-                            controls={false}
-                            url={group.url}
+                          <img
                             className="dummy-player"
-                            width='100%'
-                            height='100%'
+                            src={`${static_root}${group.thumbnail}`}
                           />
                         </div>
                         <div className="d-flex">
@@ -466,13 +462,9 @@ class PostingPage extends Component {
                                 className="preview-wrapper"
                                 onClick={() => this.setState({ activeItem: video })}
                               >
-                                <ReactPlayer
-                                  light={`${static_root}${video.thumbnail}`}
-                                  controls={false}
-                                  url={video.url}
+                                <img
                                   className="dummy-player dummy-video"
-                                  width="100%"
-                                  height="100%"
+                                  src={`${static_root}${video.thumbnail}`}
                                 />
                               </div>
                               <div className="d-flex">
