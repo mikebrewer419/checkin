@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { register } from '../../services'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { register, verifyCaptcha } from '../../services'
 import { USER_TYPES } from '../../constants'
 import './Login.scss'
 
@@ -11,6 +12,7 @@ const Register = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('')
 
   const [formError, setFormError] = useState('')
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   useEffect(() => {
     document.title = `Check In | Register`;
@@ -38,10 +40,18 @@ const Register = () => {
   }
 
   const doRegister = async (email, password) => {
+    const token = await executeRecaptcha()
+    console.log('token: ', token)
+
     const formData = new FormData()
     formData.append('email', email)
     formData.append('password', password)
     formData.append('user_type', USER_TYPES.CLIENT)
+    const captchaVerifyResponse = await verifyCaptcha(token)
+    if (!captchaVerifyResponse.success) {
+      setError('Captcha verfication failed. Refresh your browser and try again!')
+      return
+    }
     const response = await register(formData)
     if (response._id) {
       window.location.href='/login'

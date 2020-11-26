@@ -96,3 +96,12 @@ export const updateUserFields = async (id, formData) => {
   })
   return await resp.json()
 }
+
+export const verifyCaptcha = async (token) => {
+  const resp = await fetch(`${api_host}/auth/captcha-verify/${token}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}

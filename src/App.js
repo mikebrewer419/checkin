@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { IconContext } from "react-icons";
-import './App.scss'
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { verityToken, getUser, super_admins } from './services'
 import Login from './views/Auth/Login'
 import Register from './views/Auth/Register'
@@ -14,7 +14,9 @@ import StudioList from './views/studio/list'
 import SessionList from './views/Sessions'
 import AdminView from './views/Admin'
 import Header from './components/Header'
-import { USER_TYPES } from './constants';
+import { USER_TYPES } from './constants'
+
+import './App.scss'
 
 function App() {
   const [logo, setLogo] = useState('')
@@ -53,28 +55,32 @@ function App() {
     })
   }, [])
 
+  const recaptchaKey = process.env.REACT_APP_RECAPTCHA_KEY
+
   return (
-    <IconContext.Provider value={{ className: "global-class-name" }}>
-      <div className={`loading`}>
-        Processing...
-      </div>
-      <Router>
-        <Header logo={logo} />
-        <Switch>
-          <Route path="/login" component={() => <Login />} exact />
-          <Route path="/register" component={() => <Register />} exact />
-          {super_admins.includes(email) &&
-            <Route path="/heyjoe-admin" component={AdminView} />
-          }
-          <Route path="/message/:record_id" component={RecordMessagePage} />
-          <Route path="/studio/:uri/:session_id" component={HomePage} />
-          <Route path="/onboard/:uri/:session_id" component={Onboard} />
-          <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
-          <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
-          <Route path="/" component={HomeBomponent} />
-        </Switch>
-      </Router>
-    </IconContext.Provider>
+    <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
+      <IconContext.Provider value={{ className: "global-class-name" }}>
+        <div className={`loading`}>
+          Processing...
+        </div>
+        <Router>
+          <Header logo={logo} />
+          <Switch>
+            <Route path="/login" component={() => <Login />} exact />
+            <Route path="/register" component={() => <Register />} exact />
+            {super_admins.includes(email) &&
+              <Route path="/heyjoe-admin" component={AdminView} />
+            }
+            <Route path="/message/:record_id" component={RecordMessagePage} />
+            <Route path="/studio/:uri/:session_id" component={HomePage} />
+            <Route path="/onboard/:uri/:session_id" component={Onboard} />
+            <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
+            <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
+            <Route path="/" component={HomeBomponent} />
+          </Switch>
+        </Router>
+      </IconContext.Provider>
+    </GoogleReCaptchaProvider>
   );
 }
 
