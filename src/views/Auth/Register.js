@@ -67,7 +67,11 @@ const Register = () => {
       </div>
       <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
         <h2 className=" text-center"> WELCOME!</h2>
-        <h2 className=" text-center mb-5"> REGISTER HERE. </h2>
+        <p className="text-center mb-5 description-text mt-3">
+          Use the form below to register for an account on our site.
+          This will allow you client access to Casting Sessions and Video Review pages that you have been sent the link to.<br/>
+          Are you a Casting Professional? <a target="blank" href="https://heyjoe.io/#contactus">Contact Us</a> to set up a Casting Director or Session Runner account.
+        </p>
         <div className="form-group">
           <label htmlFor="email">Email address</label>
           <input
