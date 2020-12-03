@@ -5,6 +5,7 @@ import {
   getStudioByUri,
   getOneSession,
   onboardUser,
+  uploadImage,
   static_root
 } from '../../services'
 
@@ -25,6 +26,7 @@ const Onboard = () => {
   const [studio, setStudio] = useState(null)
   const [session, setSession] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [avatar64, setAvatar64] = useState(null)
 
   const [agent, setAgent] = useState('')
   const [actualCall, setActualCall] = useState(new Date())
@@ -55,7 +57,8 @@ const Onboard = () => {
       agent: agent,
       actual_call: actualCall,
       interview_no: interviewNo,
-      role: role
+      role: role,
+      avatar: avatar64
     }).then(result => {
       console.log("onSubmjit -> result", result)
       setApiResult(result)
@@ -65,6 +68,11 @@ const Onboard = () => {
         setShowMessage(true)
       }
     })
+  }
+
+  const setAvatarImg = async (file) => {
+    const res = await uploadImage(file)
+    setAvatar64(res.name)
   }
 
   if (!studio) {
@@ -124,6 +132,16 @@ const Onboard = () => {
       <div className="wrapper">
         <div className="company-info">
           <h3>Check in to {studio.name}</h3>
+          <div className="avatar-choose">
+            <img src={avatar64 ? `${static_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
+            <input
+              type="file"
+              id="photo"
+              capture="user"
+              accept="image/*"
+              onChange={ev => setAvatarImg(ev.target.files[0])}
+            />
+          </div>
         </div>
         <div className="contact">
           <form id="contactForm" onSubmit={onSubmjit}>

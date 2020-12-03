@@ -41,6 +41,16 @@ export const onboardUser = async (fields) => {
   return await resp.json()
 }
 
+export const uploadImage = async (file) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  const resp = await fetch(`${api_host}/records/upload-image`, {
+    method: 'POST',
+    body: formData
+  })
+  return await resp.json()
+}
+
 export const removeCheckinRecord = async (id) => {
   const resp = await fetch(`${api_host}/records/${id}`, {
     method: 'DELETE',
@@ -90,7 +100,6 @@ export const updateManyRecords = async (ids, fields) => {
   })
   return await resp.json()
 }
-
 
 export const getGroupRecords = async (group_id) => {
   const resp = await fetch(`${api_host}/records/group-records/${group_id}`, {

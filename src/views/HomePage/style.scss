@@ -1,5 +1,12 @@
 @import "../../values.scss";
 
+.homepage-wrapper {
+  &.client {
+    overflow-y: auto;
+  }
+  height: calc(100vh - #{$headerheight});
+}
+
 .homepage {
   display: flex;
   height: calc(100vh - #{$headerheight});
@@ -17,9 +24,6 @@
         z-index: 1;
         background-color: rgba(255,255,255,0.7);
       }
-    }
-    #comet-chat {
-      flex: 1;
     }
     .bottom-panel {
       position: relative;
@@ -40,6 +44,13 @@
         height: 300px;
       }
       height: 80px;
+    }
+  }
+
+  #comet-chat {
+    flex: 1;
+    &.client {
+      height: 100%;
     }
   }
 

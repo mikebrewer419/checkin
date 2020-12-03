@@ -62,7 +62,7 @@ class List extends Component {
       confirmClearSession: false,
       timeOptions: []
     }
-    this.interval = 30000 // query api every 30 seconds
+    this.interval = 5000 // query api every 30 seconds
     this.messages = this.props.messages || messages
     this.deletedMessageText = this.props.delete_message || deletedMessageText
   }
@@ -363,7 +363,7 @@ class List extends Component {
               <span className="d-inline-block ml-2">Video Chat</span>
               {testMode ? (
                 <div className="d-flex justify-content-center">
-                  <span className="text-danger h5 mb-0 mt-2">Testing</span>
+                  <span className="text-danger h5 mb-0 mt-2">Virtual Lobby</span>
                 </div>
               ) : (
                 <div className="d-flex justify-content-center">

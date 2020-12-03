@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import cometInject from './comet-inject'
 import List from '../CheckinList'
+import SizeCards from './SizeCards'
 import {
   getStudioByUri,
   getOneSession,
@@ -8,6 +9,7 @@ import {
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
+import { USER_TYPE } from '../../constants'
 
 class HomePage extends Component {
   constructor(props) {
@@ -142,80 +144,94 @@ class HomePage extends Component {
       return <div>Loading...</div>
     }
     const meeting_id = testMode ? studio.test_meeting_id : studio.jitsi_meeting_id
+    const isClient = USER_TYPE.IS_CLIENT()
+    console.log('isClient: ', isClient)
     return (
-      <div className={"homepage " + (testMode ? 'test': '')}>
-        <div id="checkin-list" className={`${showList?'show':''}`}>
-          <div id="list">
-            <List
-              ref={this.setListRef}
-              testMode={testMode}
-              studio={studio}
-              session={session}
-              messages={studio.position_messages}
-              delete_message={studio.delete_message}
-              setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
-            />
-          </div>
-          <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
-            {!showList ? '〉' :'〈' }
-          </button>
-        </div>
-        <div className="right-frame">
-          <div id="jitsi-frame">
-            <button
-              id="reload-jitsi"
-              title="Reload Meeting frame"
-              onClick={this.reloadJitsi}
-            >⟳</button>
-            <iframe
-              key={jitsiKey}
-              title="Meeting"
-              width="100%"
-              height="100%"
-              id="jitsi-meeting-frame"
-              src={`https://meet.heyjoe.io/${meeting_id}`}
-              allow="microphone,camera"
-              allowFullScreen="allowfullscreen">
-            </iframe>
-          </div>
-          <div className={`d-flex bottom-panel ${showChat?'show':''}`}>
-            <button
-              className="btn border-bottom-0 toggle-bottom"
-              onClick={() => this.setshowChat(!showChat)}
-            >
-              {!showChat ? '〉' :'〈' }
-            </button>
-            {!testMode && (
-              <div>
-                <div id="current-group" className="px-2">
-                  <h6 className="mx-n2 px-2">
-                    Current Group 
-                  </h6>
-                  <ul>
-                    {groupCandidates.map(person => (
-                      <li>
-                        <div className="d-flex align-items-center">
-                          <span className="mr-5">{person.first_name} ${person.last_name}</span>
-                          <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
-                            this.leaveFromGroup(person._id)
-                          }}/>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                  {groupCandidates.length > 0 && [
-                    <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
-                      Finish Group
-                    </button>
-                  ]}
-                </div>
-              </div>
-            )}
-            <div id="comet-chat">
+      <div className={"homepage-wrapper " + (isClient ? 'client' : '')}>
+        <div className={"homepage " + (testMode ? 'test': '')}>
+          <div id="checkin-list" className={`${showList?'show':''}`}>
+            {isClient &&
+            <div id="comet-chat" className="client">
               <div id="chat"></div>
+            </div>}
+            <div
+              id="list"
+              className={isClient?'d-none':''}
+            >
+              <List
+                ref={this.setListRef}
+                testMode={testMode}
+                studio={studio}
+                session={session}
+                messages={studio.position_messages}
+                delete_message={studio.delete_message}
+                setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
+              />
+            </div>
+            <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
+              {!showList ? '〉' :'〈' }
+            </button>
+          </div>
+          <div className="right-frame">
+            <div id="jitsi-frame">
+              <button
+                id="reload-jitsi"
+                title="Reload Meeting frame"
+                onClick={this.reloadJitsi}
+              >⟳</button>
+              <iframe
+                key={jitsiKey}
+                title="Meeting"
+                width="100%"
+                height="100%"
+                id="jitsi-meeting-frame"
+                src={`https://meet.heyjoe.io/${meeting_id}`}
+                allow="microphone,camera"
+                allowFullScreen="allowfullscreen">
+              </iframe>
+            </div>
+            <div className={`d-flex bottom-panel ${showChat?'show':''}`}>
+              <button
+                className="btn border-bottom-0 toggle-bottom"
+                onClick={() => this.setshowChat(!showChat)}
+              >
+                {!showChat ? '〉' :'〈' }
+              </button>
+              {!testMode && (
+                <div>
+                  <div id="current-group" className="px-2">
+                    <h6 className="mx-n2 px-2">
+                      Current Group 
+                    </h6>
+                    <ul>
+                      {groupCandidates.map(person => (
+                        <li>
+                          <div className="d-flex align-items-center">
+                            <span className="mr-5">{person.first_name} ${person.last_name}</span>
+                            {!isClient &&
+                            <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
+                              this.leaveFromGroup(person._id)
+                            }}/>}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    {groupCandidates.length > 0 && !isClient && [
+                      <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
+                        Finish Group
+                      </button>
+                    ]}
+                  </div>
+                </div>
+              )}
+              {isClient ? null :
+              <div id="comet-chat">
+                <div id="chat"></div>
+              </div>}
             </div>
           </div>
         </div>
+        {isClient && <SizeCards session={session} />}
       </div>
     )
   }
