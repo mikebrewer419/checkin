@@ -4,11 +4,11 @@
   display: flex;
   flex-wrap: wrap;
   padding: 10px 20px;
-  border-top: 1px solid #ccc;
+  margin: auto;
+  min-width: calc(100vw - 320px);
   .card-item {
     width: 300px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin: 10px;
     border-radius: 10px;
     border: 1px solid #ccc;
     .avatar {

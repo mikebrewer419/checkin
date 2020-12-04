@@ -3,6 +3,9 @@
 .homepage-wrapper {
   &.client {
     overflow-y: auto;
+    .homepage {
+      border-bottom: 1px solid #ccc;
+    }
   }
   height: calc(100vh - #{$headerheight});
 }

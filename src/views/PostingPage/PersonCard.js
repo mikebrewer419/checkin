@@ -30,7 +30,6 @@ const PersonCard = ({
   const commentorIds = (record.comments || []).map(comment => comment.by)
 
   const commentorDetector = JSON.stringify(commentorIds)
-  console.log('commentorDetector: ', commentorDetector);
 
   const fetchData = () => {
     getOneRecord(_id).then(data => {
