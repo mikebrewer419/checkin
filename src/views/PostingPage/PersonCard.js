@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { FaCheck, FaTimes, FaQuestion, FaComment } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
+import YesIcon from '../../components/icons/yes'
+import NoIcon from '../../components/icons/no'
+import MaybeIcon from '../../components/icons/maybe'
 import { 
+  static_root,
   getOneRecord,
   getUserById,
   setFeedback,
@@ -9,6 +13,7 @@ import {
   newComment
 } from '../../services'
 import { POSTINGPAGE_PERMISSIONS, USER_TYPE } from '../../constants'
+import './personcard.scss'
 
 const user = getUser()
 
@@ -19,6 +24,8 @@ const PersonCard = ({
   email,
   phone,
   skipped,
+  avatar,
+  hideAvatar,
   seen
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -81,13 +88,13 @@ const PersonCard = ({
   if (POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
     switch(myFeedback) {
       case 'yes':
-        MyFeedbackIcon = <FaCheck className="text-success" />
+        MyFeedbackIcon = <YesIcon />
         break
       case 'no':
-        MyFeedbackIcon = <FaTimes className="text-danger" />
+        MyFeedbackIcon = <NoIcon />
         break
       case 'maybe':
-        MyFeedbackIcon = <FaQuestion className="" />
+        MyFeedbackIcon = <MaybeIcon />
         break
     }
   }
@@ -106,47 +113,55 @@ const PersonCard = ({
   })
 
   return (
-    <div className="card px-4 py-1">
+    <div className="posting-person-card card px-4 py-1">
       <div className="card-body px-0">
-        <h5 className="card-title d-flex mb-2">
-          {first_name} {last_name}
-          {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
-          <span className="ml-auto">
-            {MyFeedbackIcon}
-          </span>
-        </h5>
-        <label onClick={() => setShowContact(!showContact)}>Contact</label>
-        {showContact &&
-        <div className="mb-3">
-          <p className="card-text mb-1">P: <small>{phone}</small></p>
-          <p className="card-text mb-1">E: <small>{email}</small></p>
-        </div>}
-        {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
-          <div className="d-flex align-items-center">
-            <div className={"feedback-item " + activeClass('yes')} onClick={() => {
-              setMyFeedback('yes')
-            }}>
-              <FaCheck className={"text-success "} />
-              <span>{feedbackCounts['yes']}</span>
+        <div className="content">
+          <h5 className="card-title d-flex mb-2">
+            {first_name} {last_name}
+            {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
+            <span className="ml-auto myfeedback-icon">
+              {MyFeedbackIcon}
+            </span>
+          </h5>
+          <label onClick={() => setShowContact(!showContact)}>Contact</label>
+          {showContact &&
+          <div className="mb-3">
+            <p className="card-text mb-1">P: <small>{phone}</small></p>
+            <p className="card-text mb-1">E: <small>{email}</small></p>
+          </div>}
+          {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
+            <div className="d-flex align-items-center">
+              <div className={"feedback-item " + activeClass('yes')} onClick={() => {
+                setMyFeedback('yes')
+              }}>
+                <YesIcon />
+                <span>{feedbackCounts['yes']}</span>
+              </div>
+              <div className={"feedback-item " + activeClass('no')} onClick={() => {
+                setMyFeedback('no')
+              }}>
+                <NoIcon />
+                <span>{feedbackCounts['no']}</span>
+              </div>
+              <div className={"feedback-item " + activeClass('maybe')} onClick={() => {
+                setMyFeedback('maybe')
+              }}>
+                <MaybeIcon />
+                <span>{feedbackCounts['maybe']}</span>
+              </div>
+              <div className="commentor ml-auto" onClick={() => setCommentsVisible(true)}>
+                <FaComment className="ml-5" />
+                <span className="ml-1">{(record.comments || []).length}</span>
+              </div>
             </div>
-            <div className={"feedback-item " + activeClass('no')} onClick={() => {
-              setMyFeedback('no')
-            }}>
-              <FaTimes className={"text-danger "} />
-              <span>{feedbackCounts['no']}</span>
-            </div>
-            <div className={"feedback-item " + activeClass('maybe')} onClick={() => {
-              setMyFeedback('maybe')
-            }}>
-              <FaQuestion className={""} />
-              <span>{feedbackCounts['maybe']}</span>
-            </div>
-            <div className="commentor" onClick={() => setCommentsVisible(true)}>
-              <FaComment className="ml-5" />
-              <span className="ml-1">{(record.comments || []).length}</span>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
+        {!hideAvatar &&
+          <img
+            src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+            className="small-avatar"
+          />
+        }
       </div>
       {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
         <Modal

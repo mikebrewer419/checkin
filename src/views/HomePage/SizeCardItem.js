@@ -14,6 +14,7 @@ const SizeCardItem = ({ person }) => {
       <PersonCard
         key={person._id}
         {...person}
+        hideAvatar={true}
       />
     </div>
   )

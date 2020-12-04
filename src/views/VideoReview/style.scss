@@ -86,6 +86,22 @@
     background-color: white;
   }
 
+  .person-card {
+    .card-body {
+      display: flex;
+      .content {
+        flex: 1;
+      }
+    }
+    .small-avatar {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 10px;
+      margin-left: 15px;
+    }
+  }
+  
   .feedback-item {
     padding: 0 5px;
     border: 1px solid transparent;

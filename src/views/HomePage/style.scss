@@ -48,13 +48,16 @@
       }
       height: 80px;
     }
+    .current-group-size-cards-wrapper {
+      border-bottom: 1px solid #ccc;
+      overflow-y: auto;
+    }
     .current-group-size-cards {
       display: flex;
       flex-wrap: wrap;
-      overflow-y: auto;
       border-left: 1px solid #ccc;
-      border-bottom: 1px solid #ccc;
       padding: 10px;
+      .card,
       .person-card {
         align-self: flex-start;
         margin: 10px;

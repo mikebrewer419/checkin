@@ -155,7 +155,7 @@ const Onboard = () => {
             </div>}
           </div>
           <div className="text-center mt-2">
-            {avatar64 ? 'Tap to change image' : 'Tap to capture/upload image'}
+            {avatar64 ? 'Tap to change image' : 'Tap to capture/upload photo (this helps us know who you are and adds a photo to our log sheet)'}
           </div>
         </div>
         <div className="contact">

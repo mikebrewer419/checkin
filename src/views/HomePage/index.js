@@ -3,6 +3,7 @@ import cometInject from './comet-inject'
 import List from '../CheckinList'
 import SizeCards from './SizeCards'
 import SizeCardItem from './SizeCardItem'
+import PersonCard from '../PostingPage/PersonCard'
 import {
   static_root,
   getStudioByUri,
@@ -199,7 +200,7 @@ class HomePage extends Component {
               >
                 {!showChat ? '〉' :'〈' }
               </button>
-              {!testMode && (
+              {!testMode && !isClient && (
                 <div>
                   <div id="current-group" className="px-2">
                     <h6 className="mx-n2 px-2">
@@ -227,10 +228,15 @@ class HomePage extends Component {
                 </div>
               )}
               {isClient ?
-                <div className="current-group-size-cards">
-                  {groupCandidates.map(person => (
-                    <SizeCardItem key={person._id} person={person} />
-                  ))}
+                <div className="current-group-size-cards-wrapper">
+                  <h6 className="px-2 mb-0 mt-2">
+                    Current Group 
+                  </h6>
+                  <div className="current-group-size-cards">
+                    {groupCandidates.map(person => (
+                      <PersonCard key={person._id} {...person} />
+                    ))}
+                  </div>
                 </div>
               :
               <div id="comet-chat">

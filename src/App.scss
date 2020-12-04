@@ -61,3 +61,21 @@ body {
   overflow-y: auto;
   max-height: calc(100vh - #{$headerheight});
 }
+
+.small-avatar {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-left: 15px;
+}
+
+.myfeedback-icon {
+  position: relative;
+  svg {
+    position: absolute;
+    left: -42px;
+    width: 42px;
+    height: 42px;
+  }
+}

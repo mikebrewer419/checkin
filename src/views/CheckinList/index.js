@@ -578,12 +578,13 @@ export const PersonCard = ({
   showLeave,
   updateRecord,
   groups,
+  avatar,
   testMode
 }) => {
   const dateString = formatTime(checked_in_time)
 
   return (
-    <div className="card text-primary border-0 person-card">
+    <div className="video-chat-person-card card text-primary border-0">
       <div className="card-body pr-1">
         <div className="card-title d-flex align-items-center mb-0">
           <h5 className="mr-2 cursor-pointer d-flex align-items-center cursor-pointer" onClick={() => {
@@ -639,9 +640,11 @@ export const PersonCard = ({
               )}
             </p>
           </div>
-          <p className="card-text mb-0 flex-wrap d-none">
-            <span>Group:</span>
-            <strong className="ml-2">{group || 'no group'}</strong>
+          <p className="ml-auto mr-2 mb-0">
+            <img
+              src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+              className="small-avatar"
+            />
           </p>
         </div>
         <div className="d-flex mt-1">
