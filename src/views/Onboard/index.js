@@ -27,6 +27,7 @@ const Onboard = () => {
   const [session, setSession] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [avatar64, setAvatar64] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
   const [agent, setAgent] = useState('')
   const [actualCall, setActualCall] = useState(new Date())
@@ -71,8 +72,10 @@ const Onboard = () => {
   }
 
   const setAvatarImg = async (file) => {
+    setUploading(true)
     const res = await uploadImage(file)
     setAvatar64(res.name)
+    setUploading(false)
   }
 
   if (!studio) {
@@ -141,6 +144,12 @@ const Onboard = () => {
               accept="image/*"
               onChange={ev => setAvatarImg(ev.target.files[0])}
             />
+            {uploading && <div className="uploading">
+              Uploading ...
+            </div>}
+          </div>
+          <div className="text-center mt-2">
+            {avatar64 ? 'Tap to change image' : 'Tap to capture/upload image'}
           </div>
         </div>
         <div className="contact">
