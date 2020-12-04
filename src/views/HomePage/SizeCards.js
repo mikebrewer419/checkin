@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import PersonCard from '../PostingPage/PersonCard'
+import SizeCardItem from './SizeCardItem'
 import {
-  fetchCheckInList,
-  static_root
+  fetchCheckInList
 } from '../../services'
 import './sizecards.scss'
 
@@ -37,16 +36,7 @@ const SizeCards = ({ session }) => {
     <div className="size-cards">
       {candidates.map(c => {
         return (
-          <div key={c._id} className="card-item">
-            <img
-              src={c.avatar ? `${static_root}${c.avatar}` : require('../../assets/camera.png')}
-              className="avatar"
-            />
-            <PersonCard
-              key={c._id}
-              {...c}
-            />
-          </div>
+          <SizeCardItem person={c} />
         )
       })}
     </div>

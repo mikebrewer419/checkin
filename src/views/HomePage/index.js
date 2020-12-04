@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import cometInject from './comet-inject'
 import List from '../CheckinList'
 import SizeCards from './SizeCards'
+import SizeCardItem from './SizeCardItem'
 import {
+  static_root,
   getStudioByUri,
   getOneSession,
   createCometRoom
@@ -224,7 +226,13 @@ class HomePage extends Component {
                   </div>
                 </div>
               )}
-              {isClient ? null :
+              {isClient ?
+                <div className="current-group-size-cards">
+                  {groupCandidates.map(person => (
+                    <SizeCardItem key={person._id} person={person} />
+                  ))}
+                </div>
+              :
               <div id="comet-chat">
                 <div id="chat"></div>
               </div>}

@@ -48,6 +48,42 @@
       }
       height: 80px;
     }
+    .current-group-size-cards {
+      display: flex;
+      flex-wrap: wrap;
+      overflow-y: auto;
+      border-left: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      .person-card {
+        align-self: flex-start;
+        margin: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        .avatar {
+          width: 300px;
+          height: 150px;
+          object-fit: contain;
+        }
+      }
+      .feedback-item {
+        padding: 0 5px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        span {
+          margin-left: 5px;
+        }
+        &.active {
+          border: 1px solid $danger;
+        }
+        &:hover {
+          border: 1px solid $primary;
+        }
+      }
+    }
   }
 
   #comet-chat {
