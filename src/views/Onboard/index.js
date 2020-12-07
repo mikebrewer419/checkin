@@ -195,13 +195,14 @@ const Onboard = () => {
               />
             </p>
             <p>
-              <label>Phone Number</label>
+              <label>Cell Phone (to receive SMS audition instructions)</label>
               <input
                 value={phoneNumber}
                 onChange={ev => setPhoneNumber(ev.target.value)}
                 type="text"
                 name="phone"
                 id="phone"
+                required
               />
             </p>
             <p>
