@@ -92,7 +92,7 @@
   #comet-chat {
     flex: 1;
     &.client {
-      height: 100%;
+      height: calc(100vh - #{$headerheight});
     }
   }
 

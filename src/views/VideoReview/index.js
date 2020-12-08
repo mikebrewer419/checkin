@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaArchive, FaTeethOpen, FaPenAlt, FaCheck, FaTimes, FaQuestion, FaComment, FaCopy, FaDownload, FaTrash } from 'react-icons/fa';
+import { FaArchive, FaTeethOpen, FaPenAlt, FaCheck, FaTimes, FaQuestion, FaComment, FaCopy, FaDownload, FaTrash, FaPlus } from 'react-icons/fa';
 import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
@@ -23,6 +23,7 @@ import {
   updateGroup,
   setFeedback,
   getUser,
+  createPage,
   newComment
 } from '../../services'
 import Footer from '../../components/Footer'
@@ -281,6 +282,31 @@ class VideoPage extends Component {
     })
   }
 
+  setNewPostingPage = (pp) => {
+    this.setState({
+      newPostingPage: pp
+    })
+  }
+
+  handlePostingPageSubmit = async (postingPage={}, studio_id) => {
+    const { postingPages } = this.state
+    const name = postingPage.name
+    const names = postingPages.map(p => p.name)
+    const originalPP = postingPages.find(p => p._id === postingPage._id)
+    if (names.includes(name)
+     && (!originalPP || originalPP && originalPP.name !== postingPage.name)
+    ) {
+      window.alert(`You already have the posting page ${name}`)
+      return
+    }
+    await createPage({
+      name,
+      studio: studio_id
+    })
+    await this.loadPostingPages(studio_id)
+    this.setNewPostingPage(null)
+  }
+
   render() {
     const {
       studio,
@@ -297,7 +323,8 @@ class VideoPage extends Component {
       selectedGroup,
       selectedPage,
       showPageCopyModal,
-      postingPages
+      postingPages,
+      newPostingPage
     } = this.state
 
     let rows = []
@@ -337,6 +364,18 @@ class VideoPage extends Component {
               <option>---</option>
               {videoDates.map(date => <option key={date} value={date}>{date}</option>)}
             </select>
+            <label
+              className="ml-2 mb-0 btn btn-primary"
+              onClick={async () => {
+                await this.loadPostingPages()
+                this.setState({
+                  newPostingPage: {}
+                })
+              }}
+            >
+              <FaPlus className="mr-2 mt-n1" />
+              Add New Posting Page
+            </label>
             {selectedForUploads.length > 0 && [
               <label
                 key="0"
@@ -636,6 +675,44 @@ class VideoPage extends Component {
               disabled={!selectedPage}
               className="btn btn-primary"
               onClick={this.handleGroupsCopy}
+            >
+              Submit
+            </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={!!newPostingPage}
+          onHide={() => {
+            this.setNewPostingPage(null)
+          }}
+        >
+          <Modal.Header closeButton className="align-items-baseline">
+            <h4 className="mb-0 mr-3">
+              {newPostingPage && newPostingPage._id? `Update ${newPostingPage.name}`: 'Create New Posting Page'}
+            </h4>
+          </Modal.Header>
+          <Modal.Body>
+            {newPostingPage && (
+              <input
+                type="text"
+                className="form-control mb-3"
+                value={newPostingPage.name}
+                onChange={ev => {
+                  this.setNewPostingPage({
+                    ...newPostingPage,
+                    name: ev.target.value
+                  })
+                }}
+              />
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              disabled={newPostingPage && !newPostingPage.name}
+              className="btn btn-primary"
+              onClick={() => {
+                this.handlePostingPageSubmit(newPostingPage, studio._id)
+              }}
             >
               Submit
             </button>

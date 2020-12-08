@@ -18,6 +18,7 @@ import {
 
   static_root
 } from '../../services'
+import AvatarModal from '../../components/avatar-modal'
 import './style.scss'
 
 const messages = [
@@ -478,7 +479,7 @@ class List extends Component {
           </form>
         </div>
         <Modal
-          show={!!selectedRecord}
+          show={!!selectedRecord && selectedRecord.actual_call}
           onHide = {() => {
             this.setState({
               selectedRecord: null
@@ -547,6 +548,18 @@ class List extends Component {
             >Clear.</button>
           </Modal.Footer>
         </Modal>
+        {selectedRecord &&
+        <AvatarModal
+          key={selectedRecord._id}
+          show={selectedRecord.avatar}
+          record={selectedRecord}
+          onClose={() => {
+            this.setState({
+              selectedRecord: null
+            })
+            this.fetchData()
+          }}
+        />}
       </div>
     )
   }
@@ -644,6 +657,10 @@ export const PersonCard = ({
             <img
               src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
               className="small-avatar"
+              onClick={() => updateRecord({
+                _id,
+                avatar: avatar || 'empty'
+              })}
             />
           </p>
         </div>

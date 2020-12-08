@@ -193,10 +193,10 @@ const StudioList = () => {
     const name = postingPage.name
     const names = postingPages[studio_id].map(p => p.name)
     const originalPP = postingPages[studio_id].find(p => p._id === postingPage._id)
-    if (names.includes(name) && sessions[studio_id]
+    if (names.includes(name) && postingPages[studio_id]
      && (!originalPP || originalPP && originalPP.name !== postingPage.name)
     ) {
-      window.alert(`You already have the session ${name}`)
+      window.alert(`You already have the posting page ${name}`)
       return
     }
     if (postingPage._id) {
