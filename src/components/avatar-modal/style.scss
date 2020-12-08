@@ -1,4 +1,7 @@
-.large-avatar {
-  max-height: 100vh;
-  object-fit: contain;
+.image-section {
+  position: relative;
+  .large-avatar {
+    max-height: 100vh;
+    object-fit: contain;
+  }
 }
