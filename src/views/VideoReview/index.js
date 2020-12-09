@@ -31,6 +31,7 @@ import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
 import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
+import AvatarModal from '../../components/avatar-modal'
 
 const itemWidth = 250
 const thumbWidth = 150
@@ -498,7 +499,16 @@ class VideoPage extends Component {
                         <div key="info" className="info col-4">
                           {groupRecords.map(record => (
                             <div className="talent-summary" key={record._id}>
-                              <PersonCard {...record} />
+                              <PersonCard
+                                {...record}
+                                reloadData={async () => {
+                                  await this.loadVideos()
+                                  const group = this.state.groups[activeGidx].videos[0].group
+                                  this.setState({
+                                    groupRecords: (group && group.records) || []
+                                  })
+                                }}
+                              />
                             </div>
                           ))}
                           { groupRecords.length === 0 &&
@@ -732,6 +742,7 @@ const PersonCard = ({
   phone,
   skipped,
   avatar,
+  reloadData,
   seen
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -739,6 +750,7 @@ const PersonCard = ({
   const [commentsVisible, setCommentsVisible] = useState(false)
   const [content, setContent] = useState('')
   const [recordCache, setRecordCache] = useState({})
+  const [avatarEditor, setAvatarEditor] = useState(false)
 
   const commentorIds = (record.comments || []).map(comment => comment.by)
 
@@ -864,8 +876,10 @@ const PersonCard = ({
           )}
         </div>
         <img
+          key={avatar}
           src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
           className="small-avatar"
+          onClick={() => setAvatarEditor(true)}
         />
       </div>
       {VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
@@ -905,6 +919,19 @@ const PersonCard = ({
           </Modal.Footer>
         </Modal>
       )}
+      {avatarEditor &&
+      <AvatarModal
+        key={_id}
+        show={true}
+        record={{
+          _id,
+          avatar: avatar || 'empty'
+        }}
+        onClose={() => {
+          setAvatarEditor(false)
+          reloadData()
+        }}
+      />}
     </div>
   )
 }
