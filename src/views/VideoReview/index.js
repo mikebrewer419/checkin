@@ -1,7 +1,6 @@
 import React, { Component, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Modal } from 'react-bootstrap'
-import { FaArchive, FaTeethOpen, FaPenAlt, FaCheck, FaTimes, FaQuestion, FaComment, FaCopy, FaDownload, FaTrash, FaPlus } from 'react-icons/fa';
+import { Modal, Dropdown } from 'react-bootstrap'
+import { FaArchive, FaTeethOpen, FaPenAlt, FaComment, FaCopy, FaDownload, FaTrash, FaPlus } from 'react-icons/fa'
 import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
@@ -238,6 +237,7 @@ class VideoPage extends Component {
       session
     }, async () => {
       await this.loadVideos()
+      await this.loadPostingPages()
     })
 
     window.addEventListener('resize', this.setCount)
@@ -347,10 +347,26 @@ class VideoPage extends Component {
           Processing...
         </div>
         <div className="video-header d-flex align-items-center justify-content-center">
-          <div className="video-logo mr-2 d-none">
-            <Link to="/">
-              <img src={static_root+studio.logo} alt={studio.name}/>
-            </Link>
+          <div className="pp-menu">
+            {postingPages.length > 0 && (
+              <Dropdown>
+                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                  Posting Pages
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  {postingPages.map(pp => (
+                    <Dropdown.Item
+                      key={pp._id}
+                      href={`/posting-page/${studio.uri}/${pp._id}`}
+                      target="_blank"
+                    >
+                      { pp.name }
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
           </div>
           <h2 style={{textAlign: "center"}} className="mb-0">
             {studio.name}<br/>

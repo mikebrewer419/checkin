@@ -94,3 +94,9 @@ body {
   background-color: rgba(0,0,0,0.3);
   border-radius: 20px;
 }
+
+
+.dropdown-toggle::after {
+  margin-left: 0.655em;
+  vertical-align: 0.055em;
+}
