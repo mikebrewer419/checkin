@@ -1,0 +1,36 @@
+.report-page {
+  flex-direction: column;
+  .group-item {
+    display: flex;
+    flex-direction: column;
+    .group-item-header {
+      display: flex;
+      align-items: center;
+      .group-thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+      }
+    }
+    .talent-wrapper {
+      .talent-item {
+        .talent-no {
+          width: 70px;
+        }
+        .talent-avatar {
+          width: 120px;
+        }
+        .talent-name {
+          width: 45%;
+        }
+        .avatar-img {
+          width: 100px;
+          height: 100px;
+        }
+      }
+      th, td {
+        border-color: #777;
+      }
+    }
+  }
+}

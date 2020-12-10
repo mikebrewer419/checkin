@@ -1,7 +1,7 @@
-import React, { Component, useEffect, useState } from 'react'
+import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaDownload, FaArchive, FaTeethOpen, FaPenAlt, FaTrash } from 'react-icons/fa';
+import { FaDownload, FaArchive, FaTeethOpen, FaPenAlt, FaTrash, FaPrint } from 'react-icons/fa';
 import {
   static_root,
   getStudioByUri,
@@ -22,6 +22,7 @@ import PersonCard from './PersonCard'
 import GroupSorter from './GroupSorter'
 import { saveAs } from 'file-saver'
 import { POSTINGPAGE_PERMISSIONS } from '../../constants'
+import ReportPage from './report'
 
 const itemWidth = 250
 const thumbWidth = 150
@@ -298,286 +299,296 @@ class PostingPage extends Component {
     const activeGroup = groups[activeGidx]
 
     return (
-      <div className="video-app px-5 py-3">
-        <div className={`loading ${this.state.loading?'show':''}`}>
-          Processing...
-        </div>
-        <div className="video-header d-flex align-items-center justify-content-center">
-          <div className="video-logo mr-2 d-none">
-            <Link to="/">
-              <img src={static_root+studio.logo} alt={studio.name}/>
-            </Link>
+      <div>
+        <div className="no-print video-app px-5 py-3">
+          <div className={`loading ${this.state.loading?'show':''}`}>
+            Processing...
           </div>
-          <h2 style={{textAlign: "center"}} className="mb-0">
-            {studio.name}<br/>
-            <small><small>{page.name} Video review</small></small>
-          </h2>
-          <div className="d-flex align-items-center download-selected">
-            {tab === TABS.VIDEOS && POSTINGPAGE_PERMISSIONS.CAN_SORT_GROUPS() && (
-              <GroupSorter
-                groups={groups}
-                update={this.updateGroupOrder}
-              />
-            )}
-            {selectedForUploads.length > 0 && (
-              <label key="1" className="ml-2 mb-0 btn btn-primary" onClick={() => this.downloadAllVideos()} >
-                <FaDownload className="mr-2 mt-n1"/>
-                Download Selected
+          <div className="video-header d-flex align-items-center justify-content-center">
+            <div className="video-logo mr-2 d-none">
+              <Link to="/">
+                <img src={static_root+studio.logo} alt={studio.name}/>
+              </Link>
+            </div>
+            <h2 style={{textAlign: "center"}} className="mb-0">
+              {studio.name}<br/>
+              <small><small>{page.name} Video review</small></small>
+            </h2>
+            <div className="d-flex align-items-center download-selected">
+              <label
+                className="mr-2 mb-0 btn btn-primary"
+                onClick={() => window.print()}
+              >
+                <FaPrint className="mr-2 mt-n1"/>
+                Print
               </label>
-            )}
+              {tab === TABS.VIDEOS && POSTINGPAGE_PERMISSIONS.CAN_SORT_GROUPS() && (
+                <GroupSorter
+                  groups={groups}
+                  update={this.updateGroupOrder}
+                />
+              )}
+              {selectedForUploads.length > 0 && (
+                <label key="1" className="ml-2 mb-0 btn btn-primary" onClick={() => this.downloadAllVideos()} >
+                  <FaDownload className="mr-2 mt-n1"/>
+                  Download Selected
+                </label>
+              )}
+            </div>
           </div>
-        </div>
-        <ul className="nav nav-tabs mt-2 border-bottom-0">
-          <li className="nav-item">
-            <a
-              className={`nav-link h5 mb-0 ${tab === TABS.VIDEOS ?'active':'text-danger'}`}
-              href="#"
-              onClick={() => this.changeTab(TABS.VIDEOS)}
-            >
-              Videos
-            </a>
-          </li>
-          {POSTINGPAGE_PERMISSIONS.CAN_VIEW_ARCHIVE() &&
-          <li className="nav-item">
-            <a
-              className={`nav-link h5 mb-0 ${tab === TABS.ARCHIVED ?'active':'text-danger'}`}
-              href="#"
-              onClick={() => this.changeTab(TABS.ARCHIVED)}
-            >
-              Archived
-            </a>
-          </li>}
-        </ul>
-        <div className="video-wrapper">
-          {rows.length === 0 && <div className="p-5">No videos available </div>}
-          {rows.map((row, ridx) => {
-            return (
-              [
-                <div className="video-row" key={ridx}  style={{width: `${rowWidth}px`}}>
-                  {row.map(group => {
-                    const groupVideos = group.videos.map(v => v._id)
-                    const toArchive = !(tab === TABS.ARCHIVED)
-                    return (
-                      <div
-                        key={group.idx}
-                        className={`mx-3 item ${activeGidx === group.idx?'active':''}`}
-                        style={{
-                          width: itemWidth
-                        }}
-                      >
-                        {toArchive && (
-                          <div className="order-indicator">
-                            {group.order}
-                          </div>
-                        )}
+          <ul className="nav nav-tabs mt-2 border-bottom-0">
+            <li className="nav-item">
+              <a
+                className={`nav-link h5 mb-0 ${tab === TABS.VIDEOS ?'active':'text-danger'}`}
+                href="#"
+                onClick={() => this.changeTab(TABS.VIDEOS)}
+              >
+                Videos
+              </a>
+            </li>
+            {POSTINGPAGE_PERMISSIONS.CAN_VIEW_ARCHIVE() &&
+            <li className="nav-item">
+              <a
+                className={`nav-link h5 mb-0 ${tab === TABS.ARCHIVED ?'active':'text-danger'}`}
+                href="#"
+                onClick={() => this.changeTab(TABS.ARCHIVED)}
+              >
+                Archived
+              </a>
+            </li>}
+          </ul>
+          <div className="video-wrapper">
+            {rows.length === 0 && <div className="p-5">No videos available </div>}
+            {rows.map((row, ridx) => {
+              return (
+                [
+                  <div className="video-row" key={ridx}  style={{width: `${rowWidth}px`}}>
+                    {row.map(group => {
+                      const groupVideos = group.videos.map(v => v._id)
+                      const toArchive = !(tab === TABS.ARCHIVED)
+                      return (
                         <div
-                          className="preview-wrapper"
-                          onClick={() => {
-                            this.handleGroupItemClick(ridx, group.idx)
-                          }}
-                        >
-                          <img
-                            className="dummy-player"
-                            src={`${static_root}${group.thumbnail}`}
-                          />
-                        </div>
-                        <div className="d-flex">
-                          <input
-                            type="checkbox"
-                            checked={this.groupSelectedForDownload(group.idx)}
-                            className="mr-2 mt-1"
-                            onChange={(ev) => this.toggleGroupSelectedForDownload(group.idx, ev.target.checked) }
-                          />
-                          <div>{group.name}</div>
-                          {POSTINGPAGE_PERMISSIONS.CAN_UPDATE_GROUP() && group._id &&
-                          <label
-                            className="mb-0 ml-2"
-                            onClick={ev => {
-                              ev.stopPropagation()
-                              ev.preventDefault()
-                              this.setState({
-                                selectedGroup: group
-                              })
-                            }}
-                          >
-                            <FaPenAlt />
-                          </label>}
-                          {POSTINGPAGE_PERMISSIONS.CAN_ARCHIVE() &&
-                          <label
-                            className="mb-0 ml-auto"
-                            onClick={() => {
-                              this.handleGroupArchive(groupVideos, toArchive)
-                            }}
-                            title={toArchive ? 'Archive': 'Restore'}
-                          >
-                            {toArchive ? <FaArchive />: <FaTeethOpen />}
-                          </label>}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>,
-                ridx === activeRidx && activeGroup ?
-                  <div className="d-flex flex-column active-group-row p-3" key="active-field">
-                    {activeItem? (
-                      <div className="row player-row mb-2">
-                        <ReactPlayer
-                          controls={true}
-                          url={activeItem.url}
-                          key="video"
-                          autoPlay
-                          id="active-player"
-                          className="col-auto"
-                          height="100%"
-                        />
-                        <div key="info" className="info col-4">
-                          {groupRecords.map(record => (
-                            <div className="talent-summary" key={record._id}>
-                              <PersonCard {...record} />
-                            </div>
-                          ))}
-                          { groupRecords.length === 0 &&
-                            <div className="talent-summary">
-                              No talent information available
-                            </div> }
-                        </div>
-                      </div>
-                    ): null}
-                    <div
-                      key={activeGidx}
-                      className="d-flex align-items-start group-videos-wrapper py-2"
-                    >
-                      {activeGroup.videos.map((video, idx) => {
-                        return (
-                          <div
-                            key={video.uri+idx}
-                            className={`mx-0 mb-2  mr-2 item ${activeItem.uri === video.uri? 'active': ''}`}
-                          >
-                            <div
-                              style={{
-                                width: thumbWidth
-                              }}
-                            >
-                              <div
-                                className="preview-wrapper"
-                                onClick={() => this.setState({ activeItem: video })}
-                              >
-                                <img
-                                  className="dummy-player dummy-video"
-                                  src={`${static_root}${video.thumbnail}`}
-                                />
-                              </div>
-                              <div className="d-flex">
-                                {POSTINGPAGE_PERMISSIONS.CAN_ARCHIVE() &&
-                                <label
-                                  className="mb-0 ml-2"
-                                  onClick={() => {
-                                    this.handleArchiveVideo(video._id, !video.is_archived)
-                                  }}
-                                  title={video.is_archived ? 'Restore': 'Archive'}
-                                >
-                                  {video.is_archived ? <FaTeethOpen />: <FaArchive />}
-                                </label>}
-                                {video.is_archived && (
-                                  <label
-                                    className="ml-auto mb-0"
-                                    onClick={() => this.handleVideoDelete(video._id)}
-                                    title="Delete"
-                                  >
-                                    <FaTrash />
-                                  </label>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })}
-                      {tab !== TABS.ARCHIVED && POSTINGPAGE_PERMISSIONS.CAN_ADD_VIDEO() && (
-                        <div
+                          key={group.idx}
+                          className={`mx-3 item ${activeGidx === group.idx?'active':''}`}
                           style={{
-                            width: thumbWidth,
-                            alignSelf: 'stretch'
+                            width: itemWidth
                           }}
-                          className="pb-2"
                         >
-                          <div className="video-uploader pt-4 px-3 mr-2 h-100">
-                            <span>Click to upload New Video</span>
-                            <input
-                              key={activeGroup.videos.length}
-                              type="file"
-                              accept="video/*"
-                              onChange={ev => {
-                                this.uploadNewVideo(ev.target.files[0])
-                              }}
+                          {toArchive && (
+                            <div className="order-indicator">
+                              {group.order}
+                            </div>
+                          )}
+                          <div
+                            className="preview-wrapper"
+                            onClick={() => {
+                              this.handleGroupItemClick(ridx, group.idx)
+                            }}
+                          >
+                            <img
+                              className="dummy-player"
+                              src={`${static_root}${group.thumbnail}`}
                             />
                           </div>
+                          <div className="d-flex">
+                            <input
+                              type="checkbox"
+                              checked={this.groupSelectedForDownload(group.idx)}
+                              className="mr-2 mt-1"
+                              onChange={(ev) => this.toggleGroupSelectedForDownload(group.idx, ev.target.checked) }
+                            />
+                            <div>{group.name}</div>
+                            {POSTINGPAGE_PERMISSIONS.CAN_UPDATE_GROUP() && group._id &&
+                            <label
+                              className="mb-0 ml-2"
+                              onClick={ev => {
+                                ev.stopPropagation()
+                                ev.preventDefault()
+                                this.setState({
+                                  selectedGroup: group
+                                })
+                              }}
+                            >
+                              <FaPenAlt />
+                            </label>}
+                            {POSTINGPAGE_PERMISSIONS.CAN_ARCHIVE() &&
+                            <label
+                              className="mb-0 ml-auto"
+                              onClick={() => {
+                                this.handleGroupArchive(groupVideos, toArchive)
+                              }}
+                              title={toArchive ? 'Archive': 'Restore'}
+                            >
+                              {toArchive ? <FaArchive />: <FaTeethOpen />}
+                            </label>}
+                          </div>
                         </div>
-                      )}
+                      )
+                    })}
+                  </div>,
+                  ridx === activeRidx && activeGroup ?
+                    <div className="d-flex flex-column active-group-row p-3" key="active-field">
+                      {activeItem? (
+                        <div className="row player-row mb-2">
+                          <ReactPlayer
+                            controls={true}
+                            url={activeItem.url}
+                            key="video"
+                            autoPlay
+                            id="active-player"
+                            className="col-auto"
+                            height="100%"
+                          />
+                          <div key="info" className="info col-4">
+                            {groupRecords.map(record => (
+                              <div className="talent-summary" key={record._id}>
+                                <PersonCard {...record} />
+                              </div>
+                            ))}
+                            { groupRecords.length === 0 &&
+                              <div className="talent-summary">
+                                No talent information available
+                              </div> }
+                          </div>
+                        </div>
+                      ): null}
+                      <div
+                        key={activeGidx}
+                        className="d-flex align-items-start group-videos-wrapper py-2"
+                      >
+                        {activeGroup.videos.map((video, idx) => {
+                          return (
+                            <div
+                              key={video.uri+idx}
+                              className={`mx-0 mb-2  mr-2 item ${activeItem.uri === video.uri? 'active': ''}`}
+                            >
+                              <div
+                                style={{
+                                  width: thumbWidth
+                                }}
+                              >
+                                <div
+                                  className="preview-wrapper"
+                                  onClick={() => this.setState({ activeItem: video })}
+                                >
+                                  <img
+                                    className="dummy-player dummy-video"
+                                    src={`${static_root}${video.thumbnail}`}
+                                  />
+                                </div>
+                                <div className="d-flex">
+                                  {POSTINGPAGE_PERMISSIONS.CAN_ARCHIVE() &&
+                                  <label
+                                    className="mb-0 ml-2"
+                                    onClick={() => {
+                                      this.handleArchiveVideo(video._id, !video.is_archived)
+                                    }}
+                                    title={video.is_archived ? 'Restore': 'Archive'}
+                                  >
+                                    {video.is_archived ? <FaTeethOpen />: <FaArchive />}
+                                  </label>}
+                                  {video.is_archived && (
+                                    <label
+                                      className="ml-auto mb-0"
+                                      onClick={() => this.handleVideoDelete(video._id)}
+                                      title="Delete"
+                                    >
+                                      <FaTrash />
+                                    </label>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                        {tab !== TABS.ARCHIVED && POSTINGPAGE_PERMISSIONS.CAN_ADD_VIDEO() && (
+                          <div
+                            style={{
+                              width: thumbWidth,
+                              alignSelf: 'stretch'
+                            }}
+                            className="pb-2"
+                          >
+                            <div className="video-uploader pt-4 px-3 mr-2 h-100">
+                              <span>Click to upload New Video</span>
+                              <input
+                                key={activeGroup.videos.length}
+                                type="file"
+                                accept="video/*"
+                                onChange={ev => {
+                                  this.uploadNewVideo(ev.target.files[0])
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                : null
-              ]
-            )
-          })}
+                  : null
+                ]
+              )
+            })}
+          </div>
+          <Footer/>
+          <Modal
+            show={!!selectedGroup._id}
+            onHide = {() => {
+              this.setState({
+                selectedGroup: {}
+              })
+            }}
+          >
+            <Modal.Header closeButton>
+              <h5 className="mb-0">
+                Edit group
+              </h5>
+            </Modal.Header>
+            <Modal.Body>
+              <input
+                type="text"
+                className="form-control mb-2"
+                placeholder="Group Name"
+                value={selectedGroup.name}
+                onChange={ev => {
+                  this.setState({
+                    selectedGroup: {
+                      ...this.state.selectedGroup,
+                      name: ev.target.value
+                    }
+                  })
+                }}
+              />
+              <input
+                type="file"
+                className="form-control"
+                onChange={ev => {
+                  this.setState({
+                    selectedGroup: {
+                      ...this.state.selectedGroup,
+                      thumbnail: ev.target.files[0]
+                    }
+                  })
+                }}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <button
+                disabled={selectedGroup && !selectedGroup.name}
+                className="btn btn-primary"
+                onClick={async () => {
+                  await updatePostingGroup(selectedGroup._id, selectedGroup)
+                  this.setState({
+                    selectedGroup: {}
+                  })
+                  await this.loadVideos()
+                }}
+              >
+                Submit
+              </button>
+            </Modal.Footer>
+          </Modal>
         </div>
-        <Footer/>
-        <Modal
-          show={!!selectedGroup._id}
-          onHide = {() => {
-            this.setState({
-              selectedGroup: {}
-            })
-          }}
-        >
-          <Modal.Header closeButton>
-            <h5 className="mb-0">
-              Edit group
-            </h5>
-          </Modal.Header>
-          <Modal.Body>
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Group Name"
-              value={selectedGroup.name}
-              onChange={ev => {
-                this.setState({
-                  selectedGroup: {
-                    ...this.state.selectedGroup,
-                    name: ev.target.value
-                  }
-                })
-              }}
-            />
-            <input
-              type="file"
-              className="form-control"
-              onChange={ev => {
-                this.setState({
-                  selectedGroup: {
-                    ...this.state.selectedGroup,
-                    thumbnail: ev.target.files[0]
-                  }
-                })
-              }}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              disabled={selectedGroup && !selectedGroup.name}
-              className="btn btn-primary"
-              onClick={async () => {
-                await updatePostingGroup(selectedGroup._id, selectedGroup)
-                this.setState({
-                  selectedGroup: {}
-                })
-                await this.loadVideos()
-              }}
-            >
-              Submit
-            </button>
-          </Modal.Footer>
-        </Modal>
+        <ReportPage groups={groups} />
       </div>
     )
   }

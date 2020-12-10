@@ -49,7 +49,7 @@ const Header = (props) => {
   const showCredentials = !!([USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(user.user_type))
 
   return (
-    <Navbar className="py-4 px-5 global-header" bg="danger">
+    <Navbar className="py-4 px-5 global-header no-print" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
         <Link to="/" target="_blank">
           {user.logo

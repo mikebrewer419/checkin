@@ -135,7 +135,7 @@ export const updatePostingGroup = async (id, data) => {
   if (data.name) formData.append('name', data.name)
   if (data.thumbnail) formData.append('thumbnail', data.thumbnail)
   const resp = await fetch(`${api_host}/postingpage/group/${id}`, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`
     },

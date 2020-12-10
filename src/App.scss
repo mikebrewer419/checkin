@@ -100,3 +100,20 @@ body {
   margin-left: 0.655em;
   vertical-align: 0.055em;
 }
+
+.print-only,
+.print-flex {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  };
+  .print-only {
+    display: block;
+  }
+  .print-flex {
+    display: flex !important;
+  }
+}
