@@ -47,6 +47,10 @@ const Onboard = () => {
 
   const onSubmjit = (ev) => {
     ev.preventDefault()
+    if (phoneNumber.replace(/\D/g,'').length < 10) {
+      window.alert('Please input correct phone number!!')
+      return
+    }
     setSubmitting(true)
     onboardUser({
       first_name: firstName,

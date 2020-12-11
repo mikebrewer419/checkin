@@ -8,16 +8,22 @@
     background-color: $lightgray;
     border-bottom: 0;
   }
+  .video-header {
+    top: -17px;
+    position: sticky;
+    z-index: 10;
+    background: rgba(255,255,255,0.9);
+  }
   .video-logo img {
     height: 45px;
   }
   .pp-menu {
     position: absolute;
-    left: 20px;
+    left: 0;
   }
   .download-selected {
     position: absolute;
-    right: 20px;
+    right: 0;
   }
   .video-wrapper {
     background-color: $lightgray;

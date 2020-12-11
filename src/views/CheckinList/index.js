@@ -592,6 +592,8 @@ export const PersonCard = ({
   updateRecord,
   groups,
   avatar,
+  role,
+  agent,
   testMode
 }) => {
   const dateString = formatTime(checked_in_time)
@@ -651,6 +653,14 @@ export const PersonCard = ({
               {!testMode && (
                 <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, actual_call })} />
               )}
+            </p>
+            <p className="card-text mb-0">
+              <span>Role:</span>
+              <strong className="ml-2">{role}</strong>
+            </p>
+            <p className="card-text mb-0">
+              <span>Agent:</span>
+              <strong className="ml-2">{agent}</strong>
             </p>
           </div>
           <p className="ml-auto mr-2 mb-0">

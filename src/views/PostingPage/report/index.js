@@ -52,6 +52,14 @@ const ReportPage = ({
                       <label>
                         {talent.first_name} {talent.last_name}
                       </label>
+                      <br/>
+                      <label>
+                        {talent.role}
+                      </label>
+                      <br/>
+                      <label>
+                        {talent.agent}
+                      </label>
                     </td>
                     <td></td>
                   </tr>
