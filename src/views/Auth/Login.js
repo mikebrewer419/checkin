@@ -69,7 +69,10 @@ const Login = () => {
           onClick={() => doLogin(email, password)}
         >LOG IN</button>
         <div className="form-group d-flex justify-content-between mt-2">
-          <a className="font-weight-bold" href="#">Reset my password</a>
+          <Link
+            to="/reset-password-request"
+            className="font-weight-bold" href="#"
+          >Reset password</Link>
           <Link
             to="/register"
             className="font-weight-bold" href="#"

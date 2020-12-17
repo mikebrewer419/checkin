@@ -4,6 +4,8 @@ import { IconContext } from "react-icons";
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { verityToken, getUser, super_admins } from './services'
 import Login from './views/Auth/Login'
+import ResetPasswordRequest from './views/Auth/ResetPasswordRequest'
+import Resetpassword from './views/Auth/Resetpassword'
 import Register from './views/Auth/Register'
 import HomePage from './views/HomePage'
 import RecordMessagePage from './views/RecordMessagePage'
@@ -48,6 +50,13 @@ function App() {
       document.body.appendChild(chatScriptDom)
     }, () => {
       if (window.location.pathname !== '/login') {
+        if ([
+          '/reset-password-request',
+          '/reset-password',
+          '/register'
+        ].includes(window.location.pathname)) {
+          return
+        }
         window.localStorage.setItem('prev_url', window.location.href)
         window.localStorage.removeItem('email')
         window.location.href = '/login'
@@ -67,6 +76,8 @@ function App() {
           <Header logo={logo} />
           <Switch>
             <Route path="/login" component={() => <Login />} exact />
+            <Route path="/reset-password-request" component={() => <ResetPasswordRequest />} exact />
+            <Route path="/reset-password" component={() => <Resetpassword />} exact />
             <Route path="/register" component={() => <Register />} exact />
             {super_admins.includes(email) &&
               <Route path="/heyjoe-admin" component={AdminView} />

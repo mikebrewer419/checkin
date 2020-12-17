@@ -105,3 +105,24 @@ export const verifyCaptcha = async (token) => {
   })
   return await resp.json()
 }
+
+export const resetPasswordRequest = async (email) => {
+  const resp = await fetch(`${api_host}/auth/reset-password-request?email=${email}`, {
+    method: 'POST'
+  })
+  return await resp.json()
+}
+
+export const resetPassword = async (token, newPassword) => {
+  const resp = await fetch(`${api_host}/auth/reset-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      token,
+      password: newPassword
+    })
+  })
+  return await resp.json()
+}
