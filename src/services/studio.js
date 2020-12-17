@@ -81,7 +81,12 @@ export const getStudioInfo = async (studio_id) => {
       'Content-Type': 'application/json',
     }
   })
-  return await resp.json()
+  const project = await resp.json()
+  // Casting director logo handle
+  if (!project.logo && project.casting_directors.length > 0) {
+    project.logo = project.casting_directors[0].logo
+  }
+  return project
 }
 
 export const getStudioByUri = async (studio_name) => {

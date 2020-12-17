@@ -508,7 +508,6 @@ const StudioList = () => {
         <Modal.Body>
           <AsyncTypeahead
             id="casting-director-select"
-            multiple
             selected={selectedCastingDirector}
             onChange={value => {
               setSelectedCastingDirector(value)
