@@ -77,7 +77,7 @@ function App() {
           <Switch>
             <Route path="/login" component={() => <Login />} exact />
             <Route path="/reset-password-request" component={() => <ResetPasswordRequest />} exact />
-            <Route path="/reset-password" component={() => <Resetpassword />} exact />
+            <Route path="/reset-password" component={() => <ResetPassword />} exact />
             <Route path="/register" component={() => <Register />} exact />
             {super_admins.includes(email) &&
               <Route path="/heyjoe-admin" component={AdminView} />
