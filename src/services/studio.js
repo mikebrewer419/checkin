@@ -96,7 +96,12 @@ export const getStudioByUri = async (studio_name) => {
       'Authorization': `Bearer ${token}`
     }
   })
-  return await resp.json()
+  const project = await resp.json()
+  // Casting director logo handle
+  if (!project.logo && project.casting_directors.length > 0) {
+    project.logo = project.casting_directors[0].logo
+  }
+  return project
 }
 
 export const createCometRoom = async (id, session_id) => {
