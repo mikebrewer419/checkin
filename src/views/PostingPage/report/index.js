@@ -1,15 +1,33 @@
 import React from 'react'
 import {
-  static_root
+  static_root,
+  getUser
 } from '../../../services'
 import './style.scss'
 
 const ReportPage = ({
-  groups
+  groups,
+  page,
+  studio
 }) => {
-  console.log('groups', groups)
+  const user = getUser()
   return (
-    <div className="report-page print-flex">
+    <div className="report-page print-only">
+      <div className="d-flex mb-3">
+        <img
+          className="user-logo mx-4"
+          src={user.logo ? `${static_root}${user.logo}` : require('../../../assets/camera.png')}
+        />
+        <div>
+          <label>
+            {studio.name}
+          </label>
+          <br />
+          <label>
+            {page.name}
+          </label>
+        </div>
+      </div>
       {groups.map((group, gidx) => {
         let records = []
         group.videos.forEach(video => {
@@ -19,19 +37,14 @@ const ReportPage = ({
         return (
           <div
             key={group._id}
-            className="group-item"
+            className={"group-item " + ((gidx + 1) % 6 === 0 ? 'page-break': '')}
           >
-            <h3 className="text-center">Report</h3>
             <div className="group-item-header mb-2">
-              <h4>Group { group.order }</h4>
-              <img
-                className="group-thumbnail mx-4"
-                src={group.thumbnail ? `${static_root}${group.thumbnail}` : require('../../../assets/camera.png')}
-              />
-              {group.name}
+              <label>Group { group.order }</label>
             </div>
             <table className="table-bordered table talent-wrapper">
               {records.map((talent, tidx) => {
+                const userFeedback = (talent.feedbacks || {})[user.id]
                 return (
                   <tr
                     key={talent._id}
@@ -54,14 +67,24 @@ const ReportPage = ({
                       </label>
                       <br/>
                       <label>
-                        {talent.role}
-                      </label>
-                      <br/>
-                      <label>
-                        {talent.agent}
+                        Role: {talent.role}
                       </label>
                     </td>
-                    <td></td>
+                    <td className="feedback">
+                      {userFeedback}
+                    </td>
+                    <td className="comments">
+                      {talent.comments.map(c => {
+                        return (
+                          <div>
+                            <label className="mb-0">{c.by.email}</label>
+                            <p className="mb-1 pl-2">
+                              {c.content}
+                            </p>
+                          </div>
+                        )
+                      })}
+                    </td>
                   </tr>
                 )
               })}

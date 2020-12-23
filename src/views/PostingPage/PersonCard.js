@@ -26,36 +26,20 @@ const PersonCard = ({
   skipped,
   avatar,
   hideAvatar,
+  role,
+  agent,
   seen
 }) => {
   const [showContact, setShowContact] = useState(false)
   const [record, setRecord] = useState({})
   const [commentsVisible, setCommentsVisible] = useState(false)
   const [content, setContent] = useState('')
-  const [recordCache, setRecordCache] = useState({})
-
-  const commentorIds = (record.comments || []).map(comment => comment.by)
-
-  const commentorDetector = JSON.stringify(commentorIds)
 
   const fetchData = () => {
     getOneRecord(_id).then(data => {
       setRecord(data)
     })
   }
-
-  useEffect(() => {
-    let cache = { ...recordCache }
-    Promise.all(commentorIds.map(async id => {
-      if (!recordCache[id] && !cache[id]) {
-        const r = await getUserById(id)
-        cache[id] = r
-      }
-    })).then(() => {
-      console.log('cache: ', cache);
-      setRecordCache(cache)
-    })
-  }, [commentorDetector])
 
   useEffect(() => {
     fetchData()
@@ -116,18 +100,22 @@ const PersonCard = ({
     <div className="posting-person-card card px-4 py-1">
       <div className="card-body px-0">
         <div className="content">
-          <h5 className="card-title d-flex mb-2">
-            {first_name} {last_name}
+          <div className="card-title d-flex mb-2">
+            <div>
+              <h5>{first_name} {last_name}</h5>
+              <p className="card-text mb-0">Role: <small>{role}</small></p>
+            </div>
             {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
             <span className="ml-auto myfeedback-icon">
               {MyFeedbackIcon}
             </span>
-          </h5>
+          </div>
           <label onClick={() => setShowContact(!showContact)}>Contact</label>
           {showContact &&
           <div className="mb-3">
-            <p className="card-text mb-1">P: <small>{phone}</small></p>
-            <p className="card-text mb-1">E: <small>{email}</small></p>
+            <p className="card-text mb-1">Phone: <small>{phone}</small></p>
+            <p className="card-text mb-1">Email: <small>{email}</small></p>
+            <p className="card-text mb-0">Agent: <small>{agent}</small></p>
           </div>}
           {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
             <div className="d-flex align-items-center">
@@ -174,7 +162,7 @@ const PersonCard = ({
           <Modal.Body>
             {(record.comments || []).map(comment => (
               <div>
-                <label>{(recordCache[comment.by] || {}).email || comment.by}</label>
+                <label>{comment.by.email}</label>
                 <p>{comment.content}</p>
               </div>
             ))}

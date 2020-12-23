@@ -765,32 +765,13 @@ const PersonCard = ({
   const [record, setRecord] = useState({})
   const [commentsVisible, setCommentsVisible] = useState(false)
   const [content, setContent] = useState('')
-  const [recordCache, setRecordCache] = useState({})
   const [avatarEditor, setAvatarEditor] = useState(false)
-
-  const commentorIds = (record.comments || []).map(comment => comment.by)
-
-  const commentorDetector = JSON.stringify(commentorIds)
-  console.log('commentorDetector: ', commentorDetector);
 
   const fetchData = () => {
     getOneRecord(_id).then(data => {
       setRecord(data)
     })
   }
-
-  useEffect(() => {
-    let cache = { ...recordCache }
-    Promise.all(commentorIds.map(async id => {
-      if (!recordCache[id] && !cache[id]) {
-        const r = await getUserById(id)
-        cache[id] = r
-      }
-    })).then(() => {
-      console.log('cache: ', cache);
-      setRecordCache(cache)
-    })
-  }, [commentorDetector])
 
   useEffect(() => {
     fetchData()
@@ -909,7 +890,7 @@ const PersonCard = ({
           <Modal.Body>
             {(record.comments || []).map(comment => (
               <div>
-                <label>{(recordCache[comment.by] || {}).email || comment.by}</label>
+                <label>{comment.by.email}</label>
                 <p>{comment.content}</p>
               </div>
             ))}

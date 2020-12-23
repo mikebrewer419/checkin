@@ -588,7 +588,11 @@ class PostingPage extends Component {
             </Modal.Footer>
           </Modal>
         </div>
-        <ReportPage groups={groups} />
+        <ReportPage
+          groups={groups}
+          page={page}
+          studio={studio}
+        />
       </div>
     )
   }

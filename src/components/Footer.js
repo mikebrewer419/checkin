@@ -8,12 +8,12 @@ const excludePaths = [
 
 const Footer = (props) => {
   
-  if (excludePaths.find(path => props.location.pathname.startsWith(path))) {
+  if (!props.force && excludePaths.find(path => props.location.pathname.startsWith(path))) {
     return null
   }
 
   return (
-    <div className="no-print text-center text-primary mt-5">
+    <div className="no-print text-center text-primary mt-5 mb-5">
       <img src="https://heyjoe.io/wp-content/uploads/2019/06/heyjoe.png" className="heyjoe-logo br"/>
       &copy; 2020 North Shore Media, LLC. All Rights Reserved
     </div>

@@ -1,8 +1,16 @@
 .report-page {
-  flex-direction: column;
+  .user-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    object-position: center;
+  }
   .group-item {
     display: flex;
     flex-direction: column;
+    &.page-break {
+      page-break-after: always;
+    }
     .group-item-header {
       display: flex;
       align-items: center;
@@ -18,14 +26,16 @@
           width: 70px;
         }
         .talent-avatar {
-          width: 120px;
+          width: 150px;
         }
         .talent-name {
           width: 45%;
         }
         .avatar-img {
-          width: 100px;
-          height: 100px;
+          width: 150px;
+          height: 150px;
+          object-fit: contain;
+          object-position: center;
         }
       }
       th, td {
