@@ -27,7 +27,7 @@ export const loginApi = (email, password) => {
 
 export const googleLogin = (email, token) => {
   return new Promise((resolve, reject) => {
-    fetch(`${api_host}/auth/login`, {
+    fetch(`${api_host}/auth/google-login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,6 +47,16 @@ export const googleLogin = (email, token) => {
     })
     .catch(err => reject(err))
   })
+}
+
+export const googleRegister = async (email, token) => {
+  const resp = await fetch(`${api_host}/auth/google-register`, {
+    method: 'POST',
+    body: JSON.stringify({
+      email, token
+    })
+  })
+  return await resp.json()
 }
 
 export const verityToken = () => {

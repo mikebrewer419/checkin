@@ -30,11 +30,22 @@ const Login = () => {
     document.title = `Check In | Login`;
   }, [])
 
-  
   const googleLoginSuccess = (response) => {
     const googleUser = response.profileObj
-    console.log('googleUser: ', googleUser, response)
+    googleLogin(googleUser.email, response.tokenId)
+      .then(() => {
+        const pUrl = window.localStorage.getItem('prev_url')
+        if (pUrl) {
+          window.localStorage.removeItem('prev_url')
+          window.location.href = pUrl
+        } else {
+          window.location.href = '/'
+        }
+      }, (error) => {
+        setError(error)
+      })
   }
+
   const googleLoginFail = (error) => {
     console.log("Google login error: ", error)
   }

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { GoogleLogin } from 'react-google-login';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
-import { register, verifyCaptcha } from '../../services'
+import { register, verifyCaptcha, googleRegister } from '../../services'
 import { USER_TYPES } from '../../constants'
 import './Login.scss'
+
+const client_id = process.env.REACT_APP_CLIENT_ID
 
 const Register = () => {
   const [email, setEmail] = useState('')
@@ -58,6 +61,26 @@ const Register = () => {
     } else {
       setError(response.error)
     }
+  }
+
+  const googleRegisterSuccess = async (response) => {
+    const googleUser = response.profileObj
+    const registerResponse = await googleRegister(googleUser.email, response.tokenId)
+    const token = await executeRecaptcha()
+    const captchaVerifyResponse = await verifyCaptcha(token)
+    if (!captchaVerifyResponse.success) {
+      setError('Captcha verfication failed. Refresh your browser and try again!')
+      return
+    }
+    if (registerResponse._id) {
+      window.location.href='/login'
+    } else {
+      setError(registerResponse.error)
+    }
+  }
+
+  const googleRegisterFail = (error) => {
+    console.log("Google Sign up error: ", error)
   }
 
   return (
@@ -121,6 +144,15 @@ const Register = () => {
             <Link to="/login" className="font-weight-bold" href="#">Login</Link>
           </span>
         </div>
+        <GoogleLogin
+          className="w-100 text-center d-flex justify-content-center mt-4"
+          clientId={client_id}
+          buttonText="Sign up with Google"
+          onSuccess={googleRegisterSuccess}
+          onFailure={googleRegisterFail}
+          cookiePolicy={'single_host_origin'}
+          isSignedIn={true}
+        />
       </div>
     </div>
   )
