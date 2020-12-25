@@ -65,7 +65,11 @@ const Register = () => {
 
   const googleRegisterSuccess = async (response) => {
     const googleUser = response.profileObj
-    const registerResponse = await googleRegister(googleUser.email, response.tokenId)
+    const registerResponse = await googleRegister({
+      email: googleUser.email,
+      token: response.tokenId,
+      user_type: USER_TYPES.CLIENT
+    })
     const token = await executeRecaptcha()
     const captchaVerifyResponse = await verifyCaptcha(token)
     if (!captchaVerifyResponse.success) {

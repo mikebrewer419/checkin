@@ -49,12 +49,10 @@ export const googleLogin = (email, token) => {
   })
 }
 
-export const googleRegister = async (email, token) => {
+export const googleRegister = async (fields) => {
   const resp = await fetch(`${api_host}/auth/google-register`, {
     method: 'POST',
-    body: JSON.stringify({
-      email, token
-    })
+    body: JSON.stringify(fields)
   })
   return await resp.json()
 }
