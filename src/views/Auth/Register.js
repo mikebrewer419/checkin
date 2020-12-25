@@ -155,7 +155,6 @@ const Register = () => {
           onSuccess={googleRegisterSuccess}
           onFailure={googleRegisterFail}
           cookiePolicy={'single_host_origin'}
-          isSignedIn={true}
         />
       </div>
     </div>

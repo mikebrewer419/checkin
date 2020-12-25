@@ -109,7 +109,6 @@ const Login = () => {
           onSuccess={googleLoginSuccess}
           onFailure={googleLoginFail}
           cookiePolicy={'single_host_origin'}
-          isSignedIn={true}
         />
       </div>
     </div>
