@@ -44,7 +44,6 @@ const Register = () => {
 
   const doRegister = async (email, password) => {
     const token = await executeRecaptcha()
-    console.log('token: ', token)
 
     const formData = new FormData()
     formData.append('email', email)
