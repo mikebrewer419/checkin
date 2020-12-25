@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { loginApi } from '../../services'
+import { GoogleLogin } from 'react-google-login';
+import { loginApi, googleLogin } from '../../services'
 import './Login.scss'
+
+const client_id = process.env.REACT_APP_CLIENT_ID
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -26,6 +29,16 @@ const Login = () => {
   useEffect(() => {
     document.title = `Check In | Login`;
   }, [])
+
+  
+  const googleLoginSuccess = (response) => {
+    const googleUser = response.profileObj
+    console.log('googleUser: ', googleUser, response)
+  }
+  const googleLoginFail = (error) => {
+    console.log("Google login error: ", error)
+  }
+
   return (
     <div className="d-flex align-items-center flex-column vh-100 login-page">
       <div className="bg-danger vw-100 p-3 d-flex justify-content-center">
@@ -78,6 +91,15 @@ const Login = () => {
             className="font-weight-bold" href="#"
           >Create Account</Link>
         </div>
+        <GoogleLogin
+          className="w-100 text-center d-flex justify-content-center mt-4"
+          clientId={client_id}
+          buttonText="Login with Google"
+          onSuccess={googleLoginSuccess}
+          onFailure={googleLoginFail}
+          cookiePolicy={'single_host_origin'}
+          isSignedIn={true}
+        />
       </div>
     </div>
   )

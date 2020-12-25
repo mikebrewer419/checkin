@@ -25,6 +25,30 @@ export const loginApi = (email, password) => {
   })
 }
 
+export const googleLogin = (email, token) => {
+  return new Promise((resolve, reject) => {
+    fetch(`${api_host}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email, token
+      })
+    })
+    .then(resp => resp.json())
+    .then(res => {
+      if (res.success) {
+        window.localStorage.setItem('token', res.token)
+        resolve(res.token)
+      } else {
+        reject(res.error)
+      }
+    })
+    .catch(err => reject(err))
+  })
+}
+
 export const verityToken = () => {
   return new Promise((resolve, reject) => {
     if (token) {
