@@ -6,6 +6,8 @@
   padding: 10px 20px;
   margin: auto;
   min-width: calc(100vw - 320px);
+  height: calc(100vh - 260px);
+  overflow-y: auto;
   .person-card {
     width: 300px;
     margin: 10px;

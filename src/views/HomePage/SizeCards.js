@@ -19,9 +19,9 @@ const SizeCards = ({ session }) => {
   }
 
   const setSize = () => {
-    const count = parseInt((window.innerWidth - 40) / 320)
+    const count = parseInt((window.innerWidth - 60) / 320)
     console.log('count: ', count)
-    document.querySelector('.size-cards').style.width = `${320 * count + 40}px`
+    document.querySelector('.size-cards').style.width = `${320 * count + 60}px`
   }
 
   useEffect(() => {
@@ -77,15 +77,18 @@ const SizeCards = ({ session }) => {
           Maybe
         </button>
       </div>
-      <div className="size-cards">
+      <div className="size-cards mt-2">
         {filteredCandidates.map(c => {
           return (
             <SizeCardItem person={c} />
           )
         })}
-      </div>
-      <div className="text-center">
-        {filteredCandidates.length === 0 && "No candidates."}
+
+        {filteredCandidates.length === 0 && (
+          <div className="text-center w-100">
+            No candidates
+          </div>
+        )}
       </div>
       <Footer force={true} />
     </div>

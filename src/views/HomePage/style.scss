@@ -1,15 +1,5 @@
 @import "../../values.scss";
 
-.homepage-wrapper {
-  &.client {
-    overflow-y: auto;
-    .homepage {
-      border-bottom: 1px solid #ccc;
-    }
-  }
-  height: calc(100vh - #{$headerheight});
-}
-
 .homepage {
   display: flex;
   height: calc(100vh - #{$headerheight});
@@ -187,3 +177,15 @@
   }
 }
 
+.homepage-wrapper {
+  &.client {
+    overflow-y: auto;
+    .homepage {
+      border-bottom: 1px solid #ccc;
+    }
+    .bottom-panel {
+      height: 225px;
+    }
+  }
+  height: calc(100vh - #{$headerheight});
+}
