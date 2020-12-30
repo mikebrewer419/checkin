@@ -65,7 +65,7 @@ function App() {
   }, [])
 
   const recaptchaKey = process.env.REACT_APP_RECAPTCHA_KEY
-  const user = getUser()
+  const user = getUser() || {}
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
