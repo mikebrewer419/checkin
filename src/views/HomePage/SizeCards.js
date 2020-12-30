@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import SizeCardItem from './SizeCardItem'
+import PersonCard from '../PostingPage/PersonCard'
 import {
   getUser,
   fetchCheckInList
@@ -12,10 +12,25 @@ const interval = 5000 // query api every 30 seconds
 const SizeCards = ({ session }) => {
   const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
+  const [ feedbackUsers, setFeedbackUsers] = useState([])
+  const [ userFilter, setuserFilter ] = useState(null)
   const [ user ] = useState(getUser())
   const fetchData = async () => {
-    const c = await fetchCheckInList(session._id)
-    setCandidates(c)
+    const cs = await fetchCheckInList(session._id)
+    const fbkUsers = []
+    cs.map(c => Object.keys(c.feedbacks || {})).forEach(fs => {
+      fs.forEach(f => {
+        if (fbkUsers.includes(f)) {
+          return
+        }
+        fbkUsers.push(f)
+      })
+      setFeedbackUsers(fbkUsers)
+      if (!userFilter) {
+        setuserFilter(fbkUsers[0])
+      }
+    })
+    setCandidates(cs)
   }
 
   const setSize = () => {
@@ -37,13 +52,22 @@ const SizeCards = ({ session }) => {
   window.addEventListener('resize', setSize)
 
   const filteredCandidates = candidates.filter(c => {
-    const userFeedback = (c.feedbacks || {})[user.id]
+    const userFeedback = (c.feedbacks || {})[userFilter]
     return filter === "all" || userFeedback === filter
   })
 
   return (
     <div>
       <div className="d-flex justify-content-center mt-3">
+        <div className="mr-2">
+          <select className="form-control">
+            {feedbackUsers.map(fu => (
+              <option key={fu}>
+                {fu}
+              </option>
+            ))}
+          </select>
+        </div>
         <button
           className={"btn " + (filter === 'all' ? 'btn-primary' : 'btn-default')}
           onClick={() => {
@@ -80,7 +104,12 @@ const SizeCards = ({ session }) => {
       <div className="size-cards mt-2">
         {filteredCandidates.map(c => {
           return (
-            <SizeCardItem person={c} />
+            <div key={c._id} className="person-card">
+              <PersonCard
+                {...c}
+                topAvatar={true}
+              />
+            </div>
           )
         })}
 

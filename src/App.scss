@@ -46,7 +46,7 @@ body {
 }
 
 .heyjoe-logo {
-  height: 40px;
+  height: 38px;
   padding-right: 20px;
   margin-right: 20px;
   &.white {
@@ -73,10 +73,37 @@ body {
 .myfeedback-icon {
   position: relative;
   svg {
-    position: absolute;
     left: -42px;
     width: 42px;
     height: 42px;
+  }
+}
+
+.feedback-item {
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  span {
+    margin-left: 5px;
+  }
+  &.active {
+    border: 1px solid $danger;
+  }
+  &:hover {
+    border: 1px solid $primary;
+  }
+}
+
+.feedback-modal {
+  .feedback-item {
+    font-size: 20px;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 }
 
@@ -104,6 +131,12 @@ body {
 .print-only,
 .print-flex {
   display: none;
+}
+
+.app-footer {
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+  font-size: 0.7rem;
 }
 
 @media print {

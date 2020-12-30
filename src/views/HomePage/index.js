@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import cometInject from './comet-inject'
 import List from '../CheckinList'
 import SizeCards from './SizeCards'
-import SizeCardItem from './SizeCardItem'
 import PersonCard from '../PostingPage/PersonCard'
 import {
   static_root,
@@ -193,13 +192,14 @@ class HomePage extends Component {
                 allowFullScreen="allowfullscreen">
               </iframe>
             </div>
-            <div className={`d-flex bottom-panel ${showChat?'show':''}`}>
+            <div className={`d-flex bottom-panel ${showChat && !isClient?'show':''}`}>
+              {!isClient &&
               <button
                 className="btn border-bottom-0 toggle-bottom"
                 onClick={() => this.setshowChat(!showChat)}
               >
                 {!showChat ? '〉' :'〈' }
-              </button>
+              </button>}
               {!testMode && !isClient && (
                 <div>
                   <div id="current-group" className="px-2">

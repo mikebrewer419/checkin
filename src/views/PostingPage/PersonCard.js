@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FaCheck, FaTimes, FaQuestion, FaComment } from 'react-icons/fa'
+import { FaComment } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
@@ -7,7 +7,6 @@ import MaybeIcon from '../../components/icons/maybe'
 import { 
   static_root,
   getOneRecord,
-  getUserById,
   setFeedback,
   getUser,
   newComment
@@ -25,7 +24,7 @@ const PersonCard = ({
   phone,
   skipped,
   avatar,
-  hideAvatar,
+  topAvatar,
   role,
   agent,
   seen
@@ -33,6 +32,7 @@ const PersonCard = ({
   const [showContact, setShowContact] = useState(false)
   const [record, setRecord] = useState({})
   const [commentsVisible, setCommentsVisible] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [content, setContent] = useState('')
 
   const fetchData = () => {
@@ -48,7 +48,7 @@ const PersonCard = ({
     }
   }, [])
 
-  const myFeedback = (record.feedbacks || {})[user.id]
+  const myFeedback = (record.feedbacks || {})[user.email]
 
   const setMyFeedback = async (feedback) => {
     await setFeedback(_id, feedback)
@@ -96,97 +96,147 @@ const PersonCard = ({
     feedbackCounts[value] ++
   })
 
+  const feedbackBar = [
+    <div key="yes" className={"feedback-item " + activeClass('yes')} onClick={(ev) => {
+      ev.stopPropagation()
+      setMyFeedback('yes')
+    }}>
+      <YesIcon />
+      <span>{feedbackCounts['yes']}</span>
+    </div>,
+    <div key="no" className={"feedback-item " + activeClass('no')} onClick={(ev) => {
+      ev.stopPropagation()
+      setMyFeedback('no')
+    }}>
+      <NoIcon />
+      <span>{feedbackCounts['no']}</span>
+    </div>,
+    <div key="maybe" className={"feedback-item " + activeClass('maybe')} onClick={(ev) => {
+      ev.stopPropagation()
+      setMyFeedback('maybe')
+    }}>
+      <MaybeIcon />
+      <span>{feedbackCounts['maybe']}</span>
+    </div>
+  ]
+
   return (
-    <div className="posting-person-card card px-4 py-1">
-      <div className="card-body px-0">
+    <div className="posting-person-card card px-3">
+      {topAvatar &&
+        <img
+          src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+          className="avatar mt-1"
+          onClick={() => { setShowFeedbackModal(true) }}
+        />
+      }
+      <div
+        className="card-body px-0 py-1"
+        onClick={() => { setShowFeedbackModal(true) }}
+      >
         <div className="content">
-          <div className="card-title d-flex mb-2">
+          <div className="card-title d-flex mb-0">
             <div>
-              <h5>{first_name} {last_name}</h5>
+              <h5 className="mb-1">{first_name} {last_name}</h5>
               <p className="card-text mb-0">Role: <small>{role}</small></p>
             </div>
             {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
-            <span className="ml-auto myfeedback-icon">
+            <span className="ml-auto myfeedback-icon mt-1">
               {MyFeedbackIcon}
             </span>
           </div>
-          <label onClick={() => setShowContact(!showContact)}>Contact</label>
+          <label className="mb-0" onClick={(ev) => {
+            ev.stopPropagation()
+            setShowContact(!showContact)
+          }}>Contact</label>
           {showContact &&
-          <div className="mb-3">
-            <p className="card-text mb-1">Phone: <small>{phone}</small></p>
-            <p className="card-text mb-1">Email: <small>{email}</small></p>
+          <div className="mb-1">
+            <p className="card-text mb-0">Phone: <small>{phone}</small></p>
+            <p className="card-text mb-0">Email: <small>{email}</small></p>
             <p className="card-text mb-0">Agent: <small>{agent}</small></p>
           </div>}
           {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
             <div className="d-flex align-items-center">
-              <div className={"feedback-item " + activeClass('yes')} onClick={() => {
-                setMyFeedback('yes')
+              {feedbackBar}
+              <div className="commentor ml-auto" onClick={(ev) => {
+                ev.stopPropagation()
+                setCommentsVisible(true)
               }}>
-                <YesIcon />
-                <span>{feedbackCounts['yes']}</span>
-              </div>
-              <div className={"feedback-item " + activeClass('no')} onClick={() => {
-                setMyFeedback('no')
-              }}>
-                <NoIcon />
-                <span>{feedbackCounts['no']}</span>
-              </div>
-              <div className={"feedback-item " + activeClass('maybe')} onClick={() => {
-                setMyFeedback('maybe')
-              }}>
-                <MaybeIcon />
-                <span>{feedbackCounts['maybe']}</span>
-              </div>
-              <div className="commentor ml-auto" onClick={() => setCommentsVisible(true)}>
                 <FaComment className="ml-5" />
                 <span className="ml-1">{(record.comments || []).length}</span>
               </div>
             </div>
           )}
         </div>
-        {!hideAvatar &&
+        {!topAvatar &&
           <img
             src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
-            className="small-avatar"
+            className="small-avatar mt-1"
           />
         }
       </div>
       {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
-        <Modal
-          show={commentsVisible}
-          onHide={() => setCommentsVisible(false)}
-        >
-          <Modal.Header closeButton>
-            <h5>Comments</h5>
-          </Modal.Header>
-          <Modal.Body>
-            {(record.comments || []).map(comment => (
-              <div>
-                <label>{comment.by.email}</label>
-                <p>{comment.content}</p>
-              </div>
-            ))}
-            {(record.comments || []).length === 0 && (
-              <div>
-                No comments yet.
-              </div>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <textarea
-              className="form-control"
-              value={content}
-              onChange={ev => setContent(ev.target.value)}
-            ></textarea>
-            <button
-              className="btn btn-danger"
-              onClick={addNewComment}
-              disabled={!content}
-            >
-              Comment
-            </button>
-          </Modal.Footer>
-        </Modal>
+        [
+          <Modal
+            key="comment-modal"
+            show={commentsVisible}
+            onHide={() => setCommentsVisible(false)}
+          >
+            <Modal.Header closeButton>
+              <h5>Comments</h5>
+            </Modal.Header>
+            <Modal.Body>
+              {(record.comments || []).map(comment => (
+                <div>
+                  <label>{comment.by.email}</label>
+                  <p>{comment.content}</p>
+                </div>
+              ))}
+              {(record.comments || []).length === 0 && (
+                <div>
+                  No comments yet.
+                </div>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <textarea
+                className="form-control"
+                value={content}
+                onChange={ev => setContent(ev.target.value)}
+              ></textarea>
+              <button
+                className="btn btn-danger"
+                onClick={addNewComment}
+                disabled={!content}
+              >
+                Comment
+              </button>
+            </Modal.Footer>
+          </Modal>
+          ,
+          <Modal
+            key="feedback-modal"
+            className="feedback-modal"
+            size="lg"
+            show={showFeedbackModal}
+            onHide={() => setShowFeedbackModal(false)}
+          >
+            <Modal.Header closeButton>
+              <h5>{first_name} {last_name}</h5>
+            </Modal.Header>
+            <Modal.Body>
+              <img
+                className="w-100"
+                src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <span className="myfeedback-icon mr-auto mt-1">
+                {MyFeedbackIcon}
+              </span>
+              {feedbackBar}
+            </Modal.Footer>
+          </Modal>
+        ]
       )}
     </div>
   )

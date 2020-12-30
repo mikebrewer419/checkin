@@ -3,6 +3,7 @@
 .size-cards {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   padding: 10px 20px;
   margin: auto;
   min-width: calc(100vw - 320px);
@@ -12,9 +13,8 @@
     width: 300px;
     margin: 10px;
     border-radius: 10px;
-    border: 1px solid #ccc;
     .avatar {
-      width: 300px;
+      width: 100%;
       height: 150px;
       object-fit: contain;
     }

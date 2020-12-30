@@ -110,21 +110,4 @@
     background-color: white;
   }
 
-  .feedback-item {
-    padding: 0 5px;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    span {
-      margin-left: 5px;
-    }
-    &.active {
-      border: 1px solid $danger;
-    }
-    &:hover {
-      border: 1px solid $primary;
-    }
-  }
 }

@@ -65,6 +65,7 @@ function App() {
   }, [])
 
   const recaptchaKey = process.env.REACT_APP_RECAPTCHA_KEY
+  const user = getUser()
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
@@ -85,7 +86,9 @@ function App() {
             <Route path="/message/:record_id" component={RecordMessagePage} />
             <Route path="/studio/:uri/:session_id" component={HomePage} />
             <Route path="/onboard/:uri/:session_id" component={Onboard} />
-            <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
+            {!(user.user_type === USER_TYPES.IS_CLIENT) &&
+              <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
+            }
             <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
             <Route path="/" component={HomeBomponent} />
           </Switch>
