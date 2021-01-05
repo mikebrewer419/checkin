@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import {
   updateRecordField,
-  uploadImage,
-  static_root
+  uploadImage
 } from '../../services'
 import './style.scss'
 
@@ -46,7 +45,7 @@ const AvatarEditModal = ({
       <Modal.Body>
         <div className="image-section">
           <img
-            src={avatar !== 'empty' ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+            src={avatar !== 'empty' ? avatar : require('../../assets/camera.png')}
             className="w-100 large-avatar"
           />
           {edit && (

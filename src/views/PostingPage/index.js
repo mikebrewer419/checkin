@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { FaDownload, FaArchive, FaTeethOpen, FaPenAlt, FaTrash, FaPrint } from 'react-icons/fa';
 import {
-  static_root,
   getStudioByUri,
   deletePageVideo,
   getOnePage,
@@ -305,11 +304,6 @@ class PostingPage extends Component {
             Processing...
           </div>
           <div className="video-header d-flex align-items-center justify-content-center">
-            <div className="video-logo mr-2 d-none">
-              <Link to="/">
-                <img src={static_root+studio.logo} alt={studio.name}/>
-              </Link>
-            </div>
             <h2 style={{textAlign: "center"}} className="mb-0">
               {studio.name}<br/>
               <small><small>{page.name} Video review</small></small>
@@ -387,7 +381,7 @@ class PostingPage extends Component {
                           >
                             <img
                               className="dummy-player"
-                              src={`${static_root}${group.thumbnail}`}
+                              src={group.thumbnail}
                             />
                           </div>
                           <div className="d-flex">
@@ -473,7 +467,7 @@ class PostingPage extends Component {
                                 >
                                   <img
                                     className="dummy-player dummy-video"
-                                    src={`${static_root}${video.thumbnail}`}
+                                    src={video.thumbnail}
                                   />
                                 </div>
                                 <div className="d-flex">

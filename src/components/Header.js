@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { Dropdown, Navbar, Image, Modal } from 'react-bootstrap'
 import { FaInfoCircle } from 'react-icons/fa';
 import { getUser, getUserById } from '../services/auth'
-import { static_root } from '../services'
 import UserForm from './userForm'
 import { USER_TYPES } from '../constants'
 import './Header.scss'
@@ -53,7 +52,7 @@ const Header = (props) => {
       <Navbar.Brand href="#home" className="my-n4">
         <Link to="/" target="_blank">
           {user.logo
-            ? <Image className="mt-n2" height="65" src={static_root+user.logo} />
+            ? <Image className="mt-n2" height="65" src={user.logo} />
             : <label className="mb-0 h3 text-white">HeyJoe</label>
           }
         </Link>

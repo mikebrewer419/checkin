@@ -5,7 +5,6 @@ import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
 import { 
-  static_root,
   getOneRecord,
   setFeedback,
   getUser,
@@ -124,7 +123,7 @@ const PersonCard = ({
     <div className="posting-person-card card px-3">
       {topAvatar &&
         <img
-          src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+          src={avatar ? avatar : require('../../assets/camera.png')}
           className="avatar mt-1"
           onClick={() => { setShowFeedbackModal(true) }}
         />
@@ -169,7 +168,7 @@ const PersonCard = ({
         </div>
         {!topAvatar &&
           <img
-            src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+            src={avatar ? avatar : require('../../assets/camera.png')}
             className="small-avatar mt-1"
           />
         }
@@ -226,7 +225,7 @@ const PersonCard = ({
             <Modal.Body>
               <img
                 className="w-100"
-                src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+                src={avatar ? avatar : require('../../assets/camera.png')}
               />
             </Modal.Body>
             <Modal.Footer>

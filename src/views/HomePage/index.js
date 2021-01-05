@@ -4,7 +4,6 @@ import List from '../CheckinList'
 import SizeCards from './SizeCards'
 import PersonCard from '../PostingPage/PersonCard'
 import {
-  static_root,
   getStudioByUri,
   getOneSession,
   createCometRoom

@@ -15,8 +15,6 @@ import {
   removeRecordFromCurrentGroup,
   getCurrentGroup,
   finishCurrentGroup,
-
-  static_root
 } from '../../services'
 import AvatarModal from '../../components/avatar-modal'
 import './style.scss'
@@ -352,11 +350,6 @@ class List extends Component {
       <div className={"list-view " + (testMode? 'test': '')}>
         <div className="d-flex flex-column">
           <div className="studio-header">
-            <div className="logo d-none">
-              <Link to="/">
-                <img src={static_root + studio.logo} alt={studio.name}/>
-              </Link>
-            </div>
             <h4 className="my-3 text-center">
               <span>{studio.name}</span>
               &nbsp;
@@ -665,7 +658,7 @@ export const PersonCard = ({
           </div>
           <p className="ml-auto mr-2 mb-0">
             <img
-              src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+              src={avatar ? avatar : require('../../assets/camera.png')}
               className="small-avatar"
               onClick={() => updateRecord({
                 _id,

@@ -5,7 +5,6 @@ import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
 import {
-  static_root,
   getStudioByUri,
   copyGroupFromSession,
   getPagesByStudio,
@@ -460,7 +459,7 @@ class VideoPage extends Component {
                         >
                           <img
                             className="dummy-player"
-                            src={`${static_root}${group.thumbnail}`}
+                            src={group.thumbnail}
                           />
                         </div>
                         <div className="d-flex">
@@ -552,7 +551,7 @@ class VideoPage extends Component {
                               >
                                 <img
                                   className="dummy-player dummy-video"
-                                  src={`${static_root}${video.thumbnail}`}
+                                  src={video.thumbnail}
                                 />
                               </div>
                               <div className="d-flex">
@@ -874,7 +873,7 @@ const PersonCard = ({
         </div>
         <img
           key={avatar}
-          src={avatar ? `${static_root}${avatar}` : require('../../assets/camera.png')}
+          src={avatar ? avatar : require('../../assets/camera.png')}
           className="small-avatar"
           onClick={() => setAvatarEditor(true)}
         />

@@ -137,7 +137,7 @@ const Onboard = () => {
     <div className="onboard-container">
       <img
         className="logo d-block m-auto"
-        src={static_root+studio.logo}
+        src={studio.logo}
         alt={studio.name}
       />
       <h3 className="brand mt-4 mb-3">Welcome to {studio.name}/{session.name} Virtual Check In</h3>

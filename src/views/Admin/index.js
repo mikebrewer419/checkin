@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Modal, Image, Accordion  } from 'react-bootstrap'
 import { FaPlus, FaTrash, FaPencilAlt } from 'react-icons/fa';
 import {
-  static_root,
   listUsers,
   register,
   updateUserFields,
@@ -112,7 +111,7 @@ const Admin = () => {
                 <div className="row px-5 py-3">
                   {user.logo ?
                   <div className="col-auto">
-                    <Image height="105" src={static_root+user.logo} />
+                    <Image height="105" src={user.logo} />
                   </div> : <span className="mr-5">No Logo</span>}
                   <div className="col">
                     {[USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(user.user_type) &&
