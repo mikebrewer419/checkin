@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react'
 import PersonCard from '../PostingPage/PersonCard'
 import {
   getUser,
-  fetchCheckInList
+  fetchCheckInList,
+  getCurrentGroup
 } from '../../services'
 import Footer from '../../components/Footer'
 import './sizecards.scss'
 
 const interval = 5000 // query api every 30 seconds
 
-const SizeCards = ({ session }) => {
+const SizeCards = ({ session, setGroupCandidates }) => {
   const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
   const [ feedbackUsers, setFeedbackUsers] = useState([])
@@ -30,26 +31,19 @@ const SizeCards = ({ session }) => {
         setuserFilter(fbkUsers[0])
       }
     })
+    const currentGroup = await getCurrentGroup(session._id) || {}
+    setGroupCandidates(currentGroup.records || [])
     setCandidates(cs)
-  }
-
-  const setSize = () => {
-    const count = parseInt((window.innerWidth - 60) / 320)
-    console.log('count: ', count)
-    document.querySelector('.size-cards').style.width = `${320 * count + 60}px`
   }
 
   useEffect(() => {
     const handle = setInterval(() => {
       fetchData()
     }, interval)
-    setSize()
     return () => {
       clearInterval(handle)
     }
   }, [])
-
-  window.addEventListener('resize', setSize)
 
   const filteredCandidates = candidates.filter(c => {
     const userFeedback = (c.feedbacks || {})[userFilter]

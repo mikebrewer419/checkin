@@ -179,12 +179,37 @@
 
 .homepage-wrapper {
   &.client {
-    overflow-y: auto;
     .homepage {
       border-bottom: 1px solid #ccc;
     }
     .bottom-panel {
       height: 165px;
+    }
+
+    .right-frame {
+      overflow-y: auto;
+    }
+
+    #jitsi-frame {
+      min-height: calc(100vh - 225px);
+      &.mini-view iframe {
+        width: 400px;
+        height: 300px;
+        position: fixed;
+        right: 0;
+        top: 60px;
+        z-index: 100;
+      }
+    }
+
+    #checkin-list {
+      &.show {
+        width: 300px;
+      }
+      & > button {
+        left: -13px;
+        right: auto;
+      }
     }
   }
   height: calc(100vh - #{$headerheight});

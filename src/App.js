@@ -7,7 +7,8 @@ import Login from './views/Auth/Login'
 import ResetPasswordRequest from './views/Auth/ResetPasswordRequest'
 import ResetPassword from './views/Auth/ResetPassword'
 import Register from './views/Auth/Register'
-import HomePage from './views/HomePage'
+import HomePage from './views/HomePage/index'
+import ClientHomePage from './views/HomePage/client'
 import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
@@ -67,6 +68,8 @@ function App() {
   const recaptchaKey = process.env.REACT_APP_RECAPTCHA_KEY
   const user = getUser() || {}
 
+  const HP = user.user_type === USER_TYPES.CLIENT ? ClientHomePage : HomePage
+
   return (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
       <IconContext.Provider value={{ className: "global-class-name" }}>
@@ -84,9 +87,9 @@ function App() {
               <Route path="/heyjoe-admin" component={AdminView} />
             }
             <Route path="/message/:record_id" component={RecordMessagePage} />
-            <Route path="/studio/:uri/:session_id" component={HomePage} />
+            <Route path="/studio/:uri/:session_id" component={HP} />
             <Route path="/onboard/:uri/:session_id" component={Onboard} />
-            {!(user.user_type === USER_TYPES.IS_CLIENT) &&
+            {!(user.user_type === USER_TYPES.CLIENT) &&
               <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
             }
             <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />

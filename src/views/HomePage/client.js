@@ -12,7 +12,7 @@ import './style.scss'
 import { FaMinus } from 'react-icons/fa'
 import { USER_TYPE } from '../../constants'
 
-class HomePage extends Component {
+class ClientHomePage extends Component {
   constructor(props) {
     super(props)
     let search = window.location.search.substring(1);
@@ -106,6 +106,16 @@ class HomePage extends Component {
     `
     document.body.appendChild(chatScriptSecondDom)
     this.chatScriptSecondDom = chatScriptSecondDom
+
+    document.querySelector('.right-frame').addEventListener('scroll', () => {
+      let offsetTop = document.querySelector('.right-frame').scrollTop
+      const threshold = window.innerHeight - 225
+      if (offsetTop > threshold) {
+        document.querySelector('#jitsi-frame').classList.add('mini-view')
+      } else {
+        document.querySelector('#jitsi-frame').classList.remove('mini-view')
+      }
+    })
   }
 
   setshowChat = (v) => {
@@ -146,26 +156,8 @@ class HomePage extends Component {
     }
     const meeting_id = testMode ? studio.test_meeting_id : studio.jitsi_meeting_id
     return (
-      <div className="homepage-wrapper">
+      <div className="homepage-wrapper client">
         <div className={"homepage " + (testMode ? 'test': '')}>
-          <div id="checkin-list" className={`${showList?'show':''}`}>
-            <div
-              id="list"
-            >
-              <List
-                ref={this.setListRef}
-                testMode={testMode}
-                studio={studio}
-                session={session}
-                messages={studio.position_messages}
-                delete_message={studio.delete_message}
-                setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
-              />
-            </div>
-            <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
-              {!showList ? '〉' :'〈' }
-            </button>
-          </div>
           <div className="right-frame">
             <div id="jitsi-frame">
               <button
@@ -184,43 +176,30 @@ class HomePage extends Component {
                 allowFullScreen="allowfullscreen">
               </iframe>
             </div>
-            <div className={`d-flex bottom-panel ${showChat ? 'show' : ''}`}>
-              <button
-                className="btn border-bottom-0 toggle-bottom"
-                onClick={() => this.setshowChat(!showChat)}
-              >
-                {!showChat ? '〉' :'〈' }
-              </button>
-              {!testMode && (
-                <div>
-                  <div id="current-group" className="px-2">
-                    <h6 className="mx-n2 px-2">
-                      Current Group 
-                    </h6>
-                    <ul>
-                      {groupCandidates.map(person => (
-                        <li>
-                          <div className="d-flex align-items-center">
-                            <span className="mr-5">{person.first_name} ${person.last_name}</span>
-                            <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
-                              this.leaveFromGroup(person._id)
-                            }}/>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    {groupCandidates.length > 0 && [
-                      <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
-                        Finish Group
-                      </button>
-                    ]}
-                  </div>
+            <div className="d-flex bottom-panel">
+              <div className="current-group-size-cards-wrapper w-100">
+                <h6 className="px-2 mb-0 mt-2">
+                  Current Group 
+                </h6>
+                <div className="current-group-size-cards">
+                  {groupCandidates.map(person => (
+                    <PersonCard key={person._id} {...person} />
+                  ))}
                 </div>
-              )}
-              <div id="comet-chat">
-                <div id="chat"></div>
               </div>
             </div>
+            <SizeCards
+              session={session}
+              setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
+            />
+          </div>
+          <div id="checkin-list" className={`${showList?'show':''}`}>
+            <div id="comet-chat" className="client">
+              <div id="chat"></div>
+            </div>
+            <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
+              {!showList ? '〉' :'〈' }
+            </button>
           </div>
         </div>
       </div>
@@ -228,4 +207,4 @@ class HomePage extends Component {
   }
 }
 
-export default HomePage
+export default ClientHomePage
