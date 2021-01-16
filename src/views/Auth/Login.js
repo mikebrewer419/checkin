@@ -53,7 +53,7 @@ const Login = () => {
   return (
     <div className="d-flex align-items-center flex-column vh-100 login-page">
       <div className="bg-danger vw-100 p-3 d-flex justify-content-center">
-        <img src="https://heyjoe.io/wp-content/uploads/2019/06/heyjoe.png" className="heyjoe-logo white"/>
+        <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
       <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
         <h2 className=" text-center"> WELCOME BACK.</h2>
