@@ -6,7 +6,8 @@ import {
   getOneSession,
   onboardUser,
   uploadImage,
-  static_root
+  static_root,
+  temp_root
 } from '../../services'
 
 import './style.scss'
@@ -137,7 +138,7 @@ const Onboard = () => {
     <div className="onboard-container">
       <img
         className="logo d-block m-auto"
-        src={studio.logo}
+        src={static_root+studio.logo}
         alt={studio.name}
       />
       <h3 className="brand mt-4 mb-3">Welcome to {studio.name}/{session.name} Virtual Check In</h3>
@@ -146,7 +147,7 @@ const Onboard = () => {
         <div className="company-info">
           <h3>Check in to {studio.name}</h3>
           <div className="avatar-choose">
-            <img src={avatar64 ? `${static_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
+            <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
             <input
               type="file"
               id="photo"

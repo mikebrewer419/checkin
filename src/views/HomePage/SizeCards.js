@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PersonCard from '../PostingPage/PersonCard'
 import {
+  static_root,
   getUser,
   fetchCheckInList,
   getCurrentGroup
@@ -10,12 +11,12 @@ import './sizecards.scss'
 
 const interval = 5000 // query api every 30 seconds
 
-const SizeCards = ({ session, setGroupCandidates }) => {
+const SizeCards = ({ studio, session, setGroupCandidates }) => {
   const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
   const [ feedbackUsers, setFeedbackUsers] = useState([])
   const [ userFilter, setuserFilter ] = useState(null)
-  const [ user ] = useState(getUser())
+
   const fetchData = async () => {
     const cs = await fetchCheckInList(session._id)
     const fbkUsers = []
@@ -94,6 +95,18 @@ const SizeCards = ({ session, setGroupCandidates }) => {
         >
           Maybe
         </button>
+        <div className="files-wrapper">
+          {typeof session.size_card_pdf === 'string' && (
+            <a href={`${static_root}${session.size_card_pdf}`} download="true" className="btn btn-default ml-2">
+              Size Card PDF
+            </a>
+          )}
+          {typeof session.schedule_pdf === 'string' && (
+            <a href={`${static_root}${session.schedule_pdf}`} download="true" className="btn btn-default">
+              Schedule PDF
+            </a>
+          )}
+        </div>
       </div>
       <div className="size-cards mt-2">
         {filteredCandidates.map(c => {
@@ -102,6 +115,7 @@ const SizeCards = ({ session, setGroupCandidates }) => {
               <PersonCard
                 {...c}
                 topAvatar={true}
+                studio={studio}
               />
             </div>
           )
@@ -112,6 +126,8 @@ const SizeCards = ({ session, setGroupCandidates }) => {
             No candidates
           </div>
         )}
+
+        <div className="gap-filler"></div>
       </div>
       <Footer force={true} />
     </div>

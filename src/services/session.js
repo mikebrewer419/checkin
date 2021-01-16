@@ -31,14 +31,13 @@ export const getOneSession = async (session_id) => {
   return await resp.json()
 }
 
-export const updateSession = async (id, fields) => {
+export const updateSession = async (id, formData) => {
   const resp = await fetch(`${api_host}/sessions/${id}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(fields)
+    body: formData
   })
   return await resp.json()
 }
@@ -54,14 +53,13 @@ export const deleteSession = async (id) => {
   return await resp.json()
 }
 
-export const createSession = async (fields) => {
+export const createSession = async (formData) => {
   const resp = await fetch(`${api_host}/sessions`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(fields)
+    body: formData
   })
   return await resp.json()
 }

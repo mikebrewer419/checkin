@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import cometInject from './comet-inject'
-import List from '../CheckinList'
 import SizeCards from './SizeCards'
 import PersonCard from '../PostingPage/PersonCard'
 import {
@@ -9,8 +8,6 @@ import {
   createCometRoom
 } from '../../services'
 import './style.scss'
-import { FaMinus } from 'react-icons/fa'
-import { USER_TYPE } from '../../constants'
 
 class ClientHomePage extends Component {
   constructor(props) {
@@ -183,12 +180,13 @@ class ClientHomePage extends Component {
                 </h6>
                 <div className="current-group-size-cards">
                   {groupCandidates.map(person => (
-                    <PersonCard key={person._id} {...person} />
+                    <PersonCard key={person._id} {...person} studio={studio} />
                   ))}
                 </div>
               </div>
             </div>
             <SizeCards
+              studio={studio}
               session={session}
               setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
             />

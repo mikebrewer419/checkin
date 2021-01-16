@@ -5,6 +5,7 @@ import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
 import {
+  static_root,
   getStudioByUri,
   copyGroupFromSession,
   getPagesByStudio,
@@ -459,7 +460,7 @@ class VideoPage extends Component {
                         >
                           <img
                             className="dummy-player"
-                            src={group.thumbnail}
+                            src={static_root+group.thumbnail}
                           />
                         </div>
                         <div className="d-flex">
@@ -504,7 +505,7 @@ class VideoPage extends Component {
                       <div className="row player-row mb-2">
                         <ReactPlayer
                           controls={true}
-                          url={activeItem.url}
+                          url={static_root+activeItem.uri}
                           key="video"
                           autoPlay
                           id="active-player"
@@ -551,7 +552,7 @@ class VideoPage extends Component {
                               >
                                 <img
                                   className="dummy-player dummy-video"
-                                  src={video.thumbnail}
+                                  src={static_root+video.thumbnail}
                                 />
                               </div>
                               <div className="d-flex">
@@ -873,7 +874,7 @@ const PersonCard = ({
         </div>
         <img
           key={avatar}
-          src={avatar ? avatar : require('../../assets/camera.png')}
+          src={avatar ? static_root+avatar : require('../../assets/camera.png')}
           className="small-avatar"
           onClick={() => setAvatarEditor(true)}
         />

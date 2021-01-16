@@ -5,6 +5,7 @@ import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
 import { 
+  static_root,
   getOneRecord,
   setFeedback,
   getUser,
@@ -16,6 +17,7 @@ import './personcard.scss'
 const user = getUser()
 
 const PersonCard = ({
+  studio,
   _id,
   first_name,
   last_name,
@@ -123,7 +125,7 @@ const PersonCard = ({
     <div className="posting-person-card card px-3">
       {topAvatar &&
         <img
-          src={avatar ? avatar : require('../../assets/camera.png')}
+          src={avatar ? static_root+avatar : require('../../assets/camera.png')}
           className="avatar mt-1"
           onClick={() => { setShowFeedbackModal(true) }}
         />
@@ -168,7 +170,7 @@ const PersonCard = ({
         </div>
         {!topAvatar &&
           <img
-            src={avatar ? avatar : require('../../assets/camera.png')}
+            src={avatar ? static_root+avatar : require('../../assets/camera.png')}
             className="small-avatar mt-1"
           />
         }
@@ -223,10 +225,29 @@ const PersonCard = ({
               <h5>{first_name} {last_name}</h5>
             </Modal.Header>
             <Modal.Body>
-              <img
-                className="w-100"
-                src={avatar ? avatar : require('../../assets/camera.png')}
-              />
+              <div className="personcard-card row">
+                <div className="col-8">
+                  <img
+                    className="w-100"
+                    src={avatar ? static_root+avatar : require('../../assets/camera.png')}
+                  />
+                </div>
+                <div className="col-4">
+                  {studio && studio.logo && (
+                    <img
+                      className="w-100 mb-5"
+                      src={static_root+studio.logo}
+                    />
+                  )}
+                  <div className="d-flex flex-column">
+                    <h5>Info</h5>
+                    <div className="d-flex">
+                      <label>Role: </label>
+                      <span>{role}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Modal.Body>
             <Modal.Footer>
               <span className="myfeedback-icon mr-auto mt-1">

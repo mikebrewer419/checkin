@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { FaPlus, FaPen, FaTrash, FaLink } from 'react-icons/fa';
 import {
+  static_root,
   assignCastingDirector,
   assignManagers,
   getManagers,
@@ -176,13 +177,28 @@ const StudioList = () => {
       return
     }
     if (session._id) {
-      await updateSession(session._id, { name })
+      const formData = new FormData()
+      formData.append('name', name)
+      if (selectedSession.size_card_pdf) {
+        formData.append('size_card_pdf', selectedSession.size_card_pdf)
+      }
+      if (selectedSession.schedule_pdf) {
+        formData.append('schedule_pdf', selectedSession.schedule_pdf)
+      }
+      await updateSession(session._id, formData)
       await assignManagers(session._id, selectedSessionManagers.map(m => m._id))
     } else {
-      const newSession = await createSession({
-        name,
-        studio: studio_id
-      })
+      const formData = new FormData()
+      formData.append('name', name)
+      formData.append('studio', studio_id)
+      if (selectedSession.size_card_pdf) {
+        formData.append('size_card_pdf', selectedSession.size_card_pdf)
+      }
+      if (selectedSession.schedule_pdf) {
+        formData.append('schedule_pdf', selectedSession.schedule_pdf)
+      }
+
+      const newSession = await createSession(formData)
       await assignManagers(newSession._id, selectedSessionManagers.map(m => m._id))
     }
     await fetchStudioSession(studio_id)
@@ -453,6 +469,7 @@ const StudioList = () => {
         </Modal.Header>
         {selectedSession && 
           <Modal.Body>
+            <label>Session Name</label>
             <input
               type="text"
               className="form-control mb-3"
@@ -464,8 +481,10 @@ const StudioList = () => {
                 })
               }}
             />
+            <label>Session Manager</label>
             <AsyncTypeahead
               id="session-user-select"
+              className="mb-3"
               multiple
               selected={selectedSessionManagers}
               onChange={value => {
@@ -477,6 +496,42 @@ const StudioList = () => {
               onSearch={searchSessionUsers}
               options={sessionUsers}
               placeholder="Search for a Session user..."
+            />
+            <label>
+              Sizecard PDF
+              {typeof selectedSession.size_card_pdf === 'string' && (
+                <a href={`${static_root}${selectedSession.size_card_pdf}`} download="true" className="ml-2">
+                  View
+                </a>
+              )}
+            </label>
+            <input
+              type="file"
+              className="form-control mb-3"
+              onChange={ev => {
+                setSelectedSession({
+                  ...selectedSession,
+                  size_card_pdf: ev.target.files[0]
+                })
+              }}
+            />
+            <label>
+              Schedule PDF
+              {typeof selectedSession.schedule_pdf === 'string' && (
+                <a href={`${static_root}${selectedSession.schedule_pdf}`} download="true" className="ml-2">
+                  View
+                </a>
+              )}
+            </label>
+            <input
+              type="file"
+              className="form-control mb-3"
+              onChange={ev => {
+                setSelectedSession({
+                  ...selectedSession,
+                  schedule_pdf: ev.target.files[0]
+                })
+              }}
             />
           </Modal.Body>
         }

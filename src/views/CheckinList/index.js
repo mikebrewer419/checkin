@@ -5,6 +5,7 @@ import { FaCircle, FaDownload, FaMinus, FaUserSlash, FaStickyNote,
 import { Modal } from 'react-bootstrap'
 import moment from 'moment'
 import {
+  static_root,
   sendMessage,
   fetchCheckInList,
   updateRecordField,
@@ -658,7 +659,7 @@ export const PersonCard = ({
           </div>
           <p className="ml-auto mr-2 mb-0">
             <img
-              src={avatar ? avatar : require('../../assets/camera.png')}
+              src={avatar ? static_root+avatar : require('../../assets/camera.png')}
               className="small-avatar"
               onClick={() => updateRecord({
                 _id,

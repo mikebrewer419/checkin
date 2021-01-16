@@ -13,7 +13,7 @@ const Footer = (props) => {
   }
 
   return (
-    <div className="no-print text-center text-primary mt-5 mb-5 app-footer">
+    <div className="no-print text-center text-primary mb-4 app-footer">
       <img src={require('../assets/heyjoe.png')} className="heyjoe-logo br"/>
       &copy; 2020 North Shore Media, LLC. All Rights Reserved
     </div>

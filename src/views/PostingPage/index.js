@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Modal } from 'react-bootstrap'
 import { FaDownload, FaArchive, FaTeethOpen, FaPenAlt, FaTrash, FaPrint } from 'react-icons/fa';
 import {
+  static_root,
   getStudioByUri,
   deletePageVideo,
   getOnePage,
@@ -380,7 +381,7 @@ class PostingPage extends Component {
                           >
                             <img
                               className="dummy-player"
-                              src={group.thumbnail}
+                              src={static_root+group.thumbnail}
                             />
                           </div>
                           <div className="d-flex">
@@ -425,7 +426,7 @@ class PostingPage extends Component {
                         <div className="row player-row mb-2">
                           <ReactPlayer
                             controls={true}
-                            url={activeItem.url}
+                            url={static_root+activeItem.uri}
                             key="video"
                             autoPlay
                             id="active-player"
@@ -435,7 +436,7 @@ class PostingPage extends Component {
                           <div key="info" className="info col-4">
                             {groupRecords.map(record => (
                               <div className="talent-summary" key={record._id}>
-                                <PersonCard {...record} />
+                                <PersonCard {...record} studio={studio} />
                               </div>
                             ))}
                             { groupRecords.length === 0 &&
@@ -466,7 +467,7 @@ class PostingPage extends Component {
                                 >
                                   <img
                                     className="dummy-player dummy-video"
-                                    src={video.thumbnail}
+                                    src={static_root+video.thumbnail}
                                   />
                                 </div>
                                 <div className="d-flex">

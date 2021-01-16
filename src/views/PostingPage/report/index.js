@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  static_root,
   getUser
 } from '../../../services'
 import './style.scss'
@@ -15,7 +16,7 @@ const ReportPage = ({
       <div className="d-flex mb-3">
         <img
           className="user-logo mx-4"
-          src={user.logo ? user.logo : require('../../../assets/camera.png')}
+          src={user.logo ? static_root+user.logo : require('../../../assets/camera.png')}
         />
         <div>
           <label>
@@ -57,7 +58,7 @@ const ReportPage = ({
                     <td className="talent-avatar">
                       <img
                         className="avatar-img"
-                        src={talent.avatar ? talent.avatar : require('../../../assets/camera.png')}
+                        src={talent.avatar ? static_root+talent.avatar : require('../../../assets/camera.png')}
                       />
                     </td>
                     <td className="talent-name">

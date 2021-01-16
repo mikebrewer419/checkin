@@ -1,13 +1,15 @@
 @import "../../values.scss";
 
 .size-cards {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: flex-start;
   padding: 10px 20px;
   margin: auto;
   height: calc(100vh - 275px);
   overflow-y: auto;
+
   .person-card {
     width: 300px;
     margin: 10px;
@@ -36,4 +38,9 @@
       border: 1px solid $primary;
     }
   }
+}
+
+.files-wrapper {
+  position: absolute;
+  right: 10px;
 }

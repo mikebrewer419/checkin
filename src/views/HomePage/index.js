@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import cometInject from './comet-inject'
 import List from '../CheckinList'
-import SizeCards from './SizeCards'
-import PersonCard from '../PostingPage/PersonCard'
 import {
   getStudioByUri,
   getOneSession,
@@ -10,7 +8,6 @@ import {
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
-import { USER_TYPE } from '../../constants'
 
 class HomePage extends Component {
   constructor(props) {
