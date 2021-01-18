@@ -27,8 +27,16 @@ const Login = () => {
   }
 
   useEffect(() => {
-    document.title = `Check In | Login`;
+    document.title = `Check In | Login`
+    if (!localStorage.getItem('alert-dismiss')) {
+      document.querySelector('#login-alert').classList.remove('d-none')
+    }
   }, [])
+
+  const dismissAlert = () => {
+    localStorage.setItem('alert-dismiss', true)
+    document.querySelector('#login-alert').classList.add('d-none')
+  }
 
   const googleLoginSuccess = (response) => {
     const googleUser = response.profileObj
@@ -58,6 +66,10 @@ const Login = () => {
       <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
         <h2 className=" text-center"> WELCOME BACK.</h2>
         <h2 className=" text-center mb-5"> LOGIN HERE. </h2>
+        <p id="login-alert" className="d-none">
+          Notice, January 15, 2020: If you have used Hey Joe to watch casting sessions in the past, you may have to create a new account to sign in to view your session. We are using a new authentication system for our casting software which requires a fresh registration. Please choose "create account" below. Thank you.
+          <a onClick={dismissAlert}>Dismiss</a>
+        </p>
         <div className="form-group">
           <label htmlFor="email">Email address</label>
           <input
