@@ -500,7 +500,7 @@ const StudioList = () => {
             <label>
               Sizecard PDF
               {typeof selectedSession.size_card_pdf === 'string' && (
-                <a href={`${static_root}${selectedSession.size_card_pdf}`} download="true" className="ml-2">
+                <a href={`${static_root}${selectedSession.size_card_pdf}`} target="_blank" className="ml-2">
                   View
                 </a>
               )}
@@ -518,7 +518,7 @@ const StudioList = () => {
             <label>
               Schedule PDF
               {typeof selectedSession.schedule_pdf === 'string' && (
-                <a href={`${static_root}${selectedSession.schedule_pdf}`} download="true" className="ml-2">
+                <a href={`${static_root}${selectedSession.schedule_pdf}`} target="_blank" className="ml-2">
                   View
                 </a>
               )}
