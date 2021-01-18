@@ -52,6 +52,10 @@ const Onboard = () => {
       window.alert('Please input correct phone number!!')
       return
     }
+    if (!avatar64) {
+      window.alert('please capture a photo of yourself for our log sheet')
+      return
+    }
     setSubmitting(true)
     onboardUser({
       first_name: firstName,
