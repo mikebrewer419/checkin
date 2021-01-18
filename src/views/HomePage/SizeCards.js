@@ -97,12 +97,12 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
         </button>
         <div className="files-wrapper">
           {typeof session.size_card_pdf === 'string' && (
-            <a href={`${static_root}${session.size_card_pdf}`} download="true" className="btn btn-default ml-2">
+            <a href={`${static_root}${session.size_card_pdf}`} target="_blank" className="btn btn-default ml-2">
               Size Card PDF
             </a>
           )}
           {typeof session.schedule_pdf === 'string' && (
-            <a href={`${static_root}${session.schedule_pdf}`} download="true" className="btn btn-default">
+            <a href={`${static_root}${session.schedule_pdf}`} target="_blank" className="btn btn-default">
               Schedule PDF
             </a>
           )}
