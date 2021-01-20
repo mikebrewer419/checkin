@@ -4,7 +4,8 @@ import List from '../CheckinList'
 import {
   getStudioByUri,
   getOneSession,
-  createCometRoom
+  createCometRoom,
+  static_root
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
@@ -32,7 +33,11 @@ class HomePage extends Component {
   }
 
   componentWillUnmount() {
-    if (this.cometAuthScript) {
+    document.querySelector('.global-header').classList.remove('bg-success')
+    document.querySelector('.global-header').classList.add('bg-danger')
+    document.querySelector('.global-header button').classList.remove('btn-success')
+    document.querySelector('.global-header button').classList.add('btn-danger')
+  if (this.cometAuthScript) {
       this.cometAuthScript.parentElement.removeChild(this.cometAuthScript)
     }
     if (this.chatScriptSecondDom) {
@@ -50,6 +55,15 @@ class HomePage extends Component {
 
     const pageTitle = this.state.testMode ? 'Virtual Lobby' : 'Video Chat'
     document.title = `${studio.name} ${pageTitle}`;
+    if (this.state.testMode) {
+      document.querySelector('.global-header button').classList.remove('btn-danger')
+      document.querySelector('.global-header button').classList.add('btn-success')
+      document.querySelector('.global-header').classList.remove('bg-danger')
+      document.querySelector('.global-header').classList.add('bg-success')
+    }
+    if (studio.logo) {
+      document.querySelector('#header-logo').innerHTML = `<img src="${static_root+studio.logo}" class="header-logo" />`
+    }
 
     await createCometRoom(studio._id, session._id)
 

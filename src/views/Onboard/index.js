@@ -53,7 +53,7 @@ const Onboard = () => {
       return
     }
     if (!avatar64) {
-      window.alert('please capture a photo of yourself for our log sheet')
+      window.alert('Please capture/upload a photo of yourself for our log sheet')
       return
     }
     setSubmitting(true)

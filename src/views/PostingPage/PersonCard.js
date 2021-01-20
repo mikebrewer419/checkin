@@ -28,6 +28,7 @@ const PersonCard = ({
   topAvatar,
   role,
   agent,
+  hideContact = true,
   seen
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -145,7 +146,7 @@ const PersonCard = ({
               {MyFeedbackIcon}
             </span>
           </div>
-          <label className="mb-0" onClick={(ev) => {
+          <label className={hideContact ? "d-none": "mb-0"} onClick={(ev) => {
             ev.stopPropagation()
             setShowContact(!showContact)
           }}>Contact</label>

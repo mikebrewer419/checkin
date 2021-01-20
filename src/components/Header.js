@@ -50,9 +50,9 @@ const Header = (props) => {
   return (
     <Navbar className="py-4 px-5 global-header no-print" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
-        <Link to="/" target="_blank">
+        <Link to="/" target="_blank" id="header-logo">
           {user.logo
-            ? <Image className="mt-n2" height="65" src={static_root+user.logo} />
+            ? <Image className="mt-n2 header-logo" src={static_root+user.logo} />
             : <label className="mb-0 h3 text-white">HeyJoe</label>
           }
         </Link>

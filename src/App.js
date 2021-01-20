@@ -33,6 +33,7 @@ function App() {
       return
     }
     verityToken().then((email) => {
+      console.log('email: ', email)
       setEmail(email)
       window.localStorage.setItem('email', email)
       if (window.location.pathname === '/login') {
