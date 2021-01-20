@@ -29,6 +29,8 @@ const PersonCard = ({
   role,
   agent,
   hideContact = true,
+  showNumber = false,
+  number = 0,
   seen
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -124,6 +126,11 @@ const PersonCard = ({
 
   return (
     <div className="posting-person-card card px-3">
+      {showNumber &&
+        <div className="number">
+          {number}
+        </div>
+      }
       {topAvatar &&
         <img
           src={avatar ? static_root+avatar : require('../../assets/camera.png')}

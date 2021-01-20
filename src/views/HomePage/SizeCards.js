@@ -33,8 +33,14 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
       }
     })
     const currentGroup = await getCurrentGroup(session._id) || {}
-    setGroupCandidates(currentGroup.records || [])
-    setCandidates(cs)
+    setCandidates(cs.map((c, idx) => ({ ...c, number: idx + 1 })))
+    setGroupCandidates((currentGroup.records || []).map(gc => {
+      const cidx = cs.findIndex(c => c._id === gc._id)
+      return {
+        ...gc,
+        number: cidx + 1
+      }
+    }))
   }
 
   useEffect(() => {
@@ -116,6 +122,7 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
                 {...c}
                 topAvatar={true}
                 studio={studio}
+                showNumber={true}
               />
             </div>
           )

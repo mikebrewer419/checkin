@@ -1,8 +1,26 @@
+@import "../../values.scss";
+
 .posting-person-card {
+  position: relative;
   .card-body {
     display: flex;
     .content {
       flex: 1;
     }
+  }
+  .number {
+    position: absolute;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: black;
+    border: 1px solid $lightgray;
+    color: white;
+    z-index: 1;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    top: -17px;
+    left: -16px;
   }
 }

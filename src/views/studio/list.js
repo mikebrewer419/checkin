@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaPlus, FaPen, FaTrash, FaLink } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy } from 'react-icons/fa';
 import {
   static_root,
   assignCastingDirector,
@@ -31,6 +31,8 @@ import './style.scss'
 import Footer from '../../components/Footer'
 import { USER_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+
+const host = window.location.origin
 
 const generateArray = (s, e) => {
   let result = []
@@ -64,6 +66,10 @@ const StudioList = () => {
   const [studioCastingDirector, setStudioCastingDirector] = useState(0)
   const [selectedCastingDirector, setSelectedCastingDirector] = useState(null)
   const [selectedPostingPage, setSelectedPostingPage] = useState(null)
+
+  const [emailCheckinLink, setEmailCheckinLink] = useState('')
+  const [emailProjectName, setEmailProjectName] = useState('')
+  const [emailSessionLink, setEmailSessionLink] = useState('')
 
   const searchSessionUsers = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -176,28 +182,19 @@ const StudioList = () => {
       window.alert(`You already have the session ${name}`)
       return
     }
+    const formData = new FormData()
+    formData.append('name', name)
+    if (selectedSession.size_card_pdf) {
+      formData.append('size_card_pdf', selectedSession.size_card_pdf)
+    }
+    if (selectedSession.schedule_pdf) {
+      formData.append('schedule_pdf', selectedSession.schedule_pdf)
+    }
     if (session._id) {
-      const formData = new FormData()
-      formData.append('name', name)
-      if (selectedSession.size_card_pdf) {
-        formData.append('size_card_pdf', selectedSession.size_card_pdf)
-      }
-      if (selectedSession.schedule_pdf) {
-        formData.append('schedule_pdf', selectedSession.schedule_pdf)
-      }
       await updateSession(session._id, formData)
       await assignManagers(session._id, selectedSessionManagers.map(m => m._id))
     } else {
-      const formData = new FormData()
-      formData.append('name', name)
       formData.append('studio', studio_id)
-      if (selectedSession.size_card_pdf) {
-        formData.append('size_card_pdf', selectedSession.size_card_pdf)
-      }
-      if (selectedSession.schedule_pdf) {
-        formData.append('schedule_pdf', selectedSession.schedule_pdf)
-      }
-
       const newSession = await createSession(formData)
       await assignManagers(newSession._id, selectedSessionManagers.map(m => m._id))
     }
@@ -306,6 +303,18 @@ const StudioList = () => {
     confirmCancel()
   }
 
+  const handleCopyText = (selector) => {
+    const str = document.querySelector(selector).innerHTML
+    function listener(e) {
+      e.clipboardData.setData("text/html", str);
+      e.clipboardData.setData("text/plain", str);
+      e.preventDefault();
+    }
+    document.addEventListener("copy", listener);
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener);
+  }
+
   return (
     <div className="p-5 w-100 studios-list">
       <div className="d-flex align-items-center justify-content-between mb-5">
@@ -389,7 +398,20 @@ const StudioList = () => {
                       setSelectedSession(session)
                       setStudioId(studio._id)
                     }}/>
-                    <FaTrash onClick={() => handleSessionDelete(session, studio._id)}/>
+                    <FaTrash className="mr-4" onClick={() => handleSessionDelete(session, studio._id)}/>
+                    <FaCopy
+                      className="mr-2" title="Copy Talent Email"
+                      onClick={() => {
+                        setEmailCheckinLink(`${host}/onboard/${studio.uri}/${session._id}`)
+                      }}
+                    />
+                    <FaRegCopy
+                      className="mr-2" title="Copy Client Email"
+                      onClick={() => {
+                        setEmailProjectName(studio.name)
+                        setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -663,6 +685,109 @@ const StudioList = () => {
           </button>
         </Modal.Footer>
       </Modal>
+
+      <Modal
+        size="xl"
+        show={!!emailCheckinLink}
+        onHide={() => {
+          setEmailCheckinLink(null)
+        }}
+      >
+        <Modal.Header closeButton className="align-items-baseline">
+          <h4 className="mb-0 mr-3">
+            Copy Talent Email
+          </h4>
+        </Modal.Header>
+        <Modal.Body className="bg-lightgray">
+          <div id="talent-email-text">
+            <p>
+              You are encouraged to audition from a phone or tablet and not your computer. Please download the app ahead of time:
+            </p>
+            <p>
+              iOS: <a href="https://apple.co/3grIxwR">https://apple.co/3grIxwR</a><br/>
+              Android: <a href="https://bit.ly/2MLDLwL">https://bit.ly/2MLDLwL</a>
+            </p>
+            <p>
+              15 minutes before your call time, click the link below to check in to the session:<br/>
+              <a href={emailCheckinLink}>{emailCheckinLink}</a>
+            </p>
+            <p>
+              • After you check in, you will receive an SMS with a virtual lobby link and room number. Either click the link or open up “Hey Joe"  and enter the room number you receive via SMS<br/>
+              • When it's time for your audition you will be given a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code. 
+            </p>
+            <p>
+              NOTE: If you prefer to audition from a computer, you can use the Virtual Lobby link you receive via SMS in a browser on your computer. 
+            </p>
+            <p>
+              Audition Guidelines:<br/>
+              • Put your device in Landscape (horizontal) position.<br/>
+              • Turn off “Portrait Orientation” lock if it’s turned on.<br/>
+              • Device eye level, not below you on a table or way above you<br/>
+              • Light yourself from the front. Do not stand in front of a window.<br/>
+              • Post your sides level with your camera so you are not looking off to the side or down below camera.<br/>
+              • Make sure you have a good connection before logging in. Set up as close to your WiFi router as possible. In the same room as WiFi is best.  <br/>
+              • If any of the above guidelines are not followed, we will ask you to leave the audition room to set up properly, and we will call you back in later. <br/>
+              ***you can watch a set up best practices video here - <a href="https://heyjoe.io/actor-set-up/">https://heyjoe.io/actor-set-up/</a><br/>
+              ***you can find troubleshooting tips here - <a href="https://heyjoe.io/troubleshooting/">https://heyjoe.io/troubleshooting/</a>
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            disabled={selectedPostingPage && !selectedPostingPage.name}
+            className="btn btn-primary"
+            onClick={() => {
+              handleCopyText('#talent-email-text')
+              setEmailCheckinLink(null)
+            }}
+          >
+            Copy
+          </button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={!!emailProjectName}
+        onHide={() => {
+          setEmailProjectName(null)
+          setEmailSessionLink(null)
+        }}
+      >
+        <Modal.Header closeButton className="align-items-baseline">
+          <h4 className="mb-0 mr-3">
+            Copy Client Email
+          </h4>
+        </Modal.Header>
+        <Modal.Body className="bg-lightgray">
+          <div id="client-email-text">
+            <p>
+              Here is the <b>{emailProjectName}</b> Session Link:<br/>
+              <a href={emailSessionLink}>{emailSessionLink}</a>
+            </p>
+            <p>
+              <b>
+                <i>
+                  Note: Please access the Hey Joe web app from your laptop or desktop computer in Google Chrome or a Chromium clone like Brave.  In other browsers you may not be able to access your camera or microphone. You can either create an account on the website or choose "Login with Google." Please reach out to tech support at 424.888.4735 if you have any issues connecting.
+                </i>
+              </b>
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            disabled={selectedPostingPage && !selectedPostingPage.name}
+            className="btn btn-primary"
+            onClick={() => {
+              handleCopyText('#client-email-text')
+              setEmailProjectName(null)
+              setEmailSessionLink(null)
+            }}
+          >
+            Copy
+          </button>
+        </Modal.Footer>
+      </Modal>
+
       <Footer/>
     </div>
   )
