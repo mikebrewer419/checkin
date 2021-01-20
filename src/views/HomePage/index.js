@@ -37,7 +37,7 @@ class HomePage extends Component {
     document.querySelector('.global-header').classList.add('bg-danger')
     document.querySelector('.global-header button').classList.remove('btn-success')
     document.querySelector('.global-header button').classList.add('btn-danger')
-  if (this.cometAuthScript) {
+    if (this.cometAuthScript) {
       this.cometAuthScript.parentElement.removeChild(this.cometAuthScript)
     }
     if (this.chatScriptSecondDom) {
