@@ -194,7 +194,13 @@ class ClientHomePage extends Component {
                 </h6>
                 <div className="current-group-size-cards">
                   {groupCandidates.map(person => (
-                    <PersonCard key={person._id} {...person} studio={studio} showNumber={true} />
+                    <PersonCard
+                      key={person._id}
+                      {...person}
+                      studio={studio}
+                      showNumber={true}
+                      useSelfData={false}
+                    />
                   ))}
                 </div>
               </div>

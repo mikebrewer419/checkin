@@ -30,7 +30,10 @@ const PersonCard = ({
   agent,
   hideContact = true,
   showNumber = false,
+  useSelfData = true,
   number = 0,
+  feedbacks,
+  comments,
   seen
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -46,13 +49,17 @@ const PersonCard = ({
   }
 
   useEffect(() => {
-    fetchData()
-    if (POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
+    if (useSelfData && POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
       setInterval(fetchData, 5000)
+    } else {
+      fetchData()
     }
   }, [])
 
-  const myFeedback = (record.feedbacks || {})[user.email]
+  const fbks = useSelfData ? (record.feedbacks || {}) : (feedbacks || {})
+  const cmts = useSelfData ? (record.comments || []) : (comments || [])
+
+  const myFeedback = fbks[user.email]
 
   const setMyFeedback = async (feedback) => {
     await setFeedback(_id, feedback)
@@ -93,7 +100,7 @@ const PersonCard = ({
     maybe: 0
   }
 
-  Object.values((record.feedbacks || {})).forEach(value => {
+  Object.values(fbks).forEach(value => {
     if (isNaN(feedbackCounts[value])) {
       return
     }
@@ -171,7 +178,7 @@ const PersonCard = ({
                 setCommentsVisible(true)
               }}>
                 <FaComment className="ml-5" />
-                <span className="ml-1">{(record.comments || []).length}</span>
+                <span className="ml-1">{cmts.length}</span>
               </div>
             </div>
           )}
@@ -194,13 +201,13 @@ const PersonCard = ({
               <h5>Comments</h5>
             </Modal.Header>
             <Modal.Body>
-              {(record.comments || []).map(comment => (
+              {cmts.map(comment => (
                 <div>
                   <label>{comment.by.email}</label>
                   <p>{comment.content}</p>
                 </div>
               ))}
-              {(record.comments || []).length === 0 && (
+              {cmts.length === 0 && (
                 <div>
                   No comments yet.
                 </div>
