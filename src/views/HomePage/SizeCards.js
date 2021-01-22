@@ -27,8 +27,8 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
         }
         fbkUsers.push(f)
       })
-      setFeedbackUsers(fbkUsers)
     })
+    setFeedbackUsers(fbkUsers)
     const currentGroup = await getCurrentGroup(session._id) || {}
     setCandidates(cs.map((c, idx) => ({ ...c, number: idx + 1 })))
     setGroupCandidates((currentGroup.records || []).map(gc => {
@@ -64,7 +64,9 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
       <div className="d-flex justify-content-center mt-3">
         <div className="mr-2">
           <select
+            key={userFilter}
             className="form-control"
+            value={userFilter}
             onChange={ev => {
               setuserFilter(ev.target.value)
             }}
