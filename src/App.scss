@@ -140,8 +140,11 @@ body {
 }
 
 @media print {
+  body {
+    overflow-y: auto;
+  }
   .no-print {
-    display: none;
+    display: none !important;
   };
   .print-only {
     display: block !important;

@@ -5,7 +5,14 @@
 }
 
 .header-logo {
-  height: 65px;
+  height: 60px;
+}
+
+#header-title {
+  color: white;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .fade-alert {

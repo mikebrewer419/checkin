@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login';
-import { loginApi, googleLogin } from '../../services'
+import { loginApi, googleLogin, googleRegister } from '../../services'
+import { USER_TYPES } from '../../constants'
 import './Login.scss'
 
 const client_id = process.env.REACT_APP_CLIENT_ID
@@ -38,8 +39,17 @@ const Login = () => {
     document.querySelector('#login-alert').classList.add('d-none')
   }
 
-  const googleLoginSuccess = (response) => {
+  const googleLoginSuccess = async (response) => {
     const googleUser = response.profileObj
+    try {
+      await googleRegister({
+        email: googleUser.email,
+        token: response.tokenId,
+        user_type: USER_TYPES.CLIENT
+      })
+    } catch (err) {
+      console.log('pass')
+    }
     googleLogin(googleUser.email, response.tokenId)
       .then(() => {
         const pUrl = window.localStorage.getItem('prev_url')

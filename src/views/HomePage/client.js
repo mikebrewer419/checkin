@@ -55,6 +55,7 @@ class ClientHomePage extends Component {
 
     const pageTitle = this.state.testMode ? 'Virtual Lobby' : 'Video Chat'
     document.title = `${studio.name} ${pageTitle}`;
+    document.querySelector('#header-title').innerHTML = studio.name
     if (this.state.testMode) {
       document.querySelector('.global-header button').classList.remove('btn-danger')
       document.querySelector('.global-header button').classList.add('btn-success')
@@ -170,7 +171,7 @@ class ClientHomePage extends Component {
       <div className="homepage-wrapper client">
         <div className={"homepage " + (testMode ? 'test': '')}>
           <div className="right-frame">
-            <div id="jitsi-frame">
+            <div id="jitsi-frame" className="no-print">
               <button
                 id="reload-jitsi"
                 title="Reload Meeting frame"
@@ -187,7 +188,7 @@ class ClientHomePage extends Component {
                 allowFullScreen="allowfullscreen">
               </iframe>
             </div>
-            <div className="d-flex bottom-panel">
+            <div className="d-flex bottom-panel no-print">
               <div className="current-group-size-cards-wrapper w-100">
                 <h6 className="px-2 mb-0 mt-2">
                   Current Group 
@@ -211,7 +212,7 @@ class ClientHomePage extends Component {
               setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
             />
           </div>
-          <div id="checkin-list" className={`${showList?'show':''}`}>
+          <div id="checkin-list" className={`no-print ${showList?'show':''}`}>
             <div id="comet-chat" className="client">
               <div id="chat"></div>
             </div>
