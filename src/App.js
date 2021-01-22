@@ -7,8 +7,9 @@ import Login from './views/Auth/Login'
 import ResetPasswordRequest from './views/Auth/ResetPasswordRequest'
 import ResetPassword from './views/Auth/ResetPassword'
 import Register from './views/Auth/Register'
-import HomePage from './views/HomePage/index'
-import ClientHomePage from './views/HomePage/client'
+import CheckinPage from './views/HomePage'
+import ClientCheckinPage from './views/HomePage/client'
+import ClientHomePage from './views/ClientPage'
 import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
@@ -69,7 +70,7 @@ function App() {
   const recaptchaKey = process.env.REACT_APP_RECAPTCHA_KEY
   const user = getUser() || {}
 
-  const HP = user.user_type === USER_TYPES.CLIENT ? ClientHomePage : HomePage
+  const HP = user.user_type === USER_TYPES.CLIENT ? ClientCheckinPage : CheckinPage
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
@@ -106,6 +107,9 @@ const HomeBomponent = (props) => {
   const user = getUser()
   if (!user) {
     return null
+  }
+  if (user.user_type === USER_TYPES.CLIENT) {
+    return <ClientHomePage />
   }
   if (user.user_type === USER_TYPES.SESSION_MANAGER) {
     return <SessionList {...props} />

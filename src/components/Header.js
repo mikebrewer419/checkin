@@ -47,10 +47,13 @@ const Header = (props) => {
 
   const showCredentials = !!([USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(user.user_type))
 
+  const logoLink = user.user_type === USER_TYPES.CLIENT ? '#' : '/'
+  const logoTarget = user.user_type === USER_TYPES.CLIENT ? '' : '_blank'
+
   return (
     <Navbar className="py-4 px-5 global-header no-print" bg="danger">
       <Navbar.Brand href="#home" className="my-n4">
-        <Link to="/" target="_blank" id="header-logo">
+        <Link to={logoLink} target={logoTarget} id="header-logo">
           {user.logo
             ? <Image className="mt-n2 header-logo" src={static_root+user.logo} />
             : <label className="mb-0 h3 text-white">HeyJoe</label>
