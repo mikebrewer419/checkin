@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('')
 
   const doLogin = (email, password) => {
-    loginApi(email, password)
+    loginApi(email.toLowerCase(), password)
       .then(() => {
         const pUrl = window.localStorage.getItem('prev_url')
         if (pUrl) {
