@@ -84,18 +84,18 @@ class VideoPage extends Component {
     const videos = await loadFunc(this.session_id)
     let groups = [], gidx = {}, idx = 0
     videos.forEach(video => {
-      let groupName = video.group ? video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',') : 'Unknown'
+      let groupName = video.group ? video.group.records.map(r => `${r.first_name} ${r.last_name}`).join(',') : ''
       if (!video.group) {
         video.group = {}
       }
       if (video.group.name && !video.group.name.includes('reserved field')) {
-        groupName = video.group.name
+        groupName = video.group.name + ' : ' + groupName
       }
       if (isNaN(gidx[video.group._id])) {
         gidx[video.group._id] = idx
         groups[gidx[video.group._id]] = {
           _id: video.group._id,
-          name: groupName,
+          name: groupName || 'Unknown',
           idx,
           url: video.url,
           thumbnail: video.group.thumbnail || video.thumbnail,
