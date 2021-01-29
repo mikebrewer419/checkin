@@ -171,14 +171,29 @@ const PersonCard = ({
             <p className="card-text mb-0">Agent: <small>{agent}</small></p>
           </div>}
           {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-start">
               {feedbackBar}
               <div className="commentor ml-auto" onClick={(ev) => {
                 ev.stopPropagation()
                 setCommentsVisible(true)
               }}>
-                <FaComment className="ml-5" />
-                <span className="ml-1">{cmts.length}</span>
+                <FaComment className="ml-5 no-print" />
+                <span className="ml-1 no-print">{cmts.length}</span>
+                <div className="print-only">
+                  {cmts.map((comment, idx) => (
+                    <div className="mb-1" key={idx}>
+                      <label className="mb-0">{comment.by.email}</label>
+                      <p className="mb-0">
+                        <em>{comment.content}</em>
+                      </p>
+                    </div>
+                  ))}
+                  {cmts.length === 0 && (
+                    <div>
+                      No comments.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -201,8 +216,8 @@ const PersonCard = ({
               <h5>Comments</h5>
             </Modal.Header>
             <Modal.Body>
-              {cmts.map(comment => (
-                <div>
+              {cmts.map((comment, idx) => (
+                <div key={idx}>
                   <label>{comment.by.email}</label>
                   <p>{comment.content}</p>
                 </div>

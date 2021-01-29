@@ -103,6 +103,7 @@ class List extends Component {
     const candidates = await fetchCheckInList(session._id)
     const currentGroup = await getCurrentGroup(session._id) || {}
     this.props.setGroupCandidates(currentGroup.records || [])
+    this.props.setCandidates(candidates || [])
     this.setState({
       candidates,
       loading: false

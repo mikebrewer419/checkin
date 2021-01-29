@@ -9,6 +9,7 @@ import {
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
+import SizeCards from './SizeCards'
 
 class HomePage extends Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class HomePage extends Component {
       showList: true,
       jitsiKey: 0,
       groupCandidates: [],
+      candidates: [],
       testMode: queryParams.test
     }
   }
@@ -117,6 +119,16 @@ class HomePage extends Component {
     `
     document.body.appendChild(chatScriptSecondDom)
     this.chatScriptSecondDom = chatScriptSecondDom
+
+    document.querySelector('.right-frame').addEventListener('scroll', () => {
+      let offsetTop = document.querySelector('.right-frame').scrollTop
+      const threshold = window.innerHeight - 225
+      if (offsetTop > threshold) {
+        document.querySelector('#jitsi-frame').classList.add('mini-view')
+      } else {
+        document.querySelector('#jitsi-frame').classList.remove('mini-view')
+      }
+    })
   }
 
   setshowChat = (v) => {
@@ -150,7 +162,7 @@ class HomePage extends Component {
   }
 
   render() {
-    const { studio, session, showChat, showList,
+    const { studio, session, showChat, showList, candidates,
       jitsiKey, groupCandidates, testMode } = this.state
     if (!studio) {
       return <div>Loading...</div>
@@ -171,6 +183,7 @@ class HomePage extends Component {
                 messages={studio.position_messages}
                 delete_message={studio.delete_message}
                 setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
+                setCandidates={cs => this.setState({ candidates: cs })}
               />
             </div>
             <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
@@ -178,60 +191,68 @@ class HomePage extends Component {
             </button>
           </div>
           <div className="right-frame">
-            <div id="jitsi-frame">
-              <button
-                id="reload-jitsi"
-                title="Reload Meeting frame"
-                onClick={this.reloadJitsi}
-              >⟳</button>
-              <iframe
-                key={jitsiKey}
-                title="Meeting"
-                width="100%"
-                height="100%"
-                id="jitsi-meeting-frame"
-                src={`https://meet.heyjoe.io/${meeting_id}`}
-                allow="microphone,camera"
-                allowFullScreen="allowfullscreen">
-              </iframe>
-            </div>
-            <div className={`d-flex bottom-panel ${showChat ? 'show' : ''}`}>
-              <button
-                className="btn border-bottom-0 toggle-bottom"
-                onClick={() => this.setshowChat(!showChat)}
-              >
-                {!showChat ? '〉' :'〈' }
-              </button>
-              {!testMode && (
-                <div>
-                  <div id="current-group" className="px-2">
-                    <h6 className="mx-n2 px-2">
-                      Current Group 
-                    </h6>
-                    <ul>
-                      {groupCandidates.map(person => (
-                        <li>
-                          <div className="d-flex align-items-center">
-                            <span className="mr-5">{person.first_name} ${person.last_name}</span>
-                            <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
-                              this.leaveFromGroup(person._id)
-                            }}/>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    {groupCandidates.length > 0 && [
-                      <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
-                        Finish Group
-                      </button>
-                    ]}
+            <div className="frame-wrapper">
+              <div id="jitsi-frame">
+                <button
+                  id="reload-jitsi"
+                  title="Reload Meeting frame"
+                  onClick={this.reloadJitsi}
+                >⟳</button>
+                <iframe
+                  key={jitsiKey}
+                  title="Meeting"
+                  width="100%"
+                  height="100%"
+                  id="jitsi-meeting-frame"
+                  src={`https://meet.heyjoe.io/${meeting_id}`}
+                  allow="microphone,camera"
+                  allowFullScreen="allowfullscreen">
+                </iframe>
+              </div>
+              <div className={`d-flex bottom-panel ${showChat ? 'show' : ''}`}>
+                <button
+                  className="btn border-bottom-0 toggle-bottom"
+                  onClick={() => this.setshowChat(!showChat)}
+                >
+                  {!showChat ? '〉' :'〈' }
+                </button>
+                {!testMode && (
+                  <div>
+                    <div id="current-group" className="px-2">
+                      <h6 className="mx-n2 px-2">
+                        Current Group 
+                      </h6>
+                      <ul>
+                        {groupCandidates.map(person => (
+                          <li>
+                            <div className="d-flex align-items-center">
+                              <span className="mr-5">{person.first_name} ${person.last_name}</span>
+                              <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
+                                this.leaveFromGroup(person._id)
+                              }}/>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                      {groupCandidates.length > 0 && [
+                        <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
+                          Finish Group
+                        </button>
+                      ]}
+                    </div>
                   </div>
+                )}
+                <div id="comet-chat">
+                  <div id="chat"></div>
                 </div>
-              )}
-              <div id="comet-chat">
-                <div id="chat"></div>
               </div>
             </div>
+            <SizeCards
+              studio={studio}
+              session={session}
+              isClient={false}
+              propsCandidates={candidates}
+            />
           </div>
         </div>
       </div>

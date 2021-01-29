@@ -8,10 +8,11 @@ import {
 } from '../../services'
 import Footer from '../../components/Footer'
 import './sizecards.scss'
+import { FaFilePdf, FaPrint } from 'react-icons/fa'
 
 const interval = 5000 // query api every 30 seconds
 
-const SizeCards = ({ studio, session, setGroupCandidates }) => {
+const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, propsCandidates }) => {
   const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
   const [ feedbackUsers, setFeedbackUsers] = useState([])
@@ -41,13 +42,21 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
   }
 
   useEffect(() => {
-    const handle = setInterval(() => {
-      fetchData()
-    }, interval)
-    return () => {
-      clearInterval(handle)
+    if (isClient) {
+      const handle = setInterval(() => {
+        fetchData()
+      }, interval)
+      return () => {
+        clearInterval(handle)
+      }
     }
   }, [])
+
+  useEffect(() => {
+    if (!isClient) {
+      setCandidates(propsCandidates.map((c, idx) => ({ ...c, number: idx + 1 })))
+    }
+  }, [propsCandidates])
 
   const filteredCandidates = candidates.filter(c => {
     let userFeedback = ''
@@ -61,51 +70,65 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
 
   return (
     <div>
-      <div className="d-flex justify-content-center mt-3">
-        <div className="mr-2">
-          <select
-            key={userFilter}
-            className="form-control"
-            value={userFilter}
-            onChange={ev => {
-              setuserFilter(ev.target.value)
+      <div className="d-flex mt-3 pl-3 no-print">
+        <div className="mr-auto">
+          {isClient && (
+            <button
+              className="btn btn-default"
+              onClick={() => {
+                window.print()
+              }}
+            >
+              <FaPrint className="mr-2" />
+              Print
+            </button>
+          )}
+        </div>
+        <div className="d-flex">
+          <div className="mr-2">
+            <select
+              key={userFilter}
+              className="form-control"
+              value={userFilter}
+              onChange={ev => {
+                setuserFilter(ev.target.value)
+              }}
+            >
+              <option key="all" value="all">
+                All
+              </option>
+              {feedbackUsers.map(fu => (
+                <option key={fu}>
+                  {fu}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            className={"btn " + (filter === 'all' ? 'btn-primary' : 'btn-default')}
+            onClick={() => {
+              setFilter('all')
             }}
           >
-            <option key="all" value="all">
-              All
-            </option>
-            {feedbackUsers.map(fu => (
-              <option key={fu}>
-                {fu}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button
-          className={"btn " + (filter === 'all' ? 'btn-primary' : 'btn-default')}
-          onClick={() => {
-            setFilter('all')
-          }}
-        >
-          All
-        </button>
-        <button
-          className={"btn " + (filter === 'yes' ? 'btn-primary' : 'btn-default')}
-          onClick={() => {
-            setFilter('yes')
-          }}
-        >
-          Yes
-        </button>
-        <button
-          className={"btn " + (filter === 'no' ? 'btn-primary' : 'btn-default')}
-          onClick={() => {
-            setFilter('no')
-          }}
-        >
-          No
-        </button>
-        <button
+            All
+          </button>
+          <button
+            className={"btn " + (filter === 'yes' ? 'btn-primary' : 'btn-default')}
+            onClick={() => {
+              setFilter('yes')
+            }}
+          >
+            Yes
+          </button>
+          <button
+            className={"btn " + (filter === 'no' ? 'btn-primary' : 'btn-default')}
+            onClick={() => {
+              setFilter('no')
+            }}
+          >
+            No
+          </button>
+          <button
           className={"btn " + (filter === 'maybe' ? 'btn-primary' : 'btn-default')}
           onClick={() => {
             setFilter('maybe')
@@ -113,14 +136,17 @@ const SizeCards = ({ studio, session, setGroupCandidates }) => {
         >
           Maybe
         </button>
-        <div className="files-wrapper">
+        </div>
+        <div className="d-flex ml-auto">
           {typeof session.size_card_pdf === 'string' && (
             <a href={`${static_root}${session.size_card_pdf}`} target="_blank" className="btn btn-default ml-2">
+              <FaFilePdf className="mr-2" />
               Size Card PDF
             </a>
           )}
           {typeof session.schedule_pdf === 'string' && (
             <a href={`${static_root}${session.schedule_pdf}`} target="_blank" className="btn btn-default">
+              <FaFilePdf className="mr-2" />
               Schedule PDF
             </a>
           )}

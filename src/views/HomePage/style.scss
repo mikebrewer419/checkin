@@ -9,6 +9,7 @@
     flex-direction: column;
     flex: 1;
     position: relative;
+    overflow-y: auto;
     #current-group {
       width: 420px;
       > h6 {
@@ -86,11 +87,26 @@
     }
   }
 
+  .frame-wrapper {
+    height: calc(100vh - #{$headerheight});
+    display: flex;
+    flex-direction: column;
+  }
   #jitsi-frame {
     flex: 1;
     position: relative;
     border-left: 2px solid #dfdfdf;
     border-right: 2px solid #dfdfdf;
+
+    &.mini-view iframe {
+      width: 400px;
+      height: 300px;
+      position: fixed;
+      right: 0;
+      top: 60px;
+      z-index: 100;
+      background-color: $body-bg;
+    }
   }
   
   #current-group {
@@ -171,10 +187,6 @@
   #checkin-list > button {
     right: -13px;
   }
-  
-  & > * {
-    height: calc(100vh - #{$headerheight});
-  }
 }
 
 .homepage-wrapper {
@@ -186,20 +198,8 @@
       height: 165px;
     }
 
-    .right-frame {
-      overflow-y: auto;
-    }
-
     #jitsi-frame {
       min-height: calc(100vh - 225px);
-      &.mini-view iframe {
-        width: 400px;
-        height: 300px;
-        position: fixed;
-        right: 0;
-        top: 60px;
-        z-index: 100;
-      }
     }
 
     #checkin-list {
