@@ -201,6 +201,7 @@ class ClientHomePage extends Component {
                       studio={studio}
                       showNumber={true}
                       useSelfData={false}
+                      commentRelateClick={true}
                     />
                   ))}
                 </div>

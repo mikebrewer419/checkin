@@ -34,6 +34,7 @@ const PersonCard = ({
   number = 0,
   feedbacks,
   comments,
+  commentRelateClick,
   seen
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -173,10 +174,18 @@ const PersonCard = ({
           {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
             <div className="d-flex align-items-start">
               {feedbackBar}
-              <div className="commentor ml-auto" onClick={(ev) => {
-                ev.stopPropagation()
-                setCommentsVisible(true)
-              }}>
+              <div
+                data-id={_id}
+                className={"commentor ml-auto " + (commentRelateClick ? '' : 'main-commentor')} onClick={(ev) => {
+                  ev.stopPropagation()
+                  if (commentRelateClick) {
+                    const elem = document.querySelector(`.main-commentor[data-id="${_id}"]`)
+                    elem.click()
+                  } else {
+                    setCommentsVisible(true)
+                  }
+                }}
+              >
                 <FaComment className="ml-5 no-print" />
                 <span className="ml-1 no-print">{cmts.length}</span>
                 <div className="print-only">
