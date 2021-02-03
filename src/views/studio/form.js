@@ -8,7 +8,6 @@ const StudioForm = ({
   uri = '',
   jitsi_meeting_id = '',
   test_meeting_id = '',
-  client_link = '',
   thankyou_message = '',
   position_messages = [],
   delete_message,
@@ -41,12 +40,6 @@ const StudioForm = ({
           <div className="form-group">
             <label htmlFor="test_meeting_id">test_meeting_id</label>
             <input required id="test_meeting_id" className="form-control form-control-sm"  type="text" name="test_meeting_id" defaultValue={test_meeting_id} />
-          </div>
-        </div>
-        <div className="col">
-          <div className="form-group">
-            <label htmlFor="client_link">client_link</label>
-            <input id="client_link" className="form-control form-control-sm"  type="text" name="client_link" defaultValue={client_link} />
           </div>
         </div>
       </div>

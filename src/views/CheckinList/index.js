@@ -388,14 +388,6 @@ class List extends Component {
                     <FaFilm size="16" className="text-danger" />
                   </Link>
                   <a
-                    title="Client Page"
-                    href={`https://live.heyjoe.io/project/${studio.client_link}`}
-                    target="_blank"
-                    className="mx-3"
-                  >
-                    <FaUserFriends size="20" className="text-danger" />
-                  </a>
-                  <a
                     title="Download CSV"
                     className="mx-3"
                   >
