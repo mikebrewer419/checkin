@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import { FaListUl } from 'react-icons/fa'
 import { sortable } from 'react-sortable'
+import {
+  static_root,
+} from '../../services'
 
 class Item extends React.Component {
   render() {
@@ -41,6 +44,12 @@ class SortableList extends React.Component {
           sortId={i}
         >
           {i + 1}: {item.name}
+          {this.props.showThumbnail && (
+            <img
+              className="dummy-player dummy-video ml-5"
+              src={static_root+item.thumbnail}
+            />
+          )}
         </SortableItem>
       )
     })
@@ -53,17 +62,20 @@ class SortableList extends React.Component {
   }
 }
 
-const GroupSorter = ({ groups, update }) => {
+const GroupSorter = ({ groups, update, title='Sort Group', showThumbnail }) => {
   const [show, setShow] = useState(false)
-  const [items, setItems] = useState(groups)
+  const [items, setItems] = useState(JSON.parse(JSON.stringify(groups)))
   return (
     <div>
       <button
         className="btn btn-primary mr-3"
-        onClick={() => setShow(true)}
+        onClick={() => {
+          setShow(true)
+          setItems(JSON.parse(JSON.stringify(groups)))
+        }}
       >
         <FaListUl className="mr-2 mt-n1" />
-        Sort Groups
+        { title }
       </button>
       <Modal
         show={show}
@@ -71,13 +83,14 @@ const GroupSorter = ({ groups, update }) => {
       >
         <Modal.Header closeButton>
           <h5 className="mb-0">
-            Sort Groups
+            { title }
           </h5>
         </Modal.Header>
         <Modal.Body>
           {show && (
             <SortableList
-              items={groups}
+              showThumbnail={showThumbnail}
+              items={items}
               update={setItems}
             />
           )}

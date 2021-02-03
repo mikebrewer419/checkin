@@ -165,3 +165,15 @@ export const updatePostingGroupOrder = async (groups) => {
   })
   return await resp.json()
 }
+
+export const updatePostingVideoOrder = async (videos) => {
+  const resp = await fetch(`${api_host}/postingpage/update-video-order`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ videos })
+  })
+  return await resp.json()
+}

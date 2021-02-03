@@ -13,6 +13,7 @@ import {
   uploadNewPostingVideo,
   updatePostingGroup,
   updatePostingGroupOrder,
+  updatePostingVideoOrder,
 } from '../../services'
 import Footer from '../../components/Footer'
 import './style.scss'
@@ -217,6 +218,12 @@ class PostingPage extends Component {
   updateGroupOrder = async (orderdGroup) => {
     this.setState({ loading: true })
     await updatePostingGroupOrder(orderdGroup.map(g => g._id))
+    this.loadVideos()
+  }
+
+  updateVideoOrder = async (orderedVideo) => {
+    this.setState({ loading: true })
+    await updatePostingVideoOrder(orderedVideo.map(v => v._id))
     this.loadVideos()
   }
 
@@ -515,6 +522,14 @@ class PostingPage extends Component {
                               />
                             </div>
                           </div>
+                        )}
+                        {POSTINGPAGE_PERMISSIONS.CAN_ADD_VIDEO() && (
+                          <GroupSorter
+                            title="Sort Videos"
+                            groups={activeGroup.videos}
+                            update={this.updateVideoOrder}
+                            showThumbnail={true}
+                          />
                         )}
                       </div>
                     </div>
