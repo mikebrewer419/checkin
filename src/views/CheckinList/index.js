@@ -284,12 +284,13 @@ class List extends Component {
     })
     const { selectedRecord } = this.state
     await updateRecordField(selectedRecord._id, {
-      actual_call: selectedRecord.actual_call
+      actual_call: selectedRecord.actual_call,
+      role: selectedRecord.role
     })
-    await this.fetchData()
     this.setState({
       selectedRecord: null
     })
+    await this.fetchData()
   }
 
   downloadCSV = () => {
@@ -513,6 +514,45 @@ class List extends Component {
           </Modal.Footer>
         </Modal>
         <Modal
+          show={!!selectedRecord && selectedRecord.role}
+          onHide = {() => {
+            this.setState({
+              selectedRecord: null
+            })
+          }}
+        >
+          <Modal.Header closeButton>
+            <h5 className="mb-0">
+              Update Role
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedRecord && (
+              <div>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={selectedRecord.role}
+                  onChange={ev => {
+                    this.setState({
+                      selectedRecord: {
+                        ...selectedRecord,
+                        role: ev.target.value
+                      }
+                    })
+                  }}
+                />
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="btn btn-danger"
+              onClick={this.updateRecord}
+            >Update.</button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
           show={!!confirmClearSession}
           onHide = {this.toggleClearConfirm}
         >
@@ -644,6 +684,9 @@ export const PersonCard = ({
             <p className="card-text mb-0">
               <span>Role:</span>
               <strong className="ml-2">{role}</strong>
+              {!testMode && (
+                <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, role })} />
+              )}
             </p>
             <p className="card-text mb-0">
               <span>Agent:</span>
