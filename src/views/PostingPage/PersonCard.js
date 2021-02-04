@@ -156,7 +156,7 @@ const PersonCard = ({
               <h5 className="mb-1">{first_name} {last_name}</h5>
               <p className="card-text mb-0">Role: <small>{role}</small></p>
             </div>
-            {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
+            {skipped && !USER_TYPE.IS_CLIENT() && false && <small>&nbsp;&nbsp;skipped</small>}
             <span className="ml-auto myfeedback-icon mt-1">
               {MyFeedbackIcon}
             </span>

@@ -184,7 +184,7 @@ class ClientHomePage extends Component {
                 height="100%"
                 id="jitsi-meeting-frame"
                 src={`https://meet.heyjoe.io/${meeting_id}`}
-                allow="microphone,camera"
+                allow="camera; microphone; fullscreen; display-capture"
                 allowFullScreen="allowfullscreen">
               </iframe>
             </div>

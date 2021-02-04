@@ -834,7 +834,7 @@ const PersonCard = ({
         <div className="content">
           <h5 className="card-title d-flex mb-2">
             {first_name} {last_name}
-            {skipped && !USER_TYPE.IS_CLIENT() && <small>&nbsp;&nbsp;skipped</small>}
+            {skipped && !USER_TYPE.IS_CLIENT() && false &&  <small>&nbsp;&nbsp;skipped</small>}
             <span className="ml-auto myfeedback-icon">
               {MyFeedbackIcon}
             </span>
