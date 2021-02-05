@@ -767,7 +767,7 @@ const StudioList = () => {
             <p>
               <b>
                 <i>
-                  Note: Please access the Hey Joe web app from your laptop or desktop computer in Google Chrome or a Chromium clone like Brave.  In other browsers you may not be able to access your camera or microphone. You can either create an account on the website or choose "Login with Google." Please reach out to tech support at 424.888.4735 if you have any issues connecting.
+                  Note: For best results, please access the Hey Joe web app from your laptop or desktop computer in Google Chrome or a Chromium clone like Brave. You can either create an account on the website or choose "Login with Google." Please reach out to tech support at 424.888.4735 if you have any issues connecting. I attached a PDF with helpful tips as well.
                 </i>
               </b>
             </p>
