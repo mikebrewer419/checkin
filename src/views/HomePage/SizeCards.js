@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import PersonCard from '../PostingPage/PersonCard'
+import Switch from "react-switch"
 import {
   static_root,
-  getUser,
+  updateSessionFeedbacks,
   fetchCheckInList,
-  getCurrentGroup
+  getCurrentGroup,
+  getUser
 } from '../../services'
 import Footer from '../../components/Footer'
 import './sizecards.scss'
@@ -13,23 +15,16 @@ import { FaFilePdf, FaPrint } from 'react-icons/fa'
 const interval = 5000 // query api every 30 seconds
 
 const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, propsCandidates }) => {
+  const [user, setUser] = useState(null)
   const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
   const [ feedbackUsers, setFeedbackUsers] = useState([])
   const [ userFilter, setuserFilter ] = useState('all')
+  const [ pickPrivate, setPickPrivate ] = useState(false)
+  const [ yesPickShow, setYesPickShow ] = useState(false)
 
   const fetchData = async () => {
     const cs = await fetchCheckInList(session._id)
-    const fbkUsers = []
-    cs.map(c => Object.keys(c.feedbacks || {})).forEach(fs => {
-      fs.forEach(f => {
-        if (fbkUsers.includes(f)) {
-          return
-        }
-        fbkUsers.push(f)
-      })
-    })
-    setFeedbackUsers(fbkUsers)
     const currentGroup = await getCurrentGroup(session._id) || {}
     setCandidates(cs.map((c, idx) => ({ ...c, number: idx + 1 })))
     setGroupCandidates((currentGroup.records || []).map(gc => {
@@ -42,6 +37,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   }
 
   useEffect(() => {
+    setUser(getUser())
     if (isClient) {
       const handle = setInterval(() => {
         fetchData()
@@ -53,10 +49,47 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   }, [])
 
   useEffect(() => {
+    const fbkUsers = []
+    candidates.map(c => Object.keys(c.feedbacks || {})).forEach(fs => {
+      fs.forEach(f => {
+        if (fbkUsers.includes(f)) {
+          return
+        }
+        fbkUsers.push(f)
+      })
+    })
+    setFeedbackUsers(fbkUsers)
+  }, [candidates])
+
+  useEffect(() => {
     if (!isClient) {
       setCandidates(propsCandidates.map((c, idx) => ({ ...c, number: idx + 1 })))
     }
   }, [propsCandidates])
+
+  useEffect(() => {
+    if (user && session) {
+      const myPrivacy = (session.feedbackPrivates || {})[user.id]
+      switch(myPrivacy) {
+        case 'full-private':
+          setPickPrivate(true)
+          break
+        case 'yes-private':
+          setPickPrivate(true)
+          setYesPickShow(true)
+          break
+      }
+    }
+  }, [session, user])
+
+  useEffect(() => {
+    let restrict = ''
+    if (pickPrivate && yesPickShow) { restrict = 'yes-private' }
+    if (pickPrivate && !yesPickShow) { restrict = 'full-private' }
+    if (!pickPrivate && !yesPickShow) { restrict = null }
+    console.log('restrict: ', restrict)
+    updateSessionFeedbacks(session._id, restrict)
+  }, [pickPrivate, yesPickShow])
 
   const filteredCandidates = candidates.filter(c => {
     let userFeedback = ''
@@ -71,18 +104,41 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   return (
     <div>
       <div className="d-flex mt-3 pl-3 no-print">
-        <div className="mr-auto">
-          {isClient && (
-            <button
-              className="btn btn-default"
-              onClick={() => {
-                window.print()
+        <div className="mr-auto d-flex">
+          <button
+            className="btn btn-default"
+            onClick={() => {
+              window.print()
+            }}
+          >
+            <FaPrint className="mr-2" />
+            Print
+          </button>
+          <div className="d-flex flex-column align-items-center px-2">
+            <span>Make picks private</span>
+            <Switch
+              checkedIcon={null} uncheckedIcon={null}
+              height={20}
+              onColor="#ee514f"
+              checked={pickPrivate}
+              onChange={(state) => {
+                setPickPrivate(state)
+                if (!state) {
+                  setYesPickShow(false)
+                }
               }}
-            >
-              <FaPrint className="mr-2" />
-              Print
-            </button>
-          )}
+            />
+          </div>
+          <div className="d-flex flex-column align-items-center px-2">
+            <span>Show yes picks</span>
+            <Switch
+              checkedIcon={null} uncheckedIcon={null}
+              height={20}
+              checked={yesPickShow}
+              onChange={(state) => setYesPickShow(state)}
+              disabled={!pickPrivate}
+            />
+          </div>
         </div>
         <div className="d-flex">
           <div className="mr-2">

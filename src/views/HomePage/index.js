@@ -35,10 +35,16 @@ class HomePage extends Component {
   }
 
   componentWillUnmount() {
-    document.querySelector('.global-header').classList.remove('bg-success')
-    document.querySelector('.global-header').classList.add('bg-danger')
-    document.querySelector('.global-header button').classList.remove('btn-success')
-    document.querySelector('.global-header button').classList.add('btn-danger')
+    const header = document.querySelector('.global-header')
+    if (header) {
+      header.classList.remove('bg-success')
+      header.classList.add('bg-danger')
+    }
+    const headerBtn = document.querySelector('.global-header button')
+    if (headerBtn) {
+      headerBtn.classList.remove('btn-success')
+      headerBtn.classList.add('btn-danger')
+    }
     if (this.cometAuthScript) {
       this.cometAuthScript.parentElement.removeChild(this.cometAuthScript)
     }
@@ -171,7 +177,7 @@ class HomePage extends Component {
     return (
       <div className="homepage-wrapper">
         <div className={"homepage " + (testMode ? 'test': '')}>
-          <div id="checkin-list" className={`${showList?'show':''}`}>
+          <div id="checkin-list" className={`no-print ${showList?'show':''}`}>
             <div
               id="list"
             >
@@ -191,7 +197,7 @@ class HomePage extends Component {
             </button>
           </div>
           <div className="right-frame">
-            <div className="frame-wrapper">
+            <div className="frame-wrapper no-print">
               <div id="jitsi-frame">
                 <button
                   id="reload-jitsi"

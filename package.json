@@ -23,6 +23,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-sortable": "^2.0.0",
+    "react-switch": "^6.0.0",
     "use-react-router": "^1.0.7"
   },
   "scripts": {

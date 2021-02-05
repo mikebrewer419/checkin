@@ -212,13 +212,13 @@
       }
     }
 
-    @media print {
-      &,
-      .homepage,
-      .size-cards {
-        height: auto;
-      }
-    }
   }
   height: calc(100vh - #{$headerheight});
+  @media print {
+    &,
+    .homepage,
+    .size-cards {
+      height: auto;
+    }
+  }
 }
