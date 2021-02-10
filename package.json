@@ -9,6 +9,7 @@
     "bootstrap": "^4.5.0",
     "file-saver": "^2.0.2",
     "jwt-decode": "^2.2.0",
+    "linkifyjs": "^2.1.9",
     "moment": "^2.27.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",

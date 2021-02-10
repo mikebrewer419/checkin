@@ -5,6 +5,7 @@ import {
   getOneSession,
   getStudioInfo
 } from '../../services'
+import Linkify from 'linkifyjs/react'
 import { Button } from 'react-bootstrap'
 import './style.scss'
 
@@ -37,14 +38,17 @@ const RecordMessagePage = ({ match }) => {
   const meeting_id = liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
 
   return (
-    <div className="message-page">
+    <div className="message-page container text-center mt-5">
       <img src={logo} className="studio-logo"/>
-      <p>
-        {message}
+      <p className="my-5">
+        <Linkify>
+          {message}
+        </Linkify>
       </p>
       <Button
         variant="danger"
         size="lg"
+        target="_blank"
         href={`https://meet.heyjoe.io/${meeting_id}`}
       >
         Join {!liveMode && 'Test'} Meeting

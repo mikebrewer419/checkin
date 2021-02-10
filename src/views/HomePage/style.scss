@@ -97,6 +97,12 @@
     position: relative;
     border-left: 2px solid #dfdfdf;
     border-right: 2px solid #dfdfdf;
+    display: flex;
+    flex-direction: column;
+
+    iframe {
+      flex: 1;
+    }
 
     &.mini-view iframe {
       width: 400px;

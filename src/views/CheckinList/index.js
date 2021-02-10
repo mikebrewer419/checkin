@@ -514,7 +514,7 @@ class List extends Component {
           </Modal.Footer>
         </Modal>
         <Modal
-          show={!!selectedRecord && selectedRecord.role}
+          show={!!selectedRecord && typeof(selectedRecord.role) === 'string'}
           onHide = {() => {
             this.setState({
               selectedRecord: null

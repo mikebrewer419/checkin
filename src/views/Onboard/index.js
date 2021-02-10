@@ -109,6 +109,7 @@ const Onboard = () => {
   }
 
   if (showAlert) {
+    window.location = `/message/${apiResult.record._id}`
     return (
       <div className="alert">
         Thank you {firstName} {lasttName}. You are successfully checked in to {studio.name}. We will send a text shortly.
