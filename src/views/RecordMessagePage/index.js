@@ -35,7 +35,7 @@ const RecordMessagePage = ({ match }) => {
 
   const logo = studio && studio.logo ? static_root + studio.logo : require('../../assets/heyjoe.png')
   const liveMode = record && record.groups.length > 0 || record.seen
-  const meeting_id = liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
+  const meeting_id = !liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
 
   return (
     <div className="message-page container text-center mt-5">
