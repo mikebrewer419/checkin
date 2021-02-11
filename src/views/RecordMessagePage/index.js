@@ -51,7 +51,7 @@ const RecordMessagePage = ({ match }) => {
         target="_blank"
         href={`https://meet.heyjoe.io/${meeting_id}`}
       >
-        Join {!liveMode && 'Test'} Meeting
+        Join {!liveMode ? 'Virtual Lobby' : 'Meeting' }
       </Button>
     </div>
   )
