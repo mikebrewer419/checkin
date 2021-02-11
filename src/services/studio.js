@@ -10,8 +10,8 @@ export const getAllStudios = async () => {
   return await resp.json()
 }
 
-export const getManyStudios = async (page = 0, page_size = 10) => {
-  const resp = await fetch(`${api_host}/studio/get-many?skip=${page * page_size}&take=${page_size}`, {
+export const getManyStudios = async (page = 0, page_size = 10, searchKey = '') => {
+  const resp = await fetch(`${api_host}/studio/get-many?skip=${page * page_size}&take=${page_size}&name=${searchKey}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

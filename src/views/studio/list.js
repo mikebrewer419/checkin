@@ -47,6 +47,7 @@ let fnTimeoutHandler = null
 const StudioList = () => {
   const [user, setUser] = useState({})
   const [studios, setStudios] = useState([])
+  const [searchKey, setSearchKey] = useState('')
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [pageCount, setPageCount] = useState(1)
@@ -92,7 +93,7 @@ const StudioList = () => {
   }
 
   const fetchManyStudios = async () => {
-    const {studios, count} = await getManyStudios(page, pageSize)
+    const {studios, count} = await getManyStudios(page, pageSize, searchKey)
     setStudios(studios)
     setPageCount(Math.ceil(count / pageSize))
   }
@@ -243,6 +244,13 @@ const StudioList = () => {
   }
 
   useEffect(() => {
+    if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
+    fnTimeoutHandler = setTimeout(() => {
+      fetchManyStudios()
+    }, 1000)
+  }, [searchKey])
+
+  useEffect(() => {
     document.title = `Heyjoe`;
     setUser(getUser())
   }, [])
@@ -321,6 +329,11 @@ const StudioList = () => {
         <label className="h1">
           Projects
         </label>
+        <div className="mr-auto ml-5">
+          <input className="form-control" placeholder="Project name"
+            value={searchKey} onChange={ev => setSearchKey(ev.target.value)}
+          />
+        </div>
         <div className="d-flex">
           {STUDIO_LIST_PERMISSIONS.CAN_CREATE_STUDIO() && (
             <button
@@ -699,37 +712,32 @@ const StudioList = () => {
           </h4>
         </Modal.Header>
         <Modal.Body className="bg-lightgray">
-          <div id="talent-email-text">
-            <p>
-              You are encouraged to audition from a phone or tablet and not your computer. Please download the app ahead of time:
-            </p>
-            <p>
-              iOS: <a href="https://apple.co/3grIxwR">https://apple.co/3grIxwR</a><br/>
-              Android: <a href="https://bit.ly/2MLDLwL">https://bit.ly/2MLDLwL</a>
-            </p>
-            <p>
-              15 minutes before your call time, click the link below to check in to the session:<br/>
-              <a href={emailCheckinLink}>{emailCheckinLink}</a>
-            </p>
-            <p>
-              • After you check in, you will receive an SMS with a virtual lobby link and room number. Either click the link or open up “Hey Joe"  and enter the room number you receive via SMS<br/>
-              • When it's time for your audition you will be given a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code. 
-            </p>
-            <p>
-              NOTE: If you prefer to audition from a computer, you can use the Virtual Lobby link you receive via SMS in a browser on your computer. 
-            </p>
-            <p>
-              Audition Guidelines:<br/>
-              • Put your device in Landscape (horizontal) position.<br/>
-              • Turn off “Portrait Orientation” lock if it’s turned on.<br/>
-              • Device eye level, not below you on a table or way above you<br/>
-              • Light yourself from the front. Do not stand in front of a window.<br/>
-              • Post your sides level with your camera so you are not looking off to the side or down below camera.<br/>
-              • Make sure you have a good connection before logging in. Set up as close to your WiFi router as possible. In the same room as WiFi is best.  <br/>
-              • If any of the above guidelines are not followed, we will ask you to leave the audition room to set up properly, and we will call you back in later. <br/>
-              ***you can watch a set up best practices video here - <a href="https://heyjoe.io/actor-set-up/">https://heyjoe.io/actor-set-up/</a><br/>
-              ***you can find troubleshooting tips here - <a href="https://heyjoe.io/troubleshooting/">https://heyjoe.io/troubleshooting/</a>
-            </p>
+          <div id="talent-email-text">You can audition from your phone or computer. Please choose the device that you believe has the best camera and internet connection. Here are the instructions: <br />
+            <b>AUDITION FROM PHONE:</b><br />
+            1) Download the Hey Joe app<br />
+            iOS: <a rel="nofollow noreferrer noopener" target="_blank" href="https://apple.co/3grIxwR">https://apple.co/3grIxwR</a><br />
+            Android: <a rel="nofollow noreferrer noopener" target="_blank" href="https://bit.ly/2MLDLwL">https://bit.ly/2MLDLwL</a><br />
+            2) Check in from a web browser<br />
+            15 minutes before your call time, click the link below to check in to the session:<br />
+            <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a><br />
+            3) Follow the Virtual Lobby link and prompts<br />
+            • After you check in, you will receive the virtual lobby link and room number. Either click the link or open up “Hey Joe"  and enter the room number.<br/>
+            • When it's time for your audition you will be sent a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code.<br/>
+            <b>AUDITION FROM COMPUTER:</b><br/>
+            1) Set up your computer and open a browser (preferably Google Chrome)<br/>
+            2) Check In<br/>
+            15 minutes before your call time, click the link below to check in to the session:<br/>
+            <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a><br/>
+            3) Follow the Virtual Lobby link and prompts<br/>
+            • After you check in, you will receive the virtual lobby link and room number. Either click the link or open up “Hey Joe"  and enter the room number.<br/>
+            • When it's time for your audition you will be sent a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code.<br/><br/>
+            Audition Guidelines:<br/>
+            • Put your device in Landscape (horizontal) position.<br/>
+            • Turn off “Portrait Orientation” lock if it’s turned on.<br/>
+            • Device eye level, not below you on a table or way above you<br/>
+            • Light yourself from the front. Do not stand in front of a window.<br/>
+            • Post your sides level with your camera so you are not looking off to the side or down below camera.<br/>
+            • Make sure you have a good connection before logging in. Set up as close to your WiFi router as possible. In the same room as WiFi is best.
           </div>
         </Modal.Body>
         <Modal.Footer>
