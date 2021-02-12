@@ -737,7 +737,11 @@ const StudioList = () => {
             • Device eye level, not below you on a table or way above you<br/>
             • Light yourself from the front. Do not stand in front of a window.<br/>
             • Post your sides level with your camera so you are not looking off to the side or down below camera.<br/>
-            • Make sure you have a good connection before logging in. Set up as close to your WiFi router as possible. In the same room as WiFi is best.
+            • Make sure you have a good connection before logging in. Set up as close to your WiFi router as possible. In the same room as WiFi is best.<br />
+
+            • If any of the above guidelines are not followed, we will ask you to leave the audition room to set up properly, and we will call you back in later.<br />
+            ***you can watch a set up best practices video here - https://heyjoe.io/actor-set-up/<br />
+            ***you can find troubleshooting tips here - https://heyjoe.io/troubleshooting/<br />
           </div>
         </Modal.Body>
         <Modal.Footer>
