@@ -17,19 +17,13 @@ const AvatarEditModal = ({
   const [uploading, setUploading] = useState(false)
 
   const setAvatarImg = async (file) => {
-    const stime = + new Date()
     setUploading(true)
     const res = await uploadImage(file)
     const savedRecord = await updateRecordField(record._id, {
       avatar: res.name
     })
     setAvatar(savedRecord.avatar)
-    const duration = +new Date() - stime
-    setTimeout(() => {
-      setUploading(false)
-      // hack around waiting content download time.
-      // assume download takes same amount of time as upload
-    }, duration)
+    setUploading(false)
   }
 
   return (
