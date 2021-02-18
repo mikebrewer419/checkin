@@ -4,6 +4,7 @@ import { Modal } from 'react-bootstrap'
 import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
+import ThumbImage from '../../components/ThumbImage'
 import { 
   static_root,
   getOneRecord,
@@ -140,8 +141,8 @@ const PersonCard = ({
         </div>
       }
       {topAvatar &&
-        <img
-          src={avatar ? static_root+avatar : require('../../assets/camera.png')}
+        <ThumbImage
+          src={avatar}
           className="avatar mt-1"
           onClick={() => { setShowFeedbackModal(true) }}
         />
@@ -208,8 +209,8 @@ const PersonCard = ({
           )}
         </div>
         {!topAvatar &&
-          <img
-            src={avatar ? static_root+avatar : require('../../assets/camera.png')}
+          <ThumbImage
+            src={avatar}
             className="small-avatar mt-1"
           />
         }

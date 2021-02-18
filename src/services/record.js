@@ -155,10 +155,11 @@ export const finishCurrentGroup = async (session_id) => {
 }
 
 
-export const updateGroup = async (id, data) => {
+export const updateGroup = async (id, data, record_ids) => {
   const formData = new FormData()
   if (data.name) formData.append('name', data.name)
   if (data.thumbnail) formData.append('thumbnail', data.thumbnail)
+  formData.append('record_ids', record_ids)
   const resp = await fetch(`${api_host}/records/group/${id}`, {
     method: 'POST',
     headers: {

@@ -18,6 +18,7 @@ import {
   finishCurrentGroup,
 } from '../../services'
 import AvatarModal from '../../components/avatar-modal'
+import ThumbImage from '../../components/ThumbImage'
 import './style.scss'
 
 const messages = [
@@ -320,9 +321,9 @@ class List extends Component {
           row_headers.map(key => {
             switch(key) {
               case 'studio':
-                return studio.name;
+                return encodeURIComponent(studio.name);
               case 'session': 
-                return session.name;
+                return encodeURIComponent(session.name);
               case 'call_in_time':
               case 'signed_out_time':
               case 'checked_in_time':
@@ -331,12 +332,13 @@ class List extends Component {
               case 'actual_call':
                 return formatHour(candidate[key])
               default:
-                return candidate[key]
+                return encodeURIComponent(candidate[key])
             }
           }).join(',')
         )).join('\n')
 
     const encodedUri = encodeURI(csvContent)
+    console.log('csvContent: ', csvContent)
     var link = document.createElement("a")
     link.setAttribute("href", encodedUri)
     link.setAttribute("download", `${studio.name}-${(new Date()).toISOString()}.csv`)
@@ -694,8 +696,8 @@ export const PersonCard = ({
             </p>
           </div>
           <p className="ml-auto mr-2 mb-0">
-            <img
-              src={avatar ? static_root+avatar : require('../../assets/camera.png')}
+            <ThumbImage
+              src={avatar}
               className="small-avatar"
               onClick={() => updateRecord({
                 _id,

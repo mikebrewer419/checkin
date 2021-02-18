@@ -1,4 +1,5 @@
 import React, { Component, useEffect, useState } from 'react'
+import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Modal, Dropdown } from 'react-bootstrap'
 import { FaArchive, FaTeethOpen, FaPenAlt, FaComment, FaCopy, FaDownload, FaTrash, FaPlus } from 'react-icons/fa'
 import YesIcon from '../../components/icons/yes'
@@ -23,6 +24,7 @@ import {
   setFeedback,
   getUser,
   createPage,
+  fetchCheckInList,
   newComment
 } from '../../services'
 import Footer from '../../components/Footer'
@@ -31,6 +33,7 @@ import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
 import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
 import AvatarModal from '../../components/avatar-modal'
+import ThumbImage from '../../components/ThumbImage'
 
 const itemWidth = 250
 const thumbWidth = 150
@@ -64,7 +67,10 @@ class VideoPage extends Component {
       selectedPage: null,
       postingPages: [],
       tab: TABS.VIDEOS,
-      selectedGroup: {}
+      selectedGroup: {},
+      selectedTalentRecords: [],
+      loadingTalentRecords: false,
+      sessionTalentOptions: []
     }
   }
   
@@ -89,7 +95,7 @@ class VideoPage extends Component {
         video.group = {}
       }
       if (video.group.name && !video.group.name.includes('reserved field')) {
-        groupName = video.group.name + ' : ' + groupName
+        groupName = video.group.name
       }
       if (isNaN(gidx[video.group._id])) {
         gidx[video.group._id] = idx
@@ -308,6 +314,20 @@ class VideoPage extends Component {
     this.setNewPostingPage(null)
   }
 
+  searchSessionTalents = async (name) => {
+    this.setState({ loadingTalentRecords: true })
+    const data = await fetchCheckInList(this.state.session._id)
+    this.setState({
+      loadingTalentRecords: false,
+      sessionTalentOptions: data.filter(talent => {
+        return talent.first_name.includes(name) || talent.last_name.includes(name) || `${talent.first_name} ${talent.last_name}`.includes(name)
+      }).map(talent => ({
+        ...talent,
+        full_name: `${talent.first_name} ${talent.last_name}`
+      }))
+    })
+  }
+
   render() {
     const {
       studio,
@@ -325,7 +345,10 @@ class VideoPage extends Component {
       selectedPage,
       showPageCopyModal,
       postingPages,
-      newPostingPage
+      newPostingPage,
+      selectedTalentRecords,
+      loadingTalentRecords,
+      sessionTalentOptions
     } = this.state
 
     let rows = []
@@ -473,12 +496,16 @@ class VideoPage extends Component {
                           <div>{group.name}</div>
                           {VIDEO_REVIEW_PERMISSIONS.CAN_UPDATE_GROUP() && group._id &&
                           <label
-                            className="mb-0 ml-2"
+                            className="mb-0 mx-2"
                             onClick={ev => {
                               ev.stopPropagation()
                               ev.preventDefault()
                               this.setState({
-                                selectedGroup: group
+                                selectedGroup: group,
+                                selectedTalentRecords: ((group.videos[0].group || {}).records || []).map(talent => ({
+                                  ...talent,
+                                  full_name: `${talent.first_name} ${talent.last_name}`
+                                }))
                               })
                             }}
                           >
@@ -639,7 +666,7 @@ class VideoPage extends Component {
             />
             <input
               type="file"
-              className="form-control"
+              className="form-control mb-2"
               onChange={ev => {
                 this.setState({
                   selectedGroup: {
@@ -649,17 +676,36 @@ class VideoPage extends Component {
                 })
               }}
             />
+            <AsyncTypeahead
+              id="talent-record-select"
+              selected={selectedTalentRecords}
+              onChange={value => {
+                this.setState({
+                  selectedTalentRecords: value
+                })
+              }}
+              isLoading={loadingTalentRecords}
+              labelKey="full_name"
+              minLength={2}
+              onSearch={this.searchSessionTalents}
+              options={sessionTalentOptions}
+              placeholder="Search for a talent user..."
+              multiple
+            />
           </Modal.Body>
           <Modal.Footer>
             <button
               disabled={selectedGroup && !selectedGroup.name}
               className="btn btn-primary"
               onClick={async () => {
-                await updateGroup(selectedGroup._id, selectedGroup)
+                await updateGroup(selectedGroup._id, selectedGroup, selectedTalentRecords.map(r => r._id))
                 this.setState({
                   selectedGroup: {}
                 })
                 await this.loadVideos()
+                if (activeRidx !== -1) {
+                  this.handleGroupItemClick(activeRidx, activeGidx)
+                }
               }}
             >
               Submit
@@ -872,9 +918,9 @@ const PersonCard = ({
             </div>
           )}
         </div>
-        <img
+        <ThumbImage
           key={avatar}
-          src={avatar ? static_root+avatar : require('../../assets/camera.png')}
+          src={avatar}
           className="small-avatar"
           onClick={() => setAvatarEditor(true)}
         />

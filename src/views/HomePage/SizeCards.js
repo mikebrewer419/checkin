@@ -211,7 +211,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
       <div className="size-cards mt-2">
         {filteredCandidates.map(c => {
           return (
-            <div key={c._id} className="person-card">
+            <div key={c._id} className="person-card avoid-break">
               <PersonCard
                 {...c}
                 topAvatar={true}
