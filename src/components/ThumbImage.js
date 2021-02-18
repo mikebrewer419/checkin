@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   static_root
 } from '../services'
 
 const ThumbImage = (props) => {
   const [error, setError] = useState(false)
+
+  useEffect(() => {
+    setError((false))
+  }, [props.src])
 
   if (!props.src) {
     return <img
