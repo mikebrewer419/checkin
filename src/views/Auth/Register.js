@@ -87,8 +87,8 @@ const Register = () => {
   }
 
   return (
-    <div className="d-flex align-items-center flex-column vh-100 login-page">
-      <div className="bg-danger vw-100 p-3 d-flex justify-content-center">
+    <div className="d-flex align-items-center flex-column login-page">
+      <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
         <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
       <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">

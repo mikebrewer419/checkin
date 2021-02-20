@@ -69,8 +69,8 @@ const Login = () => {
   }
 
   return (
-    <div className="d-flex align-items-center flex-column vh-100 login-page">
-      <div className="bg-danger vw-100 p-3 d-flex justify-content-center">
+    <div className="d-flex align-items-center flex-column login-page">
+      <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
         <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
       <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
@@ -125,7 +125,7 @@ const Login = () => {
           >Create Account</Link>
         </div>
         <GoogleLogin
-          className="w-100 text-center d-flex justify-content-center mt-4"
+          className="w-100 text-center d-flex justify-content-center mt-4 google-btn"
           clientId={client_id}
           buttonText="Login with Google"
           onSuccess={googleLoginSuccess}
