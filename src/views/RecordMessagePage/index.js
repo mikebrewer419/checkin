@@ -14,6 +14,7 @@ const RecordMessagePage = ({ match }) => {
   const [record, setRecord] = useState('')
   const [session, setSession] = useState('')
   const [studio, setStudio] = useState(null)
+  const [showMeetingFrame, setShowMeetingFrame] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,21 +39,36 @@ const RecordMessagePage = ({ match }) => {
   const meeting_id = !liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
 
   return (
-    <div className="message-page container text-center mt-5">
-      <img src={logo} className="studio-logo"/>
-      <p className="my-5">
-        <Linkify>
-          {message}
-        </Linkify>
-      </p>
-      <Button
-        variant="danger"
-        size="lg"
-        target="_blank"
-        href={`https://meet.heyjoe.io/${meeting_id}`}
-      >
-        Join {!liveMode ? 'Virtual Lobby' : 'Meeting' }
-      </Button>
+    <div className="message-page pt-5">
+      <div className="container text-center ">
+        <img src={logo} className="studio-logo"/>
+        <p className="my-5">
+          <Linkify>
+            {message}
+          </Linkify>
+        </p>
+        <Button
+          variant="danger"
+          size="lg"
+          target="_blank"
+          onClick={() => setShowMeetingFrame(!showMeetingFrame)}
+        >
+          {showMeetingFrame ? 'Leave' : 'Join'} {!liveMode ? 'Virtual Lobby' : 'Meeting' }
+        </Button>
+      </div>
+      {showMeetingFrame &&
+        <div className="meeting-frame mt-5">
+          <iframe
+            title="Meeting"
+            width="100%"
+            height="100%"
+            id="jitsi-meeting-frame"
+            src={`https://meet.heyjoe.io/${meeting_id}`}
+            allow="camera; microphone; fullscreen; display-capture"
+            allowFullScreen="allowfullscreen">
+          </iframe>
+        </div>
+      }
     </div>
   )
 }
