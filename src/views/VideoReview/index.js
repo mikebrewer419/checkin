@@ -328,6 +328,19 @@ class VideoPage extends Component {
     })
   }
 
+  allGroupsSelected = (checkTab) => {
+    if (checkTab !== this.state.tab || this.state.videos.length === 0) {
+      return false
+    }
+    return this.state.selectedForUploads.length === this.state.videos.length
+  }
+
+  toggleAllGroupSelect = (select) => {
+    this.setState({
+      selectedForUploads: select ? this.state.videos.map(v => v.uri) : []
+    })
+  }
+
   render() {
     const {
       studio,
@@ -444,6 +457,13 @@ class VideoPage extends Component {
               href="#"
               onClick={() => this.changeTab(TABS.VIDEOS)}
             >
+              <input
+                type="checkbox"
+                className="mr-2"
+                disabled={tab === TABS.ARCHIVED}
+                checked={this.allGroupsSelected(TABS.VIDEOS)}
+                onChange={(ev) => this.toggleAllGroupSelect(ev.target.checked)}
+              />
               Videos
             </a>
           </li>
@@ -454,6 +474,13 @@ class VideoPage extends Component {
               href="#"
               onClick={() => this.changeTab(TABS.ARCHIVED)}
             >
+              <input
+                type="checkbox"
+                className="mr-2"
+                disabled={tab === TABS.VIDEOS}
+                checked={this.allGroupsSelected(TABS.ARCHIVED)}
+                onChange={(ev) => this.toggleAllGroupSelect(ev.target.checked)}
+              />
               Archived
             </a>
           </li>}
