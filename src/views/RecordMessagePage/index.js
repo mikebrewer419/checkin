@@ -51,7 +51,10 @@ const RecordMessagePage = ({ match }) => {
           variant="danger"
           size="lg"
           target="_blank"
-          onClick={() => setShowMeetingFrame(!showMeetingFrame)}
+          onClick={() => {
+            window.open(`https://meet.heyjoe.io/${meeting_id}`, '_blank')
+            // setShowMeetingFrame(!showMeetingFrame)
+          }}
         >
           {showMeetingFrame ? 'Leave' : 'Join'} {!liveMode ? 'Virtual Lobby' : 'Meeting' }
         </Button>
