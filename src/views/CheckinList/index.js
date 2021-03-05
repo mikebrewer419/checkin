@@ -321,9 +321,9 @@ class List extends Component {
           row_headers.map(key => {
             switch(key) {
               case 'studio':
-                return encodeURIComponent(studio.name);
+                return studio.name.replace(/,/g, ' ')
               case 'session': 
-                return encodeURIComponent(session.name);
+                return session.name.replace(/,/g, ' ')
               case 'call_in_time':
               case 'signed_out_time':
               case 'checked_in_time':
@@ -332,7 +332,7 @@ class List extends Component {
               case 'actual_call':
                 return formatHour(candidate[key])
               default:
-                return encodeURIComponent(candidate[key])
+                return candidate[key].replace(/,/g, ' ')
             }
           }).join(',')
         )).join('\n')
