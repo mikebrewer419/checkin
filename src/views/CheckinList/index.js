@@ -332,7 +332,7 @@ class List extends Component {
               case 'actual_call':
                 return formatHour(candidate[key])
               default:
-                return candidate[key].replace(/,/g, ' ')
+                return `${(candidate[key] || '')}`.replace(/,/g, ' ')
             }
           }).join(',')
         )).join('\n')
