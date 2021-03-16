@@ -726,7 +726,7 @@ const StudioList = () => {
             </p>
             <p>
               2. 15 minutes before your call time, click the link below to check in to the session:<br/>
-              [check-in-link] &nbsp; &nbsp; &nbsp; &nbsp;
+              <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a>
             </p>
             <p>
               3. After you check in, click the virtual lobby link or open up “Hey Joe" and enter the room number you receive on the check in pageWhen it's time for your audition you will be sent a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code.
