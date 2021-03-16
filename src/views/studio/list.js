@@ -713,94 +713,51 @@ const StudioList = () => {
         </Modal.Header>
         <Modal.Body className="bg-lightgray">
           <div id="talent-email-text">
-            <p>You can audition from your phone or computer. Please choose the device that you believe has the best camera and internet connection (a newer smartphone usually works best). Here are the instructions: </p>
             <p>
-              <strong>AUDITION FROM PHONE:</strong>
+              You can audition from your phone or computer. Please choose the device that you believe has the best camera and internet connection (a newer smartphone usually works best). Here are the instructions:
             </p>
-            <ol>
-              <li>
-                <p>Download the Hey Joe app</p>
-              </li>
-            </ol>
             <p>
-              iOS: <a rel="nofollow noreferrer noopener" target="_blank" href="https://apple.co/3grIxwR">https://apple.co/3grIxwR</a><br />
-              Android: <a rel="nofollow noreferrer noopener" target="_blank" href="https://bit.ly/2MLDLwL">https://bit.ly/2MLDLwL</a><br />
+              <strong >AUDITION FROM PHONE:</strong>
             </p>
-            <ol>
-              <li>
-                <p>Check in from a web browser</p>
-              </li>
-            </ol>
-            <p>15 minutes before your call time, click the link below to check in to the session:
-              <br />
-                <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a>
-              </p>
-              <ol>
-                <li>
-                  <p>After you check in, click the virtual lobby link or open up “Hey Joe" and enter the room number you receive on the check in page</p>
-                </li>
-              </ol>
-              <ul>
-                <li>
-                  <p>When it's time for your audition you will be sent a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code.</p>
-                </li>
-              </ul>
-              <p>
-                <strong>AUDITION FROM COMPUTER:</strong>
-              </p>
-              <ol>
-                <li>
-                  <p>Set up your computer and open a browser (preferably Google Chrome)</p>
-                </li>
-                <li>
-                  <p>15 minutes before your call time, click the link below to check in to the session:</p>
-                </li>
-              </ol>
-              <p>
-                <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a>
-              </p>
-              <ol>
-                <li>
-                  <p>After you check in, click the link to join the virtual lobby</p>
-                </li>
-              </ol>
-              <ul>
-                <li>
-                  <p>When it's time for your audition you will be sent a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code.</p>
-                </li>
-              </ul>
-              <p>Audition Guidelines:</p>
-              <ul>
-                <li>
-                  <p>Put your device in Landscape (horizontal) position.</p>
-                </li>
-                <li>
-                  <p>Turn off “Portrait Orientation” lock if it’s turned on.</p>
-                </li>
-                <li>
-                  <p>Device eye level, not below you on a table or way above you</p>
-                </li>
-                <li>
-                  <p>Light yourself from the front. Do not stand in front of a window.</p>
-                </li>
-                <li>
-                  <p>Post your sides level with your camera so you are not looking off to the side or down below camera.</p>
-                </li>
-                <li>
-                  <p>Make sure you have a good connection before logging in. Set up as close to your WiFi router as possible. In the same room as WiFi is best.</p>
-                </li>
-                <li>
-                  <p>If any of the above guidelines are not followed, we will ask you to leave the audition room to set up properly, and we will call you back in later.</p>
-                </li>
-              </ul>
-              <p>
-                ***you can watch a set up best practices video here - 
-                <a href="https://heyjoe.io/actor-set-up/" title="https://heyjoe.io/actor-set-up/" data-renderer-mark="true">https://heyjoe.io/actor-set-up/</a>
-                <br />
-                ***you can find troubleshooting tips here - 
-                <a href="https://heyjoe.io/troubleshooting/" title="https://heyjoe.io/troubleshooting/" data-renderer-mark="true">https://heyjoe.io/troubleshooting/</a>
-              </p>
-            </div>
+            <p>
+              1. Download the Hey Joe app<br/>
+              iOS: <a  href="https://apple.co/3grIxwR" title="https://apple.co/3grIxwR" >https://apple.co/3grIxwR</a><br/>
+              Android: <a  href="https://bit.ly/2MLDLwL" title="https://bit.ly/2MLDLwL" >https://bit.ly/2MLDLwL</a>&nbsp; &nbsp; &nbsp; &nbsp;
+            </p>
+            <p>
+              2. 15 minutes before your call time, click the link below to check in to the session:<br/>
+              [check-in-link] &nbsp; &nbsp; &nbsp; &nbsp;
+            </p>
+            <p>
+              3. After you check in, click the virtual lobby link or open up “Hey Joe" and enter the room number you receive on the check in pageWhen it's time for your audition you will be sent a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code.
+            </p>
+            <p>
+              <strong >AUDITION FROM COMPUTER:</strong><br/>
+              1. Set up your computer and open Google Chrome (you must use Chrome for best results)
+            </p>
+            <p>
+              2. 15 minutes before your call time, click the link below to check in to the session:<br/>
+              [check-in-link]&nbsp; &nbsp;
+            </p>
+            <p>
+              3. When it's time for your audition you will be sent a new link and code to enter the audition room. You will hang up from the virtual lobby and either click the new link or enter the new 4 digit code.
+            </p>
+            <p>
+              <strong >Audition Guidelines:</strong>
+            </p>
+            <p>
+              Put your device in Landscape (horizontal) position.<br/>
+              Turn off “Portrait Orientation” lock if it’s turned on.<br/>
+              Device eye level, not below you on a table or way above you<br/>
+              Light yourself from the front. Do not stand in front of a window.<br/>
+              Post your sides level with your camera so you are not looking off to the side or down below camera.<br/>
+              Make sure you have a good connection before logging in. <br/>
+              Set up as close to your WiFi router as possible. In the same room as WiFi is best.<br/>
+              If any of the above guidelines are not followed, we will ask you to leave the audition room to set up properly, and we will call you back in later.<br/>
+              ***you can watch a set up best practices video here -<a  href="https://heyjoe.io/actor-set-up/" title="https://heyjoe.io/actor-set-up/" >https://heyjoe.io/actor-set-up/</a><br/>
+              ***you can find troubleshooting tips here -<a  href="https://heyjoe.io/troubleshooting/" title="https://heyjoe.io/troubleshooting/" >https://heyjoe.io/troubleshooting/</a>
+            </p>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <button
