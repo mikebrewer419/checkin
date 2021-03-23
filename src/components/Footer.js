@@ -13,9 +13,20 @@ const Footer = (props) => {
   }
 
   return (
-    <div className="no-print text-center text-primary mb-4 app-footer">
+    <div className="no-print text-center text-primary mb-4 app-footer d-flex justify-content-center">
       <img src={require('../assets/heyjoe.png')} className="heyjoe-logo br"/>
-      &copy; 2020 North Shore Media, LLC. All Rights Reserved
+      <div className="d-inline-flex flex-column">
+        <label>2021 North Shore Media, LLC. All Rights Reserved</label>
+        <div className="d-flex">
+          <a href="https://heyjoe.io/privacy-policy/" target="_blank" className="mr-2">
+            Privacy policy
+          </a>
+          <a href="https://heyjoe.io/terms-and-conditions/" target="_blank">
+            Terms and conditions.
+          </a>
+        </div>
+      </div>
+      
     </div>
   )
 }

@@ -136,6 +136,15 @@ class List extends Component {
     })
   }
 
+  virtualLobbyCallin = (id) => {
+    const candidate = this.state.candidates.find(c => c._id === id)
+    if (!candidate) { return }
+    sendMessage({
+      to: candidate.phone,
+      body: this.messages[0]
+    })
+  }
+
   setSeen = (id) => {
     const vm = this
     const { studio } = this.props
@@ -436,6 +445,7 @@ class List extends Component {
                   addToGroup={this.addToGroup}
                   leaveFromGroup={this.leaveFromGroup}
                   updateRecord={this.selectRecord}
+                  virtualLobbyCallin={this.virtualLobbyCallin}
                 />
               )
             })}
@@ -623,7 +633,8 @@ export const PersonCard = ({
   avatar,
   role,
   agent,
-  testMode
+  testMode,
+  virtualLobbyCallin,
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -648,7 +659,7 @@ export const PersonCard = ({
               <small className="mr-1">skipped</small>}
             {signed_out &&
               <small className="float-right mr-1">Signed out</small>}
-            {seen && !signed_out && signOut && !testMode && (
+            {!signed_out && signOut && !testMode && (
               <FaUserSlash
                 className="text-danger ml-auto mr-1 cursor-pointer"
                 title="Sign out this user"
@@ -707,6 +718,11 @@ export const PersonCard = ({
           </p>
         </div>
         <div className="d-flex mt-1">
+          {testMode &&
+          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => { virtualLobbyCallin && virtualLobbyCallin(_id) }}>
+            Call in SMS
+          </button>
+          }
           {(!!showCallIn || (!seen && skipped)) && setSeen && !testMode &&
           <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
             Call In SMS

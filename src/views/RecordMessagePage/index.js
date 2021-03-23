@@ -27,7 +27,12 @@ const RecordMessagePage = ({ match }) => {
       setMessage(record.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : record.lastMessage)
       setRecord(record)
     }
-    fetchData()
+    const intervalHandle = setInterval(() => {
+      fetchData()
+    }, 5000)
+    return () => {
+      clearInterval(intervalHandle)
+    }
   }, [match.params.record_id])
 
   if (!studio) {
