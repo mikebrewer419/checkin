@@ -63,7 +63,7 @@ export const googleRegister = async (fields) => {
 export const verityToken = () => {
   return new Promise((resolve, reject) => {
     if (token) {
-      fetch(`${api_host}/api/verify-token`,{
+      fetch(`${api_host}/verify-token`,{
         headers: {
           'Authorization': `Bearer ${token}`
         }
