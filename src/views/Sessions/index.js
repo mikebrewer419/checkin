@@ -28,19 +28,19 @@ const SessionList = () => {
       </div>
       <div className="list-group mb-4">
         {sessions.map(session => (
-          <div key={session._id} className="row mt-1 ml-2 mr-2 px-3 py-2">
+          <div key={session._id} className="row mt-1 ml-2 mr-2 px-3 py-2 align-items-end">
             <div className="col-2">
-              <h5 className="mb-0">{session.name}</h5>
-              <label className="mb-0 small">{session.studio.name}</label>
+              <h5 className="mb-0">{session.studio.name}</h5>
+              <label className="mb-0">{session.name}</label>
             </div>
             <div className="col-auto">
               <Link to={`/studio/${session.studio.uri}/${session._id}`} className="text-danger"  target="_blank">
-                Checkin
+                Video Chat
               </Link>
             </div>
             <div className="col-auto">
               <Link to={`/onboard/${session.studio.uri}/${session._id}`} className="text-danger"  target="_blank">
-                Onboard
+                Check-In
               </Link>
             </div>
             <div className="col-auto">

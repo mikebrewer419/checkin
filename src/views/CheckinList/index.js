@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { FaCircle, FaDownload, FaMinus, FaUserSlash, FaStickyNote,
   FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
+import Papa from 'papaparse'
 import moment from 'moment'
 import {
   static_root,
@@ -133,15 +134,6 @@ class List extends Component {
       this.fetchData()
     }).catch(err => {
       console.log("App -> setSkipped -> err", err)
-    })
-  }
-
-  virtualLobbyCallin = (id) => {
-    const candidate = this.state.candidates.find(c => c._id === id)
-    if (!candidate) { return }
-    sendMessage({
-      to: candidate.phone,
-      body: this.messages[0]
     })
   }
 
@@ -324,30 +316,30 @@ class List extends Component {
       'signed_out_time',
       // 'studio',
     ]
-    let csvContent = "data:text/csv;charset=utf-8," +row_headers.join(',')+'\n'
-      + this.state.candidates
-        .map(candidate => (
-          row_headers.map(key => {
-            switch(key) {
-              case 'studio':
-                return studio.name.replace(/,/g, ' ')
-              case 'session': 
-                return session.name.replace(/,/g, ' ')
-              case 'call_in_time':
-              case 'signed_out_time':
-              case 'checked_in_time':
-                const dateString = formatTime(candidate[key])
-                return dateString
-              case 'actual_call':
-                return formatHour(candidate[key])
-              default:
-                return `${(candidate[key] || '')}`.replace(/,/g, ' ')
-            }
-          }).join(',')
-        )).join('\n')
+    let csvContent = this.state.candidates
+      .map(candidate => (
+        row_headers.map(key => {
+          switch(key) {
+            case 'studio':
+              return studio.name.replace(/,/g, ' ')
+            case 'session': 
+              return session.name.replace(/,/g, ' ')
+            case 'call_in_time':
+            case 'signed_out_time':
+            case 'checked_in_time':
+              const dateString = formatTime(candidate[key])
+              return dateString
+            case 'actual_call':
+              return formatHour(candidate[key])
+            default:
+              return `${(candidate[key] || '')}`
+          }
+        })
+      ))
+    csvContent.unshift(row_headers)
+    console.log('csvContent: ', csvContent);
+    const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(Papa.unparse(csvContent))
 
-    const encodedUri = encodeURI(csvContent)
-    console.log('csvContent: ', csvContent)
     var link = document.createElement("a")
     link.setAttribute("href", encodedUri)
     link.setAttribute("download", `${studio.name}-${(new Date()).toISOString()}.csv`)
@@ -445,7 +437,6 @@ class List extends Component {
                   addToGroup={this.addToGroup}
                   leaveFromGroup={this.leaveFromGroup}
                   updateRecord={this.selectRecord}
-                  virtualLobbyCallin={this.virtualLobbyCallin}
                 />
               )
             })}
@@ -634,7 +625,6 @@ export const PersonCard = ({
   role,
   agent,
   testMode,
-  virtualLobbyCallin,
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -659,7 +649,7 @@ export const PersonCard = ({
               <small className="mr-1">skipped</small>}
             {signed_out &&
               <small className="float-right mr-1">Signed out</small>}
-            {!signed_out && signOut && !testMode && (
+            {!signed_out && signOut && (
               <FaUserSlash
                 className="text-danger ml-auto mr-1 cursor-pointer"
                 title="Sign out this user"
@@ -718,16 +708,11 @@ export const PersonCard = ({
           </p>
         </div>
         <div className="d-flex mt-1">
-          {testMode &&
-          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => { virtualLobbyCallin && virtualLobbyCallin(_id) }}>
-            Call in SMS
-          </button>
-          }
-          {(!!showCallIn || (!seen && skipped)) && setSeen && !testMode &&
+          {(!!showCallIn || (!seen && skipped)) && setSeen &&
           <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
             Call In SMS
           </button>}
-          {!!showCallIn && !skipped && setSkipped && !testMode &&
+          {!!showCallIn && !skipped && setSkipped &&
           <button className="btn px-2 py-0 btn-outline-dark ml-2" onClick={() => setSkipped(_id)}>
             Skip
           </button>}

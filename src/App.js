@@ -85,7 +85,7 @@ function App() {
             <Route path="/reset-password-request" component={() => <ResetPasswordRequest />} exact />
             <Route path="/reset-password" component={() => <ResetPassword />} exact />
             <Route path="/register" component={() => <Register />} exact />
-            {super_admins.includes(email) &&
+            {user.user_type === USER_TYPES.SUPER_ADMIN &&
               <Route path="/heyjoe-admin" component={AdminView} />
             }
             <Route path="/message/:record_id" component={RecordMessagePage} />
