@@ -22,6 +22,7 @@ const Header = (props) => {
     setUser(u)
     if (!u) return
     getUserById(u.id).then(data => {
+      if (!data) return 
       const need = [USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(data.user_type) &&
         (!data.twilio_account_sid ||
          !data.twilio_auth_token ||
