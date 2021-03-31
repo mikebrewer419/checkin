@@ -127,7 +127,7 @@ class VideoPage extends Component {
   }
 
   downloadAllVideos = () => {
-    const { selectedForUploads, session } = this.state
+    const { selectedForUploads, session, studio } = this.state
     const email = window.prompt(
       `You are downloading ${selectedForUploads.length} videos.\nSpecify your email address to get download link`,
       window.localStorage.getItem('email')
@@ -135,7 +135,7 @@ class VideoPage extends Component {
     if (!email) {
       return
     }
-    createZipAndSendMail(selectedForUploads, session.name, email)
+    createZipAndSendMail(selectedForUploads, `${studio.name}-${session.name}`, email)
       .then(() => {
         alert(`You will get an email with the download link once the archive is completed`)
         this.setState({
