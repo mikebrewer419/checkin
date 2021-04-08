@@ -9,7 +9,8 @@ import { USER_TYPES } from '../constants'
 import './Header.scss'
 
 const excludePaths = [
-  '/onboard'
+  '/onboard',
+  '/message'
 ]
 
 const Header = (props) => {

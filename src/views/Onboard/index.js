@@ -49,7 +49,7 @@ const Onboard = () => {
   const onSubmjit = (ev) => {
     ev.preventDefault()
     if (phoneNumber.replace(/\D/g,'').length < 10) {
-      window.alert('Please input correct phone number!!')
+      window.alert('Please input correct phone number!')
       return
     }
     if (!avatar64) {
@@ -278,6 +278,11 @@ const Onboard = () => {
                 If Union, please enter your SAG Number
               </label>
             </p>
+
+            <label className="d-flex align-items-center">
+              <input type="checkbox" className="mr-2 w-auto" required />
+              I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
+            </label>
 
             <p className="full">
               <button type="submit" disabled={submitting}>

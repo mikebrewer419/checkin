@@ -38,6 +38,10 @@ const Register = () => {
       setFormError('Confirm password does not match')
       return false
     }
+    if (!document.querySelector('#agree-terms').checked) {
+      setFormError('You should agree to terms and service.')
+      return false
+    }
     setFormError('')
     return true
   }
@@ -131,6 +135,10 @@ const Register = () => {
           />
         </div>
         <p className="text-danger">{`${error || formError || ''}`}</p>
+        <label className="d-flex align-items-center mb-3">
+          <input type="checkbox" className="mr-2 w-auto" id="agree-terms" />
+          I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
+        </label>
         <button
           type="submit"
           className="btn btn-danger"

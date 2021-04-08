@@ -64,7 +64,7 @@ export const deletePage = async (id) => {
   return await resp.json()
 }
 
-export const copyGroupFromSession = async (session_group_id, postingpage_id) => {
+export const copyGroupFromSession = async (session_group_id, postingpage_id, send_link) => {
   const resp = await fetch(`${api_host}/postingpage/copy`, {
     method: 'POST',
     headers: {
@@ -73,7 +73,8 @@ export const copyGroupFromSession = async (session_group_id, postingpage_id) => 
     },
     body: JSON.stringify({
       group: session_group_id,
-      postingpage: postingpage_id
+      postingpage: postingpage_id,
+      send_email: send_link
     })
   })
   return await resp.json()

@@ -313,7 +313,7 @@ class PostingPage extends Component {
           <div className="video-header d-flex align-items-center justify-content-center">
             <h2 style={{textAlign: "center"}} className="mb-0">
               {studio.name}<br/>
-              <small><small>{page.name} Video review</small></small>
+              <small><small>{page.name}</small></small>
             </h2>
             <div className="d-flex align-items-center download-selected">
               <label

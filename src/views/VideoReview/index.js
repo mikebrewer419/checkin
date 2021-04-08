@@ -276,11 +276,12 @@ class VideoPage extends Component {
 
   handleGroupsCopy = async () => {
     this.setState({ loading: true })
+    const sendLink = document.querySelector('#send-audition-link').checked
     const { selectedPage } = this.state
     const selectedGroups = this.state.groups.filter((group, idx) => this.groupSelectedForDownload(idx))
     for (let i = 0; i < selectedGroups.length; i ++) {
       const group = selectedGroups[i]
-      await copyGroupFromSession(group._id, selectedPage)
+      await copyGroupFromSession(group._id, selectedPage, sendLink)
     }
     this.setState({
       loading: false,
@@ -768,6 +769,10 @@ class VideoPage extends Component {
                 </option>
               ))}
             </select>
+            <label className="d-flex align-items-center mt-2">
+              <input id="send-audition-link" type="checkbox" className="mr-2" />
+              Send Audition link email?
+            </label>
           </Modal.Body>
           <Modal.Footer>
             <button

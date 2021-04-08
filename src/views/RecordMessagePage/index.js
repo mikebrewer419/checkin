@@ -13,6 +13,7 @@ const RecordMessagePage = ({ match }) => {
   const [message, setMessage] = useState('')
   const [record, setRecord] = useState('')
   const [session, setSession] = useState('')
+  const [liveMode, setLiveMode] = useState(false)
   const [studio, setStudio] = useState(null)
   const [showMeetingFrame, setShowMeetingFrame] = useState(false)
 
@@ -40,32 +41,43 @@ const RecordMessagePage = ({ match }) => {
   }
 
   const logo = studio && studio.logo ? static_root + studio.logo : require('../../assets/heyjoe.png')
-  const liveMode = record && record.groups.length > 0 || record.seen
   const meeting_id = !liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
 
+  const InfoComponents = [
+    <p key="message" className="my-2">
+      <Linkify>
+        {message}
+      </Linkify>
+    </p>,
+    <Button
+      key="join-button"
+      variant="danger"
+      size="sm"
+      target="_blank"
+      onClick={() => {
+        if (showMeetingFrame) {
+          setLiveMode(!liveMode)
+        } else {
+          setShowMeetingFrame(!showMeetingFrame)
+        }
+      }}
+    >
+      Join {!liveMode ^ showMeetingFrame ? 'Virtual Lobby' : 'Casting' }
+    </Button>
+  ]
+
   return (
-    <div className="message-page pt-5">
-      <div className="container text-center ">
+    <div className="message-page pt-2">
+      <div className="d-flex align-items-center justify-content-between mx-2">
         <img src={logo} className="studio-logo"/>
-        <p className="my-5">
-          <Linkify>
-            {message}
-          </Linkify>
-        </p>
-        <Button
-          variant="danger"
-          size="lg"
-          target="_blank"
-          onClick={() => {
-            window.open(`https://meet.heyjoe.io/${meeting_id}`, '_blank')
-            // setShowMeetingFrame(!showMeetingFrame)
-          }}
-        >
-          {showMeetingFrame ? 'Leave' : 'Join'} {!liveMode ? 'Virtual Lobby' : 'Meeting' }
-        </Button>
+        {showMeetingFrame ? InfoComponents : null}
       </div>
+      <div className="container text-center ">
+        {!showMeetingFrame ? InfoComponents : null}
+      </div>
+      { showMeetingFrame ? liveMode ? 'You are in casting now.' : 'You are in virtual lobby now.' : ''}
       {showMeetingFrame &&
-        <div className="meeting-frame mt-5">
+        <div className="meeting-frame mt-3">
           <iframe
             title="Meeting"
             width="100%"
