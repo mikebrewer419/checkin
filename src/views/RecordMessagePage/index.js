@@ -7,6 +7,7 @@ import {
 } from '../../services'
 import Linkify from 'linkifyjs/react'
 import { Button } from 'react-bootstrap'
+import { MEETING_HOST } from '../../constants'
 import './style.scss'
 
 const RecordMessagePage = ({ match }) => {
@@ -43,39 +44,44 @@ const RecordMessagePage = ({ match }) => {
   const logo = studio && studio.logo ? static_root + studio.logo : require('../../assets/heyjoe.png')
   const meeting_id = !liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
 
-  const InfoComponents = [
-    <p key="message" className="my-2">
-      <Linkify>
-        {message}
-      </Linkify>
-    </p>,
-    <Button
-      key="join-button"
-      variant="danger"
-      size="sm"
-      target="_blank"
-      onClick={() => {
-        if (showMeetingFrame) {
-          setLiveMode(!liveMode)
-        } else {
-          setShowMeetingFrame(!showMeetingFrame)
-        }
-      }}
-    >
-      Join {!liveMode ^ showMeetingFrame ? 'Virtual Lobby' : 'Casting' }
-    </Button>
-  ]
+  const JoinButton =  <Button
+    key="join-button"
+    variant="danger"
+    size="sm"
+    target="_blank"
+    onClick={() => {
+      if (showMeetingFrame) {
+        setLiveMode(!liveMode)
+      } else {
+        setShowMeetingFrame(!showMeetingFrame)
+      }
+    }}
+  >
+    Join {!liveMode ^ showMeetingFrame ? 'Virtual Lobby' : 'Casting' }
+  </Button>
 
   return (
     <div className="message-page pt-2">
       <div className="d-flex align-items-center justify-content-between mx-2">
         <img src={logo} className="studio-logo"/>
-        {showMeetingFrame ? InfoComponents : null}
+        {showMeetingFrame ? [
+          <div key="room-name d-flex justify-content-center align-items-center">
+            <label className="mb-0 h6">
+              {studio.name}&nbsp;
+              {liveMode ? 'Room' : 'Virtual Lobby'}
+            </label>
+            <label className="mb-0 ml-3">{meeting_id}</label>
+          </div>,
+          JoinButton,
+          <p key="message" className="my-2">{message}</p>
+        ] : null}
       </div>
       <div className="container text-center ">
-        {!showMeetingFrame ? InfoComponents : null}
+        {!showMeetingFrame ? [
+          <p key="message" className="my-2">{message}</p>,
+          JoinButton
+        ] : null}
       </div>
-      { showMeetingFrame ? liveMode ? 'You are in casting now.' : 'You are in virtual lobby now.' : ''}
       {showMeetingFrame &&
         <div className="meeting-frame mt-3">
           <iframe
@@ -83,7 +89,7 @@ const RecordMessagePage = ({ match }) => {
             width="100%"
             height="100%"
             id="jitsi-meeting-frame"
-            src={`https://meet.heyjoe.io/${meeting_id}`}
+            src={`${MEETING_HOST}/${meeting_id}`}
             allow="camera; microphone; fullscreen; display-capture"
             allowFullScreen="allowfullscreen">
           </iframe>

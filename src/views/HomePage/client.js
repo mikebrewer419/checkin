@@ -8,6 +8,7 @@ import {
   getOneSession,
   createCometRoom
 } from '../../services'
+import { MEETING_HOST } from '../../constants'
 import './style.scss'
 
 class ClientHomePage extends Component {
@@ -183,7 +184,7 @@ class ClientHomePage extends Component {
                 width="100%"
                 height="100%"
                 id="jitsi-meeting-frame"
-                src={`https://meet.heyjoe.io/${meeting_id}`}
+                src={`${MEETING_HOST}/${meeting_id}`}
                 allow="camera; microphone; fullscreen; display-capture"
                 allowFullScreen="allowfullscreen">
               </iframe>

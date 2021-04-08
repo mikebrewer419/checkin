@@ -9,6 +9,7 @@ import {
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
+import { MEETING_HOST } from '../../constants'
 import SizeCards from './SizeCards'
 
 class HomePage extends Component {
@@ -210,7 +211,7 @@ class HomePage extends Component {
                   width="100%"
                   height="100%"
                   id="jitsi-meeting-frame"
-                  src={`https://meet.heyjoe.io/${meeting_id}`}
+                  src={`${MEETING_HOST}/${meeting_id}`}
                   allow="camera; microphone; fullscreen; display-capture"
                   allowFullScreen="allowfullscreen">
                 </iframe>
