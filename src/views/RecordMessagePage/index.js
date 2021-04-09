@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import classnames from 'classnames'
 import {
   static_root,
   getOneRecord,
@@ -43,17 +44,23 @@ const RecordMessagePage = ({ match }) => {
 
   const logo = studio && studio.logo ? static_root + studio.logo : require('../../assets/heyjoe.png')
   const meeting_id = !liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
+  const calledIn = record && record.groups.length > 0 || record.seen
 
   const JoinButton =  <Button
     key="join-button"
     variant="danger"
     size="sm"
     target="_blank"
+    className={classnames({
+      'd-none': showMeetingFrame && !liveMode && !calledIn,
+      'mr-4': showMeetingFrame
+    })}
     onClick={() => {
-      if (showMeetingFrame) {
-        setLiveMode(!liveMode)
-      } else {
+      if (!showMeetingFrame) {
         setShowMeetingFrame(!showMeetingFrame)
+      }
+      if (calledIn) {
+        setLiveMode(!liveMode)
       }
     }}
   >
@@ -62,10 +69,10 @@ const RecordMessagePage = ({ match }) => {
 
   return (
     <div className="message-page pt-2">
-      <div className="d-flex align-items-center justify-content-between mx-2">
-        <img src={logo} className="studio-logo"/>
+      <div className="d-flex align-items-center justify-content-between mx-2 flex-wrap">
+        <img src={logo} className="studio-logo mb-2 mb-sm-0 mr-0 mr-sm-4 mx-auto mx-sm-0"/>
         {showMeetingFrame ? [
-          <div key="room-name d-flex justify-content-center align-items-center">
+          <div key="room-name" className="mr-4">
             <label className="mb-0 h6">
               {studio.name}&nbsp;
               {liveMode ? 'Room' : 'Virtual Lobby'}
@@ -73,17 +80,23 @@ const RecordMessagePage = ({ match }) => {
             <label className="mb-0 ml-3">{meeting_id}</label>
           </div>,
           JoinButton,
-          <p key="message" className="my-2">{message}</p>
+          <p key="message" className="my-2 text-left flex-fill">
+            <strong>Position Messages:</strong><br/>
+            {message}
+          </p>
         ] : null}
       </div>
       <div className="container text-center ">
         {!showMeetingFrame ? [
-          <p key="message" className="my-2">{message}</p>,
+          <p key="message" className="my-2">
+            <strong>Position Messages:</strong><br/>
+            {message}
+          </p>,
           JoinButton
         ] : null}
       </div>
       {showMeetingFrame &&
-        <div className="meeting-frame mt-3">
+        <div className="meeting-frame mt-2">
           <iframe
             title="Meeting"
             width="100%"
