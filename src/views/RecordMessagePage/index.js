@@ -39,7 +39,9 @@ const RecordMessagePage = ({ match }) => {
   }, [match.params.record_id])
 
   if (!studio) {
-    return null
+    return <div className="message-page justify-content-center">
+      Loading...
+    </div>
   }
 
   const logo = studio && studio.logo ? static_root + studio.logo : require('../../assets/heyjoe.png')
