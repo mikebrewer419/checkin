@@ -39,8 +39,8 @@ const RecordMessagePage = ({ match }) => {
   }, [match.params.record_id])
 
   if (!studio) {
-    return <div className="message-page justify-content-center">
-      Loading...
+    return <div className="message-page justify-content-center align-items-center">
+      <img src={require('../../assets/loading.gif')}/>
     </div>
   }
 
@@ -55,7 +55,6 @@ const RecordMessagePage = ({ match }) => {
     target="_blank"
     className={classnames({
       'd-none': showMeetingFrame && !liveMode && !calledIn,
-      'mr-4': showMeetingFrame
     })}
     onClick={() => {
       if (!showMeetingFrame) {
@@ -71,19 +70,21 @@ const RecordMessagePage = ({ match }) => {
 
   return (
     <div className="message-page pt-2">
-      <div className="d-flex align-items-center justify-content-between mx-2 flex-wrap">
-        <img src={logo} className="studio-logo mb-2 mb-sm-0 mr-0 mr-sm-4 mx-auto mx-sm-0"/>
+      <div className="row mx-0 align-items-center flex-wrap">
+        <img src={logo} className="studio-logo col col-auto mb-2 mb-sm-0 px-2 mr-0 mx-auto mx-sm-0"/>
         {showMeetingFrame ? [
-          <div key="room-name" className="mr-4">
-            <label className="mb-0 h6">
+          <div key="room-name" className="col col-auto">
+            <label className="mb-0 h3">
               {studio.name}&nbsp;
               {liveMode ? 'Room' : 'Virtual Lobby'}
             </label>
             <label className="mb-0 ml-3">{meeting_id}</label>
           </div>,
-          JoinButton,
-          <p key="message" className="my-2 text-left flex-fill">
-            <strong>Position Messages:</strong><br/>
+          <div className="col text-align-center">
+            {JoinButton}
+          </div>,
+          <p key="message" className="my-2 text-left sms-message col col-lg-4 col-12">
+            <img src={require('../../assets/sms.png')} className="sms-logo"/><br/>
             {message}
           </p>
         ] : null}

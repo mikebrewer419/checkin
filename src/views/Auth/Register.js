@@ -11,6 +11,8 @@ const client_id = process.env.REACT_APP_CLIENT_ID
 const Register = () => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
 
@@ -52,6 +54,8 @@ const Register = () => {
     const formData = new FormData()
     formData.append('email', email)
     formData.append('password', password)
+    formData.append('first_name', firstName)
+    formData.append('last_name', lastName)
     formData.append('user_type', USER_TYPES.CLIENT)
     const captchaVerifyResponse = await verifyCaptcha(token)
     if (!captchaVerifyResponse.success) {
@@ -71,6 +75,8 @@ const Register = () => {
     const registerResponse = await googleRegister({
       email: googleUser.email,
       token: response.tokenId,
+      first_name: googleUser.givenName,
+      last_name: googleUser.familyName,
       user_type: USER_TYPES.CLIENT
     })
     const token = await executeRecaptcha()
@@ -95,13 +101,37 @@ const Register = () => {
       <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
         <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
-      <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
+      <div className="register-pane text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
         <h2 className=" text-center"> WELCOME!</h2>
         <p className="text-center mb-5 description-text mt-3">
           Use the form below to register for an account on our site.
           This will allow you client access to Casting Sessions and Video Review pages that you have been sent the link to.<br/>
           Are you a Casting Professional? <a target="blank" href="https://heyjoe.io/#contactus">Contact Us</a> to set up a Casting Director or Session Runner account.
         </p>
+        <div className="d-flex w-100">
+          <div className="form-group w-50">
+            <label htmlFor="first_name">First name</label>
+            <input
+              type="text"
+              required
+              className="form-control"
+              id="first_name"
+              value={firstName}
+              onChange={ev => setFirstName(ev.target.value)}
+            />
+          </div>
+          <div className="form-group w-50">
+            <label htmlFor="last_name">Last name</label>
+            <input
+              type="text"
+              required
+              className="form-control"
+              id="last_name"
+              value={lastName}
+              onChange={ev => setLastName(ev.target.value)}
+            />
+          </div>
+        </div>
         <div className="form-group">
           <label htmlFor="email">Email address</label>
           <input

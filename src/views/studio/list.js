@@ -27,6 +27,7 @@ import {
   getUser
 } from '../../services'
 import StudioForm from './form'
+import SessionForm from './SessionForm'
 import './style.scss'
 import Footer from '../../components/Footer'
 import { USER_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
@@ -57,9 +58,7 @@ const StudioList = () => {
   const [selectedSession, setSelectedSession] = useState(null)
   const [errors, setErrors] = useState({})
   const [studioId, setStudioId] = useState(null)
-  const [sessionUsers, setSessionUsers] = useState([])
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false)
-  const [selectedSessionManagers, setSelectedSessionManagers] = useState([])
   const [confirmMessage, setConfirmMessage] = useState('')
   const [confirmCallback, setConfirmCallback] = useState(null)
 
@@ -71,16 +70,6 @@ const StudioList = () => {
   const [emailCheckinLink, setEmailCheckinLink] = useState('')
   const [emailProjectName, setEmailProjectName] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
-
-  const searchSessionUsers = async (email) => {
-    if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
-    fnTimeoutHandler = setTimeout(async () => {
-      setLoadingSessionUsers(true)
-      const sessionUsers = await searchUsers(email, USER_TYPES.SESSION_MANAGER)
-      setSessionUsers(sessionUsers)
-      setLoadingSessionUsers(false)
-    }, 1000)
-  }
 
   const searchCastingDirectors = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -174,6 +163,7 @@ const StudioList = () => {
   }
 
   const handleSessionSubmit = async (session = {}, studio_id) => {
+    console.log('session: ', session)
     const name = session.name
     const names = sessions[studio_id].map(s => s.name)
     const originalStudio = sessions[studio_id].find(s => s._id === session._id)
@@ -185,19 +175,29 @@ const StudioList = () => {
     }
     const formData = new FormData()
     formData.append('name', name)
-    if (selectedSession.size_card_pdf) {
-      formData.append('size_card_pdf', selectedSession.size_card_pdf)
+    if (session.size_card_pdf) {
+      formData.append('size_card_pdf', session.size_card_pdf)
     }
-    if (selectedSession.schedule_pdf) {
-      formData.append('schedule_pdf', selectedSession.schedule_pdf)
+    if (session.schedule_pdf) {
+      formData.append('schedule_pdf', session.schedule_pdf)
+    }
+    if (session.managers && session.managers.length > 0) {
+      formData.append('managers', session.managers)
+    }
+    if (session.lobbyManager && session.lobbyManager.length > 0) {
+      formData.append('lobbyManager', session.lobbyManager)
+    }
+    if (session.support) {
+      formData.append('support', session.support)
+    }
+    if (session.start_time) {
+      formData.append('start_time', session.start_time)
     }
     if (session._id) {
       await updateSession(session._id, formData)
-      await assignManagers(session._id, selectedSessionManagers.map(m => m._id))
     } else {
       formData.append('studio', studio_id)
-      const newSession = await createSession(formData)
-      await assignManagers(newSession._id, selectedSessionManagers.map(m => m._id))
+      await createSession(formData)
     }
     await fetchStudioSession(studio_id)
     setSelectedSession(null)
@@ -277,18 +277,6 @@ const StudioList = () => {
     }
     fetchAllSessionsAndPPs()
   }, [studios])
-
-  useEffect(() => {
-    const fetchSessionManagers = async () => {
-      setLoadingSessionUsers(true)
-      const managers = await getManagers(selectedSession._id)
-      setSelectedSessionManagers(managers)
-      setLoadingSessionUsers(false)
-    }
-    if (selectedSession && selectedSession._id) {
-      fetchSessionManagers()
-    }
-  }, [selectedSession])
 
   const newProjectClick = async () => {
     const { jitsi_meeting_id } = await generateNewJitsiKey()
@@ -504,83 +492,14 @@ const StudioList = () => {
         </Modal.Header>
         {selectedSession && 
           <Modal.Body>
-            <label>Session Name</label>
-            <input
-              type="text"
-              className="form-control mb-3"
-              value={selectedSession.name}
-              onChange={ev => {
-                setSelectedSession({
-                  ...selectedSession,
-                  name: ev.target.value
-                })
-              }}
-            />
-            <label>Session Manager</label>
-            <AsyncTypeahead
-              id="session-user-select"
-              className="mb-3"
-              multiple
-              selected={selectedSessionManagers}
-              onChange={value => {
-                setSelectedSessionManagers(value)
-              }}
-              isLoading={loadingSessionUsers}
-              labelKey="email"
-              minLength={2}
-              onSearch={searchSessionUsers}
-              options={sessionUsers}
-              placeholder="Search for a Session user..."
-            />
-            <label>
-              Sizecard PDF
-              {typeof selectedSession.size_card_pdf === 'string' && (
-                <a href={`${static_root}${selectedSession.size_card_pdf}`} target="_blank" className="ml-2">
-                  View
-                </a>
-              )}
-            </label>
-            <input
-              type="file"
-              className="form-control mb-3"
-              onChange={ev => {
-                setSelectedSession({
-                  ...selectedSession,
-                  size_card_pdf: ev.target.files[0]
-                })
-              }}
-            />
-            <label>
-              Schedule PDF
-              {typeof selectedSession.schedule_pdf === 'string' && (
-                <a href={`${static_root}${selectedSession.schedule_pdf}`} target="_blank" className="ml-2">
-                  View
-                </a>
-              )}
-            </label>
-            <input
-              type="file"
-              className="form-control mb-3"
-              onChange={ev => {
-                setSelectedSession({
-                  ...selectedSession,
-                  schedule_pdf: ev.target.files[0]
-                })
+            <SessionForm
+              session={selectedSession}
+              onSubmit={s => {
+                handleSessionSubmit(s, studioId)
               }}
             />
           </Modal.Body>
         }
-        <Modal.Footer>
-          <button
-            disabled={selectedSession && !selectedSession.name}
-            className="btn btn-primary"
-            onClick={() => {
-              handleSessionSubmit(selectedSession, studioId)
-            }}
-          >
-            Submit
-          </button>
-        </Modal.Footer>
       </Modal>
       <Modal
         size="xl"

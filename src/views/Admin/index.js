@@ -103,6 +103,9 @@ const Admin = () => {
                   <div className="col-3">
                     <h5 className="ml-3 mb-0">{user.email}</h5>
                   </div>
+                  <div className="col col-1">
+                    {user.first_name} {user.last_name}
+                  </div>
                   <div className="col-2">
                     {user.user_type}
                   </div>

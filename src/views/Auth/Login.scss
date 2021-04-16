@@ -1,6 +1,9 @@
 .login-page {
   overflow: auto;
   height: 100vh;
+  .register-pane {
+    padding-top: 70px;
+  }
   .header {
     position: sticky;
     top: 0;
