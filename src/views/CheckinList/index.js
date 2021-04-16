@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { FaCircle, FaDownload, FaMinus, FaUserSlash, FaStickyNote,
-  FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt } from 'react-icons/fa'
+  FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt, FaSpinner } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import Papa from 'papaparse'
 import moment from 'moment'
@@ -62,7 +62,8 @@ class List extends Component {
       error: false,
       selectedRecord: null,
       confirmClearSession: false,
-      timeOptions: []
+      timeOptions: [],
+      csvLoading: false
     }
     this.interval = 5000 // query api every 30 seconds
     this.messages = this.props.messages || messages
@@ -296,6 +297,7 @@ class List extends Component {
   }
 
   downloadCSV = async () => {
+    this.setState({ csvLoading: true })
     const { studio, session } = this.props
     const cids = this.state.candidates.map(c => c._id)
     const lastVideoTimes = await getLastVideosTime(cids)
@@ -353,11 +355,12 @@ class List extends Component {
     
     link.click()
     document.body.removeChild(link)
+    this.setState({ csvLoading: false })
   }
 
   render() {
     const { studio, session, testMode } = this.props
-    const { timeOptions, selectedRecord, confirmClearSession } = this.state
+    const { timeOptions, selectedRecord, confirmClearSession, csvLoading } = this.state
     return (
       <div className={"list-view " + (testMode? 'test': '')}>
         <div className="d-flex flex-column">
@@ -401,11 +404,18 @@ class List extends Component {
                     title="Download CSV"
                     className="mx-3"
                   >
-                    <FaDownload
-                      size="16"
-                      className="text-danger cursor-pointer"
-                      onClick={this.downloadCSV}
-                    />
+                    {csvLoading ?
+                      <FaSpinner
+                        size="16"
+                        className="text-danger cursor-pointer spinning"
+                      />
+                    :
+                      <FaDownload
+                        size="16"
+                        className="text-danger cursor-pointer"
+                        onClick={this.downloadCSV}
+                      />
+                    }
                   </a>
                   <a
                     title="Clear Records"
