@@ -88,3 +88,15 @@ export const createZipAndSendMail = async (video_ids, date, email) => {
   })
   return await resp.text()
 }
+
+export const getLastVideosTime = async (ids) => {
+  const resp = await fetch(`${api_host}/videos/last-videos`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ ids })
+  })
+  return await resp.json()
+}

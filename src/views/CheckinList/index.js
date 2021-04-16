@@ -12,7 +12,7 @@ import {
   updateRecordField,
   removeCheckinRecord,
   clearSessionRecords,
-
+  getLastVideosTime,
   addRecordToCurentGroup,
   removeRecordFromCurrentGroup,
   getCurrentGroup,
@@ -295,8 +295,10 @@ class List extends Component {
     await this.fetchData()
   }
 
-  downloadCSV = () => {
+  downloadCSV = async () => {
     const { studio, session } = this.props
+    const cids = this.state.candidates.map(c => c._id)
+    const lastVideoTimes = await getLastVideosTime(cids)
     const row_headers = [
       'first_name',
       'last_name',
@@ -314,6 +316,7 @@ class List extends Component {
       'interview_no',
       'role',
       'signed_out_time',
+      'last_record_time'
       // 'studio',
     ]
     let csvContent = this.state.candidates
@@ -331,6 +334,9 @@ class List extends Component {
               return dateString
             case 'actual_call':
               return formatHour(candidate[key])
+            case 'last_record_time':
+              const timeItem = lastVideoTimes.find(l => l.id === candidate._id)
+              return timeItem.time ? formatTime(new Date(timeItem.time)) : ''
             default:
               return `${(candidate[key] || '')}`
           }
