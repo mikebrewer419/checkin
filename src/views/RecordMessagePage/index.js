@@ -80,11 +80,13 @@ const RecordMessagePage = ({ match }) => {
             </label>
             <label className="mb-0 ml-3">{meeting_id}</label>
           </div>,
-          <div className="col text-align-center">
+          <div className="col d-flex flex-column align-items-center">
+            { calledIn && <label className="h5">It's your turn</label>}
             {JoinButton}
           </div>,
           <p key="message" className="my-2 text-left sms-message col col-lg-4 col-12">
-            <img src={require('../../assets/sms.png')} className="sms-logo"/><br/>
+            <label className="mb-0 h5">Your SMS status messages</label>
+            <br/>
             {message}
           </p>
         ] : null}
