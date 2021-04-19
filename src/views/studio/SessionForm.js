@@ -6,7 +6,7 @@ import {
   searchUsers,
   getManagers
 } from '../../services'
-import { USER_TYPES } from '../../constants'
+import { USER_TYPE, USER_TYPES } from '../../constants'
 
 let fnTimeoutHandler = null
 
@@ -24,7 +24,7 @@ const SessionForm = ({ session, onSubmit }) => {
         ...selectedSession,
         managers: selectedSessionManagers.map(m => m._id),
         lobbyManager: selectedLobbyManagers.map(m => m._id),
-        support: selectedSupport[0] ? selectedSupport[0]._id : null
+        support: selectedSupport && selectedSupport[0] ? selectedSupport[0]._id : null
       },
     )
   }
@@ -33,7 +33,11 @@ const SessionForm = ({ session, onSubmit }) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
     fnTimeoutHandler = setTimeout(async () => {
       setLoadingSessionUsers(true)
-      const sessionUsers = await searchUsers(email, USER_TYPES.SESSION_MANAGER)
+      const sessionUsers = await searchUsers(email, [
+        USER_TYPES.SESSION_MANAGER,
+        USER_TYPES.CASTING_DIRECTOR,
+        USER_TYPES.SUPER_ADMIN
+      ])
       setSessionUsers(sessionUsers)
       setLoadingSessionUsers(false)
     }, 1000)

@@ -187,7 +187,7 @@ const StudioList = () => {
     if (session.lobbyManager && session.lobbyManager.length > 0) {
       formData.append('lobbyManager', session.lobbyManager)
     }
-    if (session.support) {
+    if (session.support !== undefined) {
       formData.append('support', session.support)
     }
     if (session.start_time) {
