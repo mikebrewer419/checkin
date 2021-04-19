@@ -85,7 +85,7 @@ const RecordMessagePage = ({ match }) => {
             {JoinButton}
           </div>,
           <p key="message" className="my-2 text-left sms-message col col-lg-4 col-12">
-            <label className="mb-0 h6 font-bold">Your SMS status messages</label>
+            <strong>Your SMS status messages</strong>
             <br/>
             {message}
           </p>
@@ -94,7 +94,7 @@ const RecordMessagePage = ({ match }) => {
       <div className="container text-center ">
         {!showMeetingFrame ? [
           <p key="message" className="my-2">
-            <label className="mb-0 h6 font-bold">Your SMS status messages</label>
+            <strong>Your SMS status messages</strong>
             <br/>
             {message}
           </p>,
