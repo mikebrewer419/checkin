@@ -338,7 +338,7 @@ class List extends Component {
               return formatHour(candidate[key])
             case 'last_record_time':
               const timeItem = lastVideoTimes.find(l => l.id === candidate._id)
-              return timeItem.time ? formatTime(new Date(timeItem.time)) : ''
+              return timeItem.time ? formatTime(timeItem.time) : ''
             default:
               return `${(candidate[key] || '')}`
           }
