@@ -99,7 +99,7 @@ const Admin = () => {
           {users.map(user => (
             <div key={user._id}>
               <Accordion.Toggle as="div" eventKey={user._id}>
-                <div className="row py-2 align-items-center" >
+                <div className="row py-2 align-items-center user-item" >
                   <div className="col-3">
                     <h5 className="ml-3 mb-0">{user.email}</h5>
                   </div>
@@ -108,6 +108,21 @@ const Admin = () => {
                   </div>
                   <div className="col-2">
                     {user.user_type}
+                  </div>
+                  <div className="col-auto ml-auto mr-3 user-action">
+                    <FaPencilAlt
+                      className="mr-3 cursor-pointer"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setSelectedUser(user)
+                      }}
+                    />
+                    <FaTrash
+                      className="cursor-pointer"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                      setUserToDelete(user)
+                    }} />
                   </div>
                 </div>
               </Accordion.Toggle>
@@ -147,17 +162,6 @@ const Admin = () => {
                       </tr>
                       </tbody>
                     </table>}
-                  </div>
-                  <div className="col-auto">
-                    <FaPencilAlt
-                      className="mr-3"
-                      onClick={() => {
-                        setSelectedUser(user)
-                      }}
-                    />
-                    <FaTrash onClick={() => {
-                      setUserToDelete(user)
-                    }} />
                   </div>
                 </div>
               </Accordion.Collapse>
