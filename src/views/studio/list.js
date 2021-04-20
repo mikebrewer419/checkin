@@ -3,6 +3,7 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy } from 'react-icons/fa';
+import moment from 'moment'
 import {
   static_root,
   assignCastingDirector,
@@ -35,15 +36,21 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const host = window.location.origin
 
-const generateArray = (s, e) => {
-  let result = []
-  for(let i = s; i < e; i ++) {
-    result.push(i)
-  }
-  return result
+let fnTimeoutHandler = null
+
+const formatDate = (time) => {
+  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+  if (date.isValid())
+    return date.format('M/D/YYYY')
+  return ''
 }
 
-let fnTimeoutHandler = null
+const formatHour = (time) => {
+  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+  if (date.isValid())
+    return date.format('H:mm: a')
+  return ''
+}
 
 const StudioList = () => {
   const [user, setUser] = useState({})
@@ -70,6 +77,7 @@ const StudioList = () => {
   const [emailCheckinLink, setEmailCheckinLink] = useState('')
   const [emailProjectName, setEmailProjectName] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
+  const [emailSessionParams, setEmailSessionParams] = useState(null)
 
   const searchCastingDirectors = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -409,6 +417,7 @@ const StudioList = () => {
                     <FaRegCopy
                       className="mr-2" title="Copy Client Email"
                       onClick={() => {
+                        setEmailSessionParams(session)
                         setEmailProjectName(studio.name)
                         setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
                       }}
@@ -684,6 +693,7 @@ const StudioList = () => {
         onHide={() => {
           setEmailProjectName(null)
           setEmailSessionLink(null)
+          setEmailSessionParams(null)
         }}
       >
         <Modal.Header closeButton className="align-items-baseline">
@@ -692,7 +702,14 @@ const StudioList = () => {
           </h4>
         </Modal.Header>
         <Modal.Body className="bg-lightgray">
+          {emailSessionParams &&
           <div id="client-email-text">
+            <p className="mb-0">DATE: <strong>{ formatDate(emailSessionParams.start_time) || 'TBD' }</strong></p>
+            <p className="mb-0">TIME: <strong>{ formatHour(emailSessionParams.start_time) || 'TBD' }</strong></p>
+            <p className="mb-0">SESSION RUNNER: <strong>{ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</strong></p>
+            <p className="mb-0">LOBBY: <strong>{ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</strong></p>
+            <p className="mb-0">SUPPORT: <strong>{ emailSessionParams.support ? emailSessionParams.support.email : 'TBD' }</strong></p>
+            <br />
             <p>
               Here is the <b>{emailProjectName}</b> Session Link:<br/>
               <a href={emailSessionLink}>{emailSessionLink}</a>
@@ -704,7 +721,7 @@ const StudioList = () => {
                 </i>
               </b>
             </p>
-          </div>
+          </div>}
         </Modal.Body>
         <Modal.Footer>
           <button

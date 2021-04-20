@@ -9,6 +9,8 @@ const UserForm = ({
 }) => {
   const {
     _id,
+    first_name,
+    last_name,
     email,
     user_type,
     twilio_account_sid,
@@ -32,6 +34,16 @@ const UserForm = ({
 
   return (
     <form onSubmit={submitFields}>
+      <div className="d-flex w-100">
+        <div className="form-group w-50">
+          <label htmlFor="first_name">First name</label>
+          <input type="text" required className="form-control form-control-sm" name="first_name" id="first_name" defaultValue={first_name} />
+        </div>
+        <div className="form-group w-50">
+          <label htmlFor="last_name">Last name</label>
+          <input type="text" required className="form-control form-control-sm" name="last_name" id="last_name" defaultValue={last_name} />
+        </div>
+      </div>
       <div className="form-group">
         <label htmlFor="email">email</label>
         <input type="text" required className="form-control form-control-sm" name="email" id="email" defaultValue={email} />
