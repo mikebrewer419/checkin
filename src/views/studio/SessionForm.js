@@ -120,7 +120,7 @@ const SessionForm = ({ session, onSubmit }) => {
       />
       <label>Start time</label>
       <DateTimePicker
-        value={selectedSession.start_time}
+        value={new Date(selectedSession.start_time)}
         className="form-control mb-3"
         onChange={value => {
           setSelectedSession({
