@@ -590,12 +590,15 @@ class VideoPage extends Component {
                       </div>
                     ): null}
                     <div className="d-flex align-items-start group-videos-wrapper py-2">
-                      {activeGroup.videos.map(video => {
+                      {activeGroup.videos.map((video, index) => {
                         return (
                           <div
                             key={video.uri}
                             className={`mx-0 mb-2  mr-2 item ${activeItem.uri === video.uri? 'active': ''}`}
                           >
+                            <div className="index-indicator">
+                              { index + 1 }
+                            </div>
                             <div
                               style={{
                                 width: thumbWidth

@@ -129,4 +129,19 @@
       border: 1px solid $primary;
     }
   }
+  .index-indicator {
+    position: absolute;
+    left: 0px;
+    top: 0;
+    z-index: 1;
+    background: black;
+    color: white;
+    display: inline-block;
+    min-width: 25px;
+    height: 20px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 19px;
+    font-weight: bold;
+  }
 }
