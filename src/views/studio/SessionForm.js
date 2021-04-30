@@ -157,11 +157,25 @@ const SessionForm = ({ session, onSubmit }) => {
       </label>
       <input
         type="file"
-        className="form-control"
+        className="form-control mb-3"
         onChange={ev => {
           setSelectedSession({
             ...selectedSession,
             schedule_pdf: ev.target.files[0]
+          })
+        }}
+      />
+      <label>
+        The waitingroom integration.
+      </label>
+      <input type="text"
+        value={selectedSession.twr}
+        placeholder="Input room_id/studio_uri with no space."
+        className="form-control"
+        onChange={ev => {
+          setSelectedSession({
+            ...selectedSession,
+            twr: ev.target.value
           })
         }}
       />

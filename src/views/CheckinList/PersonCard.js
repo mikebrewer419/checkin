@@ -1,0 +1,143 @@
+import React from 'react'
+import ThumbImage from '../../components/ThumbImage'
+import { FaCircle, FaMinus, FaUserSlash, FaPencilAlt, FaTimes } from 'react-icons/fa'
+import { formatHour, formatTime } from '../../utils'
+
+const PersonCard = ({
+  idx,
+  _id,
+  showCallIn,
+  group,
+  first_name,
+  last_name,
+  email,
+  phone,
+  skipped,
+  seen,
+  signed_out,
+  checked_in_time,
+  actual_call,
+  setSeen,
+  setSkipped,
+  signOut,
+  removeRecord,
+  addToGroup,
+  leaveFromGroup,
+  hideDelete,
+  showLeave,
+  updateRecord,
+  groups,
+  avatar,
+  role,
+  agent,
+  testMode,
+  isTwr = false
+}) => {
+  const dateString = formatTime(checked_in_time)
+
+  return (
+    <div className="video-chat-person-card card text-primary border-0">
+      <div className="card-body pr-1">
+        <div className="card-title d-flex align-items-center mb-0">
+          <h5 className="mr-2 cursor-pointer d-flex align-items-center cursor-pointer" onClick={() => {
+            if (addToGroup && !testMode) {
+              addToGroup(_id)
+            }
+          }}>
+            {!groups.length && <FaCircle className="text-danger mr-2" />}
+            {first_name} {last_name}
+          </h5>
+          <small className="card-text mb-0">
+            Checked In:
+            <span className="ml-2">{dateString}</span>
+          </small>
+          <div className="d-flex align-items-center ml-auto">
+            {skipped &&
+              <small className="mr-1">skipped</small>}
+            {signed_out &&
+              <small className="float-right mr-1">Signed out</small>}
+            {!signed_out && signOut && !testMode && (
+              <FaUserSlash
+                className="text-danger ml-auto mr-1 cursor-pointer"
+                title="Sign out this user"
+                onClick={() => signOut(_id)}
+              />
+            )}
+            {!hideDelete && !testMode && (
+              <FaTimes title="Remove" className="text-danger mx-1 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
+            )}
+            {showLeave && leaveFromGroup && !testMode && (
+              <FaMinus title="Leave Group" className="text-danger mx-1 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
+            )}
+          </div>
+        </div>
+        <p className="card-text d-none">
+          <small>{_id}</small>
+        </p>
+        <div className="d-flex">
+          <div>
+            <p className="card-text mb-0">
+              <span>Phone:</span>
+              <strong className="ml-2">{phone}</strong>
+            </p>
+            <p className="card-text mb-0">
+              <span>Email:</span>
+              <strong className="ml-2">{email}</strong>
+            </p>
+            <p className="card-text mb-0 actual-call-section">
+              <span>Actual Call:</span>
+              <strong className="mx-2">{formatHour(actual_call)}</strong>
+              {!testMode && (
+                <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, actual_call })} />
+              )}
+            </p>
+            <p className="card-text mb-0">
+              <span>Role:</span>
+              <strong className="ml-2">{role}</strong>
+              {!testMode && (
+                <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, role })} />
+              )}
+            </p>
+            <p className="card-text mb-0">
+              <span>Agent:</span>
+              <strong className="ml-2">{agent}</strong>
+            </p>
+          </div>
+          <p className="ml-auto mr-2 mb-0">
+            <ThumbImage
+              isTwr={isTwr}
+              src={avatar}
+              className="small-avatar"
+              onClick={() => updateRecord({
+                _id,
+                avatar: avatar || 'empty'
+              })}
+            />
+          </p>
+        </div>
+        <div className="d-flex mt-1">
+          {(!!showCallIn || (!seen && skipped)) && setSeen &&
+          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
+            Call In SMS
+          </button>}
+          {!!showCallIn && !skipped && setSkipped &&
+          <button className="btn px-2 py-0 btn-outline-dark ml-2" onClick={() => setSkipped(_id)}>
+            Skip
+          </button>}
+          <div className="ml-auto d-none">
+            {addToGroup && !testMode &&
+            <button className="d-none btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
+              Add to Group
+            </button>}
+            {leaveFromGroup && showLeave && !testMode &&
+            <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
+              Remove from group
+            </button>}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default PersonCard

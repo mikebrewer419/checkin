@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
-  static_root
+  static_root, 
+  twr_static_host
 } from '../services'
 
 const ThumbImage = (props) => {
@@ -17,11 +18,13 @@ const ThumbImage = (props) => {
     />
   }
 
+  const root = props.isTwr ? twr_static_host : static_root
+
   if (error) {
-    return <img {...props} src={static_root+props.src} />
+    return <img {...props} src={root+props.src} />
   }
 
-  return <img onError={() => setError(true)} {...props} src={`${static_root+props.src}.thumb`} />
+  return <img onError={() => setError(true)} {...props} src={`${root+props.src}.thumb`} />
 }
 
 export default ThumbImage

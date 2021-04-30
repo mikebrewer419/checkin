@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { FaCircle, FaDownload, FaMinus, FaUserSlash, FaStickyNote,
-  FaFilm, FaListOl, FaUserFriends, FaTimes, FaPencilAlt, FaSpinner } from 'react-icons/fa'
+import classnames from 'classnames'
+import { FaDownload, FaStickyNote, FaFilm, FaListOl, FaTimes, FaSpinner } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import Papa from 'papaparse'
 import moment from 'moment'
 import {
-  static_root,
   sendMessage,
   fetchCheckInList,
   updateRecordField,
@@ -19,8 +18,10 @@ import {
   finishCurrentGroup,
 } from '../../services'
 import AvatarModal from '../../components/avatar-modal'
-import ThumbImage from '../../components/ThumbImage'
 import './style.scss'
+import { formatHour, formatTime } from '../../utils'
+import PersonCard from './PersonCard'
+import TwrList from './twr'
 
 const messages = [
   "It's now your turn to audition, please enter 'MEETING_ID' into the app and click 'create/join",
@@ -31,28 +32,12 @@ const messages = [
 
 const deletedMessageText = 'You arrived at the wrong time. Please come back at the correct call time and check in again.'
 
-const formatTime = (time) => {
-  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
-  if (date.isValid())
-    return date.format('M/D/YYYY H:mm: a')
-  return ''
-}
-
-const formatHour = (time) => {
-  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
-  if (date.isValid())
-    return date.format('H:mm: a')
-  return ''
-}
-
 class List extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      loggedin: false,
       loading: false,
-      loginError: '',
       candidates: [],
       message: {
         to: '',
@@ -63,7 +48,8 @@ class List extends Component {
       selectedRecord: null,
       confirmClearSession: false,
       timeOptions: [],
-      csvLoading: false
+      csvLoading: false,
+      listTab: 'heyjoe'
     }
     this.interval = 5000 // query api every 30 seconds
     this.messages = this.props.messages || messages
@@ -360,7 +346,7 @@ class List extends Component {
 
   render() {
     const { studio, session, testMode } = this.props
-    const { timeOptions, selectedRecord, confirmClearSession, csvLoading } = this.state
+    const { timeOptions, selectedRecord, confirmClearSession, csvLoading, listTab } = this.state
     return (
       <div className={"list-view " + (testMode? 'test': '')}>
         <div className="d-flex flex-column">
@@ -431,7 +417,15 @@ class List extends Component {
               )}
             </h4>
           </div>
-          <ul className="list-group">
+          {session.twr && <div className="tab-header d-flex">
+            <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {
+              this.setState({ listTab: 'heyjoe' })
+            }}>Heyjoe</label>
+            <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'twr' })} onClick={() => {
+              this.setState({ listTab: 'twr' })
+            }}>TWR</label>
+          </div>}
+          <ul className={classnames("list-group", { 'd-none': listTab !== 'heyjoe'})}>
             {this.state.candidates && this.state.candidates.map((person, idx) => {
               const showCallIn = !this.state.candidates[idx].seen &&
                 (idx === 0 ||
@@ -457,6 +451,12 @@ class List extends Component {
               )
             })}
           </ul>
+          {session.twr && <div className={classnames({ 'd-none': listTab !== 'twr'})}>
+            <TwrList
+              twr={session.twr}
+              testMode={testMode}
+            />
+          </div>}
           <form
             onSubmit={this.onMessageSend}
             className={this.state.error ? 'error sms-form' : 'sms-form'}
@@ -612,138 +612,3 @@ class List extends Component {
 }
 
 export default List
-
-export const PersonCard = ({
-  idx,
-  _id,
-  showCallIn,
-  group,
-  first_name,
-  last_name,
-  email,
-  phone,
-  skipped,
-  seen,
-  signed_out,
-  checked_in_time,
-  actual_call,
-  setSeen,
-  setSkipped,
-  signOut,
-  removeRecord,
-  addToGroup,
-  leaveFromGroup,
-  hideDelete,
-  showLeave,
-  updateRecord,
-  groups,
-  avatar,
-  role,
-  agent,
-  testMode,
-}) => {
-  const dateString = formatTime(checked_in_time)
-
-  return (
-    <div className="video-chat-person-card card text-primary border-0">
-      <div className="card-body pr-1">
-        <div className="card-title d-flex align-items-center mb-0">
-          <h5 className="mr-2 cursor-pointer d-flex align-items-center cursor-pointer" onClick={() => {
-            if (addToGroup && !testMode) {
-              addToGroup(_id)
-            }
-          }}>
-            {!groups.length && <FaCircle className="text-danger mr-2" />}
-            {first_name} {last_name}
-          </h5>
-          <small className="card-text mb-0">
-            Checked In:
-            <span className="ml-2">{dateString}</span>
-          </small>
-          <div className="d-flex align-items-center ml-auto">
-            {skipped &&
-              <small className="mr-1">skipped</small>}
-            {signed_out &&
-              <small className="float-right mr-1">Signed out</small>}
-            {!signed_out && signOut && (
-              <FaUserSlash
-                className="text-danger ml-auto mr-1 cursor-pointer"
-                title="Sign out this user"
-                onClick={() => signOut(_id)}
-              />
-            )}
-            {!hideDelete && !testMode && (
-              <FaTimes title="Remove" className="text-danger mx-1 cursor-pointer" onClick={() => removeRecord(_id, phone, idx)} />
-            )}
-            {showLeave && leaveFromGroup && !testMode && (
-              <FaMinus title="Leave Group" className="text-danger mx-1 cursor-pointer" onClick={() => leaveFromGroup(_id)} />
-            )}
-          </div>
-        </div>
-        <p className="card-text d-none">
-          <small>{_id}</small>
-        </p>
-        <div className="d-flex">
-          <div>
-            <p className="card-text mb-0">
-              <span>Phone:</span>
-              <strong className="ml-2">{phone}</strong>
-            </p>
-            <p className="card-text mb-0">
-              <span>Email:</span>
-              <strong className="ml-2">{email}</strong>
-            </p>
-            <p className="card-text mb-0 actual-call-section">
-              <span>Actual Call:</span>
-              <strong className="mx-2">{formatHour(actual_call)}</strong>
-              {!testMode && (
-                <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, actual_call })} />
-              )}
-            </p>
-            <p className="card-text mb-0">
-              <span>Role:</span>
-              <strong className="ml-2">{role}</strong>
-              {!testMode && (
-                <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, role })} />
-              )}
-            </p>
-            <p className="card-text mb-0">
-              <span>Agent:</span>
-              <strong className="ml-2">{agent}</strong>
-            </p>
-          </div>
-          <p className="ml-auto mr-2 mb-0">
-            <ThumbImage
-              src={avatar}
-              className="small-avatar"
-              onClick={() => updateRecord({
-                _id,
-                avatar: avatar || 'empty'
-              })}
-            />
-          </p>
-        </div>
-        <div className="d-flex mt-1">
-          {(!!showCallIn || (!seen && skipped)) && setSeen &&
-          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
-            Call In SMS
-          </button>}
-          {!!showCallIn && !skipped && setSkipped &&
-          <button className="btn px-2 py-0 btn-outline-dark ml-2" onClick={() => setSkipped(_id)}>
-            Skip
-          </button>}
-          <div className="ml-auto d-none">
-            {addToGroup && !testMode &&
-            <button className="d-none btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
-              Add to Group
-            </button>}
-            {leaveFromGroup && showLeave && !testMode &&
-            <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
-              Remove from group
-            </button>}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
