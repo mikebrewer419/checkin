@@ -238,7 +238,7 @@ class HomePage extends Component {
                   <div>
                     <div id="current-group" className="px-2">
                       <h6 className="mx-n2 px-2">
-                        Current Group 
+                        Current Group { isTwr ? '(TWR)' : '' }
                       </h6>
                       <ul>
                         {groupCandidates.map(person => (

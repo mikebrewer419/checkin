@@ -49,7 +49,6 @@ class TwrList extends React.Component {
     const { session } = this.props
     const candidates = await twrFetchCheckInList(studio._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
-    console.log('currentGroup: ', currentGroup);
     const currentGroupRecords = (currentGroup.records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
     })
@@ -62,7 +61,6 @@ class TwrList extends React.Component {
 
   addToGroup = async (record_id) => {
     const { session } = this.props
-    console.log('record_id: ', record_id, session._id)
     await addRecordToCurentTWRGroup(record_id, session._id)
     this.loadCandidates()
   }
