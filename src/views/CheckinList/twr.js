@@ -3,6 +3,10 @@ import {
   twrFetchCheckInList,
   twrGetStudioByTWRUri,
   twrGetTWRByDomain,
+  getcurrentTWRGroup,
+  addRecordToCurentTWRGroup,
+  removeRecordFromCurrentTWRGroup,
+  finishCurrentTWRGroup,
 } from '../../services'
 import PersonCard from './PersonCard'
 
@@ -42,10 +46,37 @@ class TwrList extends React.Component {
 
   loadCandidates = async () => {
     const { twrStudio: studio } = this.state
+    const { session } = this.props
     const candidates = await twrFetchCheckInList(studio._id)
+    const currentGroup = await getcurrentTWRGroup(session._id) || {}
+    console.log('currentGroup: ', currentGroup);
+    const currentGroupRecords = (currentGroup.records || []).map(r_id => {
+      return candidates.find(c => c._id === r_id)
+    })
     this.setState({
       candidates
     })
+    this.props.setTwrGroupCandidates(currentGroupRecords)
+    this.props.setTwrCandidates(candidates || [])
+  }
+
+  addToGroup = async (record_id) => {
+    const { session } = this.props
+    console.log('record_id: ', record_id, session._id)
+    await addRecordToCurentTWRGroup(record_id, session._id)
+    this.loadCandidates()
+  }
+
+  leaveFromGroup = async (record_id) => {
+    const { session } = this.props
+    await removeRecordFromCurrentTWRGroup(record_id, session._id)
+    this.loadCandidates()
+  }
+
+  finishCurrentGroup = async () => {
+    const { session } = this.props
+    await finishCurrentTWRGroup(session._id)
+    this.loadCandidates()
   }
 
   render () {
@@ -65,7 +96,7 @@ class TwrList extends React.Component {
               isTwr={true}
               id={person._id}
               idx={idx}
-              testMode={testMode || true}
+              testMode={testMode}
               showCallIn={false}
               groups={[]}
               {...person}
@@ -73,8 +104,8 @@ class TwrList extends React.Component {
               setSkipped={() => {}}
               removeRecord={() => {}}
               signOut={() => {}}
-              addToGroup={() => {}}
-              leaveFromGroup={() => {}}
+              addToGroup={this.addToGroup}
+              leaveFromGroup={this.leaveFromGroup}
               updateRecord={() => {}}
             />
           )

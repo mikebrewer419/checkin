@@ -98,6 +98,10 @@ class List extends Component {
       loading: false
     })
   }
+  
+  setTwrRef = (elem) => {
+    this.twrRef = elem
+  }
 
   setSkipped = (id) => {
     const vm = this
@@ -249,12 +253,21 @@ class List extends Component {
   }
 
   leaveFromGroup = async (_id) => {
+    const { session } = this.props
+    if (this.state.listTab === 'twr') {
+      this.twrRef.leaveFromGroup(_id, session._id)
+      return
+    }
     this.setState({ loading: true })
     await removeRecordFromCurrentGroup(_id)
     await this.fetchData()
   }
 
   finishCurrentGroup = async () => {
+    if (this.state.listTab === 'twr') {
+      this.twrRef.finishCurrentGroup()
+      return
+    }
     const { session } = this.props
     this.setState({ loading: true })
     await finishCurrentGroup(session._id)
@@ -361,7 +374,9 @@ class List extends Component {
                   <span className="text-danger h5 mb-0 mt-2">Virtual Lobby</span>
                 </div>
               ) : (
-                <div className="d-flex justify-content-center">
+                <div className={classnames("d-flex justify-content-center position-relative action-row", {
+                  disabled: listTab === 'twr'
+                })}>
                   <Link
                     title="Session Check-In"
                     to={`/onboard/${studio.uri}/${session._id}`}
@@ -420,9 +435,11 @@ class List extends Component {
           {session.twr && <div className="tab-header d-flex">
             <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {
               this.setState({ listTab: 'heyjoe' })
+              this.props.setListTab('heyjoe')
             }}>Heyjoe</label>
             <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'twr' })} onClick={() => {
               this.setState({ listTab: 'twr' })
+              this.props.setListTab('twr')
             }}>TWR</label>
           </div>}
           <ul className={classnames("list-group", { 'd-none': listTab !== 'heyjoe'})}>
@@ -453,8 +470,12 @@ class List extends Component {
           </ul>
           {session.twr && <div className={classnames({ 'd-none': listTab !== 'twr'})}>
             <TwrList
+              ref={this.setTwrRef}
               twr={session.twr}
+              session={session}
               testMode={testMode}
+              setTwrGroupCandidates={this.props.setTwrGroupCandidates}
+              setTwrCandidates={this.props.setTwrCandidates}
             />
           </div>}
           <form

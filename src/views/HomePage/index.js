@@ -31,7 +31,11 @@ class HomePage extends Component {
       jitsiKey: 0,
       groupCandidates: [],
       candidates: [],
-      testMode: queryParams.test
+      testMode: queryParams.test,
+
+      twrGroupCandidates: [],
+      twrCandidates: [],
+      listTab: 'heyjoe',
     }
   }
 
@@ -169,12 +173,16 @@ class HomePage extends Component {
   }
 
   render() {
-    const { studio, session, showChat, showList, candidates,
-      jitsiKey, groupCandidates, testMode } = this.state
+    const { studio, session, showChat, showList, candidates: hjCandidates,
+      jitsiKey, groupCandidates: hjGroupCandidates, testMode,
+      listTab, twrCandidates, twrGroupCandidates } = this.state
     if (!studio) {
       return <div>Loading...</div>
     }
+    const candidates = listTab === 'heyjoe' ? hjCandidates : twrCandidates
+    const groupCandidates = listTab === 'heyjoe' ? hjGroupCandidates : twrGroupCandidates
     const meeting_id = testMode ? studio.test_meeting_id : studio.jitsi_meeting_id
+    const isTwr = listTab === 'twr'
     return (
       <div className="homepage-wrapper">
         <div className={"homepage " + (testMode ? 'test': '')}>
@@ -191,6 +199,9 @@ class HomePage extends Component {
                 delete_message={studio.delete_message}
                 setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
                 setCandidates={cs => this.setState({ candidates: cs })}
+                setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
+                setTwrCandidates={cs => this.setState({ twrCandidates: cs })}
+                setListTab={t => this.setState({ listTab: t })}
               />
             </div>
             <button className="btn px-1 py-0 border-right-0" onClick={() => this.setShowList(!showList)}>
@@ -259,6 +270,7 @@ class HomePage extends Component {
               session={session}
               isClient={false}
               propsCandidates={candidates}
+              isTwr={isTwr}
             />
           </div>
         </div>

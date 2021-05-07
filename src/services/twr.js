@@ -65,4 +65,3 @@ export const twrClearRecords = async (studio_id) => {
 export const twrGetTWRByDomain = async (domain) => {
   return await fetch(`${api_host}/twr/domain/${domain}`).then((resp) => resp.json())
 }
-

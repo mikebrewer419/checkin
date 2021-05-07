@@ -36,7 +36,8 @@ const PersonCard = ({
   feedbacks,
   comments,
   commentRelateClick,
-  seen
+  seen,
+  isTwr=false
 }) => {
   const [showContact, setShowContact] = useState(false)
   const [record, setRecord] = useState({})
@@ -51,6 +52,7 @@ const PersonCard = ({
   }
 
   useEffect(() => {
+    if (isTwr) { return }
     if (useSelfData && POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
       setInterval(fetchData, 5000)
     } else {
@@ -143,6 +145,7 @@ const PersonCard = ({
       {topAvatar &&
         <ThumbImage
           src={avatar}
+          isTwr={isTwr}
           className="avatar mt-1"
           onClick={() => { setShowFeedbackModal(true) }}
         />
@@ -172,7 +175,7 @@ const PersonCard = ({
             <p className="card-text mb-0">Email: <small>{email}</small></p>
             <p className="card-text mb-0">Agent: <small>{agent}</small></p>
           </div>}
-          {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
+          {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && !isTwr && (
             <div className="d-flex align-items-start">
               {feedbackBar}
               <div
@@ -215,7 +218,7 @@ const PersonCard = ({
           />
         }
       </div>
-      {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
+      {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && !isTwr && (
         [
           <Modal
             key="comment-modal"

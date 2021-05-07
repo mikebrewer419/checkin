@@ -1,4 +1,5 @@
 import React from 'react'
+import classnames from 'classnames'
 import ThumbImage from '../../components/ThumbImage'
 import { FaCircle, FaMinus, FaUserSlash, FaPencilAlt, FaTimes } from 'react-icons/fa'
 import { formatHour, formatTime } from '../../utils'
@@ -51,7 +52,10 @@ const PersonCard = ({
             Checked In:
             <span className="ml-2">{dateString}</span>
           </small>
-          <div className="d-flex align-items-center ml-auto">
+          <div className={classnames("align-items-center ml-auto", {
+            'd-none': isTwr,
+            'd-flex': !isTwr
+          })}>
             {skipped &&
               <small className="mr-1">skipped</small>}
             {signed_out &&

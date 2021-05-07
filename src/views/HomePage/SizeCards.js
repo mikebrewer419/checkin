@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import classnames from 'classnames'
 import PersonCard from '../PostingPage/PersonCard'
 import Switch from "react-switch"
 import {
@@ -14,7 +15,7 @@ import { FaFilePdf, FaPrint } from 'react-icons/fa'
 
 const interval = 5000 // query api every 30 seconds
 
-const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, propsCandidates }) => {
+const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, propsCandidates, isTwr }) => {
   const [user, setUser] = useState(null)
   const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
@@ -103,7 +104,10 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
 
   return (
     <div>
-      <div className="d-flex mt-3 pl-3 no-print">
+      <div className={classnames("mt-3 pl-3 no-print", {
+        'd-none': isTwr,
+        'd-flex': !isTwr
+      })}>
         <div className="mr-auto d-flex">
           <button
             className="btn btn-default"
@@ -218,6 +222,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
                 studio={studio}
                 showNumber={true}
                 useSelfData={false}
+                isTwr={isTwr}
               />
             </div>
           )

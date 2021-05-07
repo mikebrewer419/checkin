@@ -18,7 +18,7 @@ const ThumbImage = (props) => {
     />
   }
 
-  const root = props.isTwr ? twr_static_host : static_root
+  const root = props.isTwr ? `${twr_static_host}/record/` : static_root
 
   if (error) {
     return <img {...props} src={root+props.src} />
