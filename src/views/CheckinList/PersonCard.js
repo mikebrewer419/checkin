@@ -91,14 +91,14 @@ const PersonCard = ({
             <p className="card-text mb-0 actual-call-section">
               <span>Actual Call:</span>
               <strong className="mx-2">{formatHour(actual_call)}</strong>
-              {!testMode && (
+              {!testMode && !isTwr && (
                 <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, actual_call })} />
               )}
             </p>
             <p className="card-text mb-0">
               <span>Role:</span>
               <strong className="ml-2">{role}</strong>
-              {!testMode && (
+              {!testMode && !isTwr && (
                 <FaPencilAlt small className="text-danger edit-trigger cursor-pointer" onClick={() => updateRecord({ _id, role })} />
               )}
             </p>
