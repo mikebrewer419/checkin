@@ -1,18 +1,13 @@
-import React, { Component, useEffect, useState } from 'react'
+import React, { Component } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Modal, Dropdown } from 'react-bootstrap'
-import { FaArchive, FaTeethOpen, FaPenAlt, FaComment, FaCopy, FaDownload, FaTrash, FaPlus } from 'react-icons/fa'
-import YesIcon from '../../components/icons/yes'
-import NoIcon from '../../components/icons/no'
-import MaybeIcon from '../../components/icons/maybe'
+import { FaArchive, FaTeethOpen, FaPenAlt, FaCopy, FaDownload, FaTrash, FaPlus } from 'react-icons/fa'
 import {
   static_root,
   getStudioByUri,
   copyGroupFromSession,
   getPagesByStudio,
   getOneSession,
-  getOneRecord,
-  getUserById,
   getSessionVideos,
   createZipAndSendMail,
   getArchivedSessionVideos,
@@ -21,19 +16,20 @@ import {
   updateManyVideo,
   uploadNewVideo,
   updateGroup,
-  setFeedback,
   getUser,
   createPage,
   fetchCheckInList,
-  newComment
+  twrGetTWRByDomain,
+  twrGetStudioByTWRUri,
+  twrFetchCheckInList,
+  twrGetHeyjoeSessionRecords,
 } from '../../services'
 import Footer from '../../components/Footer'
 import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
 import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
-import AvatarModal from '../../components/avatar-modal'
-import ThumbImage from '../../components/ThumbImage'
+import PersonCard from '../PostingPage/PersonCard'
 
 const itemWidth = 250
 const thumbWidth = 150
@@ -63,6 +59,9 @@ class VideoPage extends Component {
       videoDates: [],
       selectedForUploads: [],
       groupRecords: [],
+      twrCandidates: [],
+      twrGroupRecords: [],
+      twrStudio: '',
       archivedVideos: [],
       selectedPage: null,
       postingPages: [],
@@ -78,6 +77,35 @@ class VideoPage extends Component {
     this.setState({
       countPerRow: parseInt((document.documentElement.clientWidth - 96) / (itemWidth + 32))
     })
+  }
+
+  fetchTWRStudio = async () => {
+    if (!this.state.session.twr) { return }
+    const { twr } = this.state.session
+    const parsed = twr.match(/(\w+)\/(\w+)/)
+    const twrDomain = parsed[1]
+    const twrStudioUri = parsed[2]
+    const room = await twrGetTWRByDomain(twrDomain)
+    const result = await twrGetStudioByTWRUri(room._id, twrStudioUri)
+    this.setState({ twrStudio: result._id }, () => { this.loadVideos() })
+  }
+
+  fetchTWRCandidates = async () => {
+    const { twrStudio, session } = this.state
+    if (!twrStudio) { return [] }
+    let candidates = await twrFetchCheckInList(twrStudio)
+    const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
+    candidates = candidates.map((c, idx) => {
+      const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
+      return {
+        ...c,
+        ...hc,
+        number: idx + 1,
+        _id: c._id,
+        twr_id: c._id,
+      }
+    })
+    return candidates
   }
 
   loadVideos = async () => {
@@ -111,9 +139,14 @@ class VideoPage extends Component {
       }
       groups[gidx[video.group._id]].videos.push(video)
     })
+    let twrCandidates = []
+    if (this.state.session.twr) {
+      twrCandidates = await this.fetchTWRCandidates()
+    }
     this.setState({
       videos,
       groups,
+      twrCandidates,
       loading: false
     })
   }
@@ -149,6 +182,17 @@ class VideoPage extends Component {
   }
 
   handleGroupItemClick = async (ridx, gidx) => {
+    let twrGroupRecords = []
+    const { groups } = this.state
+    if (this.state.session.twr) {
+      if (groups[gidx]) {
+        const group = groups[gidx].videos[0].group
+        console.log('handleGroupItemClick group: ', group);
+        if (group) {
+          twrGroupRecords = this.state.twrCandidates.filter(c => group.twr_records.includes(c.twr_id))
+        }
+      }
+    }
     if (gidx === this.state.activeGidx) {
       this.setState({
         activeRidx: -1,
@@ -161,7 +205,8 @@ class VideoPage extends Component {
       activeRidx: ridx,
       activeGidx: gidx,
       activeItem: this.state.groups[gidx].videos[0],
-      groupRecords: (group && group.records) || []
+      groupRecords: (group && group.records) || [],
+      twrGroupRecords
     })
   }
 
@@ -244,6 +289,7 @@ class VideoPage extends Component {
     }, async () => {
       await this.loadVideos()
       await this.loadPostingPages()
+      await this.fetchTWRStudio()
     })
 
     window.addEventListener('resize', this.setCount)
@@ -354,6 +400,7 @@ class VideoPage extends Component {
       activeGidx,
       videoDates,
       groupRecords,
+      twrGroupRecords,
       selectedForUploads,
       selectedGroup,
       selectedPage,
@@ -377,6 +424,8 @@ class VideoPage extends Component {
 
     const rowWidth = countPerRow * (itemWidth + 32)
     const activeGroup = groups[activeGidx]
+
+    const combinedGroupRecords = groupRecords.concat(twrGroupRecords)
 
     return (
       <div className="video-app px-5 py-3">
@@ -568,7 +617,7 @@ class VideoPage extends Component {
                           height="100%"
                         />
                         <div key="info" className="info col-4">
-                          {groupRecords.map(record => (
+                          {combinedGroupRecords.map(record => (
                             <div className="talent-summary" key={record._id}>
                               <PersonCard
                                 {...record}
@@ -582,7 +631,7 @@ class VideoPage extends Component {
                               />
                             </div>
                           ))}
-                          { groupRecords.length === 0 &&
+                          { combinedGroupRecords.length === 0 &&
                             <div className="talent-summary">
                               No talent information available
                             </div> }
@@ -828,190 +877,6 @@ class VideoPage extends Component {
       </div>
     )
   }
-}
-
-
-const PersonCard = ({
-  _id,
-  first_name,
-  last_name,
-  email,
-  phone,
-  skipped,
-  avatar,
-  reloadData,
-  seen
-}) => {
-  const [showContact, setShowContact] = useState(false)
-  const [record, setRecord] = useState({})
-  const [commentsVisible, setCommentsVisible] = useState(false)
-  const [content, setContent] = useState('')
-  const [avatarEditor, setAvatarEditor] = useState(false)
-
-  const fetchData = () => {
-    getOneRecord(_id).then(data => {
-      setRecord(data)
-    })
-  }
-
-  useEffect(() => {
-    fetchData()
-    if (VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
-      setInterval(fetchData, 5000)
-    }
-  }, [])
-
-  const myFeedback = (record.feedbacks || {})[user.id]
-
-  const setMyFeedback = async (feedback) => {
-    await setFeedback(_id, feedback)
-    fetchData()
-  }
-
-  const addNewComment = async () => {
-    await newComment(_id, content)
-    setContent('')
-    fetchData()
-  }
-
-  const activeClass = (feedback) => {
-    if (myFeedback === feedback) {
-      return 'active'
-    }
-  }
-
-  let MyFeedbackIcon = null
-
-  if (VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
-    switch(myFeedback) {
-      case 'yes':
-        MyFeedbackIcon = <YesIcon />
-        break
-      case 'no':
-        MyFeedbackIcon = <NoIcon />
-        break
-      case 'maybe':
-        MyFeedbackIcon = <MaybeIcon />
-        break
-    }
-  }
-
-  let feedbackCounts = {
-    yes: 0,
-    no: 0,
-    maybe: 0
-  }
-
-  Object.values((record.feedbacks || {})).forEach(value => {
-    if (isNaN(feedbackCounts[value])) {
-      return
-    }
-    feedbackCounts[value] ++
-  })
-
-  return (
-    <div className="person-card card px-4 py-1">
-      <div className="card-body px-0">
-        <div className="content">
-          <h5 className="card-title d-flex mb-2">
-            {first_name} {last_name}
-            {skipped && !USER_TYPE.IS_CLIENT() && false &&  <small>&nbsp;&nbsp;skipped</small>}
-            <span className="ml-auto myfeedback-icon">
-              {MyFeedbackIcon}
-            </span>
-          </h5>
-          <label onClick={() => setShowContact(!showContact)}>Contact</label>
-          {showContact &&
-          <div className="mb-3">
-            <p className="card-text mb-1">P: <small>{phone}</small></p>
-            <p className="card-text mb-1">E: <small>{email}</small></p>
-          </div>}
-          {VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
-            <div className="d-flex align-items-center">
-              <div className={"feedback-item " + activeClass('yes')} onClick={() => {
-                setMyFeedback('yes')
-              }}>
-                <YesIcon />
-                <span>{feedbackCounts['yes']}</span>
-              </div>
-              <div className={"feedback-item " + activeClass('no')} onClick={() => {
-                setMyFeedback('no')
-              }}>
-                <NoIcon />
-                <span>{feedbackCounts['no']}</span>
-              </div>
-              <div className={"feedback-item " + activeClass('maybe')} onClick={() => {
-                setMyFeedback('maybe')
-              }}>
-                <MaybeIcon />
-                <span>{feedbackCounts['maybe']}</span>
-              </div>
-              <div className="commentor" onClick={() => setCommentsVisible(true)}>
-                <FaComment className="ml-5" />
-                <span className="ml-1">{(record.comments || []).length}</span>
-              </div>
-            </div>
-          )}
-        </div>
-        <ThumbImage
-          key={avatar}
-          src={avatar}
-          className="small-avatar"
-          onClick={() => setAvatarEditor(true)}
-        />
-      </div>
-      {VIDEO_REVIEW_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
-        <Modal
-          show={commentsVisible}
-          onHide={() => setCommentsVisible(false)}
-        >
-          <Modal.Header closeButton>
-            <h5>Comments</h5>
-          </Modal.Header>
-          <Modal.Body>
-            {(record.comments || []).map(comment => (
-              <div>
-                <label>{comment.by.email}</label>
-                <p>{comment.content}</p>
-              </div>
-            ))}
-            {(record.comments || []).length === 0 && (
-              <div>
-                No comments yet.
-              </div>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <textarea
-              className="form-control"
-              value={content}
-              onChange={ev => setContent(ev.target.value)}
-            ></textarea>
-            <button
-              className="btn btn-danger"
-              onClick={addNewComment}
-              disabled={!content}
-            >
-              Comment
-            </button>
-          </Modal.Footer>
-        </Modal>
-      )}
-      {avatarEditor &&
-      <AvatarModal
-        key={_id}
-        show={true}
-        record={{
-          _id,
-          avatar: avatar || 'empty'
-        }}
-        onClose={() => {
-          setAvatarEditor(false)
-          reloadData()
-        }}
-      />}
-    </div>
-  )
 }
 
 export default VideoPage

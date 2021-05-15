@@ -1,4 +1,9 @@
-import { twr_api_host as api_host, twr_token as token } from './index'
+import {
+  twr_api_host as api_host,
+  twr_token as token,
+  api_host as heyjoe_api_host,
+  token as heyjoe_token
+} from './index'
 
 export const twrFetchCheckInList = async (studio_id) => {
   return await fetch(`${api_host}/records/${studio_id}`, {
@@ -64,4 +69,46 @@ export const twrClearRecords = async (studio_id) => {
 
 export const twrGetTWRByDomain = async (domain) => {
   return await fetch(`${api_host}/twr/domain/${domain}`).then((resp) => resp.json())
+}
+
+export const twrSetFeedback = async (id, feedback) => {
+  const resp = await fetch(`${heyjoe_api_host}/twr/feedback/${id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${heyjoe_token}`
+    },
+    body: JSON.stringify({ feedback })
+  })
+  return await resp.json()
+}
+
+export const twrNewComment = async (id, content) => {
+  const resp = await fetch(`${heyjoe_api_host}/twr/comment/${id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${heyjoe_token}`
+    },
+    body: JSON.stringify({ content })
+  })
+  return await resp.json()
+}
+
+export const twrGetOneHeyjoeRecord = async (id) => {
+  const resp = await fetch(`${heyjoe_api_host}/twr/one/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${heyjoe_token}`
+    }
+  })
+  return await resp.json()
+}
+
+export const twrGetHeyjoeSessionRecords = async (session_id) => {
+  const resp = await fetch(`${heyjoe_api_host}/twr/${session_id}`, {
+    headers: {
+      'Authorization': `Bearer ${heyjoe_token}`
+    }
+  })
+  return await resp.json()
 }

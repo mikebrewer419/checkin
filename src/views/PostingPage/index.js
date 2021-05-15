@@ -14,6 +14,8 @@ import {
   updatePostingGroup,
   updatePostingGroupOrder,
   updatePostingVideoOrder,
+  twrGetOneRecord,
+  twrGetOneHeyjoeRecord,
 } from '../../services'
 import Footer from '../../components/Footer'
 import './style.scss'
@@ -52,7 +54,10 @@ class PostingPage extends Component {
       groupRecords: [],
       archivedVideos: [],
       tab: TABS.VIDEOS,
-      selectedGroup: {}
+      selectedGroup: {},
+      twrCandidates: [],
+      twrGroupRecords: [],
+      twrStudio: ''
     }
   }
   
@@ -60,6 +65,26 @@ class PostingPage extends Component {
     this.setState({
       countPerRow: parseInt((document.documentElement.clientWidth - 96) / (itemWidth + 32))
     })
+  }
+
+  fetchTWRCandidates = async (twr_ids) => {
+    let candidates = await Promise.all(twr_ids.map(async tid => {
+      return await twrGetOneRecord(tid)
+    }))
+    const heyjoeCandidates = await Promise.all(twr_ids.map(async tid => {
+      return await twrGetOneHeyjoeRecord(tid)
+    }))
+    candidates = candidates.map((c, idx) => {
+      const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
+      return {
+        ...c,
+        ...hc,
+        number: idx + 1,
+        _id: c._id,
+        twr_id: c._id,
+      }
+    })
+    return candidates
   }
 
   loadVideos = async (preventRepeat = false) => {
@@ -136,11 +161,22 @@ class PostingPage extends Component {
   }
 
   handleGroupItemClick = async (ridx, gidx) => {
+    let twrGroupRecords = []
+    const { groups } = this.state
+    if (groups[gidx]) {
+      const group = groups[gidx].videos[0].group
+      console.log('group: ', group)
+      if (group.twr_records) {
+        this.setState({ loading: true })
+        twrGroupRecords = await this.fetchTWRCandidates(group.twr_records)
+      }
+    }
     if (gidx === this.state.activeGidx) {
       this.setState({
         activeRidx: -1,
         activeGidx: -1,
-        activeItem: null
+        activeItem: null,
+        loading: false
       })
     }
     const group = this.state.groups[gidx].videos[0].group
@@ -148,7 +184,9 @@ class PostingPage extends Component {
       activeRidx: ridx,
       activeGidx: gidx,
       activeItem: this.state.groups[gidx].videos[0],
-      groupRecords: (group && group.records) || []
+      groupRecords: (group && group.records) || [],
+      twrGroupRecords,
+      loading: false
     })
   }
 
@@ -287,6 +325,7 @@ class PostingPage extends Component {
       activeRidx,
       activeGidx,
       selectedForUploads,
+      twrGroupRecords,
       groupRecords,
       selectedGroup
     } = this.state
@@ -303,6 +342,8 @@ class PostingPage extends Component {
 
     const rowWidth = countPerRow * (itemWidth + 32)
     const activeGroup = groups[activeGidx]
+
+    const combinedGroupRecords = groupRecords.concat(twrGroupRecords)
 
     return (
       <div>
@@ -441,12 +482,12 @@ class PostingPage extends Component {
                             height="100%"
                           />
                           <div key="info" className="info col-4">
-                            {groupRecords.map(record => (
+                            {combinedGroupRecords.map(record => (
                               <div className="talent-summary" key={record._id}>
                                 <PersonCard {...record} studio={studio} />
                               </div>
                             ))}
-                            { groupRecords.length === 0 &&
+                            { combinedGroupRecords.length === 0 &&
                               <div className="talent-summary">
                                 No talent information available
                               </div> }

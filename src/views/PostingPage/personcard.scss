@@ -2,6 +2,11 @@
 
 .posting-person-card {
   position: relative;
+  &.twr-card {
+    .number {
+      background-color: $danger;
+    }
+  }
   .card-body {
     display: flex;
     .content {

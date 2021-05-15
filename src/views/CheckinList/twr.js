@@ -3,6 +3,7 @@ import {
   twrFetchCheckInList,
   twrGetStudioByTWRUri,
   twrGetTWRByDomain,
+  twrGetHeyjoeSessionRecords,
   getcurrentTWRGroup,
   addRecordToCurentTWRGroup,
   removeRecordFromCurrentTWRGroup,
@@ -47,9 +48,18 @@ class TwrList extends React.Component {
   loadCandidates = async () => {
     const { twrStudio: studio } = this.state
     const { session } = this.props
-    const candidates = await twrFetchCheckInList(studio._id)
+    let candidates = await twrFetchCheckInList(studio._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
-    const currentGroupRecords = (currentGroup.records || []).map(r_id => {
+    const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
+    candidates = candidates.map(c => {
+      const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
+      return {
+        ...c,
+        ...hc,
+        _id: c._id
+      }
+    })
+    const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
     })
     this.setState({

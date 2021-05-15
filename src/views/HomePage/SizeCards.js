@@ -7,7 +7,12 @@ import {
   updateSessionFeedbacks,
   fetchCheckInList,
   getCurrentGroup,
-  getUser
+  getUser,
+  twrFetchCheckInList,
+  getcurrentTWRGroup,
+  twrGetHeyjoeSessionRecords,
+  twrGetTWRByDomain,
+  twrGetStudioByTWRUri
 } from '../../services'
 import Footer from '../../components/Footer'
 import './sizecards.scss'
@@ -23,12 +28,74 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   const [ userFilter, setuserFilter ] = useState('all')
   const [ pickPrivate, setPickPrivate ] = useState(false)
   const [ yesPickShow, setYesPickShow ] = useState(false)
+  const [ listTab, setListTab ] = useState('heyjoe')
+  const [ twrStudio, setTwrStudio ] = useState(null)
+
+
+  const [ heyjoeCandidates, setHeyjoeCandidates ] = useState([])
+  const [ twrCandidates, setTwrCandidates ] = useState([])
+  const [ heyjoeGroupCandidates, setHeyjoeGroupCandidates ] = useState([])
+  const [ twrGroupCandidates, setTwrGroupCandidates ] = useState([])
+
+  const fetchTWRStudio = async () => {
+    const { twr } = session
+    const parsed = twr.match(/(\w+)\/(\w+)/)
+    const twrDomain = parsed[1]
+    const twrStudioUri = parsed[2]
+    const room = await twrGetTWRByDomain(twrDomain)
+    const result = await twrGetStudioByTWRUri(room._id, twrStudioUri)
+    setTwrStudio(result._id)
+  }
+
+  const fetchTWRCandidates = async () => {
+    console.log('twrStudio: ', twrStudio)
+    if (!twrStudio) { return }
+    let candidates = await twrFetchCheckInList(twrStudio)
+    const currentGroup = await getcurrentTWRGroup(session._id) || {}
+    const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
+    candidates = candidates.map((c, idx) => {
+      const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
+      return {
+        ...c,
+        ...hc,
+        number: idx + 1,
+        _id: c._id,
+        twr_id: c._id,
+      }
+    })
+    const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
+      return candidates.find(c => c._id === r_id)
+    })
+    setTwrCandidates(candidates)
+    setTwrGroupCandidates(currentGroupRecords)
+  }
+
+  useEffect(() => {
+    if (session.twr) {
+      fetchTWRStudio()
+    }
+  }, [session.twr])
+
+  useEffect(() => {
+    setGroupCandidates && setGroupCandidates(heyjoeGroupCandidates.concat(twrGroupCandidates))
+  }, [heyjoeGroupCandidates, twrGroupCandidates])
+
+  useEffect(() => {
+    switch(listTab) {
+      case 'heyjoe':
+        setCandidates(heyjoeCandidates)
+        break
+      case 'twr':
+        setCandidates(twrCandidates)
+        break
+    }
+  }, [listTab, heyjoeCandidates, twrCandidates])
 
   const fetchData = async () => {
     const cs = await fetchCheckInList(session._id)
     const currentGroup = await getCurrentGroup(session._id) || {}
-    setCandidates(cs.map((c, idx) => ({ ...c, number: idx + 1 })))
-    setGroupCandidates((currentGroup.records || []).map(gc => {
+    setHeyjoeCandidates(cs.map((c, idx) => ({ ...c, number: idx + 1 })))
+    setHeyjoeGroupCandidates((currentGroup.records || []).map(gc => {
       const cidx = cs.findIndex(c => c._id === gc._id)
       return {
         ...gc,
@@ -50,6 +117,17 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   }, [])
 
   useEffect(() => {
+    if (twrStudio && isClient) {
+      const handle = setInterval(() => {
+        fetchTWRCandidates()
+      }, interval)
+      return () => {
+        clearInterval(handle)
+      }
+    }
+  }, [twrStudio, isClient])
+
+  useEffect(() => {
     const fbkUsers = []
     candidates.map(c => Object.keys(c.feedbacks || {})).forEach(fs => {
       fs.forEach(f => {
@@ -64,7 +142,11 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
 
   useEffect(() => {
     if (!isClient) {
-      setCandidates(propsCandidates.map((c, idx) => ({ ...c, number: idx + 1 })))
+      setCandidates(propsCandidates.map((c, idx) => ({
+        ...c,
+        number: idx + 1,
+        twr_id: isTwr ? c._id : null
+      })))
     }
   }, [propsCandidates])
 
@@ -104,10 +186,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
 
   return (
     <div>
-      <div className={classnames("mt-3 pl-3 no-print", {
-        'd-none': isTwr,
-        'd-flex': !isTwr
-      })}>
+      <div className="mt-3 pl-3 no-print d-flex">
         <div className="mr-auto d-flex">
           <button
             className="btn btn-default"
@@ -211,18 +290,30 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
             </a>
           )}
         </div>
+        {isClient &&
+          <div className="d-flex ml-auto mr-2 align-items-center">
+            {session.twr && <div className="tab-header d-flex">
+              <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {
+                setListTab('heyjoe')
+              }}>Heyjoe</label>
+              <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'twr' })} onClick={() => {
+                setListTab('twr')
+              }}>TWR</label>
+            </div>}
+          </div>
+        }
       </div>
       <div className="size-cards mt-2">
         {filteredCandidates.map(c => {
           return (
             <div key={c._id} className="person-card avoid-break">
               <PersonCard
+                key={c._id}
                 {...c}
                 topAvatar={true}
                 studio={studio}
                 showNumber={true}
                 useSelfData={false}
-                isTwr={isTwr}
               />
             </div>
           )

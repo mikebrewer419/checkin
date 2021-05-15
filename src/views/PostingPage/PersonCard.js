@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import classnames from 'classnames'
 import { FaComment } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import YesIcon from '../../components/icons/yes'
@@ -6,11 +7,15 @@ import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
 import ThumbImage from '../../components/ThumbImage'
 import { 
+  twr_static_host,
   static_root,
   getOneRecord,
   setFeedback,
   getUser,
-  newComment
+  twrGetOneHeyjoeRecord,
+  newComment,
+  twrSetFeedback,
+  twrNewComment
 } from '../../services'
 import { POSTINGPAGE_PERMISSIONS, USER_TYPE } from '../../constants'
 import './personcard.scss'
@@ -36,8 +41,7 @@ const PersonCard = ({
   feedbacks,
   comments,
   commentRelateClick,
-  seen,
-  isTwr=false
+  twr_id
 }) => {
   const [showContact, setShowContact] = useState(false)
   const [record, setRecord] = useState({})
@@ -46,13 +50,14 @@ const PersonCard = ({
   const [content, setContent] = useState('')
 
   const fetchData = () => {
-    getOneRecord(_id).then(data => {
-      setRecord(data)
-    })
+    if (twr_id) {
+      twrGetOneHeyjoeRecord(twr_id).then(data => setRecord(data))
+    } else {
+      getOneRecord(_id).then(data => setRecord(data))
+    }
   }
 
   useEffect(() => {
-    if (isTwr) { return }
     if (useSelfData && POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
       setInterval(fetchData, 5000)
     } else {
@@ -66,12 +71,12 @@ const PersonCard = ({
   const myFeedback = fbks[user.email]
 
   const setMyFeedback = async (feedback) => {
-    await setFeedback(_id, feedback)
+    if(!!twr_id) { await twrSetFeedback(_id, feedback) } else { await setFeedback(_id, feedback) }
     fetchData()
   }
 
   const addNewComment = async () => {
-    await newComment(_id, content)
+    if(!!twr_id) { await twrNewComment(_id, content) } else {  await newComment(_id, content) }
     setContent('')
     fetchData()
   }
@@ -135,8 +140,12 @@ const PersonCard = ({
     </div>
   ]
 
+  const ts_root = twr_id ? `${twr_static_host}/record/` : static_root
+
   return (
-    <div className="posting-person-card card px-3">
+    <div className={classnames("posting-person-card card px-3", {
+      'twr-card': !!twr_id
+    })}>
       {showNumber &&
         <div className="number">
           {number}
@@ -145,7 +154,7 @@ const PersonCard = ({
       {topAvatar &&
         <ThumbImage
           src={avatar}
-          isTwr={isTwr}
+          isTwr={!!twr_id}
           className="avatar mt-1"
           onClick={() => { setShowFeedbackModal(true) }}
         />
@@ -156,7 +165,9 @@ const PersonCard = ({
       >
         <div className="content">
           <div className="card-title d-flex mb-0">
-            <div>
+            <div className={classnames({
+              'text-danger': twr_id && !topAvatar && !showNumber
+            })}>
               <h5 className="mb-1">{first_name} {last_name}</h5>
               <p className="card-text mb-0">Role: <small>{role}</small></p>
             </div>
@@ -175,7 +186,7 @@ const PersonCard = ({
             <p className="card-text mb-0">Email: <small>{email}</small></p>
             <p className="card-text mb-0">Agent: <small>{agent}</small></p>
           </div>}
-          {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && !isTwr && (
+          {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
             <div className="d-flex align-items-start">
               {feedbackBar}
               <div
@@ -213,12 +224,13 @@ const PersonCard = ({
         </div>
         {!topAvatar &&
           <ThumbImage
+            isTwr={!!twr_id}
             src={avatar}
             className="small-avatar mt-1"
           />
         }
       </div>
-      {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && !isTwr && (
+      {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
         [
           <Modal
             key="comment-modal"
@@ -272,7 +284,7 @@ const PersonCard = ({
                 <div className="col-8">
                   <img
                     className="w-100"
-                    src={avatar ? static_root+avatar : require('../../assets/camera.png')}
+                    src={avatar ? ts_root+avatar : require('../../assets/camera.png')}
                   />
                 </div>
                 <div className="col-4">
