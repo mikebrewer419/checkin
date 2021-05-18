@@ -3,7 +3,7 @@ import {
   twrFetchCheckInList,
   twrGetStudioByTWRUri,
   twrGetTWRByDomain,
-  twrGetHeyjoeSessionRecords,
+  twrGetOneHeyjoeRecord,
   getcurrentTWRGroup,
   addRecordToCurentTWRGroup,
   removeRecordFromCurrentTWRGroup,
@@ -50,7 +50,10 @@ class TwrList extends React.Component {
     const { session } = this.props
     let candidates = await twrFetchCheckInList(studio._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
-    const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
+    const heyjoeCandidates = await Promise.all(candidates.map(async c => {
+      const tid = c._id
+      return await twrGetOneHeyjoeRecord(tid, session._id)
+    }))
     candidates = candidates.map(c => {
       const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
       return {
@@ -61,7 +64,7 @@ class TwrList extends React.Component {
     })
     const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
-    })
+    }).filter(r => !!r)
     this.setState({
       candidates
     })
@@ -89,7 +92,7 @@ class TwrList extends React.Component {
 
   render () {
     const { loading, candidates, twrRoom, twrStudio } = this.state
-    const { testMode } = this.props
+    const { testMode, session } = this.props
     return <div>
       {loading && <div>Loading...</div>}
       <div className="text-center mt-3">
@@ -115,6 +118,7 @@ class TwrList extends React.Component {
               addToGroup={this.addToGroup}
               leaveFromGroup={this.leaveFromGroup}
               updateRecord={() => {}}
+              session_id={session._id}
             />
           )
         })}

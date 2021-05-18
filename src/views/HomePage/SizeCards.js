@@ -65,7 +65,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
     })
     const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
-    })
+    }).filter(r => !!r)
     setTwrCandidates(candidates)
     setTwrGroupCandidates(currentGroupRecords)
   }
@@ -314,6 +314,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
                 studio={studio}
                 showNumber={true}
                 useSelfData={false}
+                session_id={session._id}
               />
             </div>
           )

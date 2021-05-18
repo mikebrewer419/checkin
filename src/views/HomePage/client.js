@@ -203,6 +203,7 @@ class ClientHomePage extends Component {
                       showNumber={true}
                       useSelfData={false}
                       commentRelateClick={true}
+                      session_id={session._id}
                     />
                   ))}
                 </div>

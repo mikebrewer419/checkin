@@ -41,6 +41,7 @@ const PersonCard = ({
   feedbacks,
   comments,
   commentRelateClick,
+  session_id,
   twr_id
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -51,7 +52,7 @@ const PersonCard = ({
 
   const fetchData = () => {
     if (twr_id) {
-      twrGetOneHeyjoeRecord(twr_id).then(data => setRecord(data))
+      twrGetOneHeyjoeRecord(twr_id, session_id).then(data => setRecord(data))
     } else {
       getOneRecord(_id).then(data => setRecord(data))
     }

@@ -464,6 +464,7 @@ class List extends Component {
                   addToGroup={this.addToGroup}
                   leaveFromGroup={this.leaveFromGroup}
                   updateRecord={this.selectRecord}
+                  session_id={session._id}
                 />
               )
             })}

@@ -95,8 +95,8 @@ export const twrNewComment = async (id, content) => {
   return await resp.json()
 }
 
-export const twrGetOneHeyjoeRecord = async (id) => {
-  const resp = await fetch(`${heyjoe_api_host}/twr/one/${id}`, {
+export const twrGetOneHeyjoeRecord = async (id, session_id) => {
+  const resp = await fetch(`${heyjoe_api_host}/twr/one/${id}/${session_id}`, {
     headers: {
       'Authorization': `Bearer ${heyjoe_token}`
     }

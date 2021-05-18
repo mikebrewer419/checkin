@@ -67,12 +67,12 @@ class PostingPage extends Component {
     })
   }
 
-  fetchTWRCandidates = async (twr_ids) => {
+  fetchTWRCandidates = async (twr_ids, session_id) => {
     let candidates = await Promise.all(twr_ids.map(async tid => {
       return await twrGetOneRecord(tid)
     }))
     const heyjoeCandidates = await Promise.all(twr_ids.map(async tid => {
-      return await twrGetOneHeyjoeRecord(tid)
+      return await twrGetOneHeyjoeRecord(tid, session_id)
     }))
     candidates = candidates.map((c, idx) => {
       const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
@@ -168,7 +168,7 @@ class PostingPage extends Component {
       console.log('group: ', group)
       if (group.twr_records) {
         this.setState({ loading: true })
-        twrGroupRecords = await this.fetchTWRCandidates(group.twr_records)
+        twrGroupRecords = await this.fetchTWRCandidates(group.twr_records, group.session)
       }
     }
     if (gidx === this.state.activeGidx) {
@@ -484,7 +484,11 @@ class PostingPage extends Component {
                           <div key="info" className="info col-4">
                             {combinedGroupRecords.map(record => (
                               <div className="talent-summary" key={record._id}>
-                                <PersonCard {...record} studio={studio} />
+                                <PersonCard
+                                  {...record}
+                                  studio={studio}
+                                  session_id={activeGroup.session}
+                                />
                               </div>
                             ))}
                             { combinedGroupRecords.length === 0 &&
