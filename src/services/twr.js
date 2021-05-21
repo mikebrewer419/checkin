@@ -112,3 +112,14 @@ export const twrGetHeyjoeSessionRecords = async (session_id) => {
   })
   return await resp.json()
 }
+
+export const twrClearSessionRecords = async (session_id) => {
+  const resp = await fetch(`${heyjoe_api_host}/twr/clear-records/${session_id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${heyjoe_token}`
+    }
+  })
+  return await resp.json()
+}

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Modal } from 'react-bootstrap'
 import {
   twrFetchCheckInList,
   twrGetStudioByTWRUri,
@@ -7,6 +8,7 @@ import {
   getcurrentTWRGroup,
   addRecordToCurentTWRGroup,
   removeRecordFromCurrentTWRGroup,
+  twrClearSessionRecords,
   finishCurrentTWRGroup,
   twrGetOneRecord,
 } from '../../services'
@@ -20,7 +22,8 @@ class TwrList extends React.Component {
     this.state = {
       candidates: [],
       twrStudio: {},
-      twrRoom: {}
+      twrRoom: {},
+      confirmClearSession: false
     }
   }
 
@@ -95,14 +98,38 @@ class TwrList extends React.Component {
     this.loadCandidates()
   }
 
+  toggleClearConfirm = () => {
+    this.setState({
+      confirmClearSession: !this.state.confirmClearSession
+    })
+  }
+
+  clearRecords = async () => {
+    this.setState({ loading: true })
+    const { session } = this.props
+    await twrClearSessionRecords(session._id)
+    await this.loadCandidates()
+    this.setState({
+      loading: false,
+      confirmClearSession: false
+    })
+  }
+
   render () {
-    const { loading, candidates, twrRoom, twrStudio } = this.state
+    const { loading, candidates, twrRoom, twrStudio, confirmClearSession } = this.state
     const { testMode, session } = this.props
     return <div>
       {loading && <div>Loading...</div>}
-      <div className="text-center mt-3">
+      <div className="d-flex align-items-center mt-3 mx-2">
         {twrRoom && <label className="h5 mr-2">{twrRoom.name}</label>}
         {twrStudio && <label className="h5">{twrStudio.name}</label>}
+        <a
+          title="Clear Records"
+          className="ml-auto cursor-pointer text-danger"
+          onClick={this.toggleClearConfirm}
+        >
+          Clear records
+        </a>
       </div>
       <ul className="list-group">
         {candidates.map((person, idx) => {
@@ -128,6 +155,30 @@ class TwrList extends React.Component {
           )
         })}
       </ul>
+      <Modal
+        show={!!confirmClearSession}
+        onHide = {this.toggleClearConfirm}
+      >
+        <Modal.Header closeButton>
+          <h5 className="mb-0">
+            Are you sure?
+          </h5>
+        </Modal.Header>
+        <Modal.Body>
+          <strong className="mr-2">NOTE:</strong>
+          Please make sure to clear the TWR records first on the TWR side before clearing on HeyJoe side.
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            className="btn"
+            onClick={this.toggleClearConfirm}
+          >Cancel.</button>
+          <button
+            className="btn btn-danger"
+            onClick={this.clearRecords}
+          >Clear.</button>
+        </Modal.Footer>
+      </Modal>
     </div>
   }
 }
