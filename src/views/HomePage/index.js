@@ -245,7 +245,10 @@ class HomePage extends Component {
                           <li>
                             <div className="d-flex align-items-center">
                               <span className="mr-5">{person.first_name} ${person.last_name}</span>
-                              <FaMinus className="text-danger cursor-pointer" size="16" onClick={() => {
+                              {person.twr_deleted && <div className="mr-2">
+                                <small>Deleted</small>
+                              </div>}
+                              <FaMinus className="text-danger cursor-pointer ml-auto mr-2" size="16" onClick={() => {
                                 this.leaveFromGroup(person._id)
                               }}/>
                             </div>

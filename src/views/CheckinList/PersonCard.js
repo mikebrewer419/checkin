@@ -32,7 +32,8 @@ const PersonCard = ({
   role,
   agent,
   testMode,
-  isTwr = false
+  isTwr = false,
+  twr_deleted
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -52,6 +53,9 @@ const PersonCard = ({
             Checked In:
             <span className="ml-2">{dateString}</span>
           </small>
+          {twr_deleted && <div className="ml-auto">
+              <small>Deleted</small>
+          </div>}
           <div className={classnames("align-items-center ml-auto", {
             'd-none': isTwr,
             'd-flex': !isTwr

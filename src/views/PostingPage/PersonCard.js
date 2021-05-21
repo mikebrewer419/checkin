@@ -42,7 +42,8 @@ const PersonCard = ({
   comments,
   commentRelateClick,
   session_id,
-  twr_id
+  twr_id,
+  twr_deleted
 }) => {
   const [showContact, setShowContact] = useState(false)
   const [record, setRecord] = useState({})
@@ -166,10 +167,15 @@ const PersonCard = ({
       >
         <div className="content">
           <div className="card-title d-flex mb-0">
-            <div className={classnames({
+            <div className={classnames('w-100', {
               'text-danger': twr_id && !topAvatar && !showNumber
             })}>
-              <h5 className="mb-1">{first_name} {last_name}</h5>
+              <h5 className="mb-1 d-flex align-items-center">
+                {first_name} {last_name}
+                {twr_deleted && <div className="ml-auto pl-2 mr-2 h6">
+                  <small>Deleted</small>
+                </div>}
+              </h5>
               <p className="card-text mb-0">Role: <small>{role}</small></p>
             </div>
             {skipped && !USER_TYPE.IS_CLIENT() && false && <small>&nbsp;&nbsp;skipped</small>}

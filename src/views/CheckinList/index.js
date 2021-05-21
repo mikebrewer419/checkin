@@ -436,7 +436,7 @@ class List extends Component {
             <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {
               this.setState({ listTab: 'heyjoe' })
               this.props.setListTab('heyjoe')
-            }}>Heyjoe</label>
+            }}>Hey Joe</label>
             <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'twr' })} onClick={() => {
               this.setState({ listTab: 'twr' })
               this.props.setListTab('twr')

@@ -12,6 +12,7 @@ import {
   getcurrentTWRGroup,
   twrGetHeyjoeSessionRecords,
   twrGetTWRByDomain,
+  twrGetOneRecord,
   twrGetStudioByTWRUri
 } from '../../services'
 import Footer from '../../components/Footer'
@@ -51,6 +52,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
     console.log('twrStudio: ', twrStudio)
     if (!twrStudio) { return }
     let candidates = await twrFetchCheckInList(twrStudio)
+    const twrCids = candidates.map(c => c._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
     const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
     candidates = candidates.map((c, idx) => {
@@ -58,11 +60,20 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
       return {
         ...c,
         ...hc,
-        number: idx + 1,
         _id: c._id,
         twr_id: c._id,
       }
     })
+    const deletedTwrCandidates = await Promise.all(heyjoeCandidates.filter(h => !twrCids.includes(h.twr_id))
+      .map(async h => {
+        const c = await twrGetOneRecord(h.twr_id)
+        return { ...c, ...h, _id: h.twr_id, twr_deleted: true }
+      }))
+    candidates = candidates.concat(deletedTwrCandidates)
+    candidates = candidates.map((c, idx) => ({
+      ...c,
+      number: idx + 1,
+    }))
     const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
     }).filter(r => !!r)
@@ -295,7 +306,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
             {session.twr && <div className="tab-header d-flex">
               <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {
                 setListTab('heyjoe')
-              }}>Heyjoe</label>
+              }}>Hey Joe</label>
               <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'twr' })} onClick={() => {
                 setListTab('twr')
               }}>TWR</label>

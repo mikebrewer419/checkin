@@ -2,12 +2,13 @@ import React from 'react'
 import {
   twrFetchCheckInList,
   twrGetStudioByTWRUri,
+  twrGetHeyjoeSessionRecords,
   twrGetTWRByDomain,
-  twrGetOneHeyjoeRecord,
   getcurrentTWRGroup,
   addRecordToCurentTWRGroup,
   removeRecordFromCurrentTWRGroup,
   finishCurrentTWRGroup,
+  twrGetOneRecord,
 } from '../../services'
 import PersonCard from './PersonCard'
 
@@ -49,11 +50,9 @@ class TwrList extends React.Component {
     const { twrStudio: studio } = this.state
     const { session } = this.props
     let candidates = await twrFetchCheckInList(studio._id)
+    const twrCids = candidates.map(c => c._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
-    const heyjoeCandidates = await Promise.all(candidates.map(async c => {
-      const tid = c._id
-      return await twrGetOneHeyjoeRecord(tid, session._id)
-    }))
+    const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
     candidates = candidates.map(c => {
       const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
       return {
@@ -62,6 +61,12 @@ class TwrList extends React.Component {
         _id: c._id
       }
     })
+    const deletedTwrCandidates = await Promise.all(heyjoeCandidates.filter(h => !twrCids.includes(h.twr_id))
+      .map(async h => {
+        const c = await twrGetOneRecord(h.twr_id)
+        return { ...c, ...h, _id: h.twr_id, twr_deleted: true }
+      }))
+    candidates = candidates.concat(deletedTwrCandidates)
     const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
     }).filter(r => !!r)
