@@ -51,17 +51,24 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   const fetchTWRCandidates = async () => {
     console.log('twrStudio: ', twrStudio)
     if (!twrStudio) { return }
+    const { twr_sync } = session
     let candidates = await twrFetchCheckInList(twrStudio)
     const twrCids = candidates.map(c => c._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
     const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
-    candidates = candidates.map((c, idx) => {
+    candidates = twr_sync ? candidates.map(c => {
       const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
       return {
         ...c,
         ...hc,
-        _id: c._id,
-        twr_id: c._id,
+        _id: c._id
+      }
+    }) : heyjoeCandidates.map(hc => {
+      const c = candidates.find(c => c._id === hc.twr_id)
+      return {
+        ...c,
+        ...hc,
+        _id: c._id
       }
     })
     const deletedTwrCandidates = await Promise.all(heyjoeCandidates.filter(h => !twrCids.includes(h.twr_id))
