@@ -142,6 +142,13 @@ class HomePage extends Component {
     })
   }
 
+  reloadSession = async() => {
+    const session_id = this.props.match.params.session_id
+    const session = await getOneSession(session_id)
+
+    this.setState({ session })
+  }
+
   setshowChat = (v) => {
     this.setState({
       showChat: v
@@ -195,6 +202,7 @@ class HomePage extends Component {
                 testMode={testMode}
                 studio={studio}
                 session={session}
+                reloadSession={this.reloadSession}
                 messages={studio.position_messages}
                 delete_message={studio.delete_message}
                 setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}

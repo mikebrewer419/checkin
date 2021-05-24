@@ -358,7 +358,7 @@ class List extends Component {
   }
 
   render() {
-    const { studio, session, testMode } = this.props
+    const { studio, session, testMode, reloadSession } = this.props
     const { timeOptions, selectedRecord, confirmClearSession, csvLoading, listTab } = this.state
     return (
       <div className={"list-view " + (testMode? 'test': '')}>
@@ -474,6 +474,7 @@ class List extends Component {
               ref={this.setTwrRef}
               twr={session.twr}
               session={session}
+              reloadSession={reloadSession}
               testMode={testMode}
               setTwrGroupCandidates={this.props.setTwrGroupCandidates}
               setTwrCandidates={this.props.setTwrCandidates}

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
+import Switch from "react-switch"
 import {
   twrFetchCheckInList,
   twrGetStudioByTWRUri,
@@ -11,6 +12,8 @@ import {
   twrClearSessionRecords,
   finishCurrentTWRGroup,
   twrGetOneRecord,
+  twrGetOneHeyjoeRecord,
+  updateSession
 } from '../../services'
 import PersonCard from './PersonCard'
 
@@ -52,12 +55,24 @@ class TwrList extends React.Component {
   loadCandidates = async () => {
     const { twrStudio: studio } = this.state
     const { session } = this.props
+    const { twr_sync } = session
     let candidates = await twrFetchCheckInList(studio._id)
     const twrCids = candidates.map(c => c._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
-    const heyjoeCandidates = await twrGetHeyjoeSessionRecords(session._id)
-    candidates = candidates.map(c => {
+    const heyjoeCandidates = twr_sync ? 
+      await Promise.all(candidates.map(async c => {
+        return await twrGetOneHeyjoeRecord(c._id, session._id)
+      }))
+    : await twrGetHeyjoeSessionRecords(session._id)
+    candidates = twr_sync ? candidates.map(c => {
       const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
+      return {
+        ...c,
+        ...hc,
+        _id: c._id
+      }
+    }) : heyjoeCandidates.map(hc => {
+      const c = candidates.find(c => c._id === hc.twr_id)
       return {
         ...c,
         ...hc,
@@ -115,21 +130,32 @@ class TwrList extends React.Component {
     })
   }
 
+  setTwrSync = async (sync) => {
+    const { session } = this.props
+    const formData = new FormData()
+    formData.append('twr_sync', sync)
+    await updateSession(session._id, formData)
+    this.props.reloadSession()
+  }
+
   render () {
     const { loading, candidates, twrRoom, twrStudio, confirmClearSession } = this.state
     const { testMode, session } = this.props
     return <div>
       {loading && <div>Loading...</div>}
-      <div className="d-flex align-items-center mt-3 mx-2">
+      <div className="d-flex align-items-center mt-3 ml-3 mr-1">
         {twrRoom && <label className="h5 mr-2">{twrRoom.name}</label>}
         {twrStudio && <label className="h5">{twrStudio.name}</label>}
-        <a
-          title="Clear Records"
-          className="ml-auto cursor-pointer text-danger"
-          onClick={this.toggleClearConfirm}
-        >
-          Clear records
-        </a>
+        <label className="ml-auto d-flex align-items-center">
+          <span className="mr-2">Sync Records</span>
+          <Switch
+            checkedIcon={null} uncheckedIcon={null}
+            onColor="#ee514f"
+            height={20}
+            checked={session.twr_sync}
+            onChange={(state) => this.setTwrSync(state)}
+          />
+        </label>
       </div>
       <ul className="list-group">
         {candidates.map((person, idx) => {
