@@ -161,6 +161,13 @@ class ClientHomePage extends Component {
     this.listRef = elem
   }
 
+  reloadSession = async() => {
+    const session_id = this.props.match.params.session_id
+    const session = await getOneSession(session_id)
+
+    this.setState({ session })
+  }
+
   render() {
     const { studio, session, showChat, showList,
       jitsiKey, groupCandidates, testMode } = this.state
@@ -212,6 +219,7 @@ class ClientHomePage extends Component {
             <SizeCards
               studio={studio}
               session={session}
+              reloadSession={this.reloadSession}
               setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
             />
           </div>

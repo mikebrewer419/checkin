@@ -21,7 +21,7 @@ import { FaFilePdf, FaPrint } from 'react-icons/fa'
 
 const interval = 5000 // query api every 30 seconds
 
-const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, propsCandidates, isTwr }) => {
+const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, propsCandidates, isTwr, reloadSession }) => {
   const [user, setUser] = useState(null)
   const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
@@ -105,6 +105,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
         break
       case 'twr':
         setCandidates(twrCandidates)
+        reloadSession()
         break
     }
   }, [listTab, heyjoeCandidates, twrCandidates])
@@ -201,6 +202,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
     }
     return filter === "all" || userFeedback.includes(filter)
   })
+  const { twr_sync } = session
 
   return (
     <div>
@@ -309,14 +311,21 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
           )}
         </div>
         {isClient &&
-          <div className="d-flex ml-auto mr-2 align-items-center">
-            {session.twr && <div className="tab-header d-flex">
-              <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {
-                setListTab('heyjoe')
-              }}>Hey Joe</label>
-              <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'twr' })} onClick={() => {
-                setListTab('twr')
-              }}>TWR</label>
+          <div className="ml-auto mr-2">
+            <div className="d-flex align-items-center">
+              {session.twr && <div className="tab-header d-flex">
+                <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {
+                  setListTab('heyjoe')
+                }}>Hey Joe</label>
+                <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'twr' })} onClick={() => {
+                  setListTab('twr')
+                }}>TWR</label>
+              </div>}
+            </div>
+            {listTab === 'twr' && <div className="text-right">
+              <span>
+                {twr_sync ? 'Syncing': 'Not Syncing'}
+              </span>
             </div>}
           </div>
         }
