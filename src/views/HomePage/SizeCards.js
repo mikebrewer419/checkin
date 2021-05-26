@@ -56,35 +56,45 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
     let candidates = await twrFetchCheckInList(twrStudio)
     const twrCids = candidates.map(c => c._id)
     const currentGroup = await getcurrentTWRGroup(session._id) || {}
-    let heyjoeCandidates = []
-    const tHCandidates = await Promise.all(candidates.map(async c => {
-      return await twrGetOneHeyjoeRecord(c._id, session._id)
-    }))
-    const hCs = await twrGetHeyjoeSessionRecords(session._id)
-    const hcIds = tHCandidates.map(h => h._id)
     if (twr_sync) {
-      heyjoeCandidates = tHCandidates.concat(hCs.filter(hc => !hcIds.includes(hc._id)).map(c => ({ ...c, twr_deleted: true })))
-    } else {
-      heyjoeCandidates = hCs
-    }
-    candidates = candidates.map(c => {
-      const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
-      return {
-        ...c,
-        ...hc,
-        _id: c._id
-      }
-    })
-    const deletedTwrCandidates = await Promise.all(heyjoeCandidates.filter(h => !twrCids.includes(h.twr_id))
-      .map(async h => {
-        const c = await twrGetOneRecord(h.twr_id)
-        return { ...c, ...h, _id: h.twr_id, twr_deleted: true }
+      const tHCandidates = await Promise.all(candidates.map(async c => {
+        return await twrGetOneHeyjoeRecord(c._id, session._id)
       }))
-    candidates = candidates.concat(deletedTwrCandidates)
-    candidates = candidates.map((c, idx) => ({
-      ...c,
-      number: idx + 1,
-    }))
+      const hCs = await twrGetHeyjoeSessionRecords(session._id)
+      const hcIds = tHCandidates.map(h => h._id)
+      heyjoeCandidates = tHCandidates.concat(hCs.filter(hc => !hcIds.includes(hc._id)).map(c => ({ ...c, twr_deleted: true })))
+      candidates = candidates.map(c => {
+        const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
+        return {
+          ...c,
+          ...hc,
+          _id: c._id
+        }
+      })
+      const deletedTwrCandidates = await Promise.all(heyjoeCandidates.filter(h => !twrCids.includes(h.twr_id))
+        .map(async h => {
+          const c = await twrGetOneRecord(h.twr_id)
+          return { ...c, ...h, _id: h.twr_id, twr_deleted: true }
+        }))
+      candidates = candidates.concat(deletedTwrCandidates)
+    } else {
+      const hCs = await twrGetHeyjoeSessionRecords(session._id)
+      heyjoeCandidates = hCs
+      candidates = await Promise.all(heyjoeCandidates.map(async hc => {
+        let c = candidates.find(c => c._id === hc.twr_id)
+        let twr_deleted = false
+        if (!c) {
+          c = await twrGetOneRecord(hc.twr_id)
+          twr_deleted = true
+        }
+        return {
+          ...hc,
+          ...c,
+          _id: hc.twr_id,
+          twr_deleted
+        }
+      }))
+    }
     const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
     }).filter(r => !!r)
