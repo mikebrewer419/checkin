@@ -62,16 +62,16 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
       }))
       const hCs = await twrGetHeyjoeSessionRecords(session._id)
       const hcIds = tHCandidates.map(h => h._id)
-      heyjoeCandidates = tHCandidates.concat(hCs.filter(hc => !hcIds.includes(hc._id)).map(c => ({ ...c, twr_deleted: true })))
+      const heyjoeCs = tHCandidates.concat(hCs.filter(hc => !hcIds.includes(hc._id)).map(c => ({ ...c, twr_deleted: true })))
       candidates = candidates.map(c => {
-        const hc = heyjoeCandidates.find(h => h.twr_id === c._id)
+        const hc = heyjoeCs.find(h => h.twr_id === c._id)
         return {
           ...c,
           ...hc,
           _id: c._id
         }
       })
-      const deletedTwrCandidates = await Promise.all(heyjoeCandidates.filter(h => !twrCids.includes(h.twr_id))
+      const deletedTwrCandidates = await Promise.all(heyjoeCs.filter(h => !twrCids.includes(h.twr_id))
         .map(async h => {
           const c = await twrGetOneRecord(h.twr_id)
           return { ...c, ...h, _id: h.twr_id, twr_deleted: true }
@@ -79,8 +79,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
       candidates = candidates.concat(deletedTwrCandidates)
     } else {
       const hCs = await twrGetHeyjoeSessionRecords(session._id)
-      heyjoeCandidates = hCs
-      candidates = await Promise.all(heyjoeCandidates.map(async hc => {
+      candidates = await Promise.all(hCs.map(async hc => {
         let c = candidates.find(c => c._id === hc.twr_id)
         let twr_deleted = false
         if (!c) {
