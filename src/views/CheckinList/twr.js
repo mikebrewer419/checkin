@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
+import { FaTrash } from 'react-icons/fa'
 import Switch from "react-switch"
 import {
   twrFetchCheckInList,
@@ -161,7 +162,8 @@ class TwrList extends React.Component {
       <div className="d-flex align-items-center mt-3 ml-3 mr-1">
         {twrRoom && <label className="h5 mr-2">{twrRoom.name}</label>}
         {twrStudio && <label className="h5">{twrStudio.name}</label>}
-        <label className="ml-auto d-flex align-items-center">
+        <FaTrash className="cursor-pointer text-secondary mr-2 ml-auto" title="Clear Records" onClick={this.toggleClearConfirm}/>
+        <label className="d-flex align-items-center">
           <span className="mr-2">Sync Records</span>
           <Switch
             checkedIcon={null} uncheckedIcon={null}
