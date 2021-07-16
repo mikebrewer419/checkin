@@ -17,6 +17,7 @@ import {
   twrGetStudioByTWRUri
 } from '../../services'
 import Footer from '../../components/Footer'
+import { POSTINGPAGE_PERMISSIONS } from '../../constants'
 import './sizecards.scss'
 import { FaFilePdf, FaPrint } from 'react-icons/fa'
 
@@ -357,6 +358,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
                 showNumber={true}
                 useSelfData={false}
                 session_id={session._id}
+                hideContact={!POSTINGPAGE_PERMISSIONS.CAN_VIEW_CONTACT()}
               />
             </div>
           )

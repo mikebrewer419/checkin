@@ -3,6 +3,7 @@
 .homepage {
   display: flex;
   height: calc(100vh - #{$headerheight});
+  position: relative;
 
   .right-frame {
     display: flex;

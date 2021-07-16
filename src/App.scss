@@ -157,6 +157,7 @@ body {
 @media print {
   body {
     overflow-y: auto;
+    page-break-inside: avoid;
   }
   .no-print {
     display: none !important;
@@ -164,7 +165,16 @@ body {
   .print-only {
     display: block !important;
   }
+  .size-cards {
+    display: block;
+  }
+  .person-card {
+    display: inline-block;
+    margin-top: 30px !important;
+    margin-bottom: 30px !important;
+  }
   .avoid-break {
-    break-inside: avoid;
+    position: relative;
+    break-inside: avoid !important;
   }
 }

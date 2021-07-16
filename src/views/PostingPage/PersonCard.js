@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import classnames from 'classnames'
-import { FaComment } from 'react-icons/fa'
+import { FaComment, FaPrint } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
+import ReactToPrint from 'react-to-print'
 import YesIcon from '../../components/icons/yes'
 import NoIcon from '../../components/icons/no'
 import MaybeIcon from '../../components/icons/maybe'
@@ -21,6 +22,69 @@ import { POSTINGPAGE_PERMISSIONS, USER_TYPE } from '../../constants'
 import './personcard.scss'
 
 const user = getUser()
+
+
+const FeedbackContent = forwardRef(({
+  avatar,
+  ts_root,
+  studio,
+  role,
+  cmts,
+  forPrint,
+  phone,
+  email,
+  agent,
+  hideContact
+}, ref) => {
+  return (
+    <div className={"personcard-card row talent-detail-content"} ref={ref}>
+      <div className="col-8">
+        <img
+          className="w-100"
+          src={avatar ? ts_root+avatar : require('../../assets/camera.png')}
+        />
+      </div>
+      <div className="col-4">
+        {studio && studio.logo && (
+          <img
+            className="w-100 mb-5"
+            src={static_root+studio.logo}
+          />
+        )}
+        <div className="d-flex flex-column">
+          <h5>Info</h5>
+          <div className="d-flex">
+            <label>Role: </label>
+            <span>{role}</span>
+          </div>
+          {!hideContact && (
+            <div className="d-flex flex-column">
+              <p className="card-text mb-0">Phone: <small>{phone}</small></p>
+              <p className="card-text mb-0">Email: <small>{email}</small></p>
+              <p className="card-text mb-0">Agent: <small>{agent}</small></p>
+            </div>
+          )}
+          {forPrint && (
+            <div className="mt-3">
+              <h6>Comments</h6>
+              {cmts.map((comment, idx) => (
+                <div key={idx}>
+                  <label>{comment.by.email}</label>
+                  <p>{comment.content}</p>
+                </div>
+              ))}
+              {cmts.length === 0 && (
+                <div>
+                  No comments yet.
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+})
 
 const PersonCard = ({
   studio,
@@ -50,6 +114,7 @@ const PersonCard = ({
   const [commentsVisible, setCommentsVisible] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [content, setContent] = useState('')
+  const feedbackContentRef = useRef({})
 
   const fetchData = () => {
     if (twr_id) {
@@ -284,31 +349,47 @@ const PersonCard = ({
             onHide={() => setShowFeedbackModal(false)}
           >
             <Modal.Header closeButton>
-              <h5>{first_name} {last_name}</h5>
+              <div className="d-flex w-100 align-items-center">
+                <h5 className="mr-auto">{first_name} {last_name}</h5>
+                <ReactToPrint
+                  pageStyle={"@page { padding: 50px 30px; }"}
+                  trigger={() => {
+                    return (
+                      <label class="cursor-pointer">
+                        <FaPrint />
+                        Print
+                      </label>
+                    )
+                  }}
+                  content={() => feedbackContentRef.current}
+                />
+              </div>
             </Modal.Header>
             <Modal.Body>
-              <div className="personcard-card row">
-                <div className="col-8">
-                  <img
-                    className="w-100"
-                    src={avatar ? ts_root+avatar : require('../../assets/camera.png')}
-                  />
-                </div>
-                <div className="col-4">
-                  {studio && studio.logo && (
-                    <img
-                      className="w-100 mb-5"
-                      src={static_root+studio.logo}
-                    />
-                  )}
-                  <div className="d-flex flex-column">
-                    <h5>Info</h5>
-                    <div className="d-flex">
-                      <label>Role: </label>
-                      <span>{role}</span>
-                    </div>
-                  </div>
-                </div>
+              <FeedbackContent
+                ts_root={ts_root}
+                studio={studio}
+                avatar={avatar}
+                role={role}
+                phone={phone}
+                email={email}
+                agent={agent}
+                hideContact={hideContact}
+              />
+              <div className="d-none">
+                <FeedbackContent
+                  ref={feedbackContentRef}
+                  forPrint
+                  cmts={cmts}
+                  ts_root={ts_root}
+                  studio={studio}
+                  avatar={avatar}
+                  role={role}
+                  phone={phone}
+                  email={email}
+                  agent={agent}
+                  hideContact={hideContact}
+                />
               </div>
             </Modal.Body>
             <Modal.Footer>
