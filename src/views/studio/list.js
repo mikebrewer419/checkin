@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt } from 'react-icons/fa';
 import moment from 'moment'
 import {
   static_root,
@@ -382,6 +382,9 @@ const StudioList = () => {
                 <div key={session._id} className="row mt-1 ml-2 mr-2">
                   <div className="col-2">
                     {session.name}
+                    {session.twr && (
+                      <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />
+                    )}
                   </div>
                   <div className="col-auto">
                     <Link to={`/studio/${studio.uri}/${session._id}`} className="text-danger" target="_blank">

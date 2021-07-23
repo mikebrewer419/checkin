@@ -23,6 +23,65 @@ import './personcard.scss'
 
 const user = getUser()
 
+const TalentPrintCard = forwardRef(({
+  avatar,
+  studio,
+  first_name,
+  last_name,
+  ts_root,
+  role,
+  cmts,
+  phone,
+  email,
+  agent,
+  hideContact
+}, ref) => {
+  return (
+    <div className="w-100" ref={ref}>
+      <div className="row">
+        <div className="col-9">
+          <h4 className="mb-3">
+            {first_name}
+            {last_name}
+          </h4>
+          <img
+            className="d-block col-6 mb-4"
+            src={avatar ? ts_root+avatar : require('../../assets/camera.png')}
+          />
+          <h5>Info</h5>
+          <div className="d-flex">
+            <label>Role: </label>
+            <span>{role}</span>
+          </div>
+          {!hideContact && (
+            <div className="d-flex flex-column">
+              <p className="card-text mb-0">Phone: <small>{phone}</small></p>
+              <p className="card-text mb-0">Email: <small>{email}</small></p>
+              <p className="card-text mb-0">Agent: <small>{agent}</small></p>
+            </div>
+          )}
+        </div>
+        <div className="col-3">
+          <img src={static_root+studio.logo} alt={studio.name} className="w-100" />
+        </div>
+      </div>
+      <div className="mt-3">
+        <h6>Comments</h6>
+        {cmts.map((comment, idx) => (
+          <div key={idx}>
+            <label>{comment.by.email}</label>
+            <p>{comment.content}</p>
+          </div>
+        ))}
+        {cmts.length === 0 && (
+          <div>
+            No comments yet.
+          </div>
+        )}
+      </div>
+    </div>
+  )
+})
 
 const FeedbackContent = forwardRef(({
   avatar,
@@ -30,7 +89,6 @@ const FeedbackContent = forwardRef(({
   studio,
   role,
   cmts,
-  forPrint,
   phone,
   email,
   agent,
@@ -62,22 +120,6 @@ const FeedbackContent = forwardRef(({
               <p className="card-text mb-0">Phone: <small>{phone}</small></p>
               <p className="card-text mb-0">Email: <small>{email}</small></p>
               <p className="card-text mb-0">Agent: <small>{agent}</small></p>
-            </div>
-          )}
-          {forPrint && (
-            <div className="mt-3">
-              <h6>Comments</h6>
-              {cmts.map((comment, idx) => (
-                <div key={idx}>
-                  <label>{comment.by.email}</label>
-                  <p>{comment.content}</p>
-                </div>
-              ))}
-              {cmts.length === 0 && (
-                <div>
-                  No comments yet.
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -377,9 +419,10 @@ const PersonCard = ({
                 hideContact={hideContact}
               />
               <div className="d-none">
-                <FeedbackContent
+                <TalentPrintCard
                   ref={feedbackContentRef}
-                  forPrint
+                  first_name={first_name}
+                  last_name={last_name}
                   cmts={cmts}
                   ts_root={ts_root}
                   studio={studio}
