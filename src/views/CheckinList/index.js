@@ -16,6 +16,7 @@ import {
   removeRecordFromCurrentGroup,
   getCurrentGroup,
   finishCurrentGroup,
+  twr_host
 } from '../../services'
 import AvatarModal from '../../components/avatar-modal'
 import './style.scss'
@@ -223,9 +224,13 @@ class List extends Component {
   }
 
   toggleClearConfirm = () => {
-    this.setState({
-      confirmClearSession: !this.state.confirmClearSession
-    })
+    if (this.state.listTab === 'twr') {
+      this.twrRef.toggleClearConfirm()
+    } else {
+      this.setState({
+        confirmClearSession: !this.state.confirmClearSession
+      })
+    }
   }
 
   clearRecords = async () => {
@@ -360,6 +365,10 @@ class List extends Component {
   render() {
     const { studio, session, testMode, reloadSession } = this.props
     const { timeOptions, selectedRecord, confirmClearSession, csvLoading, listTab } = this.state
+    let twrOnboardLink = session.twr.split('/')
+    twrOnboardLink.splice(1, 0, 'onboard')
+    twrOnboardLink = twrOnboardLink.join('/')
+
     return (
       <div className={"list-view " + (testMode? 'test': '')}>
         <div className="d-flex flex-column">
@@ -374,25 +383,36 @@ class List extends Component {
                   <span className="text-danger h5 mb-0 mt-2">Virtual Lobby</span>
                 </div>
               ) : (
-                <div className={classnames("d-flex justify-content-center position-relative action-row", {
-                  disabled: listTab === 'twr'
-                })}>
-                  <Link
-                    title="Session Check-In"
-                    to={`/onboard/${studio.uri}/${session._id}`}
-                    target="_blank"
-                    className="mx-3"
-                  >
-                    <FaListOl size="16" className="text-danger" />
-                  </Link>
-                  <Link
-                    to="?test=true"
-                    target="_blank"
-                    title="Virtual Lobby"
-                    className="mx-3"
-                  >
-                    <FaStickyNote size="16" className="text-danger" />
-                  </Link>
+                <div className="d-flex justify-content-center position-relative action-row">
+                  {listTab === 'twr' ? 
+                    <a
+                      title="Session Check-In"
+                      href={`${twr_host}${twrOnboardLink}`}
+                      target="_blank"
+                      className="mx-3"
+                    >
+                      <FaListOl size="16" className="text-danger" />
+                    </a>
+                  : (
+                    <Link
+                      title="Session Check-In"
+                      to={`/onboard/${studio.uri}/${session._id}`}
+                      target="_blank"
+                      className="mx-3"
+                    >
+                      <FaListOl size="16" className="text-danger" />
+                    </Link>
+                  )}
+                  {listTab !== 'twr' && (
+                    <Link
+                      to="?test=true"
+                      target="_blank"
+                      title="Virtual Lobby"
+                      className="mx-3"
+                    >
+                      <FaStickyNote size="16" className="text-danger" />
+                    </Link>
+                  )}
                   <Link
                     title="Video Review"
                     to={`/video/${studio.uri}/${session._id}`} 
@@ -414,7 +434,13 @@ class List extends Component {
                       <FaDownload
                         size="16"
                         className="text-danger cursor-pointer"
-                        onClick={this.downloadCSV}
+                        onClick={() => {
+                          if (listTab === 'twr') {
+                            this.twrRef.downloadCSV()
+                          } else {
+                            this.downloadCSV()
+                          }
+                        }}
                       />
                     }
                   </a>

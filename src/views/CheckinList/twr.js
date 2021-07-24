@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
-import { FaTrash } from 'react-icons/fa'
 import Switch from "react-switch"
+import Papa from 'papaparse'
 import {
   twrFetchCheckInList,
   twrGetStudioByTWRUri,
@@ -17,6 +17,7 @@ import {
   updateSession
 } from '../../services'
 import PersonCard from './PersonCard'
+import { formatHour, formatTime } from '../../utils'
 
 let loadHandler = null
 
@@ -111,6 +112,64 @@ class TwrList extends React.Component {
     this.props.setTwrCandidates(candidates || [])
   }
 
+  downloadCSV = async () => {
+    this.setState({ csvLoading: true })
+    const { candidates, twrRoom, twrStudio } = this.state
+    const cids = candidates.map(c => c._id)
+    const row_headers = [
+      'first_name',
+      'last_name',
+      'email',
+      'phone',
+      // 'skipped',
+      // 'seen',
+      // 'signed_out',
+      'checked_in_time',
+      'sagnumber',
+      // 'jitsi_meeting_id',
+      'call_in_time',
+      'agent',
+      // 'actual_call',
+      'interview_no',
+      'role',
+      'signed_out_time',
+      // 'last_record_time'
+      // 'studio',
+    ]
+    let csvContent = candidates
+      .map(candidate => (
+        row_headers.map(key => {
+          switch(key) {
+            case 'studio':
+              return twrRoom.name
+            case 'session': 
+              return twrStudio.name
+            case 'call_in_time':
+            case 'signed_out_time':
+            case 'checked_in_time':
+              const dateString = formatTime(candidate[key])
+              return dateString
+            case 'actual_call':
+              return formatHour(candidate[key])
+            default:
+              return `${(candidate[key] || '')}`
+          }
+        })
+      ))
+    csvContent.unshift(row_headers)
+    console.log('csvContent: ', csvContent);
+    const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(Papa.unparse(csvContent))
+
+    var link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `${twrRoom.name} ${twrStudio.name}-${(new Date()).toISOString()}.csv`)
+    document.body.appendChild(link)
+    
+    link.click()
+    document.body.removeChild(link)
+    this.setState({ csvLoading: false })
+  }
+
   addToGroup = async (record_id) => {
     const { session } = this.props
     await addRecordToCurentTWRGroup(record_id, session._id)
@@ -162,8 +221,7 @@ class TwrList extends React.Component {
       <div className="d-flex align-items-center mt-3 ml-3 mr-1">
         {twrRoom && <label className="h5 mr-2">{twrRoom.name}</label>}
         {twrStudio && <label className="h5">{twrStudio.name}</label>}
-        <FaTrash className="cursor-pointer text-secondary mr-2 ml-auto" title="Clear Records" onClick={this.toggleClearConfirm}/>
-        <label className="d-flex align-items-center">
+        <label className="ml-auto d-flex align-items-center">
           <span className="mr-2">Sync Records</span>
           <Switch
             checkedIcon={null} uncheckedIcon={null}
