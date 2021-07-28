@@ -365,7 +365,7 @@ class List extends Component {
   render() {
     const { studio, session, testMode, reloadSession } = this.props
     const { timeOptions, selectedRecord, confirmClearSession, csvLoading, listTab } = this.state
-    let twrOnboardLink = session.twr.split('/')
+    let twrOnboardLink = (session.twr || '').split('/')
     twrOnboardLink.splice(1, 0, 'onboard')
     twrOnboardLink = twrOnboardLink.join('/')
 
