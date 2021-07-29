@@ -166,7 +166,7 @@ const Onboard = () => {
         <div className="company-info">
           <h3>Check in to {studio.name}</h3>
           <div className="avatar-choose">
-            {avatar64 ?
+            {cameraError || avatar64 ?
               <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
             :
               <Webcam
