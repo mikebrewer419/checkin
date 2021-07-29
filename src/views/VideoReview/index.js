@@ -28,7 +28,7 @@ import Footer from '../../components/Footer'
 import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
-import { VIDEO_REVIEW_PERMISSIONS, USER_TYPE } from '../../constants'
+import { VIDEO_REVIEW_PERMISSIONS, POSTINGPAGE_PERMISSIONS } from '../../constants'
 import PersonCard from '../PostingPage/PersonCard'
 
 const itemWidth = 250
@@ -621,6 +621,7 @@ class VideoPage extends Component {
                             <div className="talent-summary" key={record._id}>
                               <PersonCard
                                 {...record}
+                                hideContact={!POSTINGPAGE_PERMISSIONS.CAN_VIEW_CONTACT()}
                                 reloadData={async () => {
                                   await this.loadVideos()
                                   const group = this.state.groups[activeGidx].videos[0].group

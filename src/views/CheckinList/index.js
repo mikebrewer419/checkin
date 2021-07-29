@@ -403,16 +403,14 @@ class List extends Component {
                       <FaListOl size="16" className="text-danger" />
                     </Link>
                   )}
-                  {listTab !== 'twr' && (
-                    <Link
-                      to="?test=true"
-                      target="_blank"
-                      title="Virtual Lobby"
-                      className="mx-3"
-                    >
-                      <FaStickyNote size="16" className="text-danger" />
-                    </Link>
-                  )}
+                  <Link
+                    to="?test=true"
+                    target="_blank"
+                    title="Virtual Lobby"
+                    className="mx-3"
+                  >
+                    <FaStickyNote size="16" className="text-danger" />
+                  </Link>
                   <Link
                     title="Video Review"
                     to={`/video/${studio.uri}/${session._id}`} 

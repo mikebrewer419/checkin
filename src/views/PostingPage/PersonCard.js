@@ -20,6 +20,7 @@ import {
 } from '../../services'
 import { POSTINGPAGE_PERMISSIONS, USER_TYPE } from '../../constants'
 import './personcard.scss'
+import { formatHour } from '../../utils'
 
 const user = getUser()
 
@@ -34,6 +35,7 @@ const TalentPrintCard = forwardRef(({
   phone,
   email,
   agent,
+  actual_call,
   hideContact
 }, ref) => {
   return (
@@ -41,8 +43,7 @@ const TalentPrintCard = forwardRef(({
       <div className="row">
         <div className="col-9">
           <h4 className="mb-3">
-            {first_name}
-            {last_name}
+            {first_name}&nbsp;{last_name}
           </h4>
           <img
             className="d-block col-6 mb-4"
@@ -62,7 +63,9 @@ const TalentPrintCard = forwardRef(({
           )}
         </div>
         <div className="col-3">
-          <img src={static_root+studio.logo} alt={studio.name} className="w-100" />
+          {studio && (
+            <img src={static_root+studio.logo} alt={studio.name} className="w-100" />
+          )}
         </div>
       </div>
       <div className="mt-3">
@@ -149,6 +152,7 @@ const PersonCard = ({
   commentRelateClick,
   session_id,
   twr_id,
+  actual_call,
   twr_deleted
 }) => {
   const [showContact, setShowContact] = useState(false)
@@ -283,23 +287,41 @@ const PersonCard = ({
                   <small>Deleted</small>
                 </div>}
               </h5>
-              <p className="card-text mb-0">Role: <small>{role}</small></p>
+              <div className="mb-2">
+                <p className="card-text mb-0 actual-call-section">
+                  <span>Actual Call:</span>
+                  <strong className="mx-2">{formatHour(actual_call)}</strong>
+                </p>
+                <p className="card-text mb-0">
+                  <span>Role:</span>
+                  <strong className="ml-2">{role}</strong>
+                </p>
+                <label className={hideContact ? "d-none": "mb-0"} onClick={(ev) => {
+                  ev.stopPropagation()
+                  setShowContact(!showContact)
+                }}>Contact</label>
+                {showContact &&
+                <div>
+                  <p className="card-text mb-0">
+                    <span>Phone:</span>
+                    <strong className="ml-2">{phone}</strong>
+                  </p>
+                  <p className="card-text mb-0">
+                    <span>Email:</span>
+                    <strong className="ml-2">{email}</strong>
+                  </p>
+                  <p className="card-text mb-0">
+                    <span>Agent:</span>
+                    <strong className="ml-2">{agent}</strong>
+                  </p>
+                </div>}
+              </div>
             </div>
             {skipped && !USER_TYPE.IS_CLIENT() && false && <small>&nbsp;&nbsp;skipped</small>}
             <span className="ml-auto myfeedback-icon mt-1">
               {MyFeedbackIcon}
             </span>
           </div>
-          <label className={hideContact ? "d-none": "mb-0"} onClick={(ev) => {
-            ev.stopPropagation()
-            setShowContact(!showContact)
-          }}>Contact</label>
-          {showContact &&
-          <div className="mb-1">
-            <p className="card-text mb-0">Phone: <small>{phone}</small></p>
-            <p className="card-text mb-0">Email: <small>{email}</small></p>
-            <p className="card-text mb-0">Agent: <small>{agent}</small></p>
-          </div>}
           {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
             <div className="d-flex align-items-start">
               {feedbackBar}
@@ -395,6 +417,7 @@ const PersonCard = ({
                 <h5 className="mr-auto">{first_name} {last_name}</h5>
                 <ReactToPrint
                   pageStyle={"@page { padding: 50px 30px; }"}
+                  documentTitle={`${first_name} ${last_name}`}
                   trigger={() => {
                     return (
                       <label class="cursor-pointer">

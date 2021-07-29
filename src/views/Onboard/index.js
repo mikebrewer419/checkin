@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import useReactRouter from 'use-react-router'
+import Webcam from "react-webcam"
 import moment from 'moment'
 import {
   getStudioByUri,
@@ -9,6 +10,7 @@ import {
   static_root,
   temp_root
 } from '../../services'
+import { dataURLtoFile } from '../../utils'
 
 import './style.scss'
 
@@ -29,11 +31,14 @@ const Onboard = () => {
   const [submitting, setSubmitting] = useState(false)
   const [avatar64, setAvatar64] = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [cameraError, setCameraError] = useState(false)
 
   const [agent, setAgent] = useState('')
   const [actualCall, setActualCall] = useState(new Date())
   const [interviewNo, setInterviewNo] = useState(1)
   const [role, setRole] = useState('')
+
+  const webcamRef = useRef(null)
 
   useEffect(() => {
     const process = async () => {
@@ -45,6 +50,15 @@ const Onboard = () => {
     }
     process()
   }, [studio_uri, session_id])
+
+  const takePhoto = React.useCallback(
+    () => {
+      const imageSrc = webcamRef.current.getScreenshot()
+      const file = dataURLtoFile(imageSrc, `${new Date()}.jpg`)
+      setAvatarImg(file)
+    },
+    [webcamRef]
+  )
 
   const onSubmjit = (ev) => {
     ev.preventDefault()
@@ -152,7 +166,23 @@ const Onboard = () => {
         <div className="company-info">
           <h3>Check in to {studio.name}</h3>
           <div className="avatar-choose">
-            <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
+            {avatar64 ?
+              <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
+            :
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                forceScreenshotSourceSize
+                screenshotFormat="image/jpeg"
+                onUserMediaError={() => { setCameraError(true) }}
+                videoConstraints={{ 
+                  width: 4000,
+                  height: 4000,
+                  facingMode: "user"
+                }}
+                className="camera-wrapper"
+              />
+            }
             <input
               type="file"
               id="photo"
@@ -163,9 +193,27 @@ const Onboard = () => {
             {uploading && <div className="uploading">
               Uploading ...
             </div>}
+            <div className="d-flex justify-content-center">
+              {!cameraError && (!avatar64 ?
+                <button className="btn btn-secondary btn-sm mr-2" onClick={takePhoto}>
+                  Take Photo
+                </button>
+              :
+                <button className="btn btn-secondary btn-sm mr-2" onClick={() => {
+                  setAvatar64(null)
+                }}>
+                  Retake Photo
+                </button>
+              )}
+              <button className="btn btn-secondary btn-sm" onClick={() => {
+                document.querySelector('#photo').click()
+              }}>
+                Browse Photo
+              </button>
+            </div>
           </div>
           <div className="text-center mt-2">
-            {avatar64 ? 'Tap to change image' : 'Tap to capture/upload photo (this helps us know who you are and adds a photo to our log sheet)'}
+            Capture/Upload photo (this helps us know who you are and adds a photo to our log sheet)
           </div>
         </div>
         <div className="contact">
