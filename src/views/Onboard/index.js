@@ -173,6 +173,7 @@ const Onboard = () => {
                 audio={false}
                 ref={webcamRef}
                 forceScreenshotSourceSize
+                mirrored
                 screenshotFormat="image/jpeg"
                 onUserMediaError={() => { setCameraError(true) }}
                 videoConstraints={{ 
