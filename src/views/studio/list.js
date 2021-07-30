@@ -349,10 +349,9 @@ const StudioList = () => {
               <h4 className="mr-3">{studio.name}</h4>
               <label className="mr-3 mb-0">{studio.jitsi_meeting_id}</label>
               <div className="action-wrap">
-                <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
-                <FaTrash onClick={() => deleteStudioHandle(studio)}/>
+                <FaPen className="mr-1" onClick={() => setSelectedStudio(studio)}/>
                 <label
-                  className="ml-4 mb-0"
+                  className="mb-0"
                   onClick={() => {
                     setStudioCastingDirector(studio._id)
                     setSelectedCastingDirector(studio.casting_directors)

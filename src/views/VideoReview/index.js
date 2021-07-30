@@ -28,7 +28,7 @@ import Footer from '../../components/Footer'
 import './style.scss'
 import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
-import { VIDEO_REVIEW_PERMISSIONS, POSTINGPAGE_PERMISSIONS } from '../../constants'
+import { VIDEO_REVIEW_PERMISSIONS, POSTINGPAGE_PERMISSIONS, USER_TYPE } from '../../constants'
 import PersonCard from '../PostingPage/PersonCard'
 
 const itemWidth = 250
@@ -674,7 +674,7 @@ class VideoPage extends Component {
                                 >
                                   {video.is_archived ? <FaTeethOpen />: <FaArchive />}
                                 </label>}
-                                {video.is_archived && (
+                                {video.is_archived && USER_TYPE.IS_SUPER_ADMIN() && (
                                   <label
                                     className="ml-auto mb-0"
                                     onClick={() => this.handleVideoDelete(video._id)}
