@@ -31,7 +31,7 @@ import StudioForm from './form'
 import SessionForm from './SessionForm'
 import './style.scss'
 import Footer from '../../components/Footer'
-import { USER_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
+import { USER_TYPE, USER_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const host = window.location.origin
@@ -349,7 +349,10 @@ const StudioList = () => {
               <h4 className="mr-3">{studio.name}</h4>
               <label className="mr-3 mb-0">{studio.jitsi_meeting_id}</label>
               <div className="action-wrap">
-                <FaPen className="mr-1" onClick={() => setSelectedStudio(studio)}/>
+                <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
+                {USER_TYPE.IS_SUPER_ADMIN() && (
+                  <FaTrash className="mr-2" onClick={() => deleteStudioHandle(studio)}/>
+                )}
                 <label
                   className="mb-0"
                   onClick={() => {
@@ -412,7 +415,9 @@ const StudioList = () => {
                       setSelectedSession(session)
                       setStudioId(studio._id)
                     }}/>
-                    <FaTrash className="mr-4" onClick={() => handleSessionDelete(session, studio._id)}/>
+                    {USER_TYPE.IS_SUPER_ADMIN() && (
+                      <FaTrash className="mr-4" onClick={() => handleSessionDelete(session, studio._id)}/>
+                    )}
                     <FaCopy
                       className="mr-2" title="Copy Talent Email"
                       onClick={() => {
