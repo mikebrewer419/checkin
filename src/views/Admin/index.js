@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Modal, Image, Accordion  } from 'react-bootstrap'
 import { FaPlus, FaTrash, FaPencilAlt } from 'react-icons/fa';
+import { Editor } from '@tinymce/tinymce-react'
 import {
   static_root,
   listUsers,
   register,
   updateUserFields,
-  deleteUser
+  deleteUser,
+  getNotification,
+  updateNotification
 } from '../../services'
 import UserForm from './UserForm'
-import { USER_TYPES } from '../../constants'
+import { USER_TYPES, TINYMCE_KEY } from '../../constants'
 import './style.scss'
 
 let delayHandle = null
@@ -21,6 +24,9 @@ const Admin = () => {
   const [page, setPage] = useState(0)
   const [count, setCount] = useState(0)
   const [selectedUser, setSelectedUser] = useState(null)
+  const [notification, setNotification] = useState('')
+  const [showNotification, setShowNotification] = useState(false)
+  const editorRef = useRef(null)
   const perPage = 20
 
   const load = async () => {
@@ -28,6 +34,8 @@ const Admin = () => {
     const response = await listUsers(query, page * perPage, perPage)
     setUsers(response.users)
     setCount(response.count)
+    const n = await getNotification()
+    setNotification(n.notification)
     document.querySelector('.loading').classList.remove('show')
   }
 
@@ -52,6 +60,9 @@ const Admin = () => {
 
   const closeUserEdit = () => {
     setSelectedUser(null)
+  }
+  const closeNotification = () => {
+    setShowNotification(false)
   }
 
   const submitUser = async (data) => {
@@ -86,6 +97,14 @@ const Admin = () => {
           />
         </div>
         <div className="d-flex ml-auto">
+          <button
+            className="btn btn-primary mr-2 d-flex align-items-center"
+            onClick={() => {
+              setShowNotification(true)
+            }}
+          >Edit Notification Content</button>
+        </div>
+        <div className="d-flex ml-2">
           <button
             className="btn btn-primary mr-2 d-flex align-items-center"
             onClick={() => {
@@ -176,6 +195,59 @@ const Admin = () => {
           }}>{p + 1}</label>
         })}
       </div>
+      <Modal
+        show={!!showNotification}
+        onHide = {closeNotification}
+        size="xl"
+      >
+        <Modal.Header closeButton>
+          <h5 className="mb-0">
+            Set Notification Content
+          </h5>
+        </Modal.Header>
+        <Modal.Body>
+          <Editor
+            apiKey={TINYMCE_KEY}
+            onInit={(evt, editor) => editorRef.current = editor}
+            initialValue={notification}
+            init={{
+              height: '65vh',
+              menubar: false,
+              plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+              ],
+              toolbar: 'undo redo | formatselect | ' +
+              'bold italic backcolor | alignleft aligncenter ' +
+              'alignright alignjustify | bullist numlist outdent indent | ' +
+              'removeformat | help',
+              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+            }}
+          />
+          <div className="mt-2">
+            <button
+              className="btn btn-primary"
+              onClick={async () => {
+                const n = editorRef.current.getContent()
+                updateNotification(n)
+                setNotification(n)
+                setShowNotification(false)
+              }}
+            >
+              Save
+            </button>
+            <button
+              className="btn btn-text ml-2"
+              onClick={() => {
+                setShowNotification(false)
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
       <Modal
         show={!!selectedUser}
         onHide = {closeUserEdit}

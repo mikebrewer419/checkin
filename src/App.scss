@@ -145,6 +145,16 @@ body {
   animation-iteration-count: infinite;
   animation-timing-function: linear; 
 }
+
+.notification-modal .modal-dialog {
+  margin-left: auto;
+  margin-right: 20px;
+}
+.notification-modal .notification-content {
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
 @keyframes spin {
   from {
       transform:rotate(0deg);

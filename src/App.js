@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
-import { verityToken, getUser, super_admins } from './services'
+import { Modal } from 'react-bootstrap'
+import { verityToken, getUser, super_admins, getNotification } from './services'
 import Login from './views/Auth/Login'
 import ResetPasswordRequest from './views/Auth/ResetPasswordRequest'
 import ResetPassword from './views/Auth/ResetPassword'
@@ -25,6 +26,8 @@ import './App.scss'
 function App() {
   const [logo, setLogo] = useState('')
   const [email, setEmail] = useState({})
+  const [notification, setNotification] = useState({})
+  const [showNotification, setShowNotification] = useState(false)
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -33,7 +36,7 @@ function App() {
     if (window.location.pathname.indexOf('/message') !== -1) {
       return
     }
-    verityToken().then((email) => {
+    verityToken().then(async (email) => {
       console.log('email: ', email)
       setEmail(email)
       window.localStorage.setItem('email', email)
@@ -51,6 +54,10 @@ function App() {
       let chatScriptDom = document.createElement('script')
       chatScriptDom.src = '//fast.cometondemand.net/54561x_x782c3x_xcorex_xembedcode.js?v=7.48.6.1'
       document.body.appendChild(chatScriptDom)
+
+      const n = await getNotification()
+      setNotification(n)
+      setShowNotification(n.notification && `${n.updated_at}` !== window.localStorage.getItem('n_updated_at'))
     }, () => {
       if (window.location.pathname !== '/login') {
         if ([
@@ -98,6 +105,28 @@ function App() {
             <Route path="/" component={HomeBomponent} />
           </Switch>
         </Router>
+        <Modal
+          show={!!showNotification}
+          onHide = {() => { setShowNotification(false) }}
+          className="notification-modal"
+        >
+          <Modal.Header closeButton>
+            <h5 className="mb-0">
+              Feature Update
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="notification-content" dangerouslySetInnerHTML={{__html: notification.notification}} />
+            <div className="mt-2">
+              <button className="btn btn-primary" onClick={() => {
+                window.localStorage.setItem('n_updated_at', notification.updated_at)
+                setShowNotification(false)
+              }}>
+                Ok, Got it.
+              </button>
+            </div>
+          </Modal.Body>
+        </Modal>
       </IconContext.Provider>
     </GoogleReCaptchaProvider>
   );
