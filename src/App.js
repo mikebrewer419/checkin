@@ -55,7 +55,8 @@ function App() {
       chatScriptDom.src = '//fast.cometondemand.net/54561x_x782c3x_xcorex_xembedcode.js?v=7.48.6.1'
       document.body.appendChild(chatScriptDom)
 
-      const n = await getNotification()
+      let n = await getNotification()
+      n = n || {}
       setNotification(n)
       setShowNotification(n.notification && `${n.updated_at}` !== window.localStorage.getItem('n_updated_at'))
     }, () => {

@@ -34,7 +34,8 @@ const Admin = () => {
     const response = await listUsers(query, page * perPage, perPage)
     setUsers(response.users)
     setCount(response.count)
-    const n = await getNotification()
+    let n = await getNotification()
+    n = n || {}
     setNotification(n.notification)
     document.querySelector('.loading').classList.remove('show')
   }
