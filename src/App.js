@@ -23,11 +23,50 @@ import { USER_TYPES } from './constants'
 
 import './App.scss'
 
+const NotificationComponent = () => {
+  const [notification, setNotification] = useState({})
+  const [showNotification, setShowNotification] = useState(false)
+
+  const mounted = async () => {
+    let n = await getNotification()
+    n = n || {}
+    setNotification(n)
+    setShowNotification(n.notification && `${n.notification_updated_at}` !== window.localStorage.getItem('n_updated_at'))
+  }
+
+  useEffect(() => {
+    mounted()
+  }, [])
+
+  return (
+    <Modal
+      show={!!showNotification}
+      onHide = {() => { setShowNotification(false) }}
+      className="notification-modal"
+    >
+      <Modal.Header closeButton>
+        <h5 className="mb-0">
+          Feature Update
+        </h5>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="notification-content" dangerouslySetInnerHTML={{__html: notification.notification}} />
+        <div className="mt-2">
+          <button className="btn btn-primary" onClick={() => {
+            window.localStorage.setItem('n_updated_at', notification.notification_updated_at)
+            setShowNotification(false)
+          }}>
+            Ok, Got it.
+          </button>
+        </div>
+      </Modal.Body>
+    </Modal>
+  )
+}
+
 function App() {
   const [logo, setLogo] = useState('')
   const [email, setEmail] = useState({})
-  const [notification, setNotification] = useState({})
-  const [showNotification, setShowNotification] = useState(false)
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -54,11 +93,6 @@ function App() {
       let chatScriptDom = document.createElement('script')
       chatScriptDom.src = '//fast.cometondemand.net/54561x_x782c3x_xcorex_xembedcode.js?v=7.48.6.1'
       document.body.appendChild(chatScriptDom)
-
-      let n = await getNotification()
-      n = n || {}
-      setNotification(n)
-      setShowNotification(n.notification && `${n.notification_updated_at}` !== window.localStorage.getItem('n_updated_at'))
     }, () => {
       if (window.location.pathname !== '/login') {
         if ([
@@ -106,28 +140,7 @@ function App() {
             <Route path="/" component={HomeBomponent} />
           </Switch>
         </Router>
-        <Modal
-          show={!!showNotification}
-          onHide = {() => { setShowNotification(false) }}
-          className="notification-modal"
-        >
-          <Modal.Header closeButton>
-            <h5 className="mb-0">
-              Feature Update
-            </h5>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="notification-content" dangerouslySetInnerHTML={{__html: notification.notification}} />
-            <div className="mt-2">
-              <button className="btn btn-primary" onClick={() => {
-                window.localStorage.setItem('n_updated_at', notification.notification_updated_at)
-                setShowNotification(false)
-              }}>
-                Ok, Got it.
-              </button>
-            </div>
-          </Modal.Body>
-        </Modal>
+        <NotificationComponent />
       </IconContext.Provider>
     </GoogleReCaptchaProvider>
   );

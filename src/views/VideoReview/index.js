@@ -279,7 +279,7 @@ class VideoPage extends Component {
     this.loadVideos()
   }
 
-  async componentDidMount() {
+  mounted = async () => {
     this.setCount()
     this.session_id = this.props.match.params.session_id
     const studio_uri = this.props.match.params.uri
@@ -317,6 +317,10 @@ class VideoPage extends Component {
     })
 
     window.addEventListener('resize', this.setCount)
+  }
+
+  componentDidMount() {
+    this.mounted()
   }
 
   componentDidUpdate() {
