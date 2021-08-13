@@ -24,8 +24,8 @@ const Admin = () => {
   const [page, setPage] = useState(0)
   const [count, setCount] = useState(0)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [notification, setNotification] = useState('')
-  const [showNotification, setShowNotification] = useState(false)
+  const [notification, setNotification] = useState({})
+  const [showNotification, setShowNotification] = useState('')
   const editorRef = useRef(null)
   const perPage = 20
 
@@ -36,7 +36,7 @@ const Admin = () => {
     setCount(response.count)
     let n = await getNotification()
     n = n || {}
-    setNotification(n.notification)
+    setNotification(n)
     document.querySelector('.loading').classList.remove('show')
   }
 
@@ -63,7 +63,7 @@ const Admin = () => {
     setSelectedUser(null)
   }
   const closeNotification = () => {
-    setShowNotification(false)
+    setShowNotification('')
   }
 
   const submitUser = async (data) => {
@@ -86,6 +86,8 @@ const Admin = () => {
     setUserToDelete(null)
   }
 
+  const noticeTitle = showNotification && showNotification.split('_').map(n => n[0].toUpperCase() + n.slice(1)).join(' ')
+
   return (
     <div className="p-5 page-content">
       <div className="d-flex align-items-center mb-3">
@@ -101,7 +103,23 @@ const Admin = () => {
           <button
             className="btn btn-primary mr-2 d-flex align-items-center"
             onClick={() => {
-              setShowNotification(true)
+              setShowNotification('casting_director_notice')
+            }}
+          >Set Casting Director Notice</button>
+        </div>
+        <div className="d-flex ml-2">
+          <button
+            className="btn btn-primary mr-2 d-flex align-items-center"
+            onClick={() => {
+              setShowNotification('session_manager_notice')
+            }}
+          >Set Session Manager Notice</button>
+        </div>
+        <div className="d-flex ml-2">
+          <button
+            className="btn btn-primary mr-2 d-flex align-items-center"
+            onClick={() => {
+              setShowNotification('notification')
             }}
           >Edit Notification Content</button>
         </div>
@@ -203,14 +221,14 @@ const Admin = () => {
       >
         <Modal.Header closeButton>
           <h5 className="mb-0">
-            Set Notification Content
+            Set {noticeTitle}
           </h5>
         </Modal.Header>
         <Modal.Body>
           <Editor
             apiKey={TINYMCE_KEY}
             onInit={(evt, editor) => editorRef.current = editor}
-            initialValue={notification}
+            initialValue={notification[showNotification]}
             init={{
               height: '65vh',
               menubar: false,
@@ -231,8 +249,8 @@ const Admin = () => {
               className="btn btn-primary"
               onClick={async () => {
                 const n = editorRef.current.getContent()
-                updateNotification(n)
-                setNotification(n)
+                updateNotification({ [showNotification]: n })
+                setNotification({ ...notification, [showNotification]: n })
                 setShowNotification(false)
               }}
             >

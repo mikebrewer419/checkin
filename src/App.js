@@ -58,7 +58,7 @@ function App() {
       let n = await getNotification()
       n = n || {}
       setNotification(n)
-      setShowNotification(n.notification && `${n.updated_at}` !== window.localStorage.getItem('n_updated_at'))
+      setShowNotification(n.notification && `${n.notification_updated_at}` !== window.localStorage.getItem('n_updated_at'))
     }, () => {
       if (window.location.pathname !== '/login') {
         if ([
@@ -120,7 +120,7 @@ function App() {
             <div className="notification-content" dangerouslySetInnerHTML={{__html: notification.notification}} />
             <div className="mt-2">
               <button className="btn btn-primary" onClick={() => {
-                window.localStorage.setItem('n_updated_at', notification.updated_at)
+                window.localStorage.setItem('n_updated_at', notification.notification_updated_at)
                 setShowNotification(false)
               }}>
                 Ok, Got it.

@@ -23,6 +23,7 @@ import {
   twrGetStudioByTWRUri,
   twrFetchCheckInList,
   twrGetHeyjoeSessionRecords,
+  getNotification
 } from '../../services'
 import Footer from '../../components/Footer'
 import './style.scss'
@@ -38,6 +39,9 @@ const TABS = {
   VIDEOS: 'Videos',
   ARCHIVED: 'Archived'
 }
+let noticeField = ''
+let noticeUpdatedAtField = ''
+let noticeTitle = ''
 
 const user = getUser()
 
@@ -69,7 +73,9 @@ class VideoPage extends Component {
       selectedGroup: {},
       selectedTalentRecords: [],
       loadingTalentRecords: false,
-      sessionTalentOptions: []
+      sessionTalentOptions: [],
+      showNotification: '',
+      notification: {}
     }
   }
   
@@ -283,9 +289,27 @@ class VideoPage extends Component {
     if (!studio) { return }
     document.title = `${studio.name} Video Review`;
     this.props.setLogo(studio.logo)
+
+    let n = await getNotification()
+    n = n || {}
+    if (USER_TYPE.CASTING_DIRECTOR()) {
+      noticeField = 'casting_director_notice'
+    }
+    if (USER_TYPE.SESSION_MANAGER()) {
+      noticeField = 'session_manager_notice'
+    }
+    noticeTitle = noticeField && noticeField.split('_').map(n => n[0].toUpperCase() + n.slice(1)).join(' ')
+    noticeUpdatedAtField = `${noticeField}_updated_at`
+    let showNotification = ''
+    if (window.localStorage.getItem(noticeUpdatedAtField) !== n[noticeUpdatedAtField]) {
+      showNotification = noticeField
+    }
+
     this.setState({
       studio,
-      session
+      session,
+      showNotification,
+      notification: n
     }, async () => {
       await this.loadVideos()
       await this.loadPostingPages()
@@ -409,7 +433,9 @@ class VideoPage extends Component {
       newPostingPage,
       selectedTalentRecords,
       loadingTalentRecords,
-      sessionTalentOptions
+      sessionTalentOptions,
+      showNotification,
+      notification
     } = this.state
 
     let rows = []
@@ -874,6 +900,34 @@ class VideoPage extends Component {
               Submit
             </button>
           </Modal.Footer>
+        </Modal>
+        <Modal
+          show={!!showNotification}
+          onHide = {() => {
+            this.setState({
+              showNotification: ''
+            })
+          }}
+          className="notification-modal"
+        >
+          <Modal.Header closeButton>
+            <h5 className="mb-0">
+              {noticeTitle}
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="notification-content" dangerouslySetInnerHTML={{__html: notification[noticeField]}} />
+            <div className="mt-2">
+              <button className="btn btn-primary" onClick={() => {
+                window.localStorage.setItem(noticeUpdatedAtField, notification[noticeUpdatedAtField])
+                this.setState({
+                  showNotification: ''
+                })
+              }}>
+                Ok, Got it.
+              </button>
+            </div>
+          </Modal.Body>
         </Modal>
       </div>
     )
