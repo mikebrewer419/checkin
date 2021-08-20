@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import ThumbImage from '../../components/ThumbImage'
-import { FaCircle, FaMinus, FaUserSlash, FaPencilAlt, FaTimes } from 'react-icons/fa'
+import { FaCircle, FaMinus, FaUserSlash, FaPencilAlt, FaTimes, FaSms } from 'react-icons/fa'
 import { formatHour, formatTime } from '../../utils'
 
 const PersonCard = ({
@@ -33,7 +33,8 @@ const PersonCard = ({
   agent,
   testMode,
   isTwr = false,
-  twr_deleted
+  twr_deleted,
+  sendSms
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -87,6 +88,9 @@ const PersonCard = ({
             <p className="card-text mb-0">
               <span>Phone:</span>
               <strong className="ml-2">{phone}</strong>
+              <label onClick={sendSms} className="d-inline-flex mb-0 ml-2 cursor-pointer" title="Send SMS">
+                <FaSms />
+              </label>
             </p>
             <p className="card-text mb-0">
               <span>Email:</span>

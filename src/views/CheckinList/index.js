@@ -488,6 +488,16 @@ class List extends Component {
                   addToGroup={this.addToGroup}
                   leaveFromGroup={this.leaveFromGroup}
                   updateRecord={this.selectRecord}
+                  sendSms={() => {
+                    this.setState({
+                      message: {
+                        to: person.phone
+                      }
+                    })
+                    setTimeout(() => {
+                      document.querySelector('#body').focus()
+                    }, 200)
+                  }}
                   session_id={session._id}
                 />
               )
@@ -506,11 +516,23 @@ class List extends Component {
           </div>}
           <form
             onSubmit={this.onMessageSend}
-            className={this.state.error ? 'error sms-form' : 'sms-form'}
+            className={classnames({
+              'error': this.state.error,
+              'active': this.state.message.to,
+              'sms-form': true
+            })}
           >
             <div>
               <div className="d-flex justify-content-lg-between">
                 <label htmlFor="to">To:</label>
+                {this.state.message.to && (
+                  <button className="btn ml-auto mr-2" onClick={(ev) => {
+                    ev.preventDefault()
+                    this.setState({ message: { to: '', body: '' } })
+                  }}>
+                    Cancel
+                  </button>
+                )}
                 <button className="btn px-2 py-0" type="submit" disabled={this.state.submitting}>
                   Send message
                 </button>
