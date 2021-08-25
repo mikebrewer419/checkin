@@ -16,12 +16,14 @@ import {
   removeRecordFromCurrentGroup,
   getCurrentGroup,
   finishCurrentGroup,
-  twr_host
+  twr_host,
+  getNotification
 } from '../../services'
 import AvatarModal from '../../components/avatar-modal'
 import './style.scss'
 import { formatHour, formatTime } from '../../utils'
 import PersonCard from './PersonCard'
+import { USER_TYPE } from '../../constants'
 import TwrList from './twr'
 
 const messages = [
@@ -32,6 +34,10 @@ const messages = [
 ]
 
 const deletedMessageText = 'You arrived at the wrong time. Please come back at the correct call time and check in again.'
+
+let noticeField = ''
+let noticeUpdatedAtField = ''
+let noticeTitle = ''
 
 class List extends Component {
 
@@ -50,7 +56,9 @@ class List extends Component {
       confirmClearSession: false,
       timeOptions: [],
       csvLoading: false,
-      listTab: 'heyjoe'
+      listTab: 'heyjoe',
+      showNotification: '',
+      notification: {}
     }
     this.interval = 5000 // query api every 30 seconds
     this.messages = this.props.messages || messages
@@ -58,6 +66,18 @@ class List extends Component {
   }
 
   componentDidMount() {
+    this.mounted()
+  }
+
+  componentDidUpdate() {
+    if (this.state.loading) {
+      document.querySelector('.loading').classList.add('show')
+    } else {
+      document.querySelector('.loading').classList.remove('show')
+    }
+  }
+
+  mounted = async () => {
     this.fetchData()
     setInterval(() => {
       this.fetchData()
@@ -75,17 +95,27 @@ class List extends Component {
         text: time.format('hh:mm a')
       })
     }
-    this.setState({
-      timeOptions
-    })
-  }
 
-  componentDidUpdate() {
-    if (this.state.loading) {
-      document.querySelector('.loading').classList.add('show')
-    } else {
-      document.querySelector('.loading').classList.remove('show')
+    let n = await getNotification()
+    n = n || {}
+    if (USER_TYPE.CASTING_DIRECTOR()) {
+      noticeField = 'casting_director_notice'
     }
+    if (USER_TYPE.SESSION_MANAGER()) {
+      noticeField = 'session_manager_notice'
+    }
+    noticeTitle = noticeField && noticeField.split('_').map(n => n[0].toUpperCase() + n.slice(1)).join(' ')
+    noticeUpdatedAtField = `${noticeField}_updated_at`
+    let showNotification = ''
+    if (window.localStorage.getItem(noticeUpdatedAtField) !== n[noticeUpdatedAtField]) {
+      showNotification = noticeField
+    }
+
+    this.setState({
+      timeOptions,
+      showNotification,
+      notification: n
+    })
   }
 
   fetchData = async () => {
@@ -364,7 +394,15 @@ class List extends Component {
 
   render() {
     const { studio, session, testMode, reloadSession } = this.props
-    const { timeOptions, selectedRecord, confirmClearSession, csvLoading, listTab } = this.state
+    const {
+      timeOptions,
+      selectedRecord,
+      confirmClearSession,
+      csvLoading,
+      listTab, 
+      showNotification,
+      notification
+    } = this.state
     let twrOnboardLink = (session.twr || '').split('/')
     twrOnboardLink.splice(1, 0, 'onboard')
     twrOnboardLink = twrOnboardLink.join('/')
@@ -675,6 +713,35 @@ class List extends Component {
             this.fetchData()
           }}
         />}
+
+        <Modal
+          show={!!showNotification}
+          onHide = {() => {
+            this.setState({
+              showNotification: ''
+            })
+          }}
+          className="notification-modal"
+        >
+          <Modal.Header closeButton>
+            <h5 className="mb-0">
+              {noticeTitle}
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="notification-content" dangerouslySetInnerHTML={{__html: notification[noticeField]}} />
+            <div className="mt-2">
+              <button className="btn btn-primary" onClick={() => {
+                window.localStorage.setItem(noticeUpdatedAtField, notification[noticeUpdatedAtField])
+                this.setState({
+                  showNotification: ''
+                })
+              }}>
+                Ok, Got it.
+              </button>
+            </div>
+          </Modal.Body>
+        </Modal>
       </div>
     )
   }
