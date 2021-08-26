@@ -183,7 +183,7 @@ const StudioList = () => {
     }
     const formData = new FormData()
     formData.append('name', name)
-    if (session.twr) {
+    if (typeof session.twr === 'string') {
       formData.append('twr', session.twr)
     }
     if (session.size_card_pdf) {

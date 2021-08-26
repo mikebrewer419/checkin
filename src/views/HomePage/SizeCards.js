@@ -45,11 +45,13 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   const fetchTWRStudio = async () => {
     const { twr } = session
     const parsed = twr.match(/(\w+)\/(\w+)/)
-    const twrDomain = parsed[1]
-    const twrStudioUri = parsed[2]
-    const room = await twrGetTWRByDomain(twrDomain)
-    const result = await twrGetStudioByTWRUri(room._id, twrStudioUri)
-    setTwrStudio(result._id)
+    if (parsed) {
+      const twrDomain = parsed[1]
+      const twrStudioUri = parsed[2]
+      const room = await twrGetTWRByDomain(twrDomain)
+      const result = await twrGetStudioByTWRUri(room._id, twrStudioUri)
+      setTwrStudio(result._id)
+    }
   }
 
   const fetchTWRCandidates = async () => {
@@ -205,6 +207,10 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
           setYesPickShow(true)
           break
       }
+      if (session.size_card_pdf || session.schedule_pdf) {
+        const headerUserMenu = document.querySelector('.header-user-menu')
+        document.querySelector('.session-files-div').style.right = `calc(100vw - ${headerUserMenu.offsetLeft}px)`
+      }
     }
   }, [session, user])
 
@@ -268,7 +274,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
             />
           </div>
         </div>
-        <div className="d-flex align-items-end">
+        <div className="d-flex align-items-end mr-auto">
           <div className="mr-2">
             <label>Roles</label>
             <select
@@ -347,15 +353,15 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
             </div>
           </div>
         </div>
-        <div className="d-flex ml-auto">
+        <div className="d-flex session-files-div">
           {typeof session.size_card_pdf === 'string' && (
-            <a href={`${static_root}${session.size_card_pdf}`} target="_blank" className="btn btn-default ml-2">
+            <a href={`${static_root}${session.size_card_pdf}`} target="_blank" className="btn btn-default text-white ml-2">
               <FaFilePdf className="mr-2" />
               Size Card PDF
             </a>
           )}
           {typeof session.schedule_pdf === 'string' && (
-            <a href={`${static_root}${session.schedule_pdf}`} target="_blank" className="btn btn-default">
+            <a href={`${static_root}${session.schedule_pdf}`} target="_blank" className="btn btn-default text-white">
               <FaFilePdf className="mr-2" />
               Schedule PDF
             </a>

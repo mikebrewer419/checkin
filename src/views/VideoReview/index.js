@@ -89,11 +89,13 @@ class VideoPage extends Component {
     if (!this.state.session.twr) { return }
     const { twr } = this.state.session
     const parsed = twr.match(/(\w+)\/(\w+)/)
-    const twrDomain = parsed[1]
-    const twrStudioUri = parsed[2]
-    const room = await twrGetTWRByDomain(twrDomain)
-    const result = await twrGetStudioByTWRUri(room._id, twrStudioUri)
-    this.setState({ twrStudio: result._id }, () => { this.loadVideos() })
+    if (parsed) {
+      const twrDomain = parsed[1]
+      const twrStudioUri = parsed[2]
+      const room = await twrGetTWRByDomain(twrDomain)
+      const result = await twrGetStudioByTWRUri(room._id, twrStudioUri)
+      this.setState({ twrStudio: result._id }, () => { this.loadVideos() })
+    }
   }
 
   fetchTWRCandidates = async () => {

@@ -43,15 +43,17 @@ class TwrList extends React.Component {
   loadStudio = async () => {
     const { twr} = this.props
     const parsed = twr.match(/(\w+)\/(\w+)/)
-    const twrDomain = parsed[1]
-    const twrStudioUri = parsed[2]
-    const room = await twrGetTWRByDomain(twrDomain)
-    const studio = await twrGetStudioByTWRUri(room._id, twrStudioUri)
-    this.setState({
-      twrStudio: studio,
-      twrRoom: room
-    })
-    loadHandler = setInterval(this.loadCandidates, 5000)
+    if (parsed) {
+      const twrDomain = parsed[1]
+      const twrStudioUri = parsed[2]
+      const room = await twrGetTWRByDomain(twrDomain)
+      const studio = await twrGetStudioByTWRUri(room._id, twrStudioUri)
+      this.setState({
+        twrStudio: studio,
+        twrRoom: room
+      })
+      loadHandler = setInterval(this.loadCandidates, 5000)
+    }
   }
 
   loadCandidates = async () => {

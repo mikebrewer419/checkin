@@ -64,7 +64,7 @@ const Header = (props) => {
       </Navbar.Brand>
       <h3 id="header-title">
       </h3>
-      <Dropdown className="ml-auto">
+      <Dropdown className="ml-auto header-user-menu">
         <Dropdown.Toggle variant="danger" id="dropdown-basic">
           {/* <Image src="https://loremflickr.com/50/50" roundedCircle /> */}
           <span className="ml-2 h5">{user.email}</span>
