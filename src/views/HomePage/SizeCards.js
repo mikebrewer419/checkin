@@ -225,7 +225,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
       userFeedback = [(c.feedbacks || {})[userFilter]]
     }
     return (filter === "all" || userFeedback.includes(filter))
-      && (roleFilter === 'all' || c.role === roleFilter)
+      && (roleFilter === 'all' || c.role.trim() === roleFilter.trim())
   })
   const { twr_sync } = session
 
