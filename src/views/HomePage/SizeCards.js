@@ -33,6 +33,8 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   const [ yesPickShow, setYesPickShow ] = useState(false)
   const [ listTab, setListTab ] = useState('heyjoe')
   const [ twrStudio, setTwrStudio ] = useState(null)
+  const [ roles, setRoles ] = useState([])
+  const [ roleFilter, setRoleFilter ] = useState('all')
 
 
   const [ heyjoeCandidates, setHeyjoeCandidates ] = useState([])
@@ -164,15 +166,21 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
 
   useEffect(() => {
     const fbkUsers = []
-    candidates.map(c => Object.keys(c.feedbacks || {})).forEach(fs => {
+    const rs = []
+    candidates.map(c => {
+      if (!rs.includes(c.role)) {
+        rs.push(c.role)
+      }
+      return Object.keys(c.feedbacks || {})
+    }).forEach(fs => {
       fs.forEach(f => {
-        if (fbkUsers.includes(f)) {
-          return
+        if (!fbkUsers.includes(f)) {
+          fbkUsers.push(f)
         }
-        fbkUsers.push(f)
       })
     })
     setFeedbackUsers(fbkUsers)
+    setRoles(rs.sort((a, b) => a.localeCompare(b)))
   }, [candidates])
 
   useEffect(() => {
@@ -216,13 +224,14 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
     } else {
       userFeedback = [(c.feedbacks || {})[userFilter]]
     }
-    return filter === "all" || userFeedback.includes(filter)
+    return (filter === "all" || userFeedback.includes(filter))
+      && (roleFilter === 'all' || c.role === roleFilter)
   })
   const { twr_sync } = session
 
   return (
     <div>
-      <div className="mt-3 pl-3 no-print d-flex">
+      <div className="mt-3 pl-3 no-print d-flex align-items-end">
         <div className="mr-auto d-flex">
           <button
             className="btn btn-default"
@@ -259,8 +268,29 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
             />
           </div>
         </div>
-        <div className="d-flex">
+        <div className="d-flex align-items-end">
           <div className="mr-2">
+            <label>Roles</label>
+            <select
+              key={roleFilter}
+              className="form-control"
+              value={roleFilter}
+              onChange={ev => {
+                setRoleFilter(ev.target.value)
+              }}
+            >
+              <option key="all" value="all">
+                All
+              </option>
+              {roles.map(role => (
+                <option key={role}>
+                  {role || '--no role--'}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mr-2">
+            <label>Users</label>
             <select
               key={userFilter}
               className="form-control"
@@ -279,38 +309,43 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
               ))}
             </select>
           </div>
-          <button
-            className={"btn " + (filter === 'all' ? 'btn-primary' : 'btn-default')}
-            onClick={() => {
-              setFilter('all')
-            }}
-          >
-            All
-          </button>
-          <button
-            className={"btn " + (filter === 'yes' ? 'btn-primary' : 'btn-default')}
-            onClick={() => {
-              setFilter('yes')
-            }}
-          >
-            Yes
-          </button>
-          <button
-            className={"btn " + (filter === 'no' ? 'btn-primary' : 'btn-default')}
-            onClick={() => {
-              setFilter('no')
-            }}
-          >
-            No
-          </button>
-          <button
-          className={"btn " + (filter === 'maybe' ? 'btn-primary' : 'btn-default')}
-          onClick={() => {
-            setFilter('maybe')
-          }}
-        >
-          Maybe
-        </button>
+          <div className="d-flex flex-column">
+            <label>Feedbacks</label>
+            <div>
+              <button
+                className={"btn " + (filter === 'all' ? 'btn-primary' : 'btn-default')}
+                onClick={() => {
+                  setFilter('all')
+                }}
+              >
+                All
+              </button>
+              <button
+                className={"btn " + (filter === 'yes' ? 'btn-primary' : 'btn-default')}
+                onClick={() => {
+                  setFilter('yes')
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className={"btn " + (filter === 'no' ? 'btn-primary' : 'btn-default')}
+                onClick={() => {
+                  setFilter('no')
+                }}
+              >
+                No
+              </button>
+              <button
+                className={"btn " + (filter === 'maybe' ? 'btn-primary' : 'btn-default')}
+                onClick={() => {
+                  setFilter('maybe')
+                }}
+              >
+                Maybe
+              </button>
+            </div>
+          </div>
         </div>
         <div className="d-flex ml-auto">
           {typeof session.size_card_pdf === 'string' && (

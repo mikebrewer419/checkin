@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import classnames from 'classnames'
 import { FaDownload, FaStickyNote, FaFilm, FaListOl, FaTimes, FaSpinner } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
@@ -58,7 +59,8 @@ class List extends Component {
       csvLoading: false,
       listTab: 'heyjoe',
       showNotification: '',
-      notification: {}
+      notification: {},
+      roles: []
     }
     this.interval = 5000 // query api every 30 seconds
     this.messages = this.props.messages || messages
@@ -124,8 +126,15 @@ class List extends Component {
     const currentGroup = await getCurrentGroup(session._id) || {}
     this.props.setGroupCandidates(currentGroup.records || [])
     this.props.setCandidates(candidates || [])
+    const rs = []
+    candidates.forEach(c => {
+      if (!rs.includes(c.role)) {
+        rs.push(c.role)
+      }
+    })
     this.setState({
       candidates,
+      roles: rs,
       loading: false
     })
   }
@@ -401,7 +410,8 @@ class List extends Component {
       csvLoading,
       listTab, 
       showNotification,
-      notification
+      notification,
+      roles
     } = this.state
     let twrOnboardLink = (session.twr || '').split('/')
     twrOnboardLink.splice(1, 0, 'onboard')
@@ -653,23 +663,18 @@ class List extends Component {
             </h5>
           </Modal.Header>
           <Modal.Body>
-            {selectedRecord && (
-              <div>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={selectedRecord.role}
-                  onChange={ev => {
-                    this.setState({
-                      selectedRecord: {
-                        ...selectedRecord,
-                        role: ev.target.value
-                      }
-                    })
-                  }}
-                />
-              </div>
-            )}
+            <RoleEditor
+              selectedRecord={selectedRecord}
+              roles={roles}
+              setRole={text => {
+                this.setState({
+                  selectedRecord: {
+                    ...selectedRecord,
+                    role: text
+                  }
+                })
+              }}
+            />
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -745,6 +750,38 @@ class List extends Component {
       </div>
     )
   }
+}
+
+const RoleEditor = ({
+  selectedRecord,
+  roles,
+  setRole
+}) => {
+  if (!selectedRecord) {
+    return null
+  }
+  return (
+    <div>
+      <AsyncTypeahead
+        key="role-select"
+        className="mb-3"
+        defaultSelected={[selectedRecord.role]}
+        onChange={value => {
+          if (value[0]) {
+            setRole(value[0])
+          }
+        }}
+        onSearch={text => {
+          setRole(text)
+        }}
+        minLength={1}
+        options={roles}
+        paginate={false}
+        maxResults={5}
+        placeholder=""
+      />
+    </div>
+  )
 }
 
 export default List
