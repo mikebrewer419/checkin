@@ -8,9 +8,11 @@ import {
   onboardUser,
   uploadImage,
   static_root,
-  temp_root
+  temp_root,
+  getSessionRoles
 } from '../../services'
 import { dataURLtoFile } from '../../utils'
+import { RoleEditor } from '../CheckinList'
 
 import './style.scss'
 
@@ -38,15 +40,19 @@ const Onboard = () => {
   const [interviewNo, setInterviewNo] = useState(1)
   const [role, setRole] = useState('')
 
+  const [roles, setRoles] = useState([])
+
   const webcamRef = useRef(null)
 
   useEffect(() => {
     const process = async () => {
       const studio = await getStudioByUri(studio_uri)
       const session = await getOneSession(session_id)
+      const rs = await getSessionRoles(session_id)
       document.title = `${studio.name} Check In`;
       setStudio(studio)
       setSession(session)
+      setRoles(rs)
     }
     process()
   }, [studio_uri, session_id])
@@ -227,6 +233,7 @@ const Onboard = () => {
                 type="text"
                 name="firstname"
                 id="firstname"
+                className="form-control"
                 required
               />
             </p>
@@ -238,6 +245,7 @@ const Onboard = () => {
                 type="text"
                 name="lastname"
                 id="lastname"
+                className="form-control"
                 required
               />
             </p>
@@ -250,6 +258,7 @@ const Onboard = () => {
                 type="email"
                 name="email"
                 id="email"
+                className="form-control"
                 required
               />
             </p>
@@ -261,6 +270,7 @@ const Onboard = () => {
                 type="text"
                 name="phone"
                 id="phone"
+                className="form-control"
                 required
               />
             </p>
@@ -272,16 +282,17 @@ const Onboard = () => {
                 type="text"
                 name="agent"
                 id="agent"
+                className="form-control"
               />
             </p>
             <p>
               <label>Role</label>
-              <input
-                value={role}
-                onChange={ev => setRole(ev.target.value)}
-                type="text"
-                name="role"
-                id="role"
+              <RoleEditor
+                selectedRecord={{role: ''}}
+                roles={roles}
+                setRole={text => {
+                  setRole(text)
+                }}
               />
             </p>
             <p>
@@ -291,6 +302,7 @@ const Onboard = () => {
                 onChange={ev => setInterviewNo(ev.target.value)}
                 name="interviewNo"
                 id="interviewNo"
+                className="form-control"
               >
                 <option>1</option>
                 <option>2</option>
@@ -305,6 +317,7 @@ const Onboard = () => {
                 onChange={ev => setActualCall(ev.target.value)}
                 name="actualCall"
                 id="actualCall"
+                className="form-control"
               >
                 {timeOptions.map(time => (
                   <option
@@ -322,6 +335,7 @@ const Onboard = () => {
                 type="text"
                 name="sagNumber"
                 id="sagNumber"
+                className="form-control"
               />
               <label className="text-secondary">
                 If Union, please enter your SAG Number

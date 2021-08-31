@@ -108,3 +108,8 @@ export const updateSessionFeedbacks = async (id, restrict) => {
   })
   return await resp.json()
 }
+
+export const getSessionRoles = async (id) => {
+  const resp = await fetch(`${api_host}/sessions/roles/${id}`)
+  return await resp.json()
+}

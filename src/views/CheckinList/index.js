@@ -128,7 +128,7 @@ class List extends Component {
     this.props.setCandidates(candidates || [])
     const rs = []
     candidates.forEach(c => {
-      if (!rs.includes(c.role)) {
+      if (c.role && !rs.includes(c.role)) {
         rs.push(c.role)
       }
     })
@@ -752,7 +752,7 @@ class List extends Component {
   }
 }
 
-const RoleEditor = ({
+export const RoleEditor = ({
   selectedRecord,
   roles,
   setRole
@@ -763,6 +763,8 @@ const RoleEditor = ({
   return (
     <div>
       <AsyncTypeahead
+        id="role"
+        isLoading={false}
         key="role-select"
         className="mb-3"
         defaultSelected={[selectedRecord.role]}
