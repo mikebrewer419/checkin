@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './style.scss'
+import { NotificationComponent } from '../../App'
 
 const ClientHomePage = () => {
   const [session, setSession] = useState('')
@@ -23,6 +24,10 @@ const ClientHomePage = () => {
       >
         Go
       </button>
+      <NotificationComponent
+        notificationField="client_notice"
+        notificationUpdateAtField="client_notice_updated_at"
+      />
     </div>
   )
 }

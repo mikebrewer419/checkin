@@ -103,6 +103,14 @@ const Admin = () => {
           <button
             className="btn btn-primary mr-2 d-flex align-items-center"
             onClick={() => {
+              setShowNotification('client_notice')
+            }}
+          >Set Client Notice</button>
+        </div>
+        <div className="d-flex ml-2">
+          <button
+            className="btn btn-primary mr-2 d-flex align-items-center"
+            onClick={() => {
               setShowNotification('casting_director_notice')
             }}
           >Set Casting Director Notice</button>

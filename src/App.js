@@ -23,7 +23,7 @@ import { USER_TYPES } from './constants'
 
 import './App.scss'
 
-const NotificationComponent = () => {
+export const NotificationComponent = ({ notificationField, notificationUpdateAtField }) => {
   const [notification, setNotification] = useState({})
   const [showNotification, setShowNotification] = useState(false)
 
@@ -31,7 +31,7 @@ const NotificationComponent = () => {
     let n = await getNotification()
     n = n || {}
     setNotification(n)
-    setShowNotification(n.notification && `${n.notification_updated_at}` !== window.localStorage.getItem('n_updated_at'))
+    setShowNotification(n[notificationField] && `${n[notificationUpdateAtField]}` !== window.localStorage.getItem('n_updated_at'))
   }
 
   useEffect(() => {
@@ -50,10 +50,10 @@ const NotificationComponent = () => {
         </h5>
       </Modal.Header>
       <Modal.Body>
-        <div className="notification-content" dangerouslySetInnerHTML={{__html: notification.notification}} />
+        <div className="notification-content" dangerouslySetInnerHTML={{__html: notification[notificationField]}} />
         <div className="mt-2">
           <button className="btn btn-primary" onClick={() => {
-            window.localStorage.setItem('n_updated_at', notification.notification_updated_at)
+            window.localStorage.setItem('n_updated_at', notification[notificationUpdateAtField])
             setShowNotification(false)
           }}>
             Ok, Got it.
@@ -140,7 +140,10 @@ function App() {
             <Route path="/" component={HomeBomponent} />
           </Switch>
         </Router>
-        <NotificationComponent />
+        <NotificationComponent
+          notificationField="notification"
+          notificationUpdateAtField="notification_updated_at"
+        />
       </IconContext.Provider>
     </GoogleReCaptchaProvider>
   );

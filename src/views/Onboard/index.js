@@ -13,6 +13,7 @@ import {
 } from '../../services'
 import { dataURLtoFile } from '../../utils'
 import { RoleEditor } from '../CheckinList'
+import { NotificationComponent } from '../../App'
 
 import './style.scss'
 
@@ -355,6 +356,10 @@ const Onboard = () => {
           </form>
         </div>
       </div>
+      <NotificationComponent
+        notificationField="client_notice"
+        notificationUpdateAtField="client_notice_updated_at"
+      />
     </div>
   )
 }

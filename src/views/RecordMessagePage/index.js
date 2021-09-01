@@ -6,10 +6,10 @@ import {
   getOneSession,
   getStudioInfo
 } from '../../services'
-import Linkify from 'linkifyjs/react'
 import { Button } from 'react-bootstrap'
 import { MEETING_HOST } from '../../constants'
 import './style.scss'
+import { NotificationComponent } from '../../App'
 
 const RecordMessagePage = ({ match }) => {
   const [message, setMessage] = useState('')
@@ -114,6 +114,10 @@ const RecordMessagePage = ({ match }) => {
           </iframe>
         </div>
       }
+      <NotificationComponent
+        notificationField="client_notice"
+        notificationUpdateAtField="client_notice_updated_at"
+      />
     </div>
   )
 }
