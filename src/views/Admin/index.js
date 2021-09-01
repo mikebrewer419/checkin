@@ -129,7 +129,7 @@ const Admin = () => {
             onClick={() => {
               setShowNotification('notification')
             }}
-          >Edit Notification Content</button>
+          >Set Global Notification Content</button>
         </div>
         <div className="d-flex ml-2">
           <button

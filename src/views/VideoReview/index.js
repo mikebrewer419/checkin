@@ -31,6 +31,7 @@ import ReactPlayer from 'react-player'
 import { saveAs } from 'file-saver'
 import { VIDEO_REVIEW_PERMISSIONS, POSTINGPAGE_PERMISSIONS, USER_TYPE } from '../../constants'
 import PersonCard from '../PostingPage/PersonCard'
+import SyncComponent from '../../components/sync'
 
 const itemWidth = 250
 const thumbWidth = 150
@@ -491,14 +492,7 @@ class VideoPage extends Component {
             <small><small>{session.name} Video review</small></small>
           </h2>
           <div className="d-flex align-items-center download-selected">
-            <select
-              className="mr-2 d-none"
-              value={this.state.date}
-              onChange={(ev) => this.handleDateChange(new Date(ev.target.value))}
-            >
-              <option>---</option>
-              {videoDates.map(date => <option key={date} value={date}>{date}</option>)}
-            </select>
+            <SyncComponent session={session} />
             <label
               className="ml-2 mb-0 btn btn-primary"
               onClick={async () => {
