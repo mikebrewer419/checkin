@@ -27,7 +27,8 @@ export const setAppSync = async (email, sessionId, sessionName, sync) => {
       sync,
       token,
       session_name: sessionName,
-      page_url: window.location.href
+      page_url: window.location.href,
+      origin: window.location.origin
     })
   })
   return await resp.json()
