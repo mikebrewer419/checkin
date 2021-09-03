@@ -16,7 +16,9 @@ const SYNC_STATUSES = {
     icon: <FaTimesCircle className="text-danger" />,
     label: 'App is not running',
     ActionBtn: () => (
-      <button className="btn btn-default btn-sm">
+      <button className="btn btn-default btn-sm" onClick={() => {
+        window.open('https://heyjoe.io/hey-joe-file-sync')
+      }}>
         <FaDownload />
       </button>
     )
