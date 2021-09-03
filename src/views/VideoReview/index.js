@@ -492,7 +492,7 @@ class VideoPage extends Component {
             <small><small>{session.name} Video review</small></small>
           </h2>
           <div className="d-flex align-items-center download-selected">
-            <SyncComponent session={session} />
+            <SyncComponent studio={studio} session={session} />
             <label
               className="ml-2 mb-0 btn btn-primary"
               onClick={async () => {

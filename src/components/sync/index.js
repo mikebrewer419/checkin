@@ -41,7 +41,7 @@ const SYNC_STATUSES = {
   },
 }
 
-const SyncComponent = ({ session }) => {
+const SyncComponent = ({ studio, session }) => {
   const [status, setStatus] = useState(SYNC_STATUSES.CHECKING)
   const { _id: sessionId, name: sessionName } = session
 
@@ -57,7 +57,7 @@ const SyncComponent = ({ session }) => {
   })
 
   const setSync = useCallback(async (sync) => {
-    await setAppSync(user.email, sessionId, sessionName, sync)
+    await setAppSync(user.email, sessionId, `${studio.name} - ${sessionName}`, sync)
     setStatus(SYNC_STATUSES.CHECKING)
     await init()
   })
