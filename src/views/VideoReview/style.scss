@@ -79,6 +79,7 @@
   .video-uploader {
     position: relative;
     background-color: $lightgray;
+    text-align: center;
     input {
       cursor: pointer;
       position: absolute;
@@ -143,5 +144,6 @@
     text-align: center;
     line-height: 19px;
     font-weight: bold;
+    box-shadow: 0 0 3px 1px lightgray;
   }
 }

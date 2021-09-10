@@ -718,9 +718,10 @@ class VideoPage extends Component {
                         <div
                           style={{
                             width: thumbWidth,
+                            minWidth: thumbWidth,
                             alignSelf: 'stretch'
                           }}
-                          className="pb-2"
+                          className="pb-4"
                         >
                           <div className="video-uploader pt-4 px-3 mr-2 h-100">
                             <span>Click to upload New Video</span>
