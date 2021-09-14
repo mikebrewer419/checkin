@@ -56,15 +56,18 @@ const RecordVideosModal = ({ record, closeModal }) => {
       <Modal.Body>
         <div className="row">
           <div className="col-12">
-            <ReactPlayer
-              controls={true}
-              url={static_root+selectedVideo.uri}
-              key="video"
-              autoPlay
-              id="active-player"
-              className="w-100 pb-3"
-              height="100%"
-            />
+            {selectedVideo
+              ? <ReactPlayer
+                controls={true}
+                url={static_root+selectedVideo.uri}
+                key="video"
+                autoPlay
+                id="active-player"
+                className="w-100 pb-3"
+                height="100%"
+              />
+              : <div className="text-center py-4">No Video Available.</div>
+            }
           </div>
           <div className="col-12">
             <div className='videos-select'>
