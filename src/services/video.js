@@ -100,3 +100,12 @@ export const getLastVideosTime = async (ids) => {
   })
   return await resp.json()
 }
+
+export const getManyByTalent = async (record_id) => {
+  const resp = await fetch(`${api_host}/videos/many-by-record/${record_id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}

@@ -46,12 +46,12 @@ const StudioForm = ({
       <div className="form-group">
         <label htmlFor="thankyou_message">Thankyou_message</label>
         <input required className="form-control form-control-sm"  type="text" name="thankyou_message" id="thankyou_message"
-          defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME, to join virtual lobby please enter 'TEST_MEETING_ID' into the app or click TEST_MEETING_LINK`} />
+          defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME. To join virtual lobby click the button below or enter 'TEST_MEETING_ID' into the app. You can always return to this page on any device with this link: TALENT_STATUS_LINK`} />
       </div>
       <div className="form-group">
         <label htmlFor="position_messages1">Position_messages 1</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[0]" id="position_messages1"
-          defaultValue={position_messages[0] || ` It's now your turn to audition, please enter 'MEETING_ID' or click MEETING_LINK`} />
+          defaultValue={position_messages[0] || `It's now your turn to audition, on desktop click the "Join Casting" button. On mobile, click MEETING_LINK or enter MEETING_ID. ***IMPORTANT: Click Ask to Join`} />
         <label htmlFor="position_messages2">Position_messages 2</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[1]" id="position_messages2"
           defaultValue={position_messages[1] || `You are on deck! We'll text you shortly to join the casting.`} />

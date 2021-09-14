@@ -14,10 +14,11 @@ import {
   twrGetOneHeyjoeRecord,
   twrGetTWRByDomain,
   twrGetOneRecord,
-  twrGetStudioByTWRUri
+  twrGetStudioByTWRUri,
 } from '../../services'
 import Footer from '../../components/Footer'
 import { POSTINGPAGE_PERMISSIONS } from '../../constants'
+import RecordVideosModal from './RecordVideos'
 import './sizecards.scss'
 import { FaFilePdf, FaPrint } from 'react-icons/fa'
 
@@ -35,7 +36,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   const [ twrStudio, setTwrStudio ] = useState(null)
   const [ roles, setRoles ] = useState([])
   const [ roleFilter, setRoleFilter ] = useState('all')
-
+  const [ videoRecord, setVideoRecord ] = useState(null)
 
   const [ heyjoeCandidates, setHeyjoeCandidates ] = useState([])
   const [ twrCandidates, setTwrCandidates ] = useState([])
@@ -223,6 +224,10 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
     updateSessionFeedbacks(session._id, restrict)
   }, [pickPrivate, yesPickShow])
 
+  const showRecordVideosModal = (record) => {
+    setVideoRecord(record)
+  }
+
   const filteredCandidates = candidates.filter(c => {
     let userFeedback = ''
     if (userFilter === 'all') {
@@ -400,6 +405,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
                 useSelfData={false}
                 session_id={session._id}
                 hideContact={!POSTINGPAGE_PERMISSIONS.CAN_VIEW_CONTACT()}
+                showRecordVideosModal={showRecordVideosModal}
               />
             </div>
           )
@@ -413,6 +419,12 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
 
         <div className="gap-filler"></div>
       </div>
+      <RecordVideosModal
+        record={videoRecord} 
+        closeModal={() => {
+          setVideoRecord(null)
+        }}
+      />
       <Footer force={true} />
     </div>
   )

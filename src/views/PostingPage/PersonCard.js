@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import classnames from 'classnames'
-import { FaComment, FaPrint } from 'react-icons/fa'
+import { FaComment, FaPrint, FaPlayCircle } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import ReactToPrint from 'react-to-print'
 import YesIcon from '../../components/icons/yes'
@@ -153,7 +153,9 @@ const PersonCard = ({
   session_id,
   twr_id,
   actual_call,
-  twr_deleted
+  twr_deleted,
+  groups,
+  showRecordVideosModal
 }) => {
   const [showContact, setShowContact] = useState(false)
   const [record, setRecord] = useState({})
@@ -264,6 +266,11 @@ const PersonCard = ({
           {number}
         </div>
       }
+      {groups.length > 0 && (
+        <div className="play-button" onClick={() => { showRecordVideosModal(record) }}>
+          <FaPlayCircle />
+        </div>
+      )}
       {topAvatar &&
         <ThumbImage
           src={avatar}
