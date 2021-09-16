@@ -32,6 +32,7 @@ import SessionForm from './SessionForm'
 import './style.scss'
 import Footer from '../../components/Footer'
 import { USER_TYPE, USER_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
+import { humanFileSize }  from '../../utils'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const host = window.location.origin
@@ -348,6 +349,7 @@ const StudioList = () => {
             <div className="d-flex align-items-lg-baseline">
               <h4 className="mr-3">{studio.name}</h4>
               <label className="mr-3 mb-0">{studio.jitsi_meeting_id}</label>
+              <label className="mr-3 mb-0">{humanFileSize(studio.size)}</label>
               <div className="action-wrap">
                 <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
                 {USER_TYPE.IS_SUPER_ADMIN() && (
