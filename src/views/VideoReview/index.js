@@ -636,7 +636,7 @@ class VideoPage extends Component {
                         <ReactPlayer
                           controls={true}
                           url={static_root+activeItem.uri}
-                          key="video"
+                          key={activeItem.uri}
                           autoPlay
                           id="active-player"
                           className="col-auto"

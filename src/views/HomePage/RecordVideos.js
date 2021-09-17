@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import classnames from 'classnames'
 import ReactPlayer from 'react-player'
 import { FaSpinner } from 'react-icons/fa'
@@ -30,6 +30,21 @@ const RecordVideosModal = ({ record, closeModal }) => {
     }
   }, [ record ])
 
+  useEffect(() => {
+    if (loading) { return }
+    setTimeout(() => {
+      const video = document.querySelector('#active-player video')
+      if (video) {
+        video.play()
+        video.addEventListener('ended', () => {
+          if (selectedIndex < recordVideos.length - 1) {
+            setSelectedIndex(selectedIndex + 1)
+          }
+        })
+      }
+    }, 1000)
+  }, [selectedIndex, loading])
+
   if (!record) {
     return null
   }
@@ -58,10 +73,9 @@ const RecordVideosModal = ({ record, closeModal }) => {
           <div className="col-12">
             {selectedVideo
               ? <ReactPlayer
+                key={selectedIndex}
                 controls={true}
                 url={static_root+selectedVideo.uri}
-                key="video"
-                autoPlay
                 id="active-player"
                 className="w-100 pb-3"
                 height="100%"

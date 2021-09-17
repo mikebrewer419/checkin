@@ -420,6 +420,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
         <div className="gap-filler"></div>
       </div>
       <RecordVideosModal
+        key={videoRecord && videoRecord._id}
         record={videoRecord} 
         closeModal={() => {
           setVideoRecord(null)
