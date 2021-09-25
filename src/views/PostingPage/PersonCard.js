@@ -223,6 +223,15 @@ const PersonCard = ({
     no: 0,
     maybe: 0
   }
+  let feedbackUsers = {
+    'yes': [],
+    'no': [],
+    'maybe': []
+  }
+  Object.keys(fbks).forEach(email => {
+    const v = fbks[email]
+    feedbackUsers[v] = feedbackUsers[v].concat(email)
+  })
 
   Object.values(fbks).forEach(value => {
     if (isNaN(feedbackCounts[value])) {
@@ -235,21 +244,21 @@ const PersonCard = ({
     <div key="yes" className={"feedback-item " + activeClass('yes')} onClick={(ev) => {
       ev.stopPropagation()
       setMyFeedback('yes')
-    }}>
+    }} title={feedbackUsers['yes'].join('\n')}>
       <YesIcon />
       <span>{feedbackCounts['yes']}</span>
     </div>,
     <div key="no" className={"feedback-item " + activeClass('no')} onClick={(ev) => {
       ev.stopPropagation()
       setMyFeedback('no')
-    }}>
+    }} title={feedbackUsers['no'].join('\n')}>
       <NoIcon />
       <span>{feedbackCounts['no']}</span>
     </div>,
     <div key="maybe" className={"feedback-item " + activeClass('maybe')} onClick={(ev) => {
       ev.stopPropagation()
       setMyFeedback('maybe')
-    }}>
+    }} title={feedbackUsers['maybe'].join('\n')}>
       <MaybeIcon />
       <span>{feedbackCounts['maybe']}</span>
     </div>
