@@ -461,7 +461,7 @@ const StudioList = () => {
           </div>
         ))}
       </div>
-      <div className="d-flex align-items-center justify-content-center">
+      <div className="d-flex align-items-center justify-content-center mb-4">
         {/* <select value={pageSize} onChange={ev => setPageSize(parseInt(ev.target.value))}>
           <option value={5}>5</option>
           <option value={10}>10</option>
@@ -473,7 +473,22 @@ const StudioList = () => {
             {'<'}
           </li>
           <li className="mx-2">
-            Page {page + 1} / {pageCount}
+            Page 
+            <select className="page-select ml-2 mr-1" onChange={ev => {
+              setPage(parseInt(ev.target.value))
+            }}>
+              {new Array(pageCount).fill().map((_, idx) => {
+                return (
+                  <option value={idx} selected={idx === page}>
+                    { idx + 1}
+                  </option>
+                )
+              })}
+            </select>
+             /
+            <span className="ml-1">
+              {pageCount}
+            </span>
           </li>
           <li onClick={() => setPage(Math.min(page + 1, pageCount - 1))}>
             {'>'}

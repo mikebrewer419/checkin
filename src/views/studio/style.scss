@@ -18,7 +18,11 @@
     cursor: pointer;
   }
 }
-
+.page-select {
+  border: none;
+  text-align: right;
+  appearance: none;
+}
 .react-datetime-picker__wrapper {
   border: none;
 }
