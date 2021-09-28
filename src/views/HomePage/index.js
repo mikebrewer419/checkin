@@ -153,6 +153,15 @@ class HomePage extends Component {
     this.setState({
       showChat: v
     })
+    if (!v) {
+      document.querySelector('#comet-chat').style.display = 'none'
+      this.chatWindowHandle = window.open(document.querySelector('#comet-chat iframe').src, 'MsgWindow', 'width=800px,height=400px;')
+    } else {
+      document.querySelector('#comet-chat').style.display = 'block'
+      if (this.chatWindowHandle) {
+        this.chatWindowHandle.close()
+      }
+    }
   }
 
   setShowList = (v) => {
@@ -239,6 +248,7 @@ class HomePage extends Component {
                 <button
                   className="btn border-bottom-0 toggle-bottom"
                   onClick={() => this.setshowChat(!showChat)}
+                  title="Click to toggle current group and chat window."
                 >
                   {!showChat ? '〉' :'〈' }
                 </button>
