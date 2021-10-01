@@ -19,25 +19,25 @@ const RecordMessagePage = ({ match }) => {
   const [studio, setStudio] = useState(null)
   const [showMeetingFrame, setShowMeetingFrame] = useState(false)
 
+  const fetchData = async () => {
+    const record_id = match.params.record_id
+    const newRecord = await getOneRecord(record_id)
+    const ss = await getOneSession(newRecord.session)
+    const st = await getStudioInfo(ss.studio)
+    setSession(ss)
+    setStudio(st)
+    setMessage(newRecord.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : newRecord.lastMessage)
+    setRecord(newRecord)
+    if (newRecord.seen && !record.seen) { setLiveMode(true) }
+  }
   useEffect(() => {
-    const fetchData = async () => {
-      const record_id = match.params.record_id
-      const record = await getOneRecord(record_id)
-      const ss = await getOneSession(record.session)
-      const st = await getStudioInfo(ss.studio)
-      setSession(ss)
-      setStudio(st)
-      setMessage(record.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : record.lastMessage)
-      setRecord(record)
-      if (record.seen) { setLiveMode(true) }
-    }
-    const intervalHandle = setInterval(() => {
+    const timeoutHandle = setTimeout(() => {
       fetchData()
     }, 5000)
     return () => {
-      clearInterval(intervalHandle)
+      clearTimeout(timeoutHandle)
     }
-  }, [match.params.record_id])
+  }, [record])
 
   if (!studio) {
     return <div className="message-page justify-content-center align-items-center">
@@ -47,7 +47,7 @@ const RecordMessagePage = ({ match }) => {
 
   const logo = studio && studio.logo ? static_root + studio.logo : require('../../assets/heyjoe.png')
   const meeting_id = !liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
-  const calledIn = record && record.groups.length > 0 || record.seen
+  const calledIn = (record && record.groups.length > 0) || record.seen
 
   const JoinButton =  <Button
     key="join-button"
@@ -58,10 +58,10 @@ const RecordMessagePage = ({ match }) => {
       'd-none': showMeetingFrame && !liveMode && !calledIn,
     })}
     onClick={() => {
+      console.log('calledIn: ', calledIn, record);
       if (!showMeetingFrame) {
         setShowMeetingFrame(!showMeetingFrame)
-      }
-      if (calledIn) {
+      } else if (calledIn) {
         setLiveMode(!liveMode)
       }
     }}
