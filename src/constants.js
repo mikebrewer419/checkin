@@ -46,6 +46,9 @@ const STUDIO_LIST_PERMISSIONS = {
   },
   CAN_CREATE_STUDIO: () => {
     return [USER_TYPES.SUPER_ADMIN, USER_TYPES.CASTING_DIRECTOR].includes(user.user_type)
+  },
+  CAN_ARCHIVE_STUDIO: () => {
+    return [USER_TYPES.SUPER_ADMIN].includes(user.user_type)
   }
 }
 

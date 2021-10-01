@@ -10,8 +10,8 @@ export const getAllStudios = async () => {
   return await resp.json()
 }
 
-export const getManyStudios = async (page = 0, page_size = 10, searchKey = '') => {
-  const resp = await fetch(`${api_host}/studio/get-many?skip=${page * page_size}&take=${page_size}&name=${searchKey}`, {
+export const getManyStudios = async (page = 0, page_size = 10, searchKey = '', archived = false) => {
+  const resp = await fetch(`${api_host}/studio/get-many?skip=${page * page_size}&take=${page_size}&name=${searchKey}&archived=${archived}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -60,6 +60,28 @@ export const createOrUpdateStudio = async (studio) => {
       'Authorization': `Bearer ${token}`
     },
     body: formData
+  })
+  return await resp.json()
+}
+
+export const archiveStudio = async (studio_id) => {
+  const resp = await fetch(`${api_host}/studio/${studio_id}/archive`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}
+
+export const unArchiveStudio = async (studio_id) => {
+  const resp = await fetch(`${api_host}/studio/${studio_id}/unarchive`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
   })
   return await resp.json()
 }

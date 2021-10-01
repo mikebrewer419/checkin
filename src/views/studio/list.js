@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive } from 'react-icons/fa';
 import moment from 'moment'
 import {
   static_root,
@@ -25,6 +25,8 @@ import {
   createSession,
   updateSession,
   deleteSession,
+  archiveStudio,
+  unArchiveStudio,
   getUser
 } from '../../services'
 import StudioForm from './form'
@@ -69,6 +71,7 @@ const StudioList = () => {
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false)
   const [confirmMessage, setConfirmMessage] = useState('')
   const [confirmCallback, setConfirmCallback] = useState(null)
+  const [archive, setArvhice] = useState(false)
 
   const [castingDirectors, setCastingDirectors] = useState([])
   const [studioCastingDirector, setStudioCastingDirector] = useState(0)
@@ -91,7 +94,7 @@ const StudioList = () => {
   }
 
   const fetchManyStudios = async () => {
-    const {studios, count} = await getManyStudios(page, pageSize, searchKey)
+    const {studios, count} = await getManyStudios(page, pageSize, searchKey, archive)
     setStudios(studios)
     setPageCount(Math.ceil(count / pageSize))
   }
@@ -255,12 +258,22 @@ const StudioList = () => {
     setConfirmCallback(() => callback)
   }
 
+  const handleStudioArchive = (studio) => {
+    const callback = async () => {
+      setSelectedStudio(null)
+      await archiveStudio(studio._id)
+      await fetchManyStudios()
+    }
+    setConfirmMessage(`Want to archive ${studio.name}?`)
+    setConfirmCallback(() => callback)
+  }
+
   useEffect(() => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
     fnTimeoutHandler = setTimeout(() => {
       fetchManyStudios()
     }, 1000)
-  }, [searchKey])
+  }, [searchKey, archive])
 
   useEffect(() => {
     document.title = `Heyjoe`;
@@ -329,10 +342,19 @@ const StudioList = () => {
         <label className="h1">
           Projects
         </label>
-        <div className="mr-auto ml-5">
+        <div className="ml-5">
           <input className="form-control" placeholder="Project name"
             value={searchKey} onChange={ev => setSearchKey(ev.target.value)}
           />
+        </div>
+        <div className="mr-auto ml-5">
+          <label className="mb-0 d-flex align-items-center">
+            <input type="checkbox" className="mr-2" onChange={(ev) => {
+              console.log('ev.target.checked: ', ev.target.checked);
+              setArvhice(ev.target.checked)
+            }} />
+            <span>Show Archive</span>
+          </label>
         </div>
         <div className="d-flex">
           {STUDIO_LIST_PERMISSIONS.CAN_CREATE_STUDIO() && (
@@ -352,9 +374,6 @@ const StudioList = () => {
               <label className="mr-3 mb-0">{humanFileSize(studio.size)}</label>
               <div className="action-wrap">
                 <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
-                {USER_TYPE.IS_SUPER_ADMIN() && (
-                  <FaTrash className="mr-2" onClick={() => deleteStudioHandle(studio)}/>
-                )}
                 <label
                   className="mb-0"
                   onClick={() => {
@@ -365,6 +384,21 @@ const StudioList = () => {
                   <FaLink title="Assign Director"/>
                   <span className="ml-1">{studio.casting_directors.map(c => c.email).join(',')}</span>
                 </label>
+                {STUDIO_LIST_PERMISSIONS.CAN_ARCHIVE_STUDIO() && (
+                  <label
+                    className="ml-5 text-danger"
+                    onClick={() => {
+                      handleStudioArchive(studio)
+                    }} 
+                  >
+                    <FaArchive title="Archive" />
+                  </label>
+                )}
+                {USER_TYPE.IS_SUPER_ADMIN() && (
+                  <label className="ml-3 text-danger">
+                    <FaTrash title="Delete" className="mr-2" onClick={() => deleteStudioHandle(studio)}/>
+                  </label>
+                )}
               </div>
               <label
                 className="ml-auto text-danger new-session-btn"
