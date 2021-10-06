@@ -29,6 +29,7 @@ const RecordMessagePage = ({ match }) => {
     setMessage(newRecord.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : newRecord.lastMessage)
     setRecord(newRecord)
     if (newRecord.seen && !record.seen) { setLiveMode(true) }
+    if (!newRecord.seen && record.seen) { setLiveMode(false) }
   }
   useEffect(() => {
     const timeoutHandle = setTimeout(() => {

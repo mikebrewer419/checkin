@@ -20,6 +20,7 @@ const PersonCard = ({
   actual_call,
   setSeen,
   setSkipped,
+  setUnSeen,
   signOut,
   removeRecord,
   addToGroup,
@@ -128,24 +129,24 @@ const PersonCard = ({
           </p>
         </div>
         <div className="d-flex mt-1">
-          {(!!showCallIn || (!seen && skipped)) && setSeen &&
-          <button className="btn px-2 py-0 btn-outline-dark" onClick={() => setSeen(_id)}>
-            Call In SMS
-          </button>}
-          {!!showCallIn && !skipped && setSkipped &&
-          <button className="btn px-2 py-0 btn-outline-dark ml-2" onClick={() => setSkipped(_id)}>
-            Skip
-          </button>}
-          <div className="ml-auto d-none">
-            {addToGroup && !testMode &&
-            <button className="d-none btn px-2 py-0 btn-outline-dark" onClick={() => addToGroup(_id)}>
-              Add to Group
-            </button>}
-            {leaveFromGroup && showLeave && !testMode &&
-            <button className="btn px-2 py-0 btn-outline-dark" onClick={() => leaveFromGroup(_id)}>
-              Remove from group
-            </button>}
-          </div>
+          {!seen && ( <img
+            onClick={() => setSeen(_id)}
+            className="callin-icon"
+            title="Call in"
+            src={require('../../assets/callin.png')}
+          /> )}
+          {seen && ( <img
+            onClick={() => setSeen(_id, seen)}
+            className="callin-icon"
+            title="Call in again"
+            src={require('../../assets/callinagain.png')}
+          />  )}
+          {seen && ( <img
+            onClick={() => setUnSeen(_id)}
+            className="callin-icon"
+            title="Call out"
+            src={require('../../assets/callout.png')}
+          />  )}
         </div>
       </div>
     </div>

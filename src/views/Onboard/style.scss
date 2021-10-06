@@ -76,10 +76,13 @@
   
   .contact form button,
   .contact form input,
-  .contact form textarea,
-  .contact form select {
+  .contact form textarea {
     width:100%;
     padding:1em;
+    border:1px solid #c9e6ff;
+  }
+  .contact form select {
+    width:100%;
     border:1px solid #c9e6ff;
   }
   

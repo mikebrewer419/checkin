@@ -168,7 +168,27 @@ class List extends Component {
     })
   }
 
-  setSeen = (id) => {
+  setUnSeen = (id) => {
+    const vm = this
+    const { studio } = this.props
+    this.setState({
+      loading: true
+    })
+    updateRecordField(id, {
+      seen: false
+    }).then(() => {
+      if (this.messages[1]) {
+        let idx = vm.state.candidates.findIndex(p => p._id === id)
+        sendMessage({
+          to: vm.state.candidates[idx].phone,
+          body: this.messages[1]
+        }, studio._id, id)
+      }
+      this.fetchData()
+    })
+  }
+
+  setSeen = (id, again = false) => {
     const vm = this
     const { studio } = this.props
     this.setState({
@@ -179,8 +199,19 @@ class List extends Component {
       call_in_time: new Date().toISOString()
     }).then(data => {
       let idx = vm.state.candidates.findIndex(p => p._id === id)
+      if (again) {
+        sendMessage({
+          to: vm.state.candidates[idx].phone,
+          body: this.messages[0]
+        }, studio._id, id)
+        this.fetchData()
+        return
+      }
       for(let i = 0; i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if ((!vm.state.candidates[idx].skipped || i === 0) && !!this.messages[i]) {
+        if (!vm.state.candidates[idx].seen
+          && (!vm.state.candidates[idx].skipped || i === 0)
+          && !!this.messages[i]
+        ) {
           sendMessage({
             to: vm.state.candidates[idx].phone,
             body: this.messages[i]
@@ -531,6 +562,7 @@ class List extends Component {
                   {...person}
                   setSeen={this.setSeen}
                   setSkipped={this.setSkipped}
+                  setUnSeen={this.setUnSeen}
                   removeRecord={this.removeRecord}
                   signOut={this.signOut}
                   addToGroup={this.addToGroup}
