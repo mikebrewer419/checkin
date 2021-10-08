@@ -31,29 +31,36 @@ const RecordMessagePage = ({ match }) => {
     if (newRecord.seen && !record.seen) { setLiveMode(true) }
     if (!newRecord.seen && record.seen) { setLiveMode(false) }
 
-    const ws = new WebSocket(WS_HOST)
-    ws.onopen = () => {
-      ws.send(JSON.stringify({
-        meta: 'join',
-        room: ss._id
-      }))
-    }
-
-    ws.onmessage = (event) => {
-      try {
-        const ev = JSON.parse(event.data)
-        console.log('ev: ', ev);
-        if (ev.type === 'record' && ev.data._id === record_id) {
-          const nr = ev.data
-          setMessage(nr.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : nr.lastMessage)
-          setRecord(nr)
-          if (nr.seen && !record.seen) { setLiveMode(true) }
-          if (!nr.seen && record.seen) { setLiveMode(false) }
+    const initWS = () => {
+      console.log('WS connecting')
+      const ws = new WebSocket(WS_HOST)
+      ws.onopen = () => {
+        ws.send(JSON.stringify({
+          meta: 'join',
+          room: ss._id
+        }))
+      }
+      ws.onclose = () => {
+        console.log('WS onclose')
+        initWS()
+      }
+      ws.onmessage = (event) => {
+        try {
+          const ev = JSON.parse(event.data)
+          console.log('ev: ', ev);
+          if (ev.type === 'record' && ev.data._id === record_id) {
+            const nr = ev.data
+            setMessage(nr.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : nr.lastMessage)
+            setRecord(nr)
+            if (nr.seen && !record.seen) { setLiveMode(true) }
+            if (!nr.seen && record.seen) { setLiveMode(false) }
+          }
+        } catch (err) {
+          console.log('socket msg handle err: ', err);
         }
-      } catch (err) {
-        console.log('socket msg handle err: ', err);
       }
     }
+    initWS()
   }
   useEffect(() => {
     fetchData()

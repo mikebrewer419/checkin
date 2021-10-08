@@ -154,56 +154,64 @@ class HomePage extends Component {
       }
     })
 
-    this.ws = new WebSocket(WS_HOST)
-    this.ws.onopen = () => {
-      this.ws.send(JSON.stringify({
-        meta: 'join',
-        room: session._id
-      }))
-      setInterval(() => {
-        console.log('ping')
-        this.ws.send(JSON.stringify({ meta: 'ping' }))
-        this.wstm = setTimeout(() => {
-          window.alert('Server disconnected. Please refresh your browser.')
-        }, 50000)
-      }, 30000)
-    }
-
-    this.ws.onmessage = (event) => {
-      try {
-        const ev = JSON.parse(event.data)
-        console.log('ev: ', ev);
-        switch (ev.type) {
-          case 'pong':
-            clearTimeout(this.wstm)
-            break
-          case 'group':
-            this.setState({
-              groupCandidates: ev.data.records
-            })
-            break
-          case 'record':
-            const rIdx = this.state.candidates.findIndex(r => r._id === ev.data._id)
-            if (rIdx === -1) {
+    const initWS = () => {
+      console.log('WS connecting')
+      this.ws = new WebSocket(WS_HOST)
+      this.ws.onopen = () => {
+        this.ws.send(JSON.stringify({
+          meta: 'join',
+          room: session._id
+        }))
+        setInterval(() => {
+          console.log('ping')
+          this.ws.send(JSON.stringify({ meta: 'ping' }))
+          this.wstm = setTimeout(() => {
+            console.log('WS disconnect detected')
+          }, 50000)
+        }, 30000)
+      }
+      this.ws.onclose = () => {
+        console.log('WS onclose')
+        initWS()
+      }
+      this.ws.onmessage = (event) => {
+        try {
+          const ev = JSON.parse(event.data)
+          console.log('ev: ', ev);
+          switch (ev.type) {
+            case 'pong':
+              clearTimeout(this.wstm)
+              break
+            case 'group':
               this.setState({
-                candidates: this.state.candidates.concat(ev.data)
+                groupCandidates: ev.data.records
               })
-            } else {
-              this.setState({
-                candidates: this.state.candidates.map((c, idx) => {
-                  return idx === rIdx ? {
-                    ...ev.data,
-                    number: idx + 1
-                  } : c
+              break
+            case 'record':
+              const rIdx = this.state.candidates.findIndex(r => r._id === ev.data._id)
+              if (rIdx === -1) {
+                this.setState({
+                  candidates: this.state.candidates.concat(ev.data)
                 })
-              })
-            }
-            break
+              } else {
+                this.setState({
+                  candidates: this.state.candidates.map((c, idx) => {
+                    return idx === rIdx ? {
+                      ...ev.data,
+                      number: idx + 1
+                    } : c
+                  })
+                })
+              }
+              break
+          }
+        } catch (err) {
+          console.log('socket msg handle err: ', err);
         }
-      } catch (err) {
-        console.log('socket msg handle err: ', err);
       }
     }
+
+    initWS()
   }
 
   reloadSession = async() => {
