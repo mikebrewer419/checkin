@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
 import moment from 'moment'
 import {
   static_root,
@@ -268,6 +268,11 @@ const StudioList = () => {
     setConfirmCallback(() => callback)
   }
 
+  const handleStudioUnArchive = async (studio) => {
+    await unArchiveStudio(studio._id)
+    await fetchManyStudios()
+  }
+
   useEffect(() => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
     fnTimeoutHandler = setTimeout(() => {
@@ -388,10 +393,14 @@ const StudioList = () => {
                   <label
                     className="ml-5 text-danger"
                     onClick={() => {
-                      handleStudioArchive(studio)
+                      if (!archive) {
+                        handleStudioArchive(studio)
+                      } else {
+                        handleStudioUnArchive(studio)
+                      }
                     }} 
                   >
-                    <FaArchive title="Archive" />
+                    {archive ? <FaBackward title="restore" /> : <FaArchive title="Archive" />}
                   </label>
                 )}
                 {USER_TYPE.IS_SUPER_ADMIN() && (
