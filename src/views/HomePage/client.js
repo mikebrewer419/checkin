@@ -178,9 +178,17 @@ class ClientHomePage extends Component {
             break
           case 'record':
             const rIdx = this.state.candidates.findIndex(r => r._id === ev.data._id)
+            const gIdx = this.state.groupCandidates.findIndex(r => r._id === ev.data._id)
+            const gcs = this.state.groupCandidates.map((r, idx) => {
+              return idx === gIdx ? {
+                ...ev.data,
+                number: idx + 1
+              } : r
+            })
             if (rIdx === -1) {
               this.setState({
-                candidates: this.state.candidates.concat(ev.data)
+                candidates: this.state.candidates.concat(ev.data),
+                groupCandidates: gcs
               })
             } else {
               this.setState({
@@ -189,7 +197,8 @@ class ClientHomePage extends Component {
                     ...ev.data,
                     number: idx + 1
                   } : c
-                })
+                }),
+                groupCandidates: gcs
               })
             }
             break
