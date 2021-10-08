@@ -160,6 +160,13 @@ class HomePage extends Component {
         meta: 'join',
         room: session._id
       }))
+      setInterval(() => {
+        console.log('ping')
+        this.ws.send(JSON.stringify({ meta: 'ping' }))
+        this.wstm = setTimeout(() => {
+          window.alert('Server disconnected. Please refresh your browser.')
+        }, 50000)
+      }, 30000)
     }
 
     this.ws.onmessage = (event) => {
@@ -167,6 +174,9 @@ class HomePage extends Component {
         const ev = JSON.parse(event.data)
         console.log('ev: ', ev);
         switch (ev.type) {
+          case 'pong':
+            clearTimeout(this.wstm)
+            break
           case 'group':
             this.setState({
               groupCandidates: ev.data.records

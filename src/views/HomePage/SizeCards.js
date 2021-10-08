@@ -179,7 +179,6 @@ const SizeCards = ({ studio, session, isClient = true, candidates,
     setVideoRecord(record)
   }
 
-  console.log('candidates: ', candidates);
   const filteredCandidates = candidates.filter(c => {
     let userFeedback = ''
     if (userFilter === 'all') {
