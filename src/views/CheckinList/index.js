@@ -46,7 +46,6 @@ class List extends Component {
     super(props)
     this.state = {
       loading: false,
-      candidates: [],
       message: {
         to: '',
         body: ''
@@ -71,19 +70,34 @@ class List extends Component {
     this.mounted()
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if (this.state.loading) {
       document.querySelector('.loading').classList.add('show')
     } else {
       document.querySelector('.loading').classList.remove('show')
     }
+    if (JSON.stringify(prevProps.candidates) !== JSON.stringify(this.props.candidates)) {
+      const { candidates } = this.props
+      const rs = []
+      candidates.forEach(c => {
+        if (c.role && !rs.includes(c.role)) {
+          rs.push(c.role)
+        }
+      })
+      this.setState({
+        candidates,
+        roles: rs,
+        loading: false
+      })
+    }
+    if (JSON.stringify(prevProps.groupCandidates) !== JSON.stringify(this.props.groupCandidates)) {
+      this.setState({
+        loading: false
+      })
+    }
   }
 
   mounted = async () => {
-    this.fetchData()
-    setInterval(() => {
-      this.fetchData()
-    }, this.interval)
     let timeOptions = []
     let time = moment().startOf('day')
     const endDayTime = moment().endOf('day')
@@ -120,25 +134,6 @@ class List extends Component {
     })
   }
 
-  fetchData = async () => {
-    const { session } = this.props
-    const candidates = await fetchCheckInList(session._id)
-    const currentGroup = await getCurrentGroup(session._id) || {}
-    this.props.setGroupCandidates(currentGroup.records || [])
-    this.props.setCandidates(candidates || [])
-    const rs = []
-    candidates.forEach(c => {
-      if (c.role && !rs.includes(c.role)) {
-        rs.push(c.role)
-      }
-    })
-    this.setState({
-      candidates,
-      roles: rs,
-      loading: false
-    })
-  }
-  
   setTwrRef = (elem) => {
     this.twrRef = elem
   }
@@ -152,17 +147,16 @@ class List extends Component {
     updateRecordField(id, {
       skipped: true
     }).then(data => {
-      let idx = vm.state.candidates.findIndex(p => p._id === id) + 1
-      for(let i = 1; i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].skipped && !!this.messages[i]) {
+      let idx = vm.props.candidates.findIndex(p => p._id === id) + 1
+      for(let i = 1; i < 4 && vm.props.candidates[idx] && idx < vm.props.candidates.length; i ++, idx ++) {
+        if (!vm.props.candidates[idx].skipped && !!this.messages[i]) {
           sendMessage({
-            to: vm.state.candidates[idx].phone,
+            to: vm.props.candidates[idx].phone,
             body: this.messages[i]
-          }, studio._id, vm.state.candidates[idx]._id)
+          }, studio._id, vm.props.candidates[idx]._id)
         }
       }
       console.log('skipped ', data)
-      this.fetchData()
     }).catch(err => {
       console.log("App -> setSkipped -> err", err)
     })
@@ -178,13 +172,12 @@ class List extends Component {
       seen: false
     }).then(() => {
       if (this.messages[1]) {
-        let idx = vm.state.candidates.findIndex(p => p._id === id)
+        let idx = vm.props.candidates.findIndex(p => p._id === id)
         sendMessage({
-          to: vm.state.candidates[idx].phone,
+          to: vm.props.candidates[idx].phone,
           body: this.messages[1]
         }, studio._id, id)
       }
-      this.fetchData()
     })
   }
 
@@ -198,28 +191,26 @@ class List extends Component {
       seen: true,
       call_in_time: new Date().toISOString()
     }).then(data => {
-      let idx = vm.state.candidates.findIndex(p => p._id === id)
+      let idx = vm.props.candidates.findIndex(p => p._id === id)
       if (again) {
         sendMessage({
-          to: vm.state.candidates[idx].phone,
+          to: vm.props.candidates[idx].phone,
           body: this.messages[0]
         }, studio._id, id)
-        this.fetchData()
         return
       }
-      for(let i = 0; i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length; i ++, idx ++) {
-        if (!vm.state.candidates[idx].seen
-          && (!vm.state.candidates[idx].skipped || i === 0)
+      for(let i = 0; i < 4 && vm.props.candidates[idx] && idx < vm.props.candidates.length; i ++, idx ++) {
+        if (!vm.props.candidates[idx].seen
+          && (!vm.props.candidates[idx].skipped || i === 0)
           && !!this.messages[i]
         ) {
           sendMessage({
-            to: vm.state.candidates[idx].phone,
+            to: vm.props.candidates[idx].phone,
             body: this.messages[i]
-          }, studio._id, vm.state.candidates[idx]._id)
+          }, studio._id, vm.props.candidates[idx]._id)
         }
       }
       console.log('updated ', data)
-      this.fetchData()
     }).catch(err => {
       console.log("App -> updateSeen -> err", err)
     })
@@ -236,27 +227,25 @@ class List extends Component {
       loading: true
     })
     removeCheckinRecord(id).then(data => {
-      this.fetchData().then(() => {
-        console.log('removed ', data)
-        if (!data.seen) {
+      console.log('removed ', data)
+      if (!data.seen) {
+        sendMessage({
+          to: Phone,
+          body: this.deletedMessageText
+        }, studio._id, id)
+      }
+      let idx = vm.props.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.props.candidates.length
+      for(let i = 1;
+          i < 4 && vm.props.candidates[idx] && idx < vm.props.candidates.length
+          && removedIdx <= idx;
+          i ++, idx ++) {
+        if (!vm.props.candidates[idx].skipped && !!this.messages[i]) {
           sendMessage({
-            to: Phone,
-            body: this.deletedMessageText
-          }, studio._id, id)
+            to: vm.props.candidates[idx].phone,
+            body: this.messages[i]
+          }, studio._id, vm.props.candidates[idx]._id)
         }
-        let idx = vm.state.candidates.findIndex(p => (!p.seen && !p.skipped)) || vm.state.candidates.length
-        for(let i = 1;
-            i < 4 && vm.state.candidates[idx] && idx < vm.state.candidates.length
-            && removedIdx <= idx;
-            i ++, idx ++) {
-          if (!vm.state.candidates[idx].skipped && !!this.messages[i]) {
-            sendMessage({
-              to: vm.state.candidates[idx].phone,
-              body: this.messages[i]
-            }, studio._id, vm.state.candidates[idx]._id)
-          }
-        }
-      })
+      }
     }).catch(err => {
       console.log("App -> removeRecode -> err", err)
     })
@@ -307,7 +296,6 @@ class List extends Component {
     this.setState({ loading: true })
     const { session } = this.props
     await clearSessionRecords(session._id)
-    await this.fetchData()
     this.toggleClearConfirm()
   }
 
@@ -316,15 +304,12 @@ class List extends Component {
     updateRecordField(id, {
       signed_out: true,
       signed_out_time: new Date().toISOString()
-    }).then(() => {
-      this.fetchData()
     })
   }
 
   addToGroup = async (_id) => {
     this.setState({ loading: true })
     await addRecordToCurentGroup(_id)
-    await this.fetchData()
   }
 
   leaveFromGroup = async (_id) => {
@@ -335,7 +320,6 @@ class List extends Component {
     }
     this.setState({ loading: true })
     await removeRecordFromCurrentGroup(_id)
-    await this.fetchData()
   }
 
   finishCurrentGroup = async () => {
@@ -346,7 +330,6 @@ class List extends Component {
     const { session } = this.props
     this.setState({ loading: true })
     await finishCurrentGroup(session._id)
-    await this.fetchData()
   }
 
   selectRecord = (record) => {
@@ -367,13 +350,12 @@ class List extends Component {
     this.setState({
       selectedRecord: null
     })
-    await this.fetchData()
   }
 
   downloadCSV = async () => {
     this.setState({ csvLoading: true })
     const { studio, session } = this.props
-    const cids = this.state.candidates.map(c => c._id)
+    const cids = this.props.candidates.map(c => c._id)
     const lastVideoTimes = await getLastVideosTime(cids)
     const row_headers = [
       'first_name',
@@ -395,7 +377,7 @@ class List extends Component {
       'last_record_time'
       // 'studio',
     ]
-    let csvContent = this.state.candidates
+    let csvContent = this.props.candidates
       .map(candidate => (
         row_headers.map(key => {
           switch(key) {
@@ -546,12 +528,12 @@ class List extends Component {
             }}>TWR</label>
           </div>}
           <ul className={classnames("list-group", { 'd-none': listTab !== 'heyjoe'})}>
-            {this.state.candidates && this.state.candidates.map((person, idx) => {
-              const showCallIn = !this.state.candidates[idx].seen &&
+            {this.props.candidates && this.props.candidates.map((person, idx) => {
+              const showCallIn = !this.props.candidates[idx].seen &&
                 (idx === 0 ||
-                (this.state.candidates[idx - 1] &&
-                  (this.state.candidates[idx - 1].seen ||
-                  this.state.candidates[idx - 1].skipped)))
+                (this.props.candidates[idx - 1] &&
+                  (this.props.candidates[idx - 1].seen ||
+                  this.props.candidates[idx - 1].skipped)))
               return (
                 <PersonCard
                   key={idx}
@@ -747,7 +729,6 @@ class List extends Component {
             this.setState({
               selectedRecord: null
             })
-            this.fetchData()
           }}
         />}
 

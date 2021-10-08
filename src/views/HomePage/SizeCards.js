@@ -24,24 +24,22 @@ import { FaFilePdf, FaPrint } from 'react-icons/fa'
 
 const interval = 5000 // query api every 30 seconds
 
-const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, propsCandidates, isTwr, reloadSession }) => {
+const SizeCards = ({ studio, session, isClient = true, candidates,
+  listTab,
+  setListTab,
+  setTwrGroupCandidates,
+  setTwrCandidates
+ }) => {
   const [user, setUser] = useState(null)
-  const [ candidates, setCandidates] = useState([])
   const [ filter, setFilter ] = useState('all')
   const [ feedbackUsers, setFeedbackUsers] = useState([])
   const [ userFilter, setuserFilter ] = useState('all')
   const [ pickPrivate, setPickPrivate ] = useState(false)
   const [ yesPickShow, setYesPickShow ] = useState(false)
-  const [ listTab, setListTab ] = useState('heyjoe')
   const [ twrStudio, setTwrStudio ] = useState(null)
   const [ roles, setRoles ] = useState([])
   const [ roleFilter, setRoleFilter ] = useState('all')
   const [ videoRecord, setVideoRecord ] = useState(null)
-
-  const [ heyjoeCandidates, setHeyjoeCandidates ] = useState([])
-  const [ twrCandidates, setTwrCandidates ] = useState([])
-  const [ heyjoeGroupCandidates, setHeyjoeGroupCandidates ] = useState([])
-  const [ twrGroupCandidates, setTwrGroupCandidates ] = useState([])
 
   const fetchTWRStudio = async () => {
     const { twr } = session
@@ -116,44 +114,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   }, [session.twr])
 
   useEffect(() => {
-    setGroupCandidates && setGroupCandidates(heyjoeGroupCandidates.concat(twrGroupCandidates))
-  }, [heyjoeGroupCandidates, twrGroupCandidates])
-
-  useEffect(() => {
-    switch(listTab) {
-      case 'heyjoe':
-        setCandidates(heyjoeCandidates)
-        break
-      case 'twr':
-        setCandidates(twrCandidates)
-        reloadSession()
-        break
-    }
-  }, [listTab, heyjoeCandidates, twrCandidates])
-
-  const fetchData = async () => {
-    const cs = await fetchCheckInList(session._id)
-    const currentGroup = await getCurrentGroup(session._id) || {}
-    setHeyjoeCandidates(cs.map((c, idx) => ({ ...c, number: idx + 1 })))
-    setHeyjoeGroupCandidates((currentGroup.records || []).map(gc => {
-      const cidx = cs.findIndex(c => c._id === gc._id)
-      return {
-        ...gc,
-        number: cidx + 1
-      }
-    }))
-  }
-
-  useEffect(() => {
     setUser(getUser())
-    if (isClient) {
-      const handle = setInterval(() => {
-        fetchData()
-      }, interval)
-      return () => {
-        clearInterval(handle)
-      }
-    }
   }, [])
 
   useEffect(() => {
@@ -187,16 +148,6 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
   }, [candidates])
 
   useEffect(() => {
-    if (!isClient) {
-      setCandidates(propsCandidates.map((c, idx) => ({
-        ...c,
-        number: idx + 1,
-        twr_id: isTwr ? c._id : null
-      })))
-    }
-  }, [propsCandidates])
-
-  useEffect(() => {
     if (user && session) {
       const myPrivacy = (session.feedbackPrivates || {})[user.id]
       switch(myPrivacy) {
@@ -228,6 +179,7 @@ const SizeCards = ({ studio, session, setGroupCandidates, isClient = true, props
     setVideoRecord(record)
   }
 
+  console.log('candidates: ', candidates);
   const filteredCandidates = candidates.filter(c => {
     let userFeedback = ''
     if (userFilter === 'all') {

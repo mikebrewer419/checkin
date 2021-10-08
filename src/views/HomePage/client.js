@@ -6,9 +6,11 @@ import {
   static_root,
   getStudioByUri,
   getOneSession,
+  fetchCheckInList,
+  getCurrentGroup,
   createCometRoom
 } from '../../services'
-import { MEETING_HOST } from '../../constants'
+import { MEETING_HOST, WS_HOST } from '../../constants'
 import './style.scss'
 
 class ClientHomePage extends Component {
@@ -29,7 +31,12 @@ class ClientHomePage extends Component {
       showList: true,
       jitsiKey: 0,
       groupCandidates: [],
-      testMode: queryParams.test
+      candidates: [],
+      testMode: queryParams.test,
+
+      twrGroupCandidates: [],
+      twrCandidates: [],
+      listTab: 'heyjoe'
     }
   }
 
@@ -52,7 +59,23 @@ class ClientHomePage extends Component {
     const studio = await getStudioByUri(studio_uri)
     const session = await getOneSession(session_id)
 
-    this.setState({ studio, session })
+    const candidates = await fetchCheckInList(session._id)
+    const currentGroup = await getCurrentGroup(session._id) || {}
+
+    this.setState({
+      studio,
+      session,
+      candidates: candidates.map((c, idx) => ({
+        ...c,
+        number: idx + 1
+      })),
+      groupCandidates: currentGroup.records.map(r => {
+        return {
+          ...r,
+          number: candidates.findIndex(c => c._id === r._id) + 1
+        }
+      })
+    })
 
     const pageTitle = this.state.testMode ? 'Virtual Lobby' : 'Video Chat'
     document.title = `${studio.name} ${pageTitle}`;
@@ -129,6 +152,52 @@ class ClientHomePage extends Component {
         document.querySelector('#jitsi-frame').classList.remove('mini-view')
       }
     })
+
+    this.ws = new WebSocket(WS_HOST)
+    this.ws.onopen = () => {
+      this.ws.send(JSON.stringify({
+        meta: 'join',
+        room: session._id
+      }))
+    }
+
+    this.ws.onmessage = (event) => {
+      try {
+        const ev = JSON.parse(event.data)
+        console.log('ev: ', ev);
+        switch (ev.type) {
+          case 'group':
+            this.setState({
+              groupCandidates: ev.data.records.map(r => {
+                return {
+                  ...r,
+                  number: this.state.candidates.findIndex(c => c._id === r._id) + 1
+                }
+              })
+            })
+            break
+          case 'record':
+            const rIdx = this.state.candidates.findIndex(r => r._id === ev.data._id)
+            if (rIdx === -1) {
+              this.setState({
+                candidates: this.state.candidates.concat(ev.data)
+              })
+            } else {
+              this.setState({
+                candidates: this.state.candidates.map((c, idx) => {
+                  return idx === rIdx ? {
+                    ...ev.data,
+                    number: idx + 1
+                  } : c
+                })
+              })
+            }
+            break
+        }
+      } catch (err) {
+        console.log('socket msg handle err: ', err);
+      }
+    }
   }
 
   setshowChat = (v) => {
@@ -169,8 +238,13 @@ class ClientHomePage extends Component {
   }
 
   render() {
-    const { studio, session, showChat, showList,
-      jitsiKey, groupCandidates, testMode } = this.state
+    const { studio, session, showChat, showList, candidates: hjCandidates,
+      jitsiKey, groupCandidates: hjGroupCandidates, testMode,
+      listTab, twrCandidates, twrGroupCandidates } = this.state
+
+    const candidates = listTab === 'heyjoe' ? hjCandidates : twrCandidates
+    const groupCandidates = listTab === 'heyjoe' ? hjGroupCandidates : twrGroupCandidates
+
     if (!studio) {
       return <div>Loading...</div>
     }
@@ -219,8 +293,13 @@ class ClientHomePage extends Component {
             <SizeCards
               studio={studio}
               session={session}
-              reloadSession={this.reloadSession}
-              setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
+              
+              candidates={candidates}
+
+              setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
+              setTwrCandidates={cs => this.setState({ twrCandidates: cs })}
+
+              setListTab={t => this.setState({ listTab: t })}
             />
           </div>
           <div id="checkin-list" className={`no-print ${showList?'show':''}`}>

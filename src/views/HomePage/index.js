@@ -5,11 +5,13 @@ import {
   getStudioByUri,
   getOneSession,
   createCometRoom,
+  fetchCheckInList,
+  getCurrentGroup,
   static_root
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
-import { MEETING_HOST } from '../../constants'
+import { MEETING_HOST, WS_HOST } from '../../constants'
 import SizeCards from './SizeCards'
 
 class HomePage extends Component {
@@ -64,7 +66,18 @@ class HomePage extends Component {
     const studio = await getStudioByUri(studio_uri)
     const session = await getOneSession(session_id)
 
-    this.setState({ studio, session })
+    const candidates = await fetchCheckInList(session._id)
+    const currentGroup = await getCurrentGroup(session._id) || {}
+
+    this.setState({
+      studio,
+      session,
+      candidates: candidates.map((c, idx) => ({
+        ...c,
+        number: idx + 1
+      })),
+      groupCandidates: currentGroup.records
+    })
 
     const pageTitle = this.state.testMode ? 'Virtual Lobby' : 'Video Chat'
     document.title = `${studio.name} ${pageTitle}`;
@@ -140,6 +153,47 @@ class HomePage extends Component {
         document.querySelector('#jitsi-frame').classList.remove('mini-view')
       }
     })
+
+    this.ws = new WebSocket(WS_HOST)
+    this.ws.onopen = () => {
+      this.ws.send(JSON.stringify({
+        meta: 'join',
+        room: session._id
+      }))
+    }
+
+    this.ws.onmessage = (event) => {
+      try {
+        const ev = JSON.parse(event.data)
+        console.log('ev: ', ev);
+        switch (ev.type) {
+          case 'group':
+            this.setState({
+              groupCandidates: ev.data.records
+            })
+            break
+          case 'record':
+            const rIdx = this.state.candidates.findIndex(r => r._id === ev.data._id)
+            if (rIdx === -1) {
+              this.setState({
+                candidates: this.state.candidates.concat(ev.data)
+              })
+            } else {
+              this.setState({
+                candidates: this.state.candidates.map((c, idx) => {
+                  return idx === rIdx ? {
+                    ...ev.data,
+                    number: idx + 1
+                  } : c
+                })
+              })
+            }
+            break
+        }
+      } catch (err) {
+        console.log('socket msg handle err: ', err);
+      }
+    }
   }
 
   reloadSession = async() => {
@@ -214,8 +268,8 @@ class HomePage extends Component {
                 reloadSession={this.reloadSession}
                 messages={studio.position_messages}
                 delete_message={studio.delete_message}
-                setGroupCandidates={gcs => this.setState({ groupCandidates: gcs })}
-                setCandidates={cs => this.setState({ candidates: cs })}
+                candidates={candidates}
+                groupCandidates={groupCandidates}
                 setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
                 setTwrCandidates={cs => this.setState({ twrCandidates: cs })}
                 setListTab={t => this.setState({ listTab: t })}
@@ -260,7 +314,7 @@ class HomePage extends Component {
                       </h6>
                       <ul>
                         {groupCandidates.map(person => (
-                          <li>
+                          <li key={person._id}>
                             <div className="d-flex align-items-center">
                               <span className="mr-5">{person.first_name} ${person.last_name}</span>
                               {person.twr_deleted && <div className="mr-2">
@@ -290,8 +344,14 @@ class HomePage extends Component {
               studio={studio}
               session={session}
               isClient={false}
-              propsCandidates={candidates}
+              candidates={candidates}
+
+              setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
+              setTwrCandidates={cs => this.setState({ twrCandidates: cs })}
+
               isTwr={isTwr}
+              listTab={listTab}
+              setListTab={t => this.setState({ listTab: t })}
             />
           </div>
         </div>

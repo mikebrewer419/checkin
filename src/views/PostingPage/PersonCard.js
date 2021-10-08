@@ -145,7 +145,6 @@ const PersonCard = ({
   agent,
   hideContact = true,
   showNumber = false,
-  useSelfData = true,
   number = 0,
   feedbacks,
   comments,
@@ -158,42 +157,23 @@ const PersonCard = ({
   showRecordVideosModal
 }) => {
   const [showContact, setShowContact] = useState(false)
-  const [record, setRecord] = useState({})
   const [commentsVisible, setCommentsVisible] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [content, setContent] = useState('')
   const feedbackContentRef = useRef({})
 
-  const fetchData = () => {
-    if (twr_id) {
-      twrGetOneHeyjoeRecord(twr_id, session_id).then(data => setRecord(data))
-    } else {
-      getOneRecord(_id).then(data => setRecord(data))
-    }
-  }
-
-  useEffect(() => {
-    if (useSelfData && POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK()) {
-      setInterval(fetchData, 5000)
-    } else {
-      fetchData()
-    }
-  }, [])
-
-  const fbks = useSelfData ? (record.feedbacks || {}) : (feedbacks || {})
-  const cmts = useSelfData ? (record.comments || []) : (comments || [])
+  const fbks = (feedbacks || {})
+  const cmts = (comments || [])
 
   const myFeedback = fbks[user.email]
 
   const setMyFeedback = async (feedback) => {
     if(!!twr_id) { await twrSetFeedback(_id, feedback) } else { await setFeedback(_id, feedback) }
-    fetchData()
   }
 
   const addNewComment = async () => {
     if(!!twr_id) { await twrNewComment(_id, content) } else {  await newComment(_id, content) }
     setContent('')
-    fetchData()
   }
 
   const activeClass = (feedback) => {
@@ -276,7 +256,11 @@ const PersonCard = ({
         </div>
       }
       {groups.length > 0 && (
-        <div className="play-button" onClick={() => { showRecordVideosModal(record) }}>
+        <div className="play-button" onClick={() => { showRecordVideosModal({
+          _id,
+          first_name,
+          last_name
+        }) }}>
           <FaPlayCircle />
         </div>
       )}
