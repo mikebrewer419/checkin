@@ -67,6 +67,7 @@ const RecordMessagePage = ({ match }) => {
 
   useEffect(() => {
     if (!record.seen && prevSeen.current) { setLiveMode(false) }
+    if (record.seen && !prevSeen.current) { setLiveMode(true) }
     prevSeen.current = record.seen
   }, [record])
 
