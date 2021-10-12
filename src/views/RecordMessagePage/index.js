@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import classnames from 'classnames'
 import {
   static_root,
@@ -18,6 +18,7 @@ const RecordMessagePage = ({ match }) => {
   const [liveMode, setLiveMode] = useState(false)
   const [studio, setStudio] = useState(null)
   const [showMeetingFrame, setShowMeetingFrame] = useState(false)
+  const prevSeen = useRef(false)
 
   const fetchData = async () => {
     const record_id = match.params.record_id
@@ -52,8 +53,6 @@ const RecordMessagePage = ({ match }) => {
             const nr = ev.data
             setMessage(nr.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : nr.lastMessage)
             setRecord(nr)
-            if (nr.seen && !record.seen) { setLiveMode(true) }
-            if (!nr.seen && record.seen) { setLiveMode(false) }
           }
         } catch (err) {
           console.log('socket msg handle err: ', err);
@@ -65,6 +64,11 @@ const RecordMessagePage = ({ match }) => {
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (!record.seen && prevSeen.current) { setLiveMode(false) }
+    prevSeen.current = record.seen
+  }, [record])
 
   if (!studio) {
     return <div className="message-page justify-content-center align-items-center">
