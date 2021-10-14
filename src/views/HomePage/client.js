@@ -221,7 +221,7 @@ class ClientHomePage extends Component {
               this.setState({
                 candidates: this.state.candidates.filter(c => c._id !== ev.data).map((c, idx) => {
                   return {
-                    ...ev.data,
+                    ...c,
                     number: idx + 1
                   }
                 })
