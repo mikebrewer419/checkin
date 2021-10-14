@@ -217,6 +217,16 @@ class ClientHomePage extends Component {
                 })
               }
               break
+            case 'record-remove':
+              this.setState({
+                candidates: this.state.candidates.filter(c => c._id !== ev.data).map((c, idx) => {
+                  return {
+                    ...ev.data,
+                    number: idx + 1
+                  }
+                })
+              })
+              break
           }
         } catch (err) {
           console.log('socket msg handle err: ', err);
