@@ -104,6 +104,7 @@ class TwrList extends React.Component {
       }))
     }
     candidates.sort((c1, c2) => c1.twr_id.localeCompare(c2.twr_id))
+    candidates = candidates.map((c, idx) => ({ ...c, number: idx + 1 }))
     const currentGroupRecords = (currentGroup.twr_records || []).map(r_id => {
       return candidates.find(c => c._id === r_id)
     }).filter(r => !!r)

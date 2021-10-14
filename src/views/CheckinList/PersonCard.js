@@ -128,26 +128,28 @@ const PersonCard = ({
             />
           </p>
         </div>
-        <div className="d-flex mt-1">
-          {!seen && ( <img
-            onClick={() => setSeen(_id)}
-            className="callin-icon"
-            title="Call in"
-            src={require('../../assets/callin.png')}
-          /> )}
-          {seen && ( <img
-            onClick={() => setSeen(_id, seen)}
-            className="callin-icon"
-            title="Call in again"
-            src={require('../../assets/callinagain.png')}
-          />  )}
-          {seen && ( <img
-            onClick={() => setUnSeen(_id)}
-            className="callin-icon"
-            title="Call out"
-            src={require('../../assets/callout.png')}
-          />  )}
-        </div>
+        {isTwr && (
+          <div className="d-flex mt-1">
+            {!seen && ( <img
+              onClick={() => setSeen(_id)}
+              className="callin-icon"
+              title="Call in"
+              src={require('../../assets/callin.png')}
+            /> )}
+            {seen && ( <img
+              onClick={() => setSeen(_id, seen)}
+              className="callin-icon"
+              title="Call in again"
+              src={require('../../assets/callinagain.png')}
+            />  )}
+            {seen && ( <img
+              onClick={() => setUnSeen(_id)}
+              className="callin-icon"
+              title="Call out"
+              src={require('../../assets/callout.png')}
+            />  )}
+          </div>
+        )}
       </div>
     </div>
   )
