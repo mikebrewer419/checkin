@@ -128,7 +128,7 @@ const PersonCard = ({
             />
           </p>
         </div>
-        {isTwr && (
+        {!isTwr && (
           <div className="d-flex mt-1">
             {!seen && ( <img
               onClick={() => setSeen(_id)}
