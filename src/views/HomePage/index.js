@@ -191,7 +191,10 @@ class HomePage extends Component {
               const rIdx = this.state.candidates.findIndex(r => r._id === ev.data._id)
               if (rIdx === -1) {
                 this.setState({
-                  candidates: this.state.candidates.concat(ev.data)
+                  candidates: this.state.candidates.concat({
+                    ...ev.data,
+                    number: this.state.candidates.length + 1
+                  })
                 })
               } else {
                 this.setState({

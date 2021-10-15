@@ -197,12 +197,15 @@ class ClientHomePage extends Component {
               const gcs = this.state.groupCandidates.map((r, idx) => {
                 return idx === gIdx ? {
                   ...ev.data,
-                  number: idx + 1
+                  number: rIdx + 1
                 } : r
               })
               if (rIdx === -1) {
                 this.setState({
-                  candidates: this.state.candidates.concat(ev.data),
+                  candidates: this.state.candidates.concat({
+                    ...ev.data,
+                    number: this.state.candidates.length + 1
+                  }),
                   groupCandidates: gcs
                 })
               } else {
