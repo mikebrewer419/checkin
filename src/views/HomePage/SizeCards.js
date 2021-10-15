@@ -28,7 +28,8 @@ const SizeCards = ({ studio, session, isClient = true, candidates,
   listTab,
   setListTab,
   setTwrGroupCandidates,
-  setTwrCandidates
+  setTwrCandidates,
+  roles
  }) => {
   const [user, setUser] = useState(null)
   const [ filter, setFilter ] = useState('all')
@@ -37,7 +38,6 @@ const SizeCards = ({ studio, session, isClient = true, candidates,
   const [ pickPrivate, setPickPrivate ] = useState(false)
   const [ yesPickShow, setYesPickShow ] = useState(false)
   const [ twrStudio, setTwrStudio ] = useState(null)
-  const [ roles, setRoles ] = useState([])
   const [ roleFilter, setRoleFilter ] = useState('all')
   const [ videoRecord, setVideoRecord ] = useState(null)
 
@@ -144,7 +144,6 @@ const SizeCards = ({ studio, session, isClient = true, candidates,
       })
     })
     setFeedbackUsers(fbkUsers)
-    setRoles(rs.sort((a, b) => a.localeCompare(b)))
   }, [candidates])
 
   useEffect(() => {

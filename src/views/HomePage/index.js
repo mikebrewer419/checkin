@@ -281,6 +281,15 @@ class HomePage extends Component {
     const groupCandidates = listTab === 'heyjoe' ? hjGroupCandidates : twrGroupCandidates
     const meeting_id = testMode ? studio.test_meeting_id : studio.jitsi_meeting_id
     const isTwr = listTab === 'twr'
+
+    const rs = []
+    candidates.forEach(c => {
+      if (c.role && !rs.includes(c.role)) {
+        rs.push(c.role)
+      }
+    })
+    rs.sort((a, b) => a.localeCompare(b))
+
     return (
       <div className="homepage-wrapper">
         <div className={"homepage " + (testMode ? 'test': '')}>
@@ -298,6 +307,7 @@ class HomePage extends Component {
                 delete_message={studio.delete_message}
                 candidates={candidates}
                 groupCandidates={groupCandidates}
+                roles={rs}
                 setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
                 setTwrCandidates={cs => this.setState({ twrCandidates: cs })}
                 setListTab={t => this.setState({ listTab: t })}
@@ -373,6 +383,7 @@ class HomePage extends Component {
               session={session}
               isClient={false}
               candidates={candidates}
+              roles={rs}
 
               setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
               setTwrCandidates={cs => this.setState({ twrCandidates: cs })}

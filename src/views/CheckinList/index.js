@@ -59,9 +59,7 @@ class List extends Component {
       listTab: 'heyjoe',
       showNotification: '',
       notification: {},
-      roles: []
     }
-    this.interval = 5000 // query api every 30 seconds
     this.messages = this.props.messages || messages
     this.deletedMessageText = this.props.delete_message || deletedMessageText
   }
@@ -78,15 +76,8 @@ class List extends Component {
     }
     if (JSON.stringify(prevProps.candidates) !== JSON.stringify(this.props.candidates)) {
       const { candidates } = this.props
-      const rs = []
-      candidates.forEach(c => {
-        if (c.role && !rs.includes(c.role)) {
-          rs.push(c.role)
-        }
-      })
       this.setState({
         candidates,
-        roles: rs,
         loading: false
       })
     }
@@ -415,7 +406,7 @@ class List extends Component {
   }
 
   render() {
-    const { studio, session, testMode, reloadSession } = this.props
+    const { studio, session, testMode, reloadSession, roles } = this.props
     const {
       timeOptions,
       selectedRecord,
@@ -424,7 +415,6 @@ class List extends Component {
       listTab, 
       showNotification,
       notification,
-      roles
     } = this.state
     let twrOnboardLink = (session.twr || '').split('/')
     twrOnboardLink.splice(1, 0, 'onboard')
