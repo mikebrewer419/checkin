@@ -289,6 +289,15 @@ class ClientHomePage extends Component {
       return <div>Loading...</div>
     }
     const meeting_id = testMode ? studio.test_meeting_id : studio.jitsi_meeting_id
+
+    const rs = []
+    candidates.forEach(c => {
+      if (c.role && !rs.includes(c.role)) {
+        rs.push(c.role)
+      }
+    })
+    rs.sort((a, b) => a.localeCompare(b))
+
     return (
       <div className="homepage-wrapper client">
         <div className={"homepage " + (testMode ? 'test': '')}>
@@ -333,6 +342,7 @@ class ClientHomePage extends Component {
             <SizeCards
               studio={studio}
               session={session}
+              roles={rs}
               
               candidates={candidates}
 
