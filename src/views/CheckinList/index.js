@@ -62,6 +62,7 @@ class List extends Component {
     }
     this.messages = this.props.messages || messages
     this.deletedMessageText = this.props.delete_message || deletedMessageText
+    this.positionBackMessage = this.props.studio.position_back_message
   }
 
   componentDidMount() {
@@ -162,11 +163,11 @@ class List extends Component {
     updateRecordField(id, {
       seen: false
     }).then(() => {
-      if (this.messages[1]) {
+      if (this.positionBackMessage) {
         let idx = vm.props.candidates.findIndex(p => p._id === id)
         sendMessage({
           to: vm.props.candidates[idx].phone,
-          body: this.messages[1]
+          body: this.positionBackMessage
         }, studio._id, id)
       }
     })

@@ -145,7 +145,7 @@ const PersonCard = ({
             {seen && ( <img
               onClick={() => setUnSeen(_id)}
               className="callin-icon"
-              title="Call out"
+              title="Call to Lobby"
               src={require('../../assets/callout.png')}
             />  )}
           </div>

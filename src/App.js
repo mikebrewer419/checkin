@@ -28,6 +28,7 @@ export const NotificationComponent = ({ notificationField, notificationUpdateAtF
   const [showNotification, setShowNotification] = useState(false)
 
   const mounted = async () => {
+    if (window.location.pathname.startsWith('/onboard')) { return }
     let n = await getNotification()
     n = n || {}
     setNotification(n)

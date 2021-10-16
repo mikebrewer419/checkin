@@ -9,6 +9,7 @@ const StudioForm = ({
   jitsi_meeting_id = '',
   test_meeting_id = '',
   thankyou_message = '',
+  position_back_message = '',
   position_messages = [],
   delete_message,
   logo = '',
@@ -49,6 +50,9 @@ const StudioForm = ({
           defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME. To join virtual lobby click the button below or enter 'TEST_MEETING_ID' into the app. You can always return to this page on any device with this link: TALENT_STATUS_LINK`} />
       </div>
       <div className="form-group">
+        <label htmlFor="position_messages1">Position back message</label>
+        <input className="form-control form-control-sm" type="text" name="position_back_message" id="position_back_message"
+          defaultValue={position_back_message || `Please return to virtual lobby. Enter 'TEST_MEETING_ID' or click TALENT_STATUS_LINK`} />
         <label htmlFor="position_messages1">Position_messages 1</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[0]" id="position_messages1"
           defaultValue={position_messages[0] || `It's now your turn to audition, on desktop click the "Join Casting" button. On mobile, click TALENT_STATUS_LINK or enter MEETING_ID. ***IMPORTANT: Click Ask to Join`} />
@@ -57,7 +61,7 @@ const StudioForm = ({
           defaultValue={position_messages[1] || `You are on deck! We'll text you shortly to join the casting.`} />
         <label htmlFor="position_messages3">Position_messages 3</label>
         <input className="form-control form-control-sm"  type="text" name="position_messages[2]" id="position_messages3"
-          defaultValue={position_messages[2] || `Be ready. You're second in line.`} />
+          defaultValue={position_messages[2] || ``} />
         <label htmlFor="position_messages4">Position_messages 4</label>
         <input className="form-control form-control-sm"  type="text" name="position_messages[3]" id="position_messages4"
           defaultValue={position_messages[3] || ``} />
