@@ -8,6 +8,8 @@ import Login from './views/Auth/Login'
 import ResetPasswordRequest from './views/Auth/ResetPasswordRequest'
 import ResetPassword from './views/Auth/ResetPassword'
 import Register from './views/Auth/Register'
+import ClientRegister from './views/Auth/ClientRegister'
+import TalentRegister from './views/Auth/TalentRegister'
 import CheckinPage from './views/HomePage'
 import ClientCheckinPage from './views/HomePage/client'
 import ClientHomePage from './views/ClientPage'
@@ -71,6 +73,7 @@ function App() {
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
+      window.localStorage.setItem('prev_url', window.location.href)
       return
     }
     if (window.location.pathname.indexOf('/message') !== -1) {
@@ -99,7 +102,9 @@ function App() {
         if ([
           '/reset-password-request',
           '/reset-password',
-          '/register'
+          '/register',
+          '/client/register',
+          '/talent/register'
         ].includes(window.location.pathname)) {
           return
         }
@@ -128,6 +133,8 @@ function App() {
             <Route path="/reset-password-request" component={() => <ResetPasswordRequest />} exact />
             <Route path="/reset-password" component={() => <ResetPassword />} exact />
             <Route path="/register" component={() => <Register />} exact />
+            <Route path="/client/register" component={() => <ClientRegister />} exact />
+            <Route path="/talent/register" component={() => <TalentRegister />} exact />
             {user.user_type === USER_TYPES.SUPER_ADMIN &&
               <Route path="/heyjoe-admin" component={AdminView} />
             }
@@ -155,13 +162,15 @@ const HomeBomponent = (props) => {
   if (!user) {
     return null
   }
-  if (user.user_type === USER_TYPES.CLIENT) {
-    return <ClientHomePage />
-  }
-  if (user.user_type === USER_TYPES.SESSION_MANAGER) {
-    return <SessionList {...props} />
-  } else {
-    return <StudioList {...props} />
+  switch (user.user_type) {
+    case USER_TYPES.CLIENT:
+      return <ClientHomePage />
+    case USER_TYPES.SESSION_MANAGER:
+      return <SessionList {...props} />
+    case USER_TYPES.TALENT:
+      return <div>Talent page </div>
+    default:
+      return <StudioList {...props} />
   }
 }
 

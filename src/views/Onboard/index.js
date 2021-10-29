@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import useReactRouter from 'use-react-router'
 import Webcam from "react-webcam"
 import moment from 'moment'
@@ -9,15 +10,20 @@ import {
   uploadImage,
   static_root,
   temp_root,
-  getSessionRoles
+  getSessionRoles,
+  getUserById,
+  getUser
 } from '../../services'
 import { dataURLtoFile } from '../../utils'
 import { RoleEditor } from '../CheckinList'
 import { NotificationComponent } from '../../App'
+import { USER_TYPES } from '../../constants'
 
 import './style.scss'
 
 const Onboard = () => {
+  const [user, setUser] = useState(null)
+
   const [firstName, setFirstName] = useState('')
   const [lasttName, setLastName] = useState('')
   const [email, setEmail] = useState('')
@@ -44,6 +50,24 @@ const Onboard = () => {
   const [roles, setRoles] = useState([])
 
   const webcamRef = useRef(null)
+
+  useEffect(() => {
+    const u = getUser()
+    if (u) {
+      getUserById(u.id).then(data => {
+        if (data.user_type === USER_TYPES.TALENT) {
+          setUser(data)
+          console.log('data: ', data);
+          setFirstName(data.first_name)
+          setLastName(data.last_name)
+          setAgent(data.agent)
+          setPhoneNumber(data.phone)
+          setEmail(data.email)
+          setAvatar64(data.logo)
+        }
+      })
+    }
+  }, [])
 
   useEffect(() => {
     const process = async () => {
@@ -114,6 +138,11 @@ const Onboard = () => {
     }, duration)
   }
 
+  const logout = () => {
+    window.localStorage.removeItem('token')
+    window.location.reload(true)
+  }
+
   if (!studio) {
     return <div>No Studio found</div>
   }
@@ -162,6 +191,23 @@ const Onboard = () => {
 
   return (
     <div className="onboard-container">
+      <div className="text-right">
+        {user ?
+          <div>
+            {`Logged in as ${user.first_name} ${user.last_name}`}
+            <a
+              className="cursor-pointer ml-2"
+              onClick={logout}
+            >
+              Logout
+            </a>
+          </div>
+        :
+          <Link to="/login">
+            Returning User? Login or Sign Up for faster check in
+          </Link>
+        }
+      </div>
       <img
         className="logo d-block m-auto"
         src={static_root+studio.logo}

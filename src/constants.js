@@ -6,7 +6,8 @@ const USER_TYPES = {
   SUPER_ADMIN: 'super_admin',
   CASTING_DIRECTOR: 'casting_director',
   SESSION_MANAGER: 'session_manager',
-  CLIENT: 'client'
+  CLIENT: 'client',
+  TALENT: 'talent'
 }
 
 const USER_TYPE = {
