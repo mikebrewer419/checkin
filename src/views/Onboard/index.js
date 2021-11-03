@@ -57,13 +57,11 @@ const Onboard = () => {
       getUserById(u.id).then(data => {
         if (data.user_type === USER_TYPES.TALENT) {
           setUser(data)
-          console.log('data: ', data);
           setFirstName(data.first_name)
           setLastName(data.last_name)
           setAgent(data.agent)
           setPhoneNumber(data.phone)
           setEmail(data.email)
-          setAvatar64(data.logo)
         }
       })
     }
@@ -191,23 +189,6 @@ const Onboard = () => {
 
   return (
     <div className="onboard-container">
-      <div className="text-right">
-        {user ?
-          <div>
-            {`Logged in as ${user.first_name} ${user.last_name}`}
-            <a
-              className="cursor-pointer ml-2"
-              onClick={logout}
-            >
-              Logout
-            </a>
-          </div>
-        :
-          <Link to="/login">
-            Returning User? Login or Sign Up for faster check in
-          </Link>
-        }
-      </div>
       <img
         className="logo d-block m-auto"
         src={static_root+studio.logo}
@@ -240,7 +221,6 @@ const Onboard = () => {
             <input
               type="file"
               id="photo"
-              capture="user"
               accept="image/*"
               onChange={ev => setAvatarImg(ev.target.files[0])}
             />
@@ -271,6 +251,23 @@ const Onboard = () => {
           </div>
         </div>
         <div className="contact">
+          <div className="text-center mb-2 mt-n2">
+            {user ?
+              <div>
+                {`Logged in as ${user.first_name} ${user.last_name}`}
+                <a
+                  className="cursor-pointer ml-2"
+                  onClick={logout}
+                >
+                  Logout
+                </a>
+              </div>
+            :
+              <Link to="/login">
+                Returning User? Login or Sign Up for faster check in
+              </Link>
+            }
+          </div>
           <form id="contactForm" onSubmit={onSubmjit}>
             <p>
               <label>First Name</label>

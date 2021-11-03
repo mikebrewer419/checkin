@@ -30,9 +30,9 @@ const Register = () => {
 
   useEffect(() => {
     document.title = `Check In | Register`;
-    document.body.style.overflow = 'auto'
+    document.body.style.overflowY = 'auto'
     return () => {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflowY = 'hidden'
     }
   }, [])
 
@@ -144,12 +144,16 @@ const Register = () => {
         <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
       <div className="register-pane text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
-        <h2 className=" text-center"> WELCOME!</h2>
+        <h2 className=" text-center"> Talent Account Registration</h2>
+
+        <p className="text-center mb-5 description-text mt-3 mx-auto">
+          Please register on our site and to save your information and check in faster for auditions. You can also add a Profile Photo/Headshot here that will be viewable by the Casting team & Director. We will add more features for talent in the future, so please check back often and Contact Us with any questions.
+        </p>
 
         <div className="row">
           <div className="col col-12 col-sm-6">
             <div className="w-100">
-              <label>Profile photo</label>
+              <label>Headshot</label>
               <div className="avatar-choose">
                 {cameraError || avatar64 ?
                   <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />

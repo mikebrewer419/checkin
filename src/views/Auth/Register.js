@@ -11,7 +11,7 @@ const Register = ({ history }) => {
         history.push('/talent/register')
         break
       case 'casting-director':
-        window.open('https://heyjoe.io/contact-us/')
+        window.open('https://heyjoe.io/#contact-us/')
         break
     }
   }

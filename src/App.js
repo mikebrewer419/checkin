@@ -168,7 +168,11 @@ const HomeBomponent = (props) => {
     case USER_TYPES.SESSION_MANAGER:
       return <SessionList {...props} />
     case USER_TYPES.TALENT:
-      return <div>Talent page </div>
+      return <div>
+        <p>
+        Please register on our site and to save your information and check in faster for auditions. You can also add a Profile Photo/Headshot here that will be viewable by the Casting team & Director. We will add more features for talent in the future, so please check back often and Contact Us with any questions.
+        </p>
+      </div>
     default:
       return <StudioList {...props} />
   }

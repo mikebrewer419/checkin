@@ -21,6 +21,10 @@ const Register = () => {
 
   useEffect(() => {
     document.title = `Check In | Register`;
+    document.body.style.overflowY = 'auto'
+    return () => {
+      document.body.style.overflowY = 'hidden'
+    }
   }, [])
 
   useEffect(() => {
@@ -102,7 +106,7 @@ const Register = () => {
         <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
       <div className="register-pane text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
-        <h2 className=" text-center"> WELCOME!</h2>
+        <h2 className=" text-center"> Client Account Registration</h2>
         <p className="text-center mb-5 description-text mt-3">
           Use the form below to register for an account on our site.
           This will allow you client access to Casting Sessions and Video Review pages that you have been sent the link to.<br/>
