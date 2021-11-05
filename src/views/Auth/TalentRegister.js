@@ -153,7 +153,7 @@ const Register = () => {
         <div className="row">
           <div className="col col-12 col-sm-6">
             <div className="w-100">
-              <label>Headshot</label>
+              <label>Profile Photo/Headshot</label>
               <div className="avatar-choose">
                 {cameraError || avatar64 ?
                   <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
