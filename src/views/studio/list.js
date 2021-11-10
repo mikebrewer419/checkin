@@ -33,7 +33,7 @@ import StudioForm from './form'
 import SessionForm from './SessionForm'
 import './style.scss'
 import Footer from '../../components/Footer'
-import { USER_TYPE, USER_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
+import { USER_TYPE, USER_TYPES, PROJECT_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
 import { humanFileSize }  from '../../utils'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
@@ -166,6 +166,7 @@ const StudioList = () => {
 
     setErrors(error)
     if (Object.keys(error).length > 0) { return }
+    object.project_type = object.creator ? PROJECT_TYPES.CREATOR: PROJECT_TYPES.DEFAULT
     const result = await createOrUpdateStudio(object)
     if (user.user_type === USER_TYPES.CASTING_DIRECTOR) {
       await assignCastingDirector(result._id, user.id)

@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
+import clsx from 'classnames'
+import { PROJECT_TYPES } from '../../constants'
 
 const StudioForm = ({
   onSubmit,
@@ -11,10 +13,14 @@ const StudioForm = ({
   thankyou_message = '',
   position_back_message = '',
   position_messages = [],
+  audition_purchase_message = '',
   delete_message,
+  project_type = PROJECT_TYPES.DEFAULT,
   logo = '',
   errors = {}
 }) => {
+  const [showAuditionPurchaseMsg, setShowAuditionPurchaseMsg] = useState(project_type === PROJECT_TYPES.CREATOR)
+
   return (
     <form onSubmit={onSubmit} id="studio-form">
       <input type="hidden" name="_id" value={_id} />
@@ -71,6 +77,22 @@ const StudioForm = ({
         <input className="form-control form-control-sm"  type="text" name="delete_message" id="delete_message"
           defaultValue={delete_message || `You arrived at the wrong time. Please come back at the correct call time and check in again.`} />
       </div>
+      <div className={clsx("form-group mt-4", {
+        'mb-0': showAuditionPurchaseMsg
+      })}>
+        <input className="mr-1 mt-1"  type="checkbox" name="creator" id="creator" defaultChecked={project_type === PROJECT_TYPES.CREATOR} onChange={(ev) => {
+          setShowAuditionPurchaseMsg(ev.target.checked)
+        }} />
+        <label htmlFor="creator">Creator project</label>
+      </div>
+      {showAuditionPurchaseMsg && (
+        <div className="form-group">
+          <label htmlFor="audition_purchase_message">Audition Purchase Message</label>
+          <input className="form-control form-control-sm"  type="text" name="audition_purchase_message" id="audition_purchase_message"
+            defaultValue={audition_purchase_message || `Reply Yes to purchase your PROJECT_NAME audition footage for $9: LINK_TO_STRIPE_PURCHASE`} />
+        </div>
+      )}
+
       <div className="form-group">
         <label htmlFor="logo">Logo</label>
         <input className="form-control"  type="file" name="logo" id="logo" accept=".png, .jpg, .jpeg"/>
