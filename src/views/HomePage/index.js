@@ -11,7 +11,8 @@ import {
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
-import { MEETING_HOST, WS_HOST } from '../../constants'
+import { WS_HOST } from '../../constants'
+import MeetFrame from './MeetFrame'
 import SizeCards from './SizeCards'
 
 class HomePage extends Component {
@@ -322,23 +323,7 @@ class HomePage extends Component {
           </div>
           <div className="right-frame">
             <div className="frame-wrapper no-print">
-              <div id="jitsi-frame">
-                <button
-                  id="reload-jitsi"
-                  title="Reload Meeting frame"
-                  onClick={this.reloadJitsi}
-                >⟳</button>
-                <iframe
-                  key={jitsiKey}
-                  title="Meeting"
-                  width="100%"
-                  height="100%"
-                  id="jitsi-meeting-frame"
-                  src={`${MEETING_HOST}/${meeting_id}`}
-                  allow="camera; microphone; fullscreen; display-capture"
-                  allowFullScreen="allowfullscreen">
-                </iframe>
-              </div>
+              <MeetFrame meeting_id={meeting_id} />
               <div className={`d-flex bottom-panel ${showChat ? 'show' : ''}`}>
                 <button
                   className="btn border-bottom-0 toggle-bottom"
