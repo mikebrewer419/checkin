@@ -10,7 +10,8 @@ import {
   getCurrentGroup,
   createCometRoom
 } from '../../services'
-import { MEETING_HOST, WS_HOST } from '../../constants'
+import { WS_HOST } from '../../constants'
+import MeetFrame from './MeetFrame'
 import './style.scss'
 
 class ClientHomePage extends Component {
@@ -302,23 +303,7 @@ class ClientHomePage extends Component {
       <div className="homepage-wrapper client">
         <div className={"homepage " + (testMode ? 'test': '')}>
           <div className="right-frame">
-            <div id="jitsi-frame" className="no-print">
-              <button
-                id="reload-jitsi"
-                title="Reload Meeting frame"
-                onClick={this.reloadJitsi}
-              >⟳</button>
-              <iframe
-                key={jitsiKey}
-                title="Meeting"
-                width="100%"
-                height="100%"
-                id="jitsi-meeting-frame"
-                src={`${MEETING_HOST}/${meeting_id}`}
-                allow="camera; microphone; fullscreen; display-capture"
-                allowFullScreen="allowfullscreen">
-              </iframe>
-            </div>
+            <MeetFrame meeting_id={meeting_id} />
             <div className="d-flex bottom-panel no-print">
               <div className="current-group-size-cards-wrapper w-100">
                 <h6 className="px-2 mb-0 mt-2">
