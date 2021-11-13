@@ -89,7 +89,7 @@ const StudioForm = ({
         <div className="form-group">
           <label htmlFor="audition_purchase_message">Audition Purchase Message</label>
           <input className="form-control form-control-sm"  type="text" name="audition_purchase_message" id="audition_purchase_message"
-            defaultValue={audition_purchase_message || `Reply Yes to purchase your PROJECT_NAME audition footage for $9: LINK_TO_STRIPE_PURCHASE`} />
+            defaultValue={audition_purchase_message || `Reply Yes to purchase your PROJECT_NAME audition footage for $9: LINK_TO_PURCHASE_INVOICE`} />
         </div>
       )}
 
