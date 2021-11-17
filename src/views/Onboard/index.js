@@ -89,7 +89,7 @@ const Onboard = () => {
     [webcamRef]
   )
 
-  const onSubmjit = (ev) => {
+  const onSubmit = (ev) => {
     ev.preventDefault()
     if (phoneNumber.replace(/\D/g,'').length < 10) {
       window.alert('Please input correct phone number!')
@@ -113,10 +113,11 @@ const Onboard = () => {
       role: role,
       avatar: avatar64
     }).then(result => {
-      console.log("onSubmjit -> result", result)
+      console.log("onSubmit -> result", result)
       setApiResult(result)
       if (result.record && result.record._id) {
         setShowAlert(true)
+        window.postMessage({ talent: result.record})
       } else {
         setShowMessage(true)
       }
@@ -268,7 +269,7 @@ const Onboard = () => {
               </Link>
             }
           </div>
-          <form id="contactForm" onSubmit={onSubmjit}>
+          <form id="contactForm" onSubmit={onSubmit}>
             <p>
               <label>First Name</label>
               <input
