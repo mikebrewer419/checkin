@@ -116,7 +116,6 @@ const Onboard = () => {
       console.log("onSubmit -> result", result)
       setApiResult(result)
       if (result.record && result.record._id) {
-        setShowAlert(true)
         try {
           if (window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify({ talent: result.record}))
@@ -124,6 +123,7 @@ const Onboard = () => {
         } catch (err) {
           console.log('IGNORE: react native send info failed.', err)
         }
+        setShowAlert(true)
       } else {
         setShowMessage(true)
       }
