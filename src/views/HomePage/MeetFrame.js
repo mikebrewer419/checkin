@@ -4,7 +4,7 @@ import { getUser, getUserById } from '../../services'
 
 let loading = false
 
-const MeetFrame = ({ meeting_id }) => {
+const MeetFrame = ({ meeting_id, record }) => {
   const [user, setUser] = useState(null)
   const [api, setApi] = useState(null)
   const [key, setKey]  = useState(0)
@@ -45,8 +45,11 @@ const MeetFrame = ({ meeting_id }) => {
 
   useEffect(() => {
     const u = getUser()
-    if (!u) return
-    getUserById(u.id).then(setUser)
+    if (u) {
+      getUserById(u.id).then(setUser)
+    } else if(record) {
+      setUser(record)
+    }
   }, [])
 
   return (

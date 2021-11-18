@@ -7,9 +7,10 @@ import {
   getStudioInfo
 } from '../../services'
 import { Button } from 'react-bootstrap'
-import { MEETING_HOST, WS_HOST } from '../../constants'
+import { WS_HOST } from '../../constants'
 import './style.scss'
 import { NotificationComponent } from '../../App'
+import MeetFrame from '../HomePage/MeetFrame'
 
 const RecordMessagePage = ({ match }) => {
   const [message, setMessage] = useState('')
@@ -28,7 +29,10 @@ const RecordMessagePage = ({ match }) => {
     setSession(ss)
     setStudio(st)
     setMessage(newRecord.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : newRecord.lastMessage)
-    setRecord(newRecord)
+    setRecord({
+      ...newRecord,
+      user_type: 'talent'
+    })
     if (newRecord.seen && !record.seen) { setLiveMode(true) }
     if (!newRecord.seen && record.seen) { setLiveMode(false) }
 
@@ -135,17 +139,10 @@ const RecordMessagePage = ({ match }) => {
         ] : null}
       </div>
       {showMeetingFrame &&
-        <div className="meeting-frame mt-2">
-          <iframe
-            title="Meeting"
-            width="100%"
-            height="100%"
-            id="jitsi-meeting-frame"
-            src={`${MEETING_HOST}/${meeting_id}`}
-            allow="camera; microphone; fullscreen; display-capture"
-            allowFullScreen="allowfullscreen">
-          </iframe>
-        </div>
+        <MeetFrame
+          meeting_id={meeting_id}
+          record={record}
+        />
       }
       <NotificationComponent
         notificationField="client_notice"
