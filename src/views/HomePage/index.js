@@ -218,6 +218,9 @@ class HomePage extends Component {
                 })
               })
               break
+            case 'clear-records':
+              this.setState({ candidates: [] })
+              break
           }
         } catch (err) {
           console.log('socket msg handle err: ', err);
