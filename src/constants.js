@@ -10,6 +10,11 @@ const USER_TYPES = {
   TALENT: 'talent'
 }
 
+const PROJECT_TYPES = {
+  DEFAULT: 'default',
+  CREATOR: 'creator'
+}
+
 const USER_TYPE = {
   IS_CLIENT: () => user.user_type === USER_TYPES.CLIENT,
   IS_SUPER_ADMIN: () => user.user_type === USER_TYPES.SUPER_ADMIN,
@@ -91,5 +96,6 @@ export {
   POSTINGPAGE_PERMISSIONS,
   MEETING_HOST,
   TINYMCE_KEY,
-  WS_HOST
+  WS_HOST,
+  PROJECT_TYPES
 }

@@ -1,9 +1,11 @@
-import  React, { useState, useCallback, useEffect, Component } from 'react'
+import  React, { useState, useEffect } from 'react'
 import { MEETING_HOST } from '../../constants'
+import { getUser, getUserById } from '../../services'
 
 let loading = false
 
 const MeetFrame = ({ meeting_id }) => {
+  const [user, setUser] = useState(null)
   const [api, setApi] = useState(null)
   const [key, setKey]  = useState(0)
 
@@ -14,10 +16,11 @@ const MeetFrame = ({ meeting_id }) => {
     }
     if (api) { api.dispose() }
     const url = new URL(MEETING_HOST)
-    setApi(new window.JitsiMeetExternalAPI(url.host, {
+    window.jitsiApi = new window.JitsiMeetExternalAPI(url.host, {
       roomName: meeting_id,
       parentNode: document.querySelector('#jitsi-frame')
-    }))
+    })
+    setApi(window.jitsiApi)
     loading = false
   }
 
@@ -33,6 +36,18 @@ const MeetFrame = ({ meeting_id }) => {
       iframe.setAttribute('id', 'jitsi-meeting-frame')
     }
   }, [api])
+
+  useEffect(() => {
+    if (api && user) {
+      api.executeCommand('displayName', `${user.first_name} ${user.last_name} (${user.user_type})`)
+    }
+  }, [api, user])
+
+  useEffect(() => {
+    const u = getUser()
+    if (!u) return
+    getUserById(u.id).then(setUser)
+  }, [])
 
   return (
     <div id="jitsi-frame" className="no-print">
