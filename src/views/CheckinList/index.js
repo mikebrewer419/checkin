@@ -360,13 +360,13 @@ class List extends Component {
       'checked_in_time',
       // 'jitsi_meeting_id',
       'actual_call',
+      'last_record_time',
       // 'signed_out_time',
       'agent',
       'interview_no',
       'role',
       'sagnumber',
       // 'call_in_time',
-      'last_record_time'
       // 'studio',
     ]
     let csvContent = this.props.candidates
@@ -392,7 +392,11 @@ class List extends Component {
           }
         })
       ))
-    csvContent.unshift(row_headers)
+    csvContent.unshift(row_headers.map(h => {
+      return h === 'last_record_time'
+        ? 'signed_out_time'
+        : h
+    }))
     console.log('csvContent: ', csvContent);
     const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(Papa.unparse(csvContent))
 
