@@ -360,13 +360,13 @@ class List extends Component {
       'checked_in_time',
       // 'jitsi_meeting_id',
       'actual_call',
-      'signed_out_time',
+      // 'signed_out_time',
       'agent',
       'interview_no',
       'role',
       'sagnumber',
       // 'call_in_time',
-      // 'last_record_time'
+      'last_record_time'
       // 'studio',
     ]
     let csvContent = this.props.candidates
