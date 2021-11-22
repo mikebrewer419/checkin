@@ -21,6 +21,17 @@ import { USER_TYPES } from '../../constants'
 
 import './style.scss'
 
+const safariCheck = () => {
+  const ua = window.navigator.userAgent
+  const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i)
+  const webkit = !!ua.match(/WebKit/i)
+  const iOSSafari = iOS && webkit && !ua.match(/CriOS/i)
+  if (iOSSafari) {
+    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`
+    window.open(url, '_self')
+  }
+}
+
 const Onboard = () => {
   const [user, setUser] = useState(null)
 
@@ -52,6 +63,7 @@ const Onboard = () => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
+    safariCheck()
     const u = getUser()
     if (u) {
       getUserById(u.id).then(data => {
