@@ -63,10 +63,6 @@ const Onboard = () => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('appframe') === 'true') {
-      setCameraError(true)
-    }
     safariCheck()
     const u = getUser()
     if (u) {
