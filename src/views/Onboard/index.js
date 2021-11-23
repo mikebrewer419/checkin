@@ -63,7 +63,11 @@ const Onboard = () => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
-    safariCheck()
+    if (window.webkit) {
+      setCameraError(true)
+    } else {
+      safariCheck()
+    }
     const u = getUser()
     if (u) {
       getUserById(u.id).then(data => {
