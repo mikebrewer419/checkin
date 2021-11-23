@@ -27,7 +27,7 @@ const safariCheck = () => {
   const webkit = !!ua.match(/WebKit/i)
   const iOSSafari = iOS && webkit && !ua.match(/CriOS/i)
   if (iOSSafari) {
-    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`
+    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?appframe=true')}`
     window.open(url, '_self')
   }
 }
@@ -63,6 +63,10 @@ const Onboard = () => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('appframe') === 'true') {
+      setCameraError(true)
+    }
     safariCheck()
     const u = getUser()
     if (u) {
