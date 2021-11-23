@@ -27,7 +27,7 @@ const safariCheck = () => {
   const webkit = !!ua.match(/WebKit/i)
   const iOSSafari = iOS && webkit && !ua.match(/CriOS/i)
   if (iOSSafari) {
-    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?appframe=true')}`
+    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`
     window.open(url, '_self')
   }
 }
