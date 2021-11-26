@@ -134,7 +134,7 @@ const Onboard = () => {
       if (result.record && result.record._id) {
         try {
           if (window.ReactNativeWebView) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ talent: result.record}))
+            window.ReactNativeWebView.postMessage(JSON.stringify({ talent: result.record, studio }))
           }
         } catch (err) {
           console.log('IGNORE: react native send info failed.', err)
