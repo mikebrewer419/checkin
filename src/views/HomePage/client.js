@@ -37,7 +37,8 @@ class ClientHomePage extends Component {
 
       twrGroupCandidates: [],
       twrCandidates: [],
-      listTab: 'heyjoe'
+      listTab: 'heyjoe',
+      selectedDate: null
     }
   }
 
@@ -284,9 +285,9 @@ class ClientHomePage extends Component {
   render() {
     const { studio, session, showChat, showList, candidates: hjCandidates,
       jitsiKey, groupCandidates: hjGroupCandidates, testMode,
-      listTab, twrCandidates, twrGroupCandidates } = this.state
+      listTab, twrCandidates, twrGroupCandidates, selectedDate } = this.state
 
-    const candidates = listTab === 'heyjoe' ? hjCandidates : twrCandidates
+    let candidates = listTab === 'heyjoe' ? hjCandidates : twrCandidates
     const groupCandidates = listTab === 'heyjoe' ? hjGroupCandidates : twrGroupCandidates
 
     if (!studio) {
@@ -301,6 +302,11 @@ class ClientHomePage extends Component {
       }
     })
     rs.sort((a, b) => a.localeCompare(b))
+
+    const dates = [...new Set([...candidates.map(c => c.checked_in_time.split('T')[0])])]
+    if (selectedDate) {
+      candidates = candidates.filter(c => c.checked_in_time.startsWith(selectedDate))
+    }
 
     return (
       <div className="homepage-wrapper client">
@@ -333,6 +339,10 @@ class ClientHomePage extends Component {
               roles={rs}
               
               candidates={candidates}
+
+              dates={dates}
+              selectedDate={selectedDate}
+              setSelectedDate={d => this.setState({ selectedDate: d })}
 
               setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
               setTwrCandidates={cs => this.setState({ twrCandidates: cs })}

@@ -24,12 +24,21 @@ import { FaFilePdf, FaPrint } from 'react-icons/fa'
 
 const interval = 5000 // query api every 30 seconds
 
-const SizeCards = ({ studio, session, isClient = true, candidates,
+const SizeCards = ({
+  studio,
+  session,
+  isClient = true,
+  candidates,
+
   listTab,
   setListTab,
   setTwrGroupCandidates,
   setTwrCandidates,
-  roles
+  roles,
+
+  dates,
+  selectedDate,
+  setSelectedDate
  }) => {
   const [user, setUser] = useState(null)
   const [ filter, setFilter ] = useState('all')
@@ -193,40 +202,61 @@ const SizeCards = ({ studio, session, isClient = true, candidates,
   return (
     <div>
       <div className="mt-3 pl-3 no-print d-flex align-items-end">
-        <div className="mr-auto d-flex">
-          <button
-            className="btn btn-default"
-            onClick={() => {
-              window.print()
-            }}
-          >
-            <FaPrint className="mr-2" />
-            Print
-          </button>
-          <div className="d-flex flex-column align-items-center px-2">
-            <span>Make picks private</span>
-            <Switch
-              checkedIcon={null} uncheckedIcon={null}
-              height={20}
-              onColor="#ee514f"
-              checked={pickPrivate}
-              onChange={(state) => {
-                setPickPrivate(state)
-                if (!state) {
-                  setYesPickShow(false)
-                }
-              }}
-            />
+        <div className="mr-auto">
+          <div>
+            {dates && dates.length > 1 && (
+              <div className="d-flex px-2 mb-2 align-items-center">
+                <label className="mb-0">Select Date</label>
+                <div className="flex-fill ml-2">
+                  <select onChange={ev => {
+                    setSelectedDate(ev.target.value)
+                  }} className="form-control form-control-sm">
+                    <option value={""}>All Dates</option>
+                    {dates.map(d => {
+                      return (
+                        <option value={d} selected={d === selectedDate} > {d} </option>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="d-flex flex-column align-items-center px-2">
-            <span>Show yes picks</span>
-            <Switch
-              checkedIcon={null} uncheckedIcon={null}
-              height={20}
-              checked={yesPickShow}
-              onChange={(state) => setYesPickShow(state)}
-              disabled={!pickPrivate}
-            />
+          <div className="d-flex">
+            <button
+              className="btn btn-default"
+              onClick={() => {
+                window.print()
+              }}
+            >
+              <FaPrint className="mr-2" />
+              Print
+            </button>
+            <div className="d-flex flex-column align-items-center px-2">
+              <span>Make picks private</span>
+              <Switch
+                checkedIcon={null} uncheckedIcon={null}
+                height={20}
+                onColor="#ee514f"
+                checked={pickPrivate}
+                onChange={(state) => {
+                  setPickPrivate(state)
+                  if (!state) {
+                    setYesPickShow(false)
+                  }
+                }}
+              />
+            </div>
+            <div className="d-flex flex-column align-items-center px-2">
+              <span>Show yes picks</span>
+              <Switch
+                checkedIcon={null} uncheckedIcon={null}
+                height={20}
+                checked={yesPickShow}
+                onChange={(state) => setYesPickShow(state)}
+                disabled={!pickPrivate}
+              />
+            </div>
           </div>
         </div>
         <div className="d-flex align-items-end mr-auto">

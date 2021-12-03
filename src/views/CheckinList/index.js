@@ -411,7 +411,8 @@ class List extends Component {
   }
 
   render() {
-    const { studio, session, testMode, reloadSession, roles } = this.props
+    const { studio, session, testMode, reloadSession, roles,
+      dates, selectedDate, setSelectedDate } = this.props
     const {
       timeOptions,
       selectedRecord,
@@ -511,6 +512,23 @@ class List extends Component {
                 </div>
               )}
             </h4>
+            {dates.length > 1 && (
+              <div className="d-flex px-2 mb-2 align-items-center">
+                <label className="mb-0">Select Date</label>
+                <div className="flex-fill ml-2">
+                  <select onChange={ev => {
+                    setSelectedDate(ev.target.value)
+                  }} className="form-control form-control-sm">
+                    <option value={""}>All Dates</option>
+                    {dates.map(d => {
+                      return (
+                        <option value={d} selected={d === selectedDate} > {d} </option>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
           {session.twr && <div className="tab-header d-flex">
             <label className={classnames("btn btn-sm flex-fill mb-0", { 'btn-danger': listTab === 'heyjoe' })} onClick={() => {

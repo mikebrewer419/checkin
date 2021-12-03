@@ -38,6 +38,7 @@ class HomePage extends Component {
 
       twrGroupCandidates: [],
       twrCandidates: [],
+      selectedDate: null,
       listTab: 'heyjoe',
     }
   }
@@ -280,11 +281,11 @@ class HomePage extends Component {
   render() {
     const { studio, session, showChat, showList, candidates: hjCandidates,
       jitsiKey, groupCandidates: hjGroupCandidates, testMode,
-      listTab, twrCandidates, twrGroupCandidates } = this.state
+      listTab, twrCandidates, twrGroupCandidates, selectedDate } = this.state
     if (!studio) {
       return <div>Loading...</div>
     }
-    const candidates = listTab === 'heyjoe' ? hjCandidates : twrCandidates
+    let candidates = listTab === 'heyjoe' ? hjCandidates : twrCandidates
     const groupCandidates = listTab === 'heyjoe' ? hjGroupCandidates : twrGroupCandidates
     const meeting_id = testMode ? studio.test_meeting_id : studio.jitsi_meeting_id
     const isTwr = listTab === 'twr'
@@ -296,6 +297,11 @@ class HomePage extends Component {
       }
     })
     rs.sort((a, b) => a.localeCompare(b))
+
+    const dates = [...new Set([...candidates.map(c => c.checked_in_time.split('T')[0])])]
+    if (selectedDate) {
+      candidates = candidates.filter(c => c.checked_in_time.startsWith(selectedDate))
+    }
 
     return (
       <div className="homepage-wrapper">
@@ -314,8 +320,11 @@ class HomePage extends Component {
                 delete_message={studio.delete_message}
                 candidates={candidates}
                 groupCandidates={groupCandidates}
+                dates={dates}
+                selectedDate={selectedDate}
                 roles={rs}
                 setTwrGroupCandidates={gcs => this.setState({ twrGroupCandidates: gcs })}
+                setSelectedDate={d => this.setState({ selectedDate: d })}
                 setTwrCandidates={cs => this.setState({ twrCandidates: cs })}
                 setListTab={t => this.setState({ listTab: t })}
               />
