@@ -107,9 +107,11 @@ const RecordMessagePage = ({ match }) => {
 
   return (
     <div className="message-page pt-2">
-      <a href="https://heyjoe.io/product/crush-your-virtual-casting-mini-workshop/" target="_blank"  className="mt-2 h6">
-        Special Offer: Pre-Order "Crush Your VIrtual Casting Set Up" Mini Workshop for $27 until 12/10/21
-      </a>
+      {!liveMode && (
+        <a href="https://heyjoe.io/product/crush-your-virtual-casting-mini-workshop/" target="_blank"  className="mt-2 h6">
+          Special Offer: Pre-Order "Crush Your Virtual Casting Set Up" Mini Workshop for $27 until 12/10/21
+        </a>
+      )}
       <div className="row mx-0 align-items-center flex-wrap">
         <img src={logo} className="studio-logo col col-auto mb-2 mb-sm-0 px-2 mr-0 mx-auto mx-sm-0"/>
         {showMeetingFrame ? [
@@ -121,7 +123,6 @@ const RecordMessagePage = ({ match }) => {
             <label className="mb-0 ml-3">{meeting_id}</label>
           </div>,
           <div className="col d-flex flex-column align-items-center">
-            { calledIn && <label className="h5">It's your turn</label>}
             {JoinButton}
           </div>,
           <p key="message" className="d-none my-2 text-left sms-message col col-lg-4 col-12">
