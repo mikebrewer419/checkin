@@ -414,25 +414,21 @@ const Onboard = () => {
               </label>
             </p>
 
-            <label className="d-flex align-items-center">
-              <input type="checkbox" className="mr-2 w-auto" required />
-              I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
-            </label>
-            <label className="d-flex align-items-center">
-              <input type="checkbox" className="mr-2 w-auto" name="opt_in" checked={optIn} onChange={ev => {
-                setOptIn(ev.target.checked)
-              }} />
-              Opt in to special offers from Hey Joe
-            </label>
+            <div className="full">
+              <label className="d-flex align-items-center full">
+                <input type="checkbox" className="mr-2 w-auto" required />
+                I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
+              </label>
+              <label className="d-flex align-items-center full mb-0">
+                <input type="checkbox" className="mr-2 w-auto" name="opt_in" checked={optIn} onChange={ev => {
+                  setOptIn(ev.target.checked)
+                }} />
+                Opt in to special offers from Hey Joe
+              </label>
+              </div>
             {optIn && (
               <div className="full">
-                By submitting this form, you agree to receive
-                marketing text messages from us at the number
-                provided, including messages sent by autodialer.
-                Consent is not a condition of purchase. Message
-                and data rates may apply, Message frequency
-                varies. Reply HELP for help or STOP to cancel. View
-                our Privacy Policy and Terms of Service.
+                By submitting this form, you agree to receive marketing text messages from us at the number provided. Message and data rates may apply, Message frequency varies. Reply HELP for help or STOP to cancel.
               </div>
             )}
 
