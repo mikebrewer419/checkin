@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import classnames from 'classnames'
-import { FaDownload, FaStickyNote, FaFilm, FaListOl, FaTimes, FaSpinner } from 'react-icons/fa'
+import { FaDownload, FaStickyNote, FaFilm, FaListOl, FaTimes, FaSpinner, FaFileDownload } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import Papa from 'papaparse'
 import moment from 'moment'
@@ -56,6 +56,7 @@ class List extends Component {
       confirmClearSession: false,
       timeOptions: [],
       csvLoading: false,
+      optInCsvLoading: false,
       listTab: 'heyjoe',
       showNotification: '',
       notification: {},
@@ -344,6 +345,59 @@ class List extends Component {
     })
   }
 
+  downloadOptinCSV = async () => {
+    const { studio } = this.props
+    this.setState({ optInCsvLoading: true })
+    const row_headers = [
+      'first_name',
+      'last_name',
+      'Consent',
+      'email',
+      'Phone',
+      'Timestamp',
+      'Country'
+    ]
+    let csvContent = this.props.candidates.filter(c => c.opt_in).map(c => (
+      row_headers.map(key => {
+        switch(key) {
+          case 'first_name':
+            return c.first_name
+            break
+          case 'last_name':
+            return c.last_name
+            break
+          case 'Consent':
+            return "['sms']"
+            break
+          case 'email':
+            return c.email
+            break
+          case 'Phone':
+            return c.phone
+            break
+          case 'Timestamp':
+            return c.checked_in_time
+            break
+          case 'Country':
+            return 'USA'
+            break
+        }
+      })
+    ))
+    csvContent.unshift(row_headers)
+    const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(Papa.unparse(csvContent))
+
+    var link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `${studio.name}-${(new Date()).toISOString()}-optins.csv`)
+    document.body.appendChild(link)
+    
+    link.click()
+    document.body.removeChild(link)
+
+    this.setState({ optInCsvLoading: false })
+  }
+
   downloadCSV = async () => {
     this.setState({ csvLoading: true })
     const { studio, session } = this.props
@@ -417,6 +471,7 @@ class List extends Component {
       timeOptions,
       selectedRecord,
       confirmClearSession,
+      optInCsvLoading,
       csvLoading,
       listTab, 
       showNotification,
@@ -499,6 +554,25 @@ class List extends Component {
                       />
                     }
                   </a>
+                  {listTab !== 'twr' && (
+                    <a
+                      title="Download Opt Ins CSV"
+                      className="mx-3"
+                    >
+                      {optInCsvLoading ?
+                        <FaSpinner
+                          size="16"
+                          className="text-danger cursor-pointer spinning"
+                        />
+                      :
+                        <FaFileDownload
+                          size="16"
+                          className="text-danger cursor-pointer"
+                          onClick={this.downloadOptinCSV}
+                        />
+                      }
+                    </a>
+                  )}
                   <a
                     title="Clear Records"
                     className="mx-3"

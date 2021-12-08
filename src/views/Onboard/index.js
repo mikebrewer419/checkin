@@ -21,7 +21,7 @@ import { USER_TYPES } from '../../constants'
 
 import './style.scss'
 
-const safariCheck = () => {
+const mobileSafariCheck = () => {
   const ua = window.navigator.userAgent
   const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i)
   const webkit = !!ua.match(/WebKit/i)
@@ -29,7 +29,9 @@ const safariCheck = () => {
   if (iOSSafari) {
     const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`
     window.open(url, '_self')
+    return true
   }
+  return false
 }
 
 const Onboard = () => {
@@ -57,8 +59,10 @@ const Onboard = () => {
   const [actualCall, setActualCall] = useState(new Date())
   const [interviewNo, setInterviewNo] = useState(1)
   const [role, setRole] = useState('')
+  const [optIn, setOptIn] = useState(false)
 
   const [roles, setRoles] = useState([])
+  const [isMobileSafari, setIsMobileSafari] = useState(false)
 
   const webcamRef = useRef(null)
 
@@ -66,7 +70,7 @@ const Onboard = () => {
     if (window.webkit) {
       setCameraError(true)
     } else {
-      safariCheck()
+      setIsMobileSafari(mobileSafariCheck())
     }
     const u = getUser()
     if (u) {
@@ -127,7 +131,8 @@ const Onboard = () => {
       actual_call: actualCall,
       interview_no: interviewNo,
       role: role,
-      avatar: avatar64
+      avatar: avatar64,
+      opt_in: optIn
     }).then(result => {
       console.log("onSubmit -> result", result)
       setApiResult(result)
@@ -413,6 +418,23 @@ const Onboard = () => {
               <input type="checkbox" className="mr-2 w-auto" required />
               I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
             </label>
+            <label className="d-flex align-items-center">
+              <input type="checkbox" className="mr-2 w-auto" name="opt_in" checked={optIn} onChange={ev => {
+                setOptIn(ev.target.checked)
+              }} />
+              Opt in to special offers from Hey Joe
+            </label>
+            {optIn && (
+              <div className="full">
+                By submitting this form, you agree to receive
+                marketing text messages from us at the number
+                provided, including messages sent by autodialer.
+                Consent is not a condition of purchase. Message
+                and data rates may apply, Message frequency
+                varies. Reply HELP for help or STOP to cancel. View
+                our Privacy Policy and Terms of Service.
+              </div>
+            )}
 
             <p className="full">
               <button type="submit" disabled={submitting}>
