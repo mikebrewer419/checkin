@@ -14,6 +14,7 @@ const Register = () => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [agent, setAgent] = useState('')
+  const [optIn, setOptIn] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [password, setPassword] = useState('')
@@ -73,6 +74,7 @@ const Register = () => {
     formData.append('logo', avatar64)
     formData.append('phone', phoneNumber)
     formData.append('agent', agent)
+    formData.append('opt_in', optIn)
 
     // const captchaVerifyResponse = await verifyCaptcha(token)
     // if (!captchaVerifyResponse.success) {
@@ -295,10 +297,23 @@ const Register = () => {
         </div>
 
         <p className="text-danger">{`${error || formError || ''}`}</p>
-        <label className="d-flex align-items-center mb-3">
-          <input type="checkbox" className="mr-2 w-auto" id="agree-terms" />
-          I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
-        </label>
+        <div className="form-group">
+          <label className="d-flex align-items-center mb-3">
+            <input type="checkbox" className="mr-2 w-auto" id="agree-terms" />
+            I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
+          </label>
+          <label className="d-flex align-items-center full mb-0">
+              <input type="checkbox" className="mr-2 w-auto" name="opt_in" checked={optIn} onChange={ev => {
+                setOptIn(ev.target.checked)
+              }} />
+              Opt in to special offers from Hey Joe
+          </label>
+          {optIn && (
+            <div className="full mt-2">
+              By submitting this form, you agree to receive marketing text messages from us at the number provided. Message and data rates may apply, Message frequency varies. Reply HELP for help or STOP to cancel.
+            </div>
+          )}
+        </div>
         <button
           type="submit"
           className="btn btn-danger"

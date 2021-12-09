@@ -9,6 +9,7 @@ const TalentPage = () => {
   const [user, setUser] = useState(null)
   const [email, setEmail] = useState('')
   const [agent, setAgent] = useState('')
+  const [optIn, setOptIn] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [password, setPassword] = useState('')
@@ -34,6 +35,7 @@ const TalentPage = () => {
           setAgent(data.agent)
           setPhoneNumber(data.phone)
           setEmail(data.email)
+          setOptIn(data.opt_in)
         }
       })
     }
@@ -247,6 +249,19 @@ const TalentPage = () => {
             {showPwdFields ? 'Cancel' : 'Update Password'}
           </button>
           <p className="text-danger">{`${formError || ''}`}</p>
+          <div className="form-group">
+            <label className="d-flex align-items-center full mb-0">
+                <input type="checkbox" className="mr-2 w-auto" name="opt_in" checked={optIn} onChange={ev => {
+                  setOptIn(ev.target.checked)
+                }} />
+                Opt in to special offers from Hey Joe
+            </label>
+            {optIn && (
+              <div className="full mt-2">
+                By submitting this form, you agree to receive marketing text messages from us at the number provided. Message and data rates may apply, Message frequency varies. Reply HELP for help or STOP to cancel.
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <button

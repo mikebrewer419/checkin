@@ -82,6 +82,7 @@ const Onboard = () => {
           setAgent(data.agent)
           setPhoneNumber(data.phone)
           setEmail(data.email)
+          setOptIn(data.opt_in)
         }
       })
     }
