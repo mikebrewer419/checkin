@@ -14,6 +14,7 @@ import { FaMinus } from 'react-icons/fa'
 import { WS_HOST } from '../../constants'
 import MeetFrame from './MeetFrame'
 import SizeCards from './SizeCards'
+import { formatTime } from '../../utils'
 
 class HomePage extends Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class HomePage extends Component {
 
       twrGroupCandidates: [],
       twrCandidates: [],
-      selectedDate: null,
+      selectedDate: '',
       listTab: 'heyjoe',
     }
   }
@@ -298,9 +299,9 @@ class HomePage extends Component {
     })
     rs.sort((a, b) => a.localeCompare(b))
 
-    const dates = [...new Set([...candidates.map(c => c.checked_in_time.split('T')[0])])]
+    const dates = [...new Set([...candidates.map(c => formatTime(c.checked_in_time, 'YYYY-MM-DD'))])]
     if (selectedDate) {
-      candidates = candidates.filter(c => c.checked_in_time.startsWith(selectedDate))
+      candidates = candidates.filter(c => formatTime(c.checked_in_time, 'YYYY-MM-DD') === selectedDate)
     }
 
     return (

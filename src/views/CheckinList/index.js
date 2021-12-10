@@ -24,7 +24,7 @@ import AvatarModal from '../../components/avatar-modal'
 import './style.scss'
 import { formatHour, formatTime } from '../../utils'
 import PersonCard from './PersonCard'
-import { USER_TYPE } from '../../constants'
+import { USER_TYPE, USER_TYPES } from '../../constants'
 import TwrList from './twr'
 
 const messages = [
@@ -554,7 +554,7 @@ class List extends Component {
                       />
                     }
                   </a>
-                  {listTab !== 'twr' && (
+                  {listTab !== 'twr' && USER_TYPE.IS_SUPER_ADMIN() && (
                     <a
                       title="Download Opt Ins CSV"
                       className="mx-3"
@@ -590,13 +590,13 @@ class List extends Component {
               <div className="d-flex px-2 mb-2 align-items-center">
                 <label className="mb-0">Select Date</label>
                 <div className="flex-fill ml-2">
-                  <select onChange={ev => {
+                  <select value={selectedDate} onChange={ev => {
                     setSelectedDate(ev.target.value)
                   }} className="form-control form-control-sm">
                     <option value={""}>All Dates</option>
                     {dates.map(d => {
                       return (
-                        <option value={d} selected={d === selectedDate} > {d} </option>
+                        <option key={d} value={d}> {d} </option>
                       )
                     })}
                   </select>

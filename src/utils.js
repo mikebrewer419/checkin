@@ -1,9 +1,9 @@
 import moment from 'moment'
 
-export const formatTime = (time) => {
+export const formatTime = (time, format = 'M/D/YYYY h:mm: a') => {
   const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
   if (date.isValid())
-    return date.format('M/D/YYYY h:mm: a')
+    return date.format(format)
   return ''
 }
 

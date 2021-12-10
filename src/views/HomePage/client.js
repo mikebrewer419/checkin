@@ -11,6 +11,7 @@ import {
   createCometRoom
 } from '../../services'
 import { WS_HOST } from '../../constants'
+import { formatTime } from '../../utils'
 import MeetFrame from './MeetFrame'
 import './style.scss'
 
@@ -38,7 +39,7 @@ class ClientHomePage extends Component {
       twrGroupCandidates: [],
       twrCandidates: [],
       listTab: 'heyjoe',
-      selectedDate: null
+      selectedDate: ''
     }
   }
 
@@ -303,9 +304,9 @@ class ClientHomePage extends Component {
     })
     rs.sort((a, b) => a.localeCompare(b))
 
-    const dates = [...new Set([...candidates.map(c => c.checked_in_time.split('T')[0])])]
+    const dates = [...new Set([...candidates.map(c => formatTime(c.checked_in_time, 'YYYY-MM-DD'))])]
     if (selectedDate) {
-      candidates = candidates.filter(c => c.checked_in_time.startsWith(selectedDate))
+      candidates = candidates.filter(c => formatTime(c.checked_in_time, 'YYYY-MM-DD') === selectedDate)
     }
 
     return (
