@@ -107,11 +107,6 @@ const RecordMessagePage = ({ match }) => {
 
   return (
     <div className="message-page pt-2">
-      {!liveMode && (
-        <a href="https://heyjoe.io/product/crush-your-virtual-casting-mini-workshop/" target="_blank"  className="mt-2 h6">
-          Special Offer: Pre-Order "Crush Your Virtual Casting Set Up" Mini Workshop for $27 until 12/10/21
-        </a>
-      )}
       <div className="row mx-0 align-items-center flex-wrap">
         <img src={logo} className="studio-logo col col-auto mb-2 mb-sm-0 px-2 mr-0 mx-auto mx-sm-0"/>
         {showMeetingFrame ? [
