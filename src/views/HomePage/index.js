@@ -14,6 +14,7 @@ import { FaMinus } from 'react-icons/fa'
 import { WS_HOST } from '../../constants'
 import MeetFrame from './MeetFrame'
 import SizeCards from './SizeCards'
+import GroupVideos from './GroupVideos'
 import { formatTime } from '../../utils'
 
 class HomePage extends Component {
@@ -187,7 +188,11 @@ class HomePage extends Component {
               break
             case 'group':
               this.setState({
-                groupCandidates: ev.data.records
+                groupCandidates: ev.data.records,
+                session: {
+                  ...this.state.session,
+                  currentGroup: ev.data._id
+                }
               })
               break
             case 'record':
@@ -351,7 +356,7 @@ class HomePage extends Component {
                       <h6 className="mx-n2 px-2">
                         Current Group { isTwr ? '(TWR)' : '' }
                       </h6>
-                      <ul>
+                      <ul className='mb-1'>
                         {groupCandidates.map(person => (
                           <li key={person._id}>
                             <div className="d-flex align-items-center">
@@ -367,6 +372,7 @@ class HomePage extends Component {
                         ))}
                       </ul>
                       {groupCandidates.length > 0 && [
+                        <GroupVideos key="group-videos" groupId={session.currentGroup} />,
                         <button key="finish" className="btn btn-sm btn-danger leave-group-btn" onClick={this.leaveCurrentGroup}>
                           Finish Group
                         </button>

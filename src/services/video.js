@@ -10,6 +10,16 @@ export const getSessionVideos = async (session_id) => {
   return await resp.json()
 }
 
+export const getGroupVideos = async (group_id) => {
+  const resp = await fetch(`${api_host}/videos/by-group/${group_id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}
+
 export const getArchivedSessionVideos = async (session_id) => {
   const resp = await fetch(`${api_host}/videos/archived/${session_id}`, {
     headers: {
