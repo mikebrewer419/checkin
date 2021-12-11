@@ -50,11 +50,12 @@ class GroupVideos extends Component {
     }
     this.ws.onmessage = (event) => {
       try {
-        const ev = JSON.parse(event.data)
-        console.log('video ev: ', ev);
-        this.setState({
-          videos: this.state.videos.concat(ev)
-        })
+        const event = JSON.parse(event.data)
+        if (event.type === 'add-video') {
+          this.setState({
+            videos: this.state.videos.concat(event.data)
+          })
+        }
       } catch (err) {
         console.log('socket msg handle err: ', err);
       }
