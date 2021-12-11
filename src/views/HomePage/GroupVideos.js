@@ -48,9 +48,9 @@ class GroupVideos extends Component {
       console.log('WS onclose')
       this.initWS()
     }
-    this.ws.onmessage = (event) => {
+    this.ws.onmessage = (ev) => {
       try {
-        const event = JSON.parse(event.data)
+        const event = JSON.parse(ev.data)
         if (event.type === 'add-video') {
           this.setState({
             videos: this.state.videos.concat(event.data)
