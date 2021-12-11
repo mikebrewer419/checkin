@@ -53,7 +53,7 @@ class GroupVideos extends Component {
         const ev = JSON.parse(event.data)
         console.log('video ev: ', ev);
         this.setState({
-          videos: this.state.videos.concat(ev.data)
+          videos: this.state.videos.concat(ev)
         })
       } catch (err) {
         console.log('socket msg handle err: ', err);
