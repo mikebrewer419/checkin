@@ -3,10 +3,12 @@ import ReactPlayer from 'react-player'
 import { Modal } from 'react-bootstrap'
 import {
   static_root,
+  updateVideo,
   getGroupVideos
 } from '../../services'
 import { WS_HOST } from '../../constants'
 import './groupvideos.scss'
+import { FaArchive } from 'react-icons/fa'
 
 class GroupVideos extends Component {
   constructor(props) {
@@ -70,6 +72,13 @@ class GroupVideos extends Component {
     this.initWS()
   }
 
+  handleArchiveVideo = async (video_id) => {
+    await updateVideo(video_id, { is_archived: true })
+    this.setState({
+      videos: this.state.videos.filter(v => v._id !== video_id)
+    })
+  }
+
   render () {
     const { videos, selectedVideo } = this.state
 
@@ -77,18 +86,27 @@ class GroupVideos extends Component {
       <div className='group-videos'>
         {videos.map((video, index) => {
           return (
-            <div key={video.uri} className='video-item' onClick={() => {
-              this.setState({
-                selectedVideo: video
-              })
-            }}>
+            <div key={video.uri} className='video-item'>
               <div className="index-indicator">
                 { index + 1 }
               </div>
               <img
                 className="dummy-player"
                 src={static_root+video.thumbnail}
+                onClick={() => {
+                  this.setState({
+                    selectedVideo: video
+                  })
+                }}
               />
+              <label
+                title="Archive" className='mb-0 mt-n1 cursor-pointer'
+                onClick={() => {
+                  this.handleArchiveVideo(video._id)
+                }}
+              >
+                <FaArchive />
+              </label>
             </div>
           )
         })}
