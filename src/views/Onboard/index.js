@@ -222,7 +222,7 @@ const Onboard = () => {
     <div className="onboard-container">
       {isAppFrame && (
         <div className='d-flex mb-2'>
-          <button className='btn btn-danger btn-sm ml-auto' onClick={() => {
+          <button className='btn btn-text btn-sm text-danger ml-auto' onClick={() => {
             try {
               if (window.ReactNativeWebView) {
                 window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'leave' }))
