@@ -63,12 +63,14 @@ const Onboard = () => {
 
   const [roles, setRoles] = useState([])
   const [isMobileSafari, setIsMobileSafari] = useState(false)
+  const [isAppFrame, setIsAppFrame] = useState(false)
 
   const webcamRef = useRef(null)
 
   useEffect(() => {
     if (window.webkit) {
       setCameraError(true)
+      setIsAppFrame(true)
     } else {
       setIsMobileSafari(mobileSafariCheck())
     }
@@ -140,7 +142,7 @@ const Onboard = () => {
       if (result.record && result.record._id) {
         try {
           if (window.ReactNativeWebView) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ talent: result.record, studio }))
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'onboard', talent: result.record, studio }))
           }
         } catch (err) {
           console.log('IGNORE: react native send info failed.', err)
@@ -218,6 +220,21 @@ const Onboard = () => {
 
   return (
     <div className="onboard-container">
+      {isAppFrame && (
+        <div className='d-flex mb-2'>
+          <button className='btn btn-danger btn-sm ml-auto' onClick={() => {
+            try {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'leave' }))
+              }
+            } catch (err) {
+              console.log('IGNORE: react native send info failed.', err)
+            }
+          }}>
+            Leave
+          </button>
+        </div>
+      )}
       <img
         className="logo d-block m-auto"
         src={static_root+studio.logo}
