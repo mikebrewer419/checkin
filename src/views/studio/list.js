@@ -207,7 +207,7 @@ const StudioList = () => {
       formData.append('support', session.support)
     }
     if (session.start_time) {
-      formData.append('start_time', session.start_time)
+      formData.append('start_time', JSON.stringify(session.start_time))
     }
     if (session._id) {
       await updateSession(session._id, formData)
@@ -458,7 +458,10 @@ const StudioList = () => {
                   </div>}
                   <div className="col-auto action-wrap">
                     <FaPen className="mr-2" onClick={() => {
-                      setSelectedSession(session)
+                      setSelectedSession({
+                        ...session,
+                        start_time: typeof session.start_time === 'string' ? [session.start_time] : session.start_time
+                      })
                       setStudioId(studio._id)
                     }}/>
                     {USER_TYPE.IS_SUPER_ADMIN() && (

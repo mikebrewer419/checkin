@@ -119,16 +119,35 @@ const SessionForm = ({ session, onSubmit }) => {
         placeholder="Search for a Session user..."
       />
       <label>Start time</label>
-      <DateTimePicker
-        value={selectedSession.start_time && new Date(selectedSession.start_time)}
-        className="form-control mb-3"
-        onChange={value => {
+      {(selectedSession.start_time || []).map((st, idx) => {
+        return (
+          <DateTimePicker
+            key={idx}
+            value={st && new Date(st)}
+            className="form-control"
+            onChange={value => {
+              const st = [...selectedSession.start_time]
+              st.splice(idx, 1, value.toISOString())
+              if (!value && selectedSession.start_time.length > 1) {
+                st.splice(idx, 1)
+              }
+              setSelectedSession({
+                ...selectedSession,
+                start_time: st
+              })
+            }}
+          />
+        )
+      })}
+      <sapn
+        className="mb-2 mt-1 cursor-pointer mr-auto"
+        onClick={() => {
           setSelectedSession({
             ...selectedSession,
-            start_time: value
+            start_time: selectedSession.start_time.concat(new Date().toISOString())
           })
         }}
-      />
+      >+ Add Additional Dates/Times</sapn>
       <label>
         Sizecard PDF
         {typeof selectedSession.size_card_pdf === 'string' && (
