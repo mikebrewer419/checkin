@@ -488,6 +488,7 @@ class PostingPage extends Component {
                                   {...record}
                                   studio={studio}
                                   session_id={activeGroup.session}
+                                  hideFeedbackComments={true}
                                 />
                               </div>
                             ))}

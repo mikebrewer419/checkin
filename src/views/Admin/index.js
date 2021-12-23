@@ -55,7 +55,8 @@ const Admin = () => {
   }, [query])
 
   let pages = []
-  for(let i = 0; i < Math.ceil(count / perPage); i ++) {
+  const pageCount = Math.ceil(count / perPage)
+  for(let i = 0; i < pageCount; i ++) {
     pages.push(i)
   }
 
@@ -216,11 +217,32 @@ const Admin = () => {
         </Accordion>
       </div>
       <div className="text-center mt-3">
-        {pages.map(p => {
-          return <label className={`mx-3 page-item ${page === p?'active':''}`} key={p} onClick={() => {
-            setPage(p)
-          }}>{p + 1}</label>
-        })}
+        <ul className="mb-0 d-inline-flex pagination">
+          <li onClick={() => setPage(Math.max(page - 1, 0))}>
+            {'<'}
+          </li>
+          <li className="mx-2">
+            Page 
+            <select className="page-select ml-2 mr-1" onChange={ev => {
+              setPage(parseInt(ev.target.value))
+            }}>
+              {new Array(pageCount).fill().map((_, idx) => {
+                return (
+                  <option value={idx} selected={idx === page}>
+                    { idx + 1}
+                  </option>
+                )
+              })}
+            </select>
+              /
+            <span className="ml-1">
+              {pageCount}
+            </span>
+          </li>
+          <li onClick={() => setPage(Math.min(page + 1, pageCount - 1))}>
+            {'>'}
+          </li>
+        </ul>
       </div>
       <Modal
         show={!!showNotification}

@@ -36,7 +36,8 @@ const TalentPrintCard = forwardRef(({
   email,
   agent,
   actual_call,
-  hideContact
+  hideContact,
+  hideFeedbackComments = false
 }, ref) => {
   return (
     <div className="w-100" ref={ref}>
@@ -68,20 +69,22 @@ const TalentPrintCard = forwardRef(({
           )}
         </div>
       </div>
-      <div className="mt-3">
-        <h6>Comments</h6>
-        {cmts.map((comment, idx) => (
-          <div key={idx}>
-            <label>{comment.by.email}</label>
-            <p>{comment.content}</p>
-          </div>
-        ))}
-        {cmts.length === 0 && (
-          <div>
-            No comments yet.
-          </div>
-        )}
-      </div>
+      {!hideFeedbackComments && (
+        <div className="mt-3">
+          <h6>Comments</h6>
+          {cmts.map((comment, idx) => (
+            <div key={idx}>
+              <label>{comment.by.email}</label>
+              <p>{comment.content}</p>
+            </div>
+          ))}
+          {cmts.length === 0 && (
+            <div>
+              No comments yet.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 })
@@ -154,7 +157,8 @@ const PersonCard = ({
   actual_call,
   twr_deleted,
   groups,
-  showRecordVideosModal
+  showRecordVideosModal,
+  hideFeedbackComments = false
 }) => {
   const [showContact, setShowContact] = useState(false)
   const [commentsVisible, setCommentsVisible] = useState(false)
@@ -322,7 +326,7 @@ const PersonCard = ({
               {MyFeedbackIcon}
             </span>
           </div>
-          {POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
+          {!hideFeedbackComments && POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
             <div className="d-flex align-items-start">
               {feedbackBar}
               <div
@@ -455,15 +459,18 @@ const PersonCard = ({
                   email={email}
                   agent={agent}
                   hideContact={hideContact}
+                  hideFeedbackComments={hideFeedbackComments}
                 />
               </div>
             </Modal.Body>
-            <Modal.Footer>
-              <span className="myfeedback-icon mr-auto mt-1">
-                {MyFeedbackIcon}
-              </span>
-              {feedbackBar}
-            </Modal.Footer>
+            {!hideFeedbackComments && (
+              <Modal.Footer>
+                <span className="myfeedback-icon mr-auto mt-1">
+                  {MyFeedbackIcon}
+                </span>
+                {feedbackBar}
+              </Modal.Footer>
+            )}
           </Modal>
         ]
       )}
