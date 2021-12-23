@@ -427,9 +427,14 @@ const StudioList = () => {
             </div>
             <div className="d-flex flex-column">
               {(sessions[studio._id] || []).map(session => (
-                <div key={session._id} className="row mt-1 ml-2 mr-2">
+                <div key={session._id} className="row mt-1 ml-2 mr-2 align-items-center">
                   <div className="col-2">
-                    {session.name}
+                    <div className='d-inline-flex align-items-end'>
+                      <span className='mr-2'>{session.name}</span>
+                      <span>{((typeof session.start_time === 'string' ? [session.start_time] : session.start_time) || []).map(st => {
+                        return moment(new Date(st)).format('MM/DD')
+                      }).join(', ')}</span>
+                    </div>
                     {session.twr && (
                       <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />
                     )}
