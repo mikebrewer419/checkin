@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import DateTimePicker from 'react-datetime-picker'
+import { FaListAlt } from 'react-icons/fa';
 import {
   static_root,
   searchUsers,
@@ -186,6 +187,7 @@ const SessionForm = ({ session, onSubmit }) => {
       />
       <label>
         The waitingroom integration.
+        <FaListAlt size="11" className="ml-2" />
       </label>
       <input type="text"
         value={selectedSession.twr}

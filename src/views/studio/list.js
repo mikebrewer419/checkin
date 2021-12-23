@@ -431,7 +431,7 @@ const StudioList = () => {
                   <div className="col-2">
                     <div className='d-inline-flex align-items-end'>
                       <span className='mr-2'>{session.name}</span>
-                      <span>{((typeof session.start_time === 'string' ? [session.start_time] : session.start_time) || []).map(st => {
+                      <span>{session.start_time.map(st => {
                         return moment(new Date(st)).format('MM/DD')
                       }).join(', ')}</span>
                     </div>
@@ -465,7 +465,7 @@ const StudioList = () => {
                     <FaPen className="mr-2" onClick={() => {
                       setSelectedSession({
                         ...session,
-                        start_time: typeof session.start_time === 'string' ? [session.start_time] : session.start_time
+                        start_time: session.start_time
                       })
                       setStudioId(studio._id)
                     }}/>
