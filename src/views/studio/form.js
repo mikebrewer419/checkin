@@ -14,6 +14,7 @@ const StudioForm = ({
   position_back_message = '',
   position_messages = [],
   audition_purchase_message = '',
+  good_bye_message = '',
   delete_message,
   project_type = PROJECT_TYPES.DEFAULT,
   logo = '',
@@ -71,6 +72,9 @@ const StudioForm = ({
         <label htmlFor="position_messages4">Position_messages 4</label>
         <input className="form-control form-control-sm"  type="text" name="position_messages[3]" id="position_messages4"
           defaultValue={position_messages[3] || ``} />
+        <label htmlFor="position_messages4">Good bye message</label>
+        <input className='form-control form-control-sm' type="text" name="good_bye_message" id="good_bye_message"
+          defaultValue={good_bye_message || 'Thank you for using Hey Joe! Want to step up your at-home video setup? Use offer code crush20 for $20 off our Mini Workshop heyjoe.io/workshop Valid til 2/1/21'} />
       </div>
       <div className="form-group">
         <label htmlFor="delete_message">Delete message</label>

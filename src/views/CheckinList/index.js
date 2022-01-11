@@ -17,6 +17,7 @@ import {
   removeRecordFromCurrentGroup,
   getCurrentGroup,
   finishCurrentGroup,
+  scheduleSendMessage,
   twr_host,
   getNotification
 } from '../../services'
@@ -201,6 +202,12 @@ class List extends Component {
             to: vm.props.candidates[idx].phone,
             body: this.messages[i]
           }, studio._id, vm.props.candidates[idx]._id)
+          if (i === 0 && studio.good_bye_message) {
+            scheduleSendMessage({
+              to: vm.props.candidates[idx].phone,
+              body: studio.good_bye_message,
+            }, studio._id, vm.props.candidates[idx]._id, 10)
+          }
         }
       }
       console.log('updated ', data)

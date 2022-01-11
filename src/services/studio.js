@@ -154,6 +154,23 @@ export const sendMessage = async (message, studio_id, record_id = '') => {
   return await res.json()
 }
 
+export const scheduleSendMessage = async (message, studio_id, record_id = '', timeout = 10) => {
+  const res = await fetch(api_host + `/studio/schedule-message/${studio_id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      to: message.to,
+      body: message.body,
+      record_id,
+      time: timeout
+    })
+  })
+  return await res.json()
+}
+
 export const assignCastingDirector = (id, director_ids) => {
   return fetch(api_host+`/studio/assign-director/${id}`, {
     method: 'POST',
