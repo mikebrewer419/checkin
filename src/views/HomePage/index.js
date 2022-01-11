@@ -7,7 +7,8 @@ import {
   createCometRoom,
   fetchCheckInList,
   getCurrentGroup,
-  static_root
+  static_root,
+  getUser
 } from '../../services'
 import './style.scss'
 import { FaMinus } from 'react-icons/fa'
@@ -42,6 +43,7 @@ class HomePage extends Component {
       twrCandidates: [],
       selectedDate: '',
       listTab: 'heyjoe',
+      user: null
     }
   }
 
@@ -72,8 +74,10 @@ class HomePage extends Component {
 
     const candidates = await fetchCheckInList(session._id)
     const currentGroup = await getCurrentGroup(session._id) || {}
+    const user = getUser()
 
     this.setState({
+      user,
       studio,
       session,
       candidates: candidates.map((c, idx) => ({
@@ -225,8 +229,45 @@ class HomePage extends Component {
                 })
               })
               break
+            case 'set-record-feedback':
+              const record = this.state.candidates.find(r => r._id === ev.data._id)
+              const rrIdx = this.state.candidates.findIndex(r => r._id === ev.data._id)
+              const feedbackUserEmail = ev.data.feedback_data.email
+              const feedbackUserId = ev.data.feedback_data.user_id
+              const feedbackChoice = ev.data.feedback_data.feedback
+              const feedbacks = {
+                ...record.feedbacks
+              }
+              console.log('this.state.session.feedbackPrivates: ', this.state.session.feedbackPrivates);
+              if (feedbackUserId === user.id || !this.state.session.feedbackPrivates[feedbackUserId] ||
+                (this.state.session.feedbackPrivates[feedbackUserId] === 'yes-private' && feedbackChoice === 'yes')) {
+                  feedbacks[feedbackUserEmail] = feedbackChoice
+                }
+              this.setState({
+                candidates: this.state.candidates.map((c, idx) => {
+                  return idx === rrIdx ? {
+                    ...c,
+                    feedbacks,
+                    number: idx + 1
+                  } : c
+                })
+              })
+              break
             case 'clear-records':
               this.setState({ candidates: [] })
+              break
+            case 'feedback-private-update':
+              (async () => {
+                const session = await getOneSession(session_id)
+                const candidates = await fetchCheckInList(session._id)
+                this.setState({
+                  session,
+                  candidates: candidates.map((c, idx) => ({
+                    ...c,
+                    number: idx + 1
+                  }))
+                })
+              })()
               break
           }
         } catch (err) {
