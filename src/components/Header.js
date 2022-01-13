@@ -5,7 +5,7 @@ import { Dropdown, Navbar, Image, Modal } from 'react-bootstrap'
 import { FaInfoCircle } from 'react-icons/fa';
 import { getUser, getUserById, static_root } from '../services'
 import UserForm from './userForm'
-import { USER_TYPES } from '../constants'
+import { USER_TYPES, VERSION } from '../constants'
 import './Header.scss'
 
 const excludePaths = [
@@ -114,6 +114,9 @@ const Header = (props) => {
           />
         </Modal.Body>
       </Modal>
+      <label className='version-display'>
+        { VERSION }
+      </label>
     </Navbar>
   )
 }
