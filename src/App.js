@@ -3,7 +3,7 @@ import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Modal } from 'react-bootstrap'
-import { verityToken, getUser, super_admins, getNotification } from './services'
+import { verityToken, getUser, getNotification, getVersion } from './services'
 import Login from './views/Auth/Login'
 import ResetPasswordRequest from './views/Auth/ResetPasswordRequest'
 import ResetPassword from './views/Auth/ResetPassword'
@@ -22,7 +22,7 @@ import SessionList from './views/Sessions'
 import AdminView from './views/Admin'
 import TalentPage from './views/TalentPage'
 import Header from './components/Header'
-import { USER_TYPES } from './constants'
+import { USER_TYPES, VERSION } from './constants'
 
 import './App.scss'
 
@@ -31,6 +31,11 @@ export const NotificationComponent = ({ notificationField, notificationUpdateAtF
   const [showNotification, setShowNotification] = useState(false)
 
   const mounted = async () => {
+    const version = await getVersion()
+    if (version !== VERSION) {
+      // Hard refresh!
+      window.location.href = window.location.href
+    }
     if (window.location.pathname.startsWith('/onboard')) { return }
     let n = await getNotification()
     n = n || {}

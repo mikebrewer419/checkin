@@ -1,4 +1,5 @@
 import  React, { useState, useEffect } from 'react'
+import { FaTimes } from 'react-icons/fa'
 import { MEETING_HOST } from '../../constants'
 import { getUser, getUserById } from '../../services'
 
@@ -8,6 +9,7 @@ const MeetFrame = ({ meeting_id, record }) => {
   const [user, setUser] = useState(null)
   const [api, setApi] = useState(null)
   const [key, setKey]  = useState(0)
+  const [hide, setHide] = useState(false)
 
   const handleLoad = () => {
     loading = true
@@ -18,7 +20,7 @@ const MeetFrame = ({ meeting_id, record }) => {
     const url = new URL(MEETING_HOST)
     window.jitsiApi = new window.JitsiMeetExternalAPI(url.host, {
       roomName: meeting_id,
-      parentNode: document.querySelector('#jitsi-frame')
+      parentNode: document.querySelector('#iframe-wrapper')
     })
     setApi(window.jitsiApi)
     loading = false
@@ -50,15 +52,30 @@ const MeetFrame = ({ meeting_id, record }) => {
     } else if(record) {
       setUser(record)
     }
+    document.querySelector('.right-frame').addEventListener('scroll', () => {
+      let offsetTop = document.querySelector('.right-frame').scrollTop
+      const threshold = window.innerHeight - 225
+      if (offsetTop > threshold) {
+        document.querySelector('#jitsi-frame').classList.add('mini-view')
+      } else {
+        document.querySelector('#jitsi-frame').classList.remove('mini-view')
+        setHide(false)
+      }
+    })
   }, [])
 
   return (
-    <div id="jitsi-frame" className="no-print">
+    <div id="jitsi-frame" className={"no-print " + (hide ? 'hide-frame' : '')}>
       <button
         id="reload-jitsi"
         title="Reload Meeting frame"
         onClick={() => { setKey(key + 1) }}
       >⟳</button>
+      <div id="iframe-wrapper">
+        <FaTimes className='text-danger h5' id="close" onClick={() => {
+          setHide(true)
+        }} />
+      </div>
     </div>
   )
 }

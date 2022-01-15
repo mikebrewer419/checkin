@@ -152,16 +152,6 @@ class HomePage extends Component {
     document.body.appendChild(chatScriptSecondDom)
     this.chatScriptSecondDom = chatScriptSecondDom
 
-    document.querySelector('.right-frame').addEventListener('scroll', () => {
-      let offsetTop = document.querySelector('.right-frame').scrollTop
-      const threshold = window.innerHeight - 225
-      if (offsetTop > threshold) {
-        document.querySelector('#jitsi-frame').classList.add('mini-view')
-      } else {
-        document.querySelector('#jitsi-frame').classList.remove('mini-view')
-      }
-    })
-
     const initWS = () => {
       console.log('WS connecting')
       this.ws = new WebSocket(WS_HOST)
@@ -401,7 +391,7 @@ class HomePage extends Component {
                         {groupCandidates.map(person => (
                           <li key={person._id}>
                             <div className="d-flex align-items-center">
-                              <span className="mr-5">{person.first_name} ${person.last_name}</span>
+                              <span className="mr-5">{person.first_name} {person.last_name}</span>
                               {person.twr_deleted && <div className="mr-2">
                                 <small>Deleted</small>
                               </div>}

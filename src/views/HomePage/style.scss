@@ -105,7 +105,11 @@
       flex: 1;
     }
 
-    &.mini-view iframe {
+    &.hide-frame #iframe-wrapper {
+      display: none;
+    }
+
+    &.mini-view #iframe-wrapper {
       width: 400px !important;
       height: 300px !important;
       position: fixed;
@@ -113,6 +117,22 @@
       top: 60px;
       z-index: 100;
       background-color: $body-bg;
+      #close {
+        display: block;
+        cursor: pointer;
+      }
+    }
+
+    #iframe-wrapper {
+      height: 100%;
+      width: 100%;
+      position: relative;
+      #close {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
     }
   }
   

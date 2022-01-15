@@ -149,16 +149,6 @@ class ClientHomePage extends Component {
     document.body.appendChild(chatScriptSecondDom)
     this.chatScriptSecondDom = chatScriptSecondDom
 
-    document.querySelector('.right-frame').addEventListener('scroll', () => {
-      let offsetTop = document.querySelector('.right-frame').scrollTop
-      const threshold = window.innerHeight - 225
-      if (offsetTop > threshold) {
-        document.querySelector('#jitsi-frame').classList.add('mini-view')
-      } else {
-        document.querySelector('#jitsi-frame').classList.remove('mini-view')
-      }
-    })
-
     const initWS = () => {
       console.log('WS connecting')
       this.ws = new WebSocket(WS_HOST)

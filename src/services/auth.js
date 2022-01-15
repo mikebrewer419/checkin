@@ -161,3 +161,8 @@ export const resetPassword = async (token, newPassword) => {
   })
   return await resp.json()
 }
+
+export const getVersion = async () => {
+  const resp = await fetch(`${api_host}/auth/version`)
+  return await resp.json()
+}
