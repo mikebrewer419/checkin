@@ -34,6 +34,19 @@ const mobileSafariCheck = () => {
   return false
 }
 
+const mobileChromeCheck = () => {
+  if (window.originalPostMessage) { return }
+  const ua = window.navigator.userAgent
+  const isAndroid = ua.toLowerCase().indexOf("android") > -1
+  if (isAndroid) {
+    const open = window.confirm('Notice: This check in page should be opened in the Hey Joe app for best performance')
+    if (open) {
+      const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`
+      window.open(url, '_self')
+    }
+  }
+}
+
 const Onboard = () => {
   const [user, setUser] = useState(null)
 
@@ -73,6 +86,7 @@ const Onboard = () => {
       setIsAppFrame(true)
     } else {
       setIsMobileSafari(mobileSafariCheck())
+      mobileChromeCheck()
     }
     const u = getUser()
     if (u) {
