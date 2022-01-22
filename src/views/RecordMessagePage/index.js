@@ -4,7 +4,8 @@ import {
   static_root,
   getOneRecord,
   getOneSession,
-  getStudioInfo
+  getStudioInfo,
+  token
 } from '../../services'
 import { Button } from 'react-bootstrap'
 import { WS_HOST } from '../../constants'
@@ -42,7 +43,8 @@ const RecordMessagePage = ({ match }) => {
       ws.onopen = () => {
         ws.send(JSON.stringify({
           meta: 'join',
-          room: ss._id
+          room: ss._id,
+          token
         }))
       }
       ws.onclose = () => {

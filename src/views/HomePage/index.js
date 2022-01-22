@@ -8,7 +8,8 @@ import {
   fetchCheckInList,
   getCurrentGroup,
   static_root,
-  getUser
+  getUser,
+  token
 } from '../../services'
 import './style.scss'
 import { FaCircle, FaMinus } from 'react-icons/fa'
@@ -159,6 +160,7 @@ class HomePage extends Component {
       this.ws = new WebSocket(WS_HOST)
       this.ws.onopen = () => {
         this.ws.send(JSON.stringify({
+          token,
           meta: 'join',
           room: session._id
         }))
@@ -168,7 +170,7 @@ class HomePage extends Component {
         setInterval(() => {
           console.log('ping')
           try {
-            this.ws.send(JSON.stringify({ meta: 'ping', room: session._id }))
+            this.ws.send(JSON.stringify({ token, meta: 'ping', room: session._id }))
           } catch (err) {}
           this.wstm = setTimeout(() => {
             console.log('WS disconnect detected')

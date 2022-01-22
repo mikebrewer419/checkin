@@ -4,7 +4,8 @@ import { Modal } from 'react-bootstrap'
 import {
   static_root,
   updateVideo,
-  getGroupVideos
+  getGroupVideos,
+  token
 } from '../../services'
 import { WS_HOST } from '../../constants'
 import './groupvideos.scss'
@@ -35,12 +36,13 @@ class GroupVideos extends Component {
     this.ws = new WebSocket(WS_HOST)
     this.ws.onopen = () => {
       this.ws.send(JSON.stringify({
+        token,
         meta: 'join',
         room: this.props.groupId
       }))
       setInterval(() => {
         console.log('ping')
-        this.ws.send(JSON.stringify({ meta: 'ping' }))
+        this.ws.send(JSON.stringify({ token, meta: 'ping', room: this.props.groupId }))
         this.wstm = setTimeout(() => {
           console.log('WS disconnect detected')
         }, 50000)
