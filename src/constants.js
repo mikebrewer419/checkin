@@ -2,7 +2,7 @@ import { getUser } from './services'
 
 const user = getUser()
 
-export const VERSION = 'v1.0'
+export const VERSION = 'v1.01'
 
 const USER_TYPES = {
   SUPER_ADMIN: 'super_admin',
