@@ -34,14 +34,14 @@ class GroupVideos extends Component {
   componentWillUnmount () {
     if (this.ws) {
       this.ws.onclose = () => {}
-      this.ws.terminate()
+      this.ws.close()
     }
   }
 
   initWS = () => {
     if (this.ws) {
       this.ws.onclose = () => {}
-      this.ws.terminate()
+      this.ws.close()
     }
     this.ws = new WebSocket(WS_HOST)
     this.ws.onopen = () => {
