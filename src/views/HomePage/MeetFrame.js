@@ -52,16 +52,18 @@ const MeetFrame = ({ meeting_id, record }) => {
     } else if(record) {
       setUser(record)
     }
-    document.querySelector('.right-frame').addEventListener('scroll', () => {
-      let offsetTop = document.querySelector('.right-frame').scrollTop
-      const threshold = window.innerHeight - 225
-      if (offsetTop > threshold) {
-        document.querySelector('#jitsi-frame').classList.add('mini-view')
-      } else {
-        document.querySelector('#jitsi-frame').classList.remove('mini-view')
-        setHide(false)
-      }
-    })
+    if (document.querySelector('.right-frame')) {
+      document.querySelector('.right-frame').addEventListener('scroll', () => {
+        let offsetTop = document.querySelector('.right-frame').scrollTop
+        const threshold = window.innerHeight - 225
+        if (offsetTop > threshold) {
+          document.querySelector('#jitsi-frame').classList.add('mini-view')
+        } else {
+          document.querySelector('#jitsi-frame').classList.remove('mini-view')
+          setHide(false)
+        }
+      })
+    }
   }, [])
 
   return (

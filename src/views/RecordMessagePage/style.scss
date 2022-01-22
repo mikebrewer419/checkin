@@ -33,5 +33,10 @@
   #reload-jitsi:hover {
     opacity: 1;
   }
-  
+  #iframe-wrapper {
+    height: 100%;
+  }
+  #iframe-wrapper #close {
+    display: none;
+  }
 }
