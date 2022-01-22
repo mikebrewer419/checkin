@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import cometInject from './comet-inject'
+import { FaCircle } from 'react-icons/fa'
 import SizeCards from './SizeCards'
 import PersonCard from '../PostingPage/PersonCard'
 import {
@@ -40,7 +41,9 @@ class ClientHomePage extends Component {
       twrGroupCandidates: [],
       twrCandidates: [],
       listTab: 'heyjoe',
-      selectedDate: ''
+      selectedDate: '',
+
+      ws_connected: false
     }
   }
 
@@ -157,16 +160,28 @@ class ClientHomePage extends Component {
           meta: 'join',
           room: session._id
         }))
+        this.setState({
+          ws_connected: true
+        })
         setInterval(() => {
           console.log('ping')
-          this.ws.send(JSON.stringify({ meta: 'ping' }))
+          try {
+            this.ws.send(JSON.stringify({ meta: 'ping', room: session._id }))
+          } catch (err) {}
           this.wstm = setTimeout(() => {
             console.log('WS disconnect detected')
+            this.setState({
+              ws_connected: false
+            })
+            initWS()
           }, 50000)
         }, 30000)
       }
       this.ws.onclose = () => {
         console.log('WS onclose')
+        this.setState({
+          ws_connected: false
+        })
         initWS()
       }
       this.ws.onmessage = (event) => {
@@ -315,7 +330,7 @@ class ClientHomePage extends Component {
 
   render() {
     const { studio, session, showChat, showList, candidates: hjCandidates,
-      jitsiKey, groupCandidates: hjGroupCandidates, testMode,
+      jitsiKey, groupCandidates: hjGroupCandidates, testMode, ws_connected,
       listTab, twrCandidates, twrGroupCandidates, selectedDate } = this.state
 
     let candidates = listTab === 'heyjoe' ? hjCandidates : twrCandidates
@@ -341,6 +356,9 @@ class ClientHomePage extends Component {
 
     return (
       <div className="homepage-wrapper client">
+        <div className='ws-indicator'>
+          <FaCircle className={ws_connected ? 'text-success' : 'text-danger'} />
+        </div>
         <div className={"homepage " + (testMode ? 'test': '')}>
           <div className="right-frame">
             <MeetFrame meeting_id={meeting_id} />

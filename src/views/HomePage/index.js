@@ -11,7 +11,7 @@ import {
   getUser
 } from '../../services'
 import './style.scss'
-import { FaMinus } from 'react-icons/fa'
+import { FaCircle, FaMinus } from 'react-icons/fa'
 import { WS_HOST } from '../../constants'
 import MeetFrame from './MeetFrame'
 import SizeCards from './SizeCards'
@@ -43,7 +43,9 @@ class HomePage extends Component {
       twrCandidates: [],
       selectedDate: '',
       listTab: 'heyjoe',
-      user: null
+      user: null,
+
+      ws_connected: false
     }
   }
 
@@ -160,16 +162,28 @@ class HomePage extends Component {
           meta: 'join',
           room: session._id
         }))
+        this.setState({
+          ws_connected: true
+        })
         setInterval(() => {
           console.log('ping')
-          this.ws.send(JSON.stringify({ meta: 'ping' }))
+          try {
+            this.ws.send(JSON.stringify({ meta: 'ping', room: session._id }))
+          } catch (err) {}
           this.wstm = setTimeout(() => {
             console.log('WS disconnect detected')
+            this.setState({
+              ws_connected: false
+            })
+            initWS()
           }, 50000)
         }, 30000)
       }
       this.ws.onclose = () => {
         console.log('WS onclose')
+        this.setState({
+          ws_connected: false
+        })
         initWS()
       }
       this.ws.onmessage = (event) => {
@@ -317,7 +331,7 @@ class HomePage extends Component {
 
   render() {
     const { studio, session, showChat, showList, candidates: hjCandidates,
-      jitsiKey, groupCandidates: hjGroupCandidates, testMode,
+      jitsiKey, groupCandidates: hjGroupCandidates, testMode, ws_connected,
       listTab, twrCandidates, twrGroupCandidates, selectedDate } = this.state
     if (!studio) {
       return <div>Loading...</div>
@@ -342,6 +356,9 @@ class HomePage extends Component {
 
     return (
       <div className="homepage-wrapper">
+        <div className='ws-indicator'>
+          <FaCircle className={ws_connected ? 'text-success' : 'text-danger'} />
+        </div>
         <div className={"homepage " + (testMode ? 'test': '')}>
           <div id="checkin-list" className={`no-print ${showList?'show':''}`}>
             <div

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import useReactRouter from 'use-react-router'
 import Webcam from "react-webcam"
+import { Modal } from 'react-bootstrap'
 import moment from 'moment'
 import {
   getStudioByUri,
@@ -35,16 +36,9 @@ const mobileSafariCheck = () => {
 }
 
 const mobileChromeCheck = () => {
-  if (window.originalPostMessage) { return }
   const ua = window.navigator.userAgent
   const isAndroid = ua.toLowerCase().indexOf("android") > -1
-  if (isAndroid) {
-    const open = window.confirm('Notice: This check in page should be opened in the Hey Joe app for best performance')
-    if (open) {
-      const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`
-      window.open(url, '_self')
-    }
-  }
+  return isAndroid
 }
 
 const Onboard = () => {
@@ -78,15 +72,18 @@ const Onboard = () => {
   const [isMobileSafari, setIsMobileSafari] = useState(false)
   const [isAppFrame, setIsAppFrame] = useState(false)
 
+  const [showAndroidPrompt, setShowAndroidPrompt] = useState(false)
+
   const webcamRef = useRef(null)
 
   useEffect(() => {
+    alert(window.navigator.userAgent)
     if (window.webkit) {
       setCameraError(true)
       setIsAppFrame(true)
     } else {
       setIsMobileSafari(mobileSafariCheck())
-      mobileChromeCheck()
+      setShowAndroidPrompt(mobileChromeCheck())
     }
     const u = getUser()
     if (u) {
@@ -476,6 +473,28 @@ const Onboard = () => {
         notificationField="client_notice"
         notificationUpdateAtField="client_notice_updated_at"
       />
+
+      <Modal
+        size="xl"
+        show={showAndroidPrompt}
+        onHide={() => {
+          setShowAndroidPrompt(false)
+        }}
+      >
+        <Modal.Body>
+          Notice: This check in page should be opened in the Hey Joe app for best performance
+        </Modal.Body>
+        <Modal.Footer>
+          <button className='btn btn-danger' onClick={() => {
+            setShowAndroidPrompt(false)
+          }}>
+            Close
+          </button>
+          <a className='btn btn-danger' href={`org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`} >
+            Ok
+          </a>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }
