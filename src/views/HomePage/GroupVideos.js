@@ -31,8 +31,18 @@ class GroupVideos extends Component {
     }
   }
 
+  componentWillUnmount () {
+    if (this.ws) {
+      this.ws.onclose = () => {}
+      this.ws.terminate()
+    }
+  }
+
   initWS = () => {
-    if (this.ws) { this.ws.close() }
+    if (this.ws) {
+      this.ws.onclose = () => {}
+      this.ws.terminate()
+    }
     this.ws = new WebSocket(WS_HOST)
     this.ws.onopen = () => {
       this.ws.send(JSON.stringify({
@@ -45,6 +55,7 @@ class GroupVideos extends Component {
         this.ws.send(JSON.stringify({ token, meta: 'ping', room: this.props.groupId }))
         this.wstm = setTimeout(() => {
           console.log('WS disconnect detected')
+          this.initWS()
         }, 50000)
       }, 30000)
     }
