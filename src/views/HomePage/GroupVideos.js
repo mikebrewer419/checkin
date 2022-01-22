@@ -33,6 +33,8 @@ class GroupVideos extends Component {
 
   componentWillUnmount () {
     if (this.ws) {
+      clearTimeout(this.wstm)
+      clearInterval(this.wsitv)
       this.ws.onclose = () => {}
       this.ws.close()
     }
@@ -40,6 +42,8 @@ class GroupVideos extends Component {
 
   initWS = () => {
     if (this.ws) {
+      clearTimeout(this.wstm)
+      clearInterval(this.wsitv)
       this.ws.onclose = () => {}
       this.ws.close()
     }
@@ -50,7 +54,7 @@ class GroupVideos extends Component {
         meta: 'join',
         room: this.props.groupId
       }))
-      setInterval(() => {
+      this.wsitv = setInterval(() => {
         console.log('ping')
         this.ws.send(JSON.stringify({ token, meta: 'ping', room: this.props.groupId }))
         this.wstm = setTimeout(() => {
