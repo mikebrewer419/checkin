@@ -80,9 +80,7 @@ const Onboard = () => {
 
   useEffect(() => {
     setIsAppFrame(window.is_react_native)
-    if (window.webkit) {
-      setCameraError(true)
-    } else {
+    if (!window.is_react_native) {
       setIsMobileSafari(mobileSafariCheck())
       setShowAndroidPrompt(mobileChromeCheck())
     }
@@ -101,6 +99,12 @@ const Onboard = () => {
       })
     }
   }, [])
+
+  useEffect(() => {
+    if (window.webkit && isMobileSafari) {
+      setCameraError(true)
+    }
+  }, [isMobileSafari])
 
   useEffect(() => {
     const process = async () => {
