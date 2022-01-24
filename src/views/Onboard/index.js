@@ -23,6 +23,7 @@ import { USER_TYPES } from '../../constants'
 import './style.scss'
 
 const mobileSafariCheck = () => {
+  if (window.is_react_native) { return }
   const ua = window.navigator.userAgent
   const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i)
   const webkit = !!ua.match(/WebKit/i)
@@ -36,6 +37,7 @@ const mobileSafariCheck = () => {
 }
 
 const mobileChromeCheck = () => {
+  if (window.is_react_native) { return }
   const ua = window.navigator.userAgent
   const isAndroid = ua.toLowerCase().indexOf("android") > -1
   return isAndroid
