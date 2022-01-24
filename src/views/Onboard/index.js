@@ -77,7 +77,6 @@ const Onboard = () => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
-    alert(window.navigator.userAgent)
     if (window.webkit) {
       setCameraError(true)
       setIsAppFrame(true)
