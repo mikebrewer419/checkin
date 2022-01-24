@@ -79,9 +79,9 @@ const Onboard = () => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
+    setIsAppFrame(window.is_react_native)
     if (window.webkit) {
       setCameraError(true)
-      setIsAppFrame(true)
     } else {
       setIsMobileSafari(mobileSafariCheck())
       setShowAndroidPrompt(mobileChromeCheck())
