@@ -30,7 +30,7 @@
     "react-sortable": "^2.0.0",
     "react-switch": "^6.0.0",
     "react-to-print": "^2.12.6",
-    "react-webcam": "^5.2.4",
+    "react-webcam": "^6.0.1",
     "use-react-router": "^1.0.7"
   },
   "scripts": {
