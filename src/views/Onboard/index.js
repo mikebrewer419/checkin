@@ -29,7 +29,7 @@ const mobileSafariCheck = () => {
   const webkit = !!ua.match(/WebKit/i)
   const iOSSafari = iOS && webkit && !ua.match(/CriOS/i)
   if (iOSSafari) {
-    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`
+    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`
     window.open(url, '_self')
     return true
   }
@@ -495,7 +495,7 @@ const Onboard = () => {
           }}>
             Close
           </button>
-          <a className='btn btn-danger' href={`org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href)}`} >
+          <a className='btn btn-danger' href={`org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`} >
             Ok
           </a>
         </Modal.Footer>

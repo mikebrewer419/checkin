@@ -4,6 +4,11 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+p = new URLSearchParams(window.location.search)
+if (p.get('nativeFrame') === 'true') {
+  window.is_react_native = true
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
