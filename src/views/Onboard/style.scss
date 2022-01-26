@@ -150,10 +150,18 @@
     .logo {
       max-width: 70vw;
     }
-  
+
     #contactForm {
       display: flex;
       flex-direction: column;
     }
   }
+}
+
+.onboard-terms-frame {
+  height: calc(100vh - 126px);
+  width: calc(100% + 20px);
+  border: none;
+  overflow: hidden;
+  margin: 0 -10px;
 }

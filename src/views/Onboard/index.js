@@ -75,6 +75,7 @@ const Onboard = () => {
   const [isAppFrame, setIsAppFrame] = useState(false)
 
   const [showAndroidPrompt, setShowAndroidPrompt] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
 
   const webcamRef = useRef(null)
 
@@ -451,7 +452,13 @@ const Onboard = () => {
             <div className="full">
               <label className="d-flex align-items-center full">
                 <input type="checkbox" className="mr-2 w-auto" required />
-                I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
+                I agree to &nbsp;<a target="_blank" onClick={() => {
+                  if (window.is_react_native) {
+                    setShowTermsModal(true)
+                  } else {
+                    window.open("https://heyjoe.io/terms-and-conditions/", '_blank')
+                  }
+                }}>terms of service</a>
               </label>
               <label className="d-flex align-items-center full mb-0">
                 <input type="checkbox" className="mr-2 w-auto" name="opt_in" checked={optIn} onChange={ev => {
@@ -498,6 +505,25 @@ const Onboard = () => {
           <a className='btn btn-danger' href={`org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`} >
             Ok
           </a>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        size="xl"
+        className='h-100'
+        show={showTermsModal}
+        onHide={() => {
+          setShowTermsModal(false)
+        }}
+      >
+        <Modal.Body>
+          <iframe src="https://heyjoe.io/terms-and-conditions/" className='onboard-terms-frame' />
+        </Modal.Body>
+        <Modal.Footer>
+          <button className='btn btn-danger' onClick={() => {
+            setShowTermsModal(false)
+          }}>
+            Done
+          </button>
         </Modal.Footer>
       </Modal>
     </div>
