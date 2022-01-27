@@ -497,13 +497,13 @@ const Onboard = () => {
           Notice: This check in page should be opened in the Hey Joe app for best performance
         </Modal.Body>
         <Modal.Footer>
-          <button className='btn btn-danger' onClick={() => {
+          <button className='btn text-danger btn-text' onClick={() => {
             setShowAndroidPrompt(false)
           }}>
-            Close
+            Cancel
           </button>
           <a className='btn btn-danger' href={`org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`} >
-            Ok
+            Open App
           </a>
         </Modal.Footer>
       </Modal>
