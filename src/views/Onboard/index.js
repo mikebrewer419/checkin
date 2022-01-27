@@ -23,21 +23,21 @@ import { USER_TYPES } from '../../constants'
 import './style.scss'
 
 const mobileSafariCheck = () => {
-  if (window.is_react_native) { return }
   const ua = window.navigator.userAgent
   const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i)
   const webkit = !!ua.match(/WebKit/i)
   const iOSSafari = iOS && webkit && !ua.match(/CriOS/i)
   if (iOSSafari) {
-    const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`
-    window.open(url, '_self')
+    if (!window.is_react_native) {
+      const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`
+      window.open(url, '_self')
+    }
     return true
   }
   return false
 }
 
 const mobileChromeCheck = () => {
-  if (window.is_react_native) { return }
   const ua = window.navigator.userAgent
   const isAndroid = ua.toLowerCase().indexOf("android") > -1
   return isAndroid
@@ -81,8 +81,8 @@ const Onboard = () => {
 
   useEffect(() => {
     setIsAppFrame(window.is_react_native)
+    setIsMobileSafari(mobileSafariCheck())
     if (!window.is_react_native) {
-      setIsMobileSafari(mobileSafariCheck())
       setShowAndroidPrompt(mobileChromeCheck())
     }
     const u = getUser()
