@@ -102,7 +102,7 @@ const Onboard = () => {
   }, [])
 
   useEffect(() => {
-    if (window.webkit && isMobileSafari) {
+    if (window.is_react_native && isMobileSafari) {
       setCameraError(true)
     }
   }, [isMobileSafari])
