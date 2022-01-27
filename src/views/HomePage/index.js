@@ -156,6 +156,12 @@ class HomePage extends Component {
     this.chatScriptSecondDom = chatScriptSecondDom
 
     const initWS = () => {
+      if (this.ws) {
+        clearTimeout(this.wstm)
+        clearInterval(this.wsitv)
+        this.ws.onclose = () => {}
+        this.ws.close()
+      }
       console.log('WS connecting')
       this.ws = new WebSocket(WS_HOST)
       this.ws.onopen = () => {
@@ -167,7 +173,7 @@ class HomePage extends Component {
         this.setState({
           ws_connected: true
         })
-        setInterval(() => {
+        this.wsitv = setInterval(() => {
           console.log('ping')
           try {
             this.ws.send(JSON.stringify({ token, meta: 'ping', room: session._id }))
