@@ -69,6 +69,12 @@ class List extends Component {
 
   componentDidMount() {
     this.mounted()
+
+    document.body.addEventListener('soft-refresh', this.mounted)
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('soft-refresh', this.mounted)
   }
 
   componentDidUpdate(prevProps) {
@@ -124,7 +130,8 @@ class List extends Component {
     this.setState({
       timeOptions,
       showNotification,
-      notification: n
+      notification: n,
+      loading: false
     })
   }
 

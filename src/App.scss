@@ -5,7 +5,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
   pointer-events: none;
   opacity: 0;
   transition: .2s;
@@ -19,6 +18,8 @@
 }
 .loading.show {
   opacity: 1;
+}
+.loading.show button {
   pointer-events: all;
 }
 

@@ -124,6 +124,13 @@ const SizeCards = ({
 
   useEffect(() => {
     setUser(getUser())
+    const softRefresh = () => {
+      fetchTWRCandidates()
+    }
+    document.body.addEventListener('soft-refresh', softRefresh)
+    return () => {
+      document.body.removeEventListener('soft-refresh', softRefresh)
+    }
   }, [])
 
   useEffect(() => {

@@ -76,6 +76,7 @@ export const NotificationComponent = ({ notificationField, notificationUpdateAtF
 function App() {
   const [logo, setLogo] = useState('')
   const [email, setEmail] = useState({})
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -130,7 +131,13 @@ function App() {
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
       <IconContext.Provider value={{ className: "global-class-name" }}>
         <div className={`loading`}>
-          Processing...
+          <button className='btn btn-secondary btn-sm' onClick={() => {
+            const event = new Event('soft-refresh')
+            document.body.dispatchEvent(event)
+            document.querySelector('.loading').classList.remove('show')
+          }}>
+            Processing... <small>(click to refresh)</small>
+          </button>
         </div>
         <Router>
           <Header logo={logo} />
