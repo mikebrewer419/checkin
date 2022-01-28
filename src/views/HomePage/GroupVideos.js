@@ -32,18 +32,18 @@ class GroupVideos extends Component {
   }
 
   componentWillUnmount () {
+    clearTimeout(this.wstm)
+    clearInterval(this.wsitv)
     if (this.ws) {
-      clearTimeout(this.wstm)
-      clearInterval(this.wsitv)
       this.ws.onclose = () => {}
       this.ws.close()
     }
   }
 
   initWS = () => {
+    clearTimeout(this.wstm)
+    clearInterval(this.wsitv)
     if (this.ws) {
-      clearTimeout(this.wstm)
-      clearInterval(this.wsitv)
       this.ws.onclose = () => {}
       this.ws.close()
     }

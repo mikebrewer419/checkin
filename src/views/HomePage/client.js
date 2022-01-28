@@ -154,9 +154,9 @@ class ClientHomePage extends Component {
     this.chatScriptSecondDom = chatScriptSecondDom
 
     const initWS = () => {
+      clearTimeout(this.wstm)
+      clearInterval(this.wsitv)
       if (this.ws) {
-        clearTimeout(this.wstm)
-        clearInterval(this.wsitv)
         this.ws.onclose = () => {}
         this.ws.close()
       }
