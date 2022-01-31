@@ -60,6 +60,7 @@ const RecordMessagePage = ({ match }) => {
             const nr = ev.data
             setMessage(nr.lastMessage === "false" ? "You checked in with an invalid phone number. Please check in again with a cell phone number to receive status messages." : nr.lastMessage)
             setRecord(nr)
+            setShowMeetingFrame(true)
           }
         } catch (err) {
           console.log('socket msg handle err: ', err);
