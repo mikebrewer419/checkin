@@ -44,7 +44,8 @@ const RecordMessagePage = ({ match }) => {
         ws.send(JSON.stringify({
           meta: 'join',
           room: ss._id,
-          token
+          token,
+          talent: true
         }))
       }
       ws.onclose = () => {
