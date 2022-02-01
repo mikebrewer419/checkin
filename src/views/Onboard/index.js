@@ -163,6 +163,9 @@ const Onboard = () => {
           }
         } catch (err) {
           console.log('IGNORE: react native send info failed.', err)
+          setApiResult({
+            message: err
+          })
         }
         setShowAlert(true)
       } else {

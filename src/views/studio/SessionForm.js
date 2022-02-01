@@ -128,9 +128,10 @@ const SessionForm = ({ session, onSubmit }) => {
             className="form-control"
             onChange={value => {
               const st = [...selectedSession.start_time]
-              st.splice(idx, 1, value.toISOString())
-              if (!value && selectedSession.start_time.length > 1) {
+              if (!value && selectedSession.start_time.length > 0) {
                 st.splice(idx, 1)
+              } else {
+                st.splice(idx, 1, value.toISOString())
               }
               setSelectedSession({
                 ...selectedSession,
@@ -145,7 +146,7 @@ const SessionForm = ({ session, onSubmit }) => {
         onClick={() => {
           setSelectedSession({
             ...selectedSession,
-            start_time: selectedSession.start_time.concat(new Date().toISOString())
+            start_time: (selectedSession.start_time || []).concat(new Date().toISOString())
           })
         }}
       >+ Add Additional Dates/Times</sapn>
