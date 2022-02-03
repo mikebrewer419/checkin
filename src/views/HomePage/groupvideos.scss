@@ -36,8 +36,8 @@
   }
   .group-sorter {
     position: absolute;
-    transform: translateY(157px);
-    right: 120px;
+    right: 0;
+    z-index: 11;
     .btn svg {
       display: none;
     }
