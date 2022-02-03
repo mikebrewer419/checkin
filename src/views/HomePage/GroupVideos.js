@@ -5,11 +5,13 @@ import {
   static_root,
   updateVideo,
   getGroupVideos,
+  updateVideoSort,
   token
 } from '../../services'
 import { WS_HOST } from '../../constants'
 import './groupvideos.scss'
 import { FaArchive } from 'react-icons/fa'
+import GroupSorter from '../PostingPage/GroupSorter'
 
 class GroupVideos extends Component {
   constructor(props) {
@@ -70,10 +72,15 @@ class GroupVideos extends Component {
     this.ws.onmessage = (ev) => {
       try {
         const event = JSON.parse(ev.data)
-        if (event.type === 'add-video') {
-          this.setState({
-            videos: this.state.videos.concat(event.data)
-          })
+        switch(event.type) {
+          case 'add-video':
+            this.setState({
+              videos: this.state.videos.concat(event.data)
+            })
+            break
+          case 'refresh-videos':
+            this.loadVideos()
+            break
         }
       } catch (err) {
         console.log('socket msg handle err: ', err);
@@ -127,6 +134,18 @@ class GroupVideos extends Component {
             </div>
           )
         })}
+        {videos.length > 0 && (
+          <GroupSorter
+            showThumbnail={true}
+            groups={videos}
+            title="Sort videos"
+            btnClass="btn-sm"
+            update={(vs) => {
+              const ids = vs.map(vs => vs._id)
+              updateVideoSort({ ids, group_id: this.props.groupId })
+            }}
+          />
+        )}
 
         <Modal
           size="xl"

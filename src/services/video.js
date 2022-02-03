@@ -119,3 +119,15 @@ export const getManyByTalent = async (record_id) => {
   })
   return await resp.json()
 }
+
+export const updateVideoSort = async (data) => {
+  const resp = await fetch(`${api_host}/videos/update-video-sort`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  })
+  return await resp.json()
+}
