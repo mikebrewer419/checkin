@@ -144,6 +144,7 @@ class GroupVideos extends Component {
               const ids = vs.map(vs => vs._id)
               updateVideoSort({ ids, group_id: this.props.groupId })
             }}
+            btnContent={<img title="Sort videos" className='sort-icon' src={require('../../assets/sort.png')} />}
           />
         )}
 

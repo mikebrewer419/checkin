@@ -62,7 +62,7 @@ class SortableList extends React.Component {
   }
 }
 
-const GroupSorter = ({ groups, update, title='Sort Group', showThumbnail, btnClass='' }) => {
+const GroupSorter = ({ groups, update, title='Sort Group', showThumbnail, btnClass='', btnContent = null }) => {
   const [show, setShow] = useState(false)
   const [items, setItems] = useState(JSON.parse(JSON.stringify(groups)))
   return (
@@ -74,8 +74,10 @@ const GroupSorter = ({ groups, update, title='Sort Group', showThumbnail, btnCla
           setItems(JSON.parse(JSON.stringify(groups)))
         }}
       >
-        <FaListUl className="mr-2 mt-n1" />
-        <span>{ title }</span>
+        {btnContent ? btnContent : [
+          <FaListUl key="icon" className="mr-2 mt-n1" />,
+          <span key="text">{ title }</span>
+        ]}
       </button>
       <Modal
         show={show}
