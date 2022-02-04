@@ -74,7 +74,7 @@ const StudioForm = ({
           defaultValue={position_messages[3] || ``} />
         <label htmlFor="position_messages4">Good bye message</label>
         <input className='form-control form-control-sm' type="text" name="good_bye_message" id="good_bye_message"
-          defaultValue={good_bye_message || 'Thank you for using Hey Joe! Want to step up your at-home video setup? Use offer code crush20 for $20 off our Mini Workshop heyjoe.io/workshop Valid til 2/1/21'} />
+          defaultValue={good_bye_message || 'Thank you for using Hey Joe! Want to step up your at-home video setup? Visit heyjoe.io/workshop for details'} />
       </div>
       <div className="form-group">
         <label htmlFor="delete_message">Delete message</label>
