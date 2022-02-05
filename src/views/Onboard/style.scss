@@ -149,9 +149,6 @@
       text-align: left;
     }
 
-    .app-update-notice {
-      display: block;
-    }
   }
 
   @media(max-width: 450px) {
@@ -162,6 +159,10 @@
     #contactForm {
       display: flex;
       flex-direction: column;
+    }
+
+    .app-update-notice {
+      display: block;
     }
   }
 }
