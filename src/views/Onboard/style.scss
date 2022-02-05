@@ -151,6 +151,12 @@
 
   }
 
+  @media(max-width: 900px) {
+    .app-update-notice {
+      display: block;
+    }
+  }
+
   @media(max-width: 450px) {
     .logo {
       max-width: 70vw;
@@ -159,10 +165,6 @@
     #contactForm {
       display: flex;
       flex-direction: column;
-    }
-
-    .app-update-notice {
-      display: block;
     }
   }
 }

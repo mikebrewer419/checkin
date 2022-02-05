@@ -496,6 +496,7 @@ const Onboard = () => {
 
       <Modal
         size="xl"
+        centered
         show={showAndroidPrompt}
         onHide={() => {
           setShowAndroidPrompt(false)
