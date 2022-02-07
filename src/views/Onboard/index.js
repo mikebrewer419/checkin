@@ -262,7 +262,7 @@ const Onboard = () => {
       />
       {!isAppFrame && (
         <div className='text-center text-danger h6 my-3 app-update-notice'>
-          2/5/22 NOTICE: Please update the Hey Joe app -- <a className='text-danger' href="https://apps.apple.com/us/app/hey-joe/id1514006633" target='_blank'>Apple Update</a> / <a className='text-danger' href="https://play.google.com/store/apps/details?id=org.hey.meet&hl=en_US&gl=US" target='_blank'>Android Update</a>. After updating, re-open this page and when prompted to "Open in Hey Joe", click "OK" on iOS or "Open" on Android.  Please call 424.888.4735 with any questions
+          2/5/22 NOTICE: Please update the Hey Joe app -- <a className='text-danger' href="https://apps.apple.com/us/app/hey-joe/id1514006633" target='_blank'>Apple Update</a> / <a className='text-danger' href="https://play.google.com/store/apps/details?id=org.hey.meet&hl=en_US&gl=US" target='_blank'>Android Update</a>. After updating, re-open this page and when prompted to "Open in Hey Joe", click "Open" on iOS or "Open App" on Android.  Please call 424.888.4735 with any questions
         </div>
       )}
       <h3 className="brand mt-4 mb-3">Welcome to {studio.name}/{session.name} Virtual Check In</h3>
