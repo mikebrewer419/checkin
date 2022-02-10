@@ -735,6 +735,10 @@ const StudioList = () => {
             <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a>
             <br />
             3. Once you are checked in, please click the "Join Virtual Lobby" button. The casting team will give you instructions for your audition in the virtual lobby<br />
+            ***you can watch a set up best practices video here -<a href="https://heyjoe.io/actor-set-up/" target="_blank">https://heyjoe.io/actor-set-up/</a>
+            <br />
+            ***you can find troubleshooting tips here -<a href="https://heyjoe.io/troubleshooting/" target="_blank">https://heyjoe.io/troubleshooting/</a>
+            <br />
             </p>
           </div>
         </Modal.Body>
