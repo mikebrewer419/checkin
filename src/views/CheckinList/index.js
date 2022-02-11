@@ -495,6 +495,9 @@ class List extends Component {
     twrOnboardLink.splice(1, 0, 'onboard')
     twrOnboardLink = twrOnboardLink.join('/')
 
+    const stIdx = session.start_time.findIndex(st => moment(st).isSame(moment(), 'day'))
+    const dayType = session.start_time_type[stIdx] || ''
+
     return (
       <div className={"list-view " + (testMode? 'test': '')}>
         <div className="d-flex flex-column">
@@ -504,6 +507,9 @@ class List extends Component {
               &nbsp;
               <span>{session.name}</span>
               <span className="d-inline-block ml-2">Video Chat</span>
+              {dayType && (
+                <div>{dayType}</div>
+              )}
               {testMode ? (
                 <div className="d-flex justify-content-center">
                   <span className="text-danger h5 mb-0 mt-2">Virtual Lobby</span>

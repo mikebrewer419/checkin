@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import moment from 'moment'
 import cometInject from './comet-inject'
 import { FaCircle } from 'react-icons/fa'
 import SizeCards from './SizeCards'
@@ -89,7 +90,9 @@ class ClientHomePage extends Component {
 
     const pageTitle = this.state.testMode ? 'Virtual Lobby' : 'Video Chat'
     document.title = `${studio.name} ${pageTitle}`;
-    document.querySelector('#header-title').innerHTML = studio.name
+    const stIdx = session.start_time.findIndex(st => moment(st).isSame(moment(), 'day'))
+    const dayType = session.start_time_type[stIdx] || ''
+    document.querySelector('#header-title').innerHTML = studio.name + ' ' + dayType
     if (this.state.testMode) {
       document.querySelector('.global-header button').classList.remove('btn-danger')
       document.querySelector('.global-header button').classList.add('btn-success')

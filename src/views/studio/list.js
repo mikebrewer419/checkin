@@ -33,7 +33,7 @@ import StudioForm from './form'
 import SessionForm from './SessionForm'
 import './style.scss'
 import Footer from '../../components/Footer'
-import { USER_TYPE, USER_TYPES, PROJECT_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
+import { SESSION_TIME_TYPE, USER_TYPE, USER_TYPES, PROJECT_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
 import { humanFileSize }  from '../../utils'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
@@ -208,6 +208,9 @@ const StudioList = () => {
     }
     if (session.start_time) {
       formData.append('start_time', JSON.stringify(session.start_time))
+    }
+    if (session.start_time_type) {
+      formData.append('start_time_type', JSON.stringify(session.start_time_type))
     }
     if (session._id) {
       await updateSession(session._id, formData)
@@ -431,9 +434,19 @@ const StudioList = () => {
                   <div className="col-2">
                     <div className='d-inline-flex align-items-end'>
                       <span className='mr-2'>{session.name}</span>
-                      <span>{session.start_time.map(st => {
-                        return moment(new Date(st)).format('MM/DD')
-                      }).join(', ')}</span>
+                      {session.start_time.map((st, idx) => {
+                        const stt = session.start_time_type[idx]
+                        let sttClsName = ''
+                        switch (stt) {
+                          case SESSION_TIME_TYPE[1]:
+                            sttClsName = 'text-danger'
+                            break
+                        }
+                        return (<span className={'mr-1 ' + sttClsName}>
+                          {moment(new Date(st)).format('MM/DD')}
+                          {idx < session.start_time.length - 1 && ','}
+                        </span>)
+                      })}
                     </div>
                     {session.twr && (
                       <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />

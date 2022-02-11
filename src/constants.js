@@ -84,6 +84,11 @@ const POSTINGPAGE_PERMISSIONS = {
   }
 }
 
+const SESSION_TIME_TYPE = [
+  '1st call',
+  'Callback'
+]
+
 const MEETING_HOST = process.env.REACT_APP_MEETING_HOST
 
 const TINYMCE_KEY = process.env.REACT_APP_TINYMCE_KEY
@@ -99,5 +104,6 @@ export {
   MEETING_HOST,
   TINYMCE_KEY,
   WS_HOST,
-  PROJECT_TYPES
+  PROJECT_TYPES,
+  SESSION_TIME_TYPE
 }

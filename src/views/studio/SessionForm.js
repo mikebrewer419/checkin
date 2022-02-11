@@ -7,7 +7,7 @@ import {
   searchUsers,
   getManagers
 } from '../../services'
-import { USER_TYPE, USER_TYPES } from '../../constants'
+import { SESSION_TIME_TYPE, USER_TYPES } from '../../constants'
 
 let fnTimeoutHandler = null
 
@@ -122,23 +122,45 @@ const SessionForm = ({ session, onSubmit }) => {
       <label>Start time</label>
       {(selectedSession.start_time || []).map((st, idx) => {
         return (
-          <DateTimePicker
-            key={idx}
-            value={st && new Date(st)}
-            className="form-control"
-            onChange={value => {
-              const st = [...selectedSession.start_time]
-              if (!value && selectedSession.start_time.length > 0) {
-                st.splice(idx, 1)
-              } else {
-                st.splice(idx, 1, value.toISOString())
-              }
-              setSelectedSession({
-                ...selectedSession,
-                start_time: st
-              })
-            }}
-          />
+          <div className='d-flex'>
+            <DateTimePicker
+              key={idx}
+              value={st && new Date(st)}
+              className="form-control"
+              onChange={value => {
+                const st = [...selectedSession.start_time]
+                if (!value && selectedSession.start_time.length > 0) {
+                  st.splice(idx, 1)
+                } else {
+                  st.splice(idx, 1, value.toISOString())
+                }
+                setSelectedSession({
+                  ...selectedSession,
+                  start_time: st
+                })
+              }}
+            />
+            <select
+              defaultValue={(selectedSession.start_time_type || [])[idx]}
+              onChange={ev => {
+                const stt = [...selectedSession.start_time_type]
+                if (idx >= stt.length) {
+                  while (stt.length < idx) {
+                    stt.push(SESSION_TIME_TYPE[0])
+                  }
+                }
+                stt[idx] = ev.target.value
+                setSelectedSession({
+                  ...selectedSession,
+                  start_time_type: stt
+                })
+              }}
+            >
+              {SESSION_TIME_TYPE.map(type => (
+                <option key={type}>{type}</option>
+              ))}
+            </select>
+          </div>
         )
       })}
       <sapn
@@ -146,7 +168,8 @@ const SessionForm = ({ session, onSubmit }) => {
         onClick={() => {
           setSelectedSession({
             ...selectedSession,
-            start_time: (selectedSession.start_time || []).concat(new Date().toISOString())
+            start_time: (selectedSession.start_time || []).concat(new Date().toISOString()),
+            start_time_type: (selectedSession.start_time_type || []).concat(SESSION_TIME_TYPE[0])
           })
         }}
       >+ Add Additional Dates/Times</sapn>
