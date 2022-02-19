@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import { Form } from 'react-bootstrap'
-import { USER_TYPES } from '../../constants'
+import { USER_TYPES, USER_TYPE_TEXT } from '../../constants'
+import { searchUsers, getUserById } from '../../services'
+
+let fnTimeoutHandler = null
 
 const UserForm = ({
   onClose,
@@ -19,15 +23,39 @@ const UserForm = ({
     comet_chat_appid,
     comet_chat_auth,
     comet_api_key,
+    attached_users,
     logo  
   } = user || {}
 
   const [userType, setUserType] = useState(user_type)
+  const [attachedUsers, setAttachedUsers] = useState([])
+  const [searchUserList, setSearchUserList] = useState([])
+  const [searchUserLoading, setSearchUserLoading] = useState(false)
+
+  useEffect(() => {
+    const loadAttachedUsers = async () => {
+      const users = await Promise.all(attached_users.map(id => getUserById(id)))
+      setAttachedUsers(users)
+    }
+    loadAttachedUsers()
+  }, [])
 
   const submitFields = async (event) => {
     event.preventDefault()
     const form_data = new FormData(event.target)
     await onSubmit(form_data)
+  }
+
+  const handleSearchUser = async (email) => {
+    if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
+    fnTimeoutHandler = setTimeout(async () => {
+      setSearchUserLoading(true)
+      const users = await searchUsers(email, [
+        userType
+      ])
+      setSearchUserList(users)
+      setSearchUserLoading(false)
+    }, 1000)
   }
 
   if (!user) return null
@@ -54,7 +82,7 @@ const UserForm = ({
           setUserType(ev.target.value)
         }}>
           {Object.values(USER_TYPES).map(type => (
-            <option key={type} value={type}>{type}</option>
+            <option key={type} value={type}>{USER_TYPE_TEXT[type]}</option>
           ))}
         </Form.Control>
       </Form.Group>
@@ -91,6 +119,27 @@ const UserForm = ({
           <input type="text" required className="form-control form-control-sm" name="comet_api_key" id="comet_api_key" defaultValue={comet_api_key} />
         </div>
       ]}
+      {[USER_TYPES.SESSION_MANAGER, USER_TYPES.CASTING_DIRECTOR].includes(userType) && (
+        <div className='form-group'>
+          <label>Attach { USER_TYPE_TEXT[userType] }</label>
+          <AsyncTypeahead
+            id="session-user-select"
+            className="mb-3"
+            multiple
+            selected={attachedUsers}
+            onChange={value => {
+              setAttachedUsers((typeof value === 'string') ? [value] : value)
+            }}
+            isLoading={searchUserLoading}
+            labelKey="email"
+            minLength={2}
+            onSearch={handleSearchUser}
+            options={searchUserList}
+            placeholder={`Search for ${USER_TYPE_TEXT[userType]}...`}
+          />
+        </div>
+      )}
+      <input type="text" name="attached_users" value={JSON.stringify((attachedUsers || []).map(u => u._id))} className="d-none" />
       <div className="form-group">
         <label htmlFor="logo">logo</label>
         <input type="file" className="form-control" name="logo" id="logo"  accept=".png, .jpg, .jpeg"/>

@@ -32,6 +32,9 @@ body {
   >div:nth-child(odd) {
     background-color: $lightgray;
   }
+  &.hover-highlight >div:hover {
+    background-color: $gray;
+  }
 }
 .action-wrap {
   > * {

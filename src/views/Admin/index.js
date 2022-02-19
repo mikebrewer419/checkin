@@ -12,7 +12,7 @@ import {
   updateNotification
 } from '../../services'
 import UserForm from './UserForm'
-import { USER_TYPES, TINYMCE_KEY } from '../../constants'
+import { USER_TYPES, TINYMCE_KEY, USER_TYPE_TEXT } from '../../constants'
 import './style.scss'
 
 let delayHandle = null
@@ -142,7 +142,7 @@ const Admin = () => {
         </div>
       </div>
       <div>
-        <Accordion className="list-group">
+        <Accordion className="list-group hover-highlight">
           {users.map(user => (
             <div key={user._id}>
               <Accordion.Toggle as="div" eventKey={user._id}>
@@ -154,7 +154,7 @@ const Admin = () => {
                     {user.first_name} {user.last_name}
                   </div>
                   <div className="col-2">
-                    {user.user_type}
+                    {USER_TYPE_TEXT[user.user_type]}
                   </div>
                   <div className="col-auto ml-auto mr-3 user-action">
                     <FaPencilAlt

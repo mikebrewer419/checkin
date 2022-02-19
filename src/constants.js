@@ -12,6 +12,14 @@ const USER_TYPES = {
   TALENT: 'talent'
 }
 
+const USER_TYPE_TEXT = {
+  [USER_TYPES.SUPER_ADMIN]: 'Super Admin',
+  [USER_TYPES.CASTING_DIRECTOR]: 'Casting Director',
+  [USER_TYPES.SESSION_MANAGER]: 'Session Manager',
+  [USER_TYPES.CLIENT]: 'Client',
+  [USER_TYPES.TALENT]: 'Talent',
+}
+
 const PROJECT_TYPES = {
   DEFAULT: 'default',
   CREATOR: 'creator'
@@ -98,6 +106,7 @@ const WS_HOST = process.env.REACT_APP_WS_HOST
 export {
   USER_TYPES,
   USER_TYPE,
+  USER_TYPE_TEXT,
   VIDEO_REVIEW_PERMISSIONS,
   STUDIO_LIST_PERMISSIONS,
   POSTINGPAGE_PERMISSIONS,
