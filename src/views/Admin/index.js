@@ -26,12 +26,13 @@ const Admin = () => {
   const [selectedUser, setSelectedUser] = useState(null)
   const [notification, setNotification] = useState({})
   const [showNotification, setShowNotification] = useState('')
+  const [userType, setUserType] = useState('')
   const editorRef = useRef(null)
   const perPage = 20
 
   const load = async () => {
     document.querySelector('.loading').classList.add('show')
-    const response = await listUsers(query, page * perPage, perPage)
+    const response = await listUsers(query, userType, page * perPage, perPage)
     setUsers(response.users)
     setCount(response.count)
     let n = await getNotification()
@@ -42,7 +43,7 @@ const Admin = () => {
 
   useEffect(() => {
     load()
-  }, [page])
+  }, [page, userType])
 
   useEffect(() => {
     if (delayHandle) { clearTimeout(delayHandle) }
@@ -52,7 +53,7 @@ const Admin = () => {
         else { setPage(0) }
       }, 800)
     }
-  }, [query])
+  }, [query, userType])
 
   let pages = []
   const pageCount = Math.ceil(count / perPage)
@@ -92,13 +93,27 @@ const Admin = () => {
   return (
     <div className="p-5 page-content">
       <div className="d-flex align-items-center mb-3">
-        <div>
+        <div className='d-flex'>
           <input
-            className="form-control"
+            className="form-control mr-2"
             value={query}
             onChange={ev => setQuery(ev.target.value)}
             placeholder="Search with Email"
           />
+          <select
+            className='form-control'
+            value={userType}
+            onChange={ev => {
+              setUserType(ev.target.value)
+            }}
+          >
+            <option value="">All</option>
+            { Object.values(USER_TYPES).map(user_type => {
+              return <option key={user_type} value={user_type}>
+                { USER_TYPE_TEXT[user_type] }
+              </option>
+            }) }
+          </select>
         </div>
         <div className="d-flex ml-auto">
           <button

@@ -124,14 +124,16 @@ const Login = () => {
             className="font-weight-bold" href="#"
           >Create Account</Link>
         </div>
-        <GoogleLogin
-          className="w-100 text-center d-flex justify-content-center mt-4 google-btn"
-          clientId={client_id}
-          buttonText="Login with Google"
-          onSuccess={googleLoginSuccess}
-          onFailure={googleLoginFail}
-          cookiePolicy={'single_host_origin'}
-        />
+        {!window.is_react_native && (
+          <GoogleLogin
+            className="w-100 text-center d-flex justify-content-center mt-4 google-btn"
+            clientId={client_id}
+            buttonText="Login with Google"
+            onSuccess={googleLoginSuccess}
+            onFailure={googleLoginFail}
+            cookiePolicy={'single_host_origin'}
+          />
+        )}
       </div>
     </div>
   )

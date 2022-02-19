@@ -19,6 +19,7 @@ import { dataURLtoFile } from '../../utils'
 import { RoleEditor } from '../CheckinList'
 import { NotificationComponent } from '../../App'
 import { USER_TYPES } from '../../constants'
+import OnboardChoice from './OnboardChoice'
 
 import './style.scss'
 
@@ -43,7 +44,7 @@ const mobileChromeCheck = () => {
   return isAndroid
 }
 
-const Onboard = () => {
+const Onboard = ({ history }) => {
   const [user, setUser] = useState(null)
 
   const [firstName, setFirstName] = useState('')
@@ -76,10 +77,12 @@ const Onboard = () => {
 
   const [showAndroidPrompt, setShowAndroidPrompt] = useState(false)
   const [showTermsModal, setShowTermsModal] = useState(false)
+  const [showChoice, setShowChoice] = useState(true)
 
   const webcamRef = useRef(null)
 
   useEffect(() => {
+    setShowChoice(!window.localStorage.getItem('token'))
     setIsAppFrame(window.is_react_native)
     setIsMobileSafari(mobileSafariCheck())
     if (!window.is_react_native) {
@@ -240,6 +243,15 @@ const Onboard = () => {
 
   return (
     <div className="onboard-container">
+      {showChoice && (
+        <OnboardChoice
+          history={history}
+          studio={studio} session={session}
+          hideChoice={() => {
+            setShowChoice(false)
+          }}
+        />
+      )}
       {isAppFrame && (
         <div className='d-flex mb-2'>
           <button className='btn btn-text btn-sm text-danger ml-auto' onClick={() => {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Webcam from "react-webcam"
 import { GoogleLogin } from 'react-google-login';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
-import { register, verifyCaptcha, googleRegister, uploadImage, temp_root } from '../../services'
+import { register, verifyCaptcha, googleRegister, uploadImage, loginApi, temp_root } from '../../services'
 import { USER_TYPES } from '../../constants'
 import { dataURLtoFile } from '../../utils'
 import './Login.scss'
@@ -83,7 +83,18 @@ const Register = () => {
     // }
     const response = await register(formData)
     if (response._id) {
-      window.location.href='/login'
+      loginApi(email.toLowerCase(), password)
+      .then(() => {
+        const pUrl = window.localStorage.getItem('prev_url')
+        if (pUrl) {
+          window.localStorage.removeItem('prev_url')
+          window.location.href = pUrl
+        } else {
+          window.location.href='/login'
+        }
+      }, (error) => {
+        setError(error)
+      })
     } else {
       setError(response.error)
     }

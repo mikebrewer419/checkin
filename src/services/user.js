@@ -1,7 +1,7 @@
 import { api_host, token } from './index'
 
-export const listUsers = async (query = '', skip = 0, limit = 20) => {
-  const resp = await fetch(`${api_host}/auth/admin/users?email=${query}&skip=${skip}&limit=${limit}`, {
+export const listUsers = async (query = '', userType='', skip = 0, limit = 20) => {
+  const resp = await fetch(`${api_host}/auth/admin/users?email=${query}&user_type=${userType}&skip=${skip}&limit=${limit}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
