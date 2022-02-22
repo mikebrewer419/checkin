@@ -366,9 +366,6 @@ const PersonCard = ({
             <div onClick={ev => {
               ev.stopPropagation()
             }} className="d-flex flex-column">
-              {cmts.length > 0 (
-                <label className='h6 my-1'>Comments ({cmts.length})</label>
-              )}
               {cmts.map((comment, idx) => (
                 <div className="mb-1" key={idx}>
                   <label className="mb-0"> - {comment.by.email} - </label>
