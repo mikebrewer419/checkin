@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react'
 import classnames from 'classnames'
-import { FaComment, FaPrint, FaPlayCircle } from 'react-icons/fa'
+import { FaComment, FaPrint, FaPlayCircle, FaPaperPlane } from 'react-icons/fa'
 import { Modal } from 'react-bootstrap'
 import ReactToPrint from 'react-to-print'
 import YesIcon from '../../components/icons/yes'
@@ -158,7 +158,8 @@ const PersonCard = ({
   twr_deleted,
   groups,
   showRecordVideosModal,
-  hideFeedbackComments = false
+  hideFeedbackComments = false,
+  showCommentInline = false
 }) => {
   const [showContact, setShowContact] = useState(false)
   const [commentsVisible, setCommentsVisible] = useState(false)
@@ -359,6 +360,41 @@ const PersonCard = ({
                   )}
                 </div>
               </div>
+            </div>
+          )}
+          {showCommentInline && POSTINGPAGE_PERMISSIONS.CAN_LEAVE_FEEDBACK() && (
+            <div onClick={ev => {
+              ev.stopPropagation()
+            }} className="d-flex flex-column">
+              <label className='h6 my-1'>Comments ({cmts.length})</label>
+              {cmts.map((comment, idx) => (
+                <div className="mb-1" key={idx}>
+                  <label className="mb-0"> - {comment.by.email} - </label>
+                  <p className="mb-0">
+                    {comment.content}
+                  </p>
+                </div>
+              ))}
+              {cmts.length === 0 && (
+                <div>
+                  No comments.
+                </div>
+              )}
+              <textarea
+                className="form-control"
+                rows={1}
+                value={content}
+                onChange={ev => setContent(ev.target.value)}
+                placeholder="New comment here"
+              ></textarea>
+              <button
+                className="btn btn-text btn-sm ml-auto mr-3"
+                onClick={addNewComment}
+                disabled={!content}
+                title="Send"
+              >
+                <FaPaperPlane />
+              </button>
             </div>
           )}
         </div>

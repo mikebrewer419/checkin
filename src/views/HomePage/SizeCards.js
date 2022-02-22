@@ -49,6 +49,7 @@ const SizeCards = ({
   const [ twrStudio, setTwrStudio ] = useState(null)
   const [ roleFilter, setRoleFilter ] = useState('all')
   const [ videoRecord, setVideoRecord ] = useState(null)
+  const [ showCommentInline, setShowCommentInline ] = useState(false)
 
   const fetchTWRStudio = async () => {
     const { twr } = session
@@ -345,6 +346,16 @@ const SizeCards = ({
             </div>
           </div>
         </div>
+        <div className='ml-auto d-flex flex-column align-items-end mr-4'>
+          Show Comments Inline
+          <Switch
+            checkedIcon={null} uncheckedIcon={null}
+            height={20}
+            onColor="#ee514f"
+            checked={showCommentInline}
+            onChange={(state) => setShowCommentInline(state)}
+          />
+        </div>
         <div className="d-flex session-files-div">
           {typeof session.size_card_pdf === 'string' && (
             <a href={`${static_root}${session.size_card_pdf}`} target="_blank" className="btn btn-default text-white ml-2">
@@ -393,6 +404,7 @@ const SizeCards = ({
                 session_id={session._id}
                 hideContact={!POSTINGPAGE_PERMISSIONS.CAN_VIEW_CONTACT()}
                 showRecordVideosModal={showRecordVideosModal}
+                showCommentInline={showCommentInline}
               />
             </div>
           )
