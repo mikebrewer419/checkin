@@ -7,6 +7,21 @@ const OnboardChoice = ({ history, studio, session, hideChoice }) => {
   return (
     <div className='onboard-choice'>
       <div className='d-flex flex-column align-items-center p-3 bg-danger'>
+        {window.is_react_native && (
+          <div className='d-flex mb-2 w-100'>
+            <label className='btn btn-text btn-sm text-white ml-auto' onClick={() => {
+              try {
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'leave' }))
+                }
+              } catch (err) {
+                console.log('IGNORE: react native send info failed.', err)
+              }
+            }}>
+              Leave
+            </label>
+          </div>
+        )}
         <img
           className="logo d-block m-auto"
           src={static_root+studio.logo}

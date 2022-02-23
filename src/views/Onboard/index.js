@@ -20,6 +20,7 @@ import { RoleEditor } from '../CheckinList'
 import { NotificationComponent } from '../../App'
 import { USER_TYPES } from '../../constants'
 import OnboardChoice from './OnboardChoice'
+import { FaArrowLeft } from 'react-icons/fa';
 
 import './style.scss'
 
@@ -252,8 +253,11 @@ const Onboard = ({ history }) => {
           }}
         />
       )}
-      {isAppFrame && (
+      {window.is_react_native && (
         <div className='d-flex mb-2'>
+          <button className='btn btn-text btn-sm text-danger' onClick={() => { setShowChoice(true) } }>
+            <FaArrowLeft />
+          </button>
           <button className='btn btn-text btn-sm text-danger ml-auto' onClick={() => {
             try {
               if (window.ReactNativeWebView) {

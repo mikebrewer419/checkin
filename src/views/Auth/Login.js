@@ -4,10 +4,11 @@ import { GoogleLogin } from 'react-google-login';
 import { loginApi, googleLogin, googleRegister } from '../../services'
 import { USER_TYPES } from '../../constants'
 import './Login.scss'
+import { FaArrowLeft } from 'react-icons/fa';
 
 const client_id = process.env.REACT_APP_CLIENT_ID
 
-const Login = () => {
+const Login = ({ history }) => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [password, setPassword] = useState('')
@@ -71,6 +72,11 @@ const Login = () => {
   return (
     <div className="d-flex align-items-center flex-column login-page">
       <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
+        {window.is_react_native && (
+          <button className='btn btn-text btn-sm text-white back-btn' onClick={() => history.goBack() }>
+            <FaArrowLeft />
+          </button>
+        )}
         <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
       <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">

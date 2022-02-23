@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Webcam from "react-webcam"
+import { Modal } from 'react-bootstrap'
 import { GoogleLogin } from 'react-google-login';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { register, verifyCaptcha, googleRegister, uploadImage, loginApi, temp_root } from '../../services'
 import { USER_TYPES } from '../../constants'
 import { dataURLtoFile } from '../../utils'
 import './Login.scss'
+import { FaArrowLeft } from 'react-icons/fa';
 
 const client_id = process.env.REACT_APP_CLIENT_ID
 
-const Register = () => {
+const Register = ({ history }) => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [agent, setAgent] = useState('')
@@ -26,6 +28,7 @@ const Register = () => {
 
   const [formError, setFormError] = useState('')
   const { executeRecaptcha } = useGoogleReCaptcha()
+  const [showTermsModal, setShowTermsModal] = useState(false)
 
   const webcamRef = useRef(null)
 
@@ -154,6 +157,11 @@ const Register = () => {
   return (
     <div className="d-flex align-items-center flex-column login-page talent-onboard">
       <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
+        {window.is_react_native && (
+          <button className='btn btn-text btn-sm text-white back-btn' onClick={() => history.goBack() }>
+            <FaArrowLeft />
+          </button>
+        )}
         <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
       </div>
       <div className="register-pane text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
@@ -311,7 +319,13 @@ const Register = () => {
         <div className="form-group">
           <label className="d-flex align-items-center mb-3">
             <input type="checkbox" className="mr-2 w-auto" id="agree-terms" />
-            I agree to &nbsp;<a target="_blank" href="https://heyjoe.io/terms-and-conditions/">terms of service</a>
+            I agree to &nbsp;<a target="_blank" onClick={() => {
+              if (window.is_react_native) {
+                setShowTermsModal(true)
+              } else {
+                window.open("https://heyjoe.io/terms-and-conditions/", '_blank')
+              }
+            }}>terms of service</a>
           </label>
           <label className="d-flex align-items-center full mb-0">
               <input type="checkbox" className="mr-2 w-auto" name="opt_in" checked={optIn} onChange={ev => {
@@ -341,15 +355,34 @@ const Register = () => {
             <Link to="/login" className="font-weight-bold" href="#">Login</Link>
           </span>
         </div>
-        <GoogleLogin
+        {!window.is_react_native && (<GoogleLogin
           className="w-100 text-center d-flex justify-content-center mt-4"
           clientId={client_id}
           buttonText="Sign up with Google"
           onSuccess={googleRegisterSuccess}
           onFailure={googleRegisterFail}
           cookiePolicy={'single_host_origin'}
-        />
+        />)}
       </div>
+      <Modal
+        size="xl"
+        className='h-100'
+        show={showTermsModal}
+        onHide={() => {
+          setShowTermsModal(false)
+        }}
+      >
+        <Modal.Body>
+          <iframe src="https://heyjoe.io/terms-and-conditions/" className='onboard-terms-frame' />
+        </Modal.Body>
+        <Modal.Footer>
+          <button className='btn btn-danger' onClick={() => {
+            setShowTermsModal(false)
+          }}>
+            Done
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }

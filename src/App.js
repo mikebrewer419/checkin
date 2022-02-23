@@ -142,12 +142,12 @@ function App() {
         <Router>
           <Header logo={logo} />
           <Switch>
-            <Route path="/login" component={() => <Login />} exact />
+            <Route path="/login" component={(props) => <Login {...props} />} exact />
             <Route path="/reset-password-request" component={() => <ResetPasswordRequest />} exact />
             <Route path="/reset-password" component={() => <ResetPassword />} exact />
             <Route path="/register" component={() => <Register />} exact />
             <Route path="/client/register" component={() => <ClientRegister />} exact />
-            <Route path="/talent/register" component={() => <TalentRegister />} exact />
+            <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
             {user.user_type === USER_TYPES.SUPER_ADMIN &&
               <Route path="/heyjoe-admin" component={AdminView} />
             }
