@@ -156,7 +156,8 @@ const Onboard = ({ history }) => {
       interview_no: interviewNo,
       role: role,
       avatar: avatar64,
-      opt_in: optIn
+      opt_in: optIn,
+      browser_info: `${window.navigator.userAgent} - ${window.navigator.platform} - ${window.navigator.appVersion}`
     }).then(result => {
       console.log("onSubmit -> result", result)
       setApiResult(result)

@@ -4,6 +4,9 @@ import ThumbImage from '../../components/ThumbImage'
 import { FaCircle, FaMinus, FaUserSlash, FaPencilAlt, FaTimes, FaSms } from 'react-icons/fa'
 import { formatHour, formatTime } from '../../utils'
 
+const query = new URLSearchParams(window.location.search)
+const isDebug = query.get('debug') === 'true'
+
 const PersonCard = ({
   idx,
   _id,
@@ -35,7 +38,8 @@ const PersonCard = ({
   testMode,
   isTwr = false,
   twr_deleted,
-  sendSms
+  sendSms,
+  browser_info
 }) => {
   const dateString = formatTime(checked_in_time)
 
@@ -148,6 +152,11 @@ const PersonCard = ({
               title="Call to Lobby"
               src={require('../../assets/callout.png')}
             />  )}
+          </div>
+        )}
+        {isDebug && (
+          <div>
+            {browser_info || ''}
           </div>
         )}
       </div>
