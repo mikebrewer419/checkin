@@ -124,14 +124,13 @@ const Onboard = ({ history }) => {
     process()
   }, [studio_uri, session_id])
 
-  const takePhoto = React.useCallback(
-    () => {
-      const imageSrc = webcamRef.current.getScreenshot()
+  const takePhoto = () => {
+    const imageSrc = webcamRef.current.getScreenshot()
+    if (imageSrc && imageSrc.includes(',')) {
       const file = dataURLtoFile(imageSrc, `${new Date()}.jpg`)
       setAvatarImg(file)
-    },
-    [webcamRef]
-  )
+    }
+  }
 
   const onSubmit = (ev) => {
     ev.preventDefault()
