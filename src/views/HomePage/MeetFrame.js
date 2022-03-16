@@ -44,7 +44,8 @@ const MeetFrame = ({ meeting_id, record, studio }) => {
       api.executeCommand('displayName', `${user.first_name} ${user.last_name} (${user.user_type})`)
       if (record && studio) {
         const iframe = api.getIFrame()
-        iframe.setAttribute('src', `${iframe.src}&talent_data=${encodeURIComponent(JSON.stringify(record))}&studio_data=${encodeURIComponent(JSON.stringify(studio))}`)
+        const onboardUrl = window.location.href
+        iframe.setAttribute('src', `${iframe.src}&talent_data=${encodeURIComponent(JSON.stringify(record))}&studio_data=${encodeURIComponent(JSON.stringify(studio))}&onboard_url=${encodeURIComponent(onboardUrl)}`)
       }
     }
   }, [api, user])
