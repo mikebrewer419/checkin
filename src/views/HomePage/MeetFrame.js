@@ -42,6 +42,10 @@ const MeetFrame = ({ meeting_id, record }) => {
   useEffect(() => {
     if (api && user) {
       api.executeCommand('displayName', `${user.first_name} ${user.last_name} (${user.user_type})`)
+      if (record) {
+        const iframe = api.getIFrame()
+        iframe.setAttribute('src', `${iframe.src}&talent_data=${encodeURIComponent(JSON.stringify(record))}`)
+      }
     }
   }, [api, user])
 
