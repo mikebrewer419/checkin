@@ -45,7 +45,12 @@ const MeetFrame = ({ meeting_id, record, studio }) => {
       if (record && studio) {
         const iframe = api.getIFrame()
         const onboardUrl = window.location.href
-        iframe.setAttribute('src', `${iframe.src}&talent_data=${encodeURIComponent(JSON.stringify(record))}&studio_data=${encodeURIComponent(JSON.stringify(studio))}&onboard_url=${encodeURIComponent(onboardUrl)}`)
+        const auditionData = JSON.stringify({
+          talent: record,
+          studio: studio,
+          onboard_url: onboardUrl
+        })
+        iframe.setAttribute('src', `${iframe.src}&audition_data=${encodeURIComponent(auditionData)}`)
       }
     }
   }, [api, user])
