@@ -145,6 +145,7 @@ const RecordMessagePage = ({ match }) => {
         <MeetFrame
           meeting_id={meeting_id}
           record={record}
+          studio={studio}
         />
       }
       <NotificationComponent

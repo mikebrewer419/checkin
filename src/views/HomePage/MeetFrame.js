@@ -5,7 +5,7 @@ import { getUser, getUserById } from '../../services'
 
 let loading = false
 
-const MeetFrame = ({ meeting_id, record }) => {
+const MeetFrame = ({ meeting_id, record, studio }) => {
   const [user, setUser] = useState(null)
   const [api, setApi] = useState(null)
   const [key, setKey]  = useState(0)
@@ -42,9 +42,9 @@ const MeetFrame = ({ meeting_id, record }) => {
   useEffect(() => {
     if (api && user) {
       api.executeCommand('displayName', `${user.first_name} ${user.last_name} (${user.user_type})`)
-      if (record) {
+      if (record && studio) {
         const iframe = api.getIFrame()
-        iframe.setAttribute('src', `${iframe.src}&talent_data=${encodeURIComponent(JSON.stringify(record))}`)
+        iframe.setAttribute('src', `${iframe.src}&talent_data=${encodeURIComponent(JSON.stringify(record))}&studio_data=${encodeURIComponent(JSON.stringify(studio))}`)
       }
     }
   }, [api, user])
