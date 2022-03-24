@@ -529,7 +529,7 @@ const Onboard = ({ history }) => {
           <button className='btn btn-danger' onClick={() => {
             copyUrl()
             const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`
-            window.open(url)
+            window.open(url, '_self')
           }}>
             Open App
           </button>
