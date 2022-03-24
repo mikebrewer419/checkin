@@ -86,11 +86,6 @@ const Onboard = ({ history }) => {
     setShowChoice(!window.localStorage.getItem('token'))
     setIsAppFrame(window.is_react_native)
     setIsMobileSafari(mobileSafariCheck())
-    document.querySelector('#urlInput').value = window.location.href
-    const copyText = document.querySelector('#urlInput')
-    copyText.select()
-    copyText.setSelectionRange(0, 99999)
-    navigator.clipboard.writeText(copyText.value)
     if (!window.is_react_native) {
       setShowAndroidPrompt(mobileChromeCheck())
     }
@@ -125,6 +120,11 @@ const Onboard = ({ history }) => {
       setStudio(studio)
       setSession(session)
       setRoles(rs)
+      const copyText = document.querySelector('#urlInput')
+      copyText.value = window.location.href
+      copyText.select()
+      copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText.value)
     }
     process()
   }, [studio_uri, session_id])
