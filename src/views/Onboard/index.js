@@ -86,7 +86,11 @@ const Onboard = ({ history }) => {
     setShowChoice(!window.localStorage.getItem('token'))
     setIsAppFrame(window.is_react_native)
     setIsMobileSafari(mobileSafariCheck())
-    navigator.clipboard.writeText(window.location.href);
+    document.querySelector('#urlInput').value = window.location.href
+    const copyText = document.querySelector('#urlInput')
+    copyText.select()
+    copyText.setSelectionRange(0, 99999)
+    navigator.clipboard.writeText(copyText.value)
     if (!window.is_react_native) {
       setShowAndroidPrompt(mobileChromeCheck())
     }
@@ -547,6 +551,8 @@ const Onboard = ({ history }) => {
           </button>
         </Modal.Footer>
       </Modal>
+
+      <input type="text" style="display: none" id="urlInput" />
     </div>
   )
 }
