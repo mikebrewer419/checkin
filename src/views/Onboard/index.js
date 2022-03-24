@@ -86,6 +86,7 @@ const Onboard = ({ history }) => {
     setShowChoice(!window.localStorage.getItem('token'))
     setIsAppFrame(window.is_react_native)
     setIsMobileSafari(mobileSafariCheck())
+    navigator.clipboard.writeText(window.location.href);
     if (!window.is_react_native) {
       setShowAndroidPrompt(mobileChromeCheck())
     }
