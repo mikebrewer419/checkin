@@ -29,14 +29,7 @@ const mobileSafariCheck = () => {
   const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i)
   const webkit = !!ua.match(/WebKit/i)
   const iOSSafari = iOS && webkit && !ua.match(/CriOS/i)
-  if (iOSSafari) {
-    if (!window.is_react_native) {
-      const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`
-      window.open(url, '_self')
-    }
-    return true
-  }
-  return false
+  return iOSSafari
 }
 
 const mobileChromeCheck = () => {
@@ -83,11 +76,6 @@ const Onboard = ({ history }) => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
-    const copyText = document.querySelector('#urlInput')
-    copyText.value = window.location.href
-    copyText.select()
-    copyText.setSelectionRange(0, 99999)
-    navigator.clipboard.writeText(copyText.value)
     setShowChoice(!window.localStorage.getItem('token'))
     setIsAppFrame(window.is_react_native)
     setIsMobileSafari(mobileSafariCheck())
@@ -111,6 +99,9 @@ const Onboard = ({ history }) => {
   }, [])
 
   useEffect(() => {
+    if (!window.is_react_native) {
+      setShowAndroidPrompt(isMobileSafari)
+    }
     if (window.is_react_native && isMobileSafari) {
       setCameraError(true)
     }
@@ -135,6 +126,14 @@ const Onboard = ({ history }) => {
       const file = dataURLtoFile(imageSrc, `${new Date()}.jpg`)
       setAvatarImg(file)
     }
+  }
+
+  const copyUrl = () => {
+    const copyText = document.querySelector('#urlInput')
+    copyText.value = window.location.href
+    copyText.select()
+    copyText.setSelectionRange(0, 99999)
+    navigator.clipboard.writeText(copyText.value)
   }
 
   const onSubmit = (ev) => {
@@ -527,9 +526,13 @@ const Onboard = ({ history }) => {
           }}>
             Cancel
           </button>
-          <a className='btn btn-danger' href={`org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`} >
+          <button className='btn btn-danger' onClick={() => {
+            copyUrl()
+            const url = `org.hey.meet://?onboard=true&url=${encodeURIComponent(window.location.href+'?nativeFrame=true')}`
+            window.open(url)
+          }}>
             Open App
-          </a>
+          </button>
         </Modal.Footer>
       </Modal>
       <Modal
