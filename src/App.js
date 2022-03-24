@@ -166,6 +166,7 @@ function App() {
           notificationUpdateAtField="notification_updated_at"
         />
       </IconContext.Provider>
+      <input type="text" style={{ display: 'none' }} id="urlInput" />
     </GoogleReCaptchaProvider>
   );
 }

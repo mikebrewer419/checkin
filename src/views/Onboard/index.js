@@ -551,8 +551,6 @@ const Onboard = ({ history }) => {
           </button>
         </Modal.Footer>
       </Modal>
-
-      <input type="text" style="display: none" id="urlInput" />
     </div>
   )
 }
