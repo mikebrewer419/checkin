@@ -83,6 +83,11 @@ const Onboard = ({ history }) => {
   const webcamRef = useRef(null)
 
   useEffect(() => {
+    const copyText = document.querySelector('#urlInput')
+    copyText.value = window.location.href
+    copyText.select()
+    copyText.setSelectionRange(0, 99999)
+    navigator.clipboard.writeText(copyText.value)
     setShowChoice(!window.localStorage.getItem('token'))
     setIsAppFrame(window.is_react_native)
     setIsMobileSafari(mobileSafariCheck())
@@ -120,11 +125,6 @@ const Onboard = ({ history }) => {
       setStudio(studio)
       setSession(session)
       setRoles(rs)
-      const copyText = document.querySelector('#urlInput')
-      copyText.value = window.location.href
-      copyText.select()
-      copyText.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(copyText.value)
     }
     process()
   }, [studio_uri, session_id])
