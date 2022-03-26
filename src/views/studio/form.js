@@ -62,7 +62,7 @@ const StudioForm = ({
           defaultValue={position_back_message || `Please return to virtual lobby. Enter 'TEST_MEETING_ID' or click TALENT_STATUS_LINK`} />
         <label htmlFor="position_messages1">Position_messages 1</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[0]" id="position_messages1"
-          defaultValue={position_messages[0] || `It's now your turn to audition, on desktop click the "Join Casting" button. On mobile, click TALENT_STATUS_LINK or enter MEETING_ID. ***IMPORTANT: Click Ask to Join`} />
+          defaultValue={position_messages[0] || `It's now your turn to audition, please click the TALENT_STATUS_LINK. ***IMPORTANT: Click Ask to Join.`} />
         <label htmlFor="position_messages2">Position_messages 2</label>
         <input required className="form-control form-control-sm"  type="text" name="position_messages[1]" id="position_messages2"
           defaultValue={position_messages[1] || `You are on deck! We'll text you shortly to join the casting.`} />
@@ -74,7 +74,7 @@ const StudioForm = ({
           defaultValue={position_messages[3] || ``} />
         <label htmlFor="position_messages4">Good bye message</label>
         <input className='form-control form-control-sm' type="text" name="good_bye_message" id="good_bye_message"
-          defaultValue={good_bye_message || 'Thank you for using Hey Joe! Want to step up your at-home video setup? Visit heyjoe.io/workshop for details'} />
+          defaultValue={good_bye_message || ''} />
       </div>
       <div className="form-group">
         <label htmlFor="delete_message">Delete message</label>

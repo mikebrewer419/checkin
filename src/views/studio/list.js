@@ -391,7 +391,14 @@ const StudioList = () => {
                   }} 
                 >
                   <FaLink title="Assign Director"/>
-                  <span className="ml-1">{studio.casting_directors.map(c => c.email).join(',')}</span>
+                  {studio.casting_directors.map(c => {
+                    return <div className='casting-admin-wrap'>
+                      <span key={c._id} className="ml-1">{c.email}</span>
+                      {c.logo ?
+                        <img src={static_root + c.logo} />
+                      : null}
+                    </div>
+                  })}
                 </label>
                 {STUDIO_LIST_PERMISSIONS.CAN_ARCHIVE_STUDIO() && (
                   <label

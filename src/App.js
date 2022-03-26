@@ -161,10 +161,12 @@ function App() {
             <Route path="/" component={HomeBomponent} />
           </Switch>
         </Router>
-        <NotificationComponent
-          notificationField="notification"
-          notificationUpdateAtField="notification_updated_at"
-        />
+        { user && user.user_type !== USER_TYPES.CLIENT && (
+          <NotificationComponent
+            notificationField="notification"
+            notificationUpdateAtField="notification_updated_at"
+          />
+        )}
       </IconContext.Provider>
       <input type="text" style={{ display: 'none' }} id="urlInput" />
     </GoogleReCaptchaProvider>

@@ -69,6 +69,8 @@ const Login = ({ history }) => {
     console.log("Google login error: ", error)
   }
 
+  const noticeText = ''
+
   return (
     <div className="d-flex align-items-center flex-column login-page">
       <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
@@ -83,8 +85,10 @@ const Login = ({ history }) => {
         <h2 className=" text-center"> WELCOME BACK.</h2>
         <h2 className=" text-center mb-5"> LOGIN HERE. </h2>
         <p id="login-alert" className="d-none">
-          Notice, January 15, 2020: If you have used Hey Joe to watch casting sessions in the past, you may have to create a new account to sign in to view your session. We are using a new authentication system for our casting software which requires a fresh registration. Please choose "create account" below. Thank you.
-          <a onClick={dismissAlert}>Dismiss</a>
+          {noticeText}
+          {noticeText && (
+            <a onClick={dismissAlert}>Dismiss</a>
+          )}
         </p>
         <div className="form-group">
           <label htmlFor="email">Email address</label>
