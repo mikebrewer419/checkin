@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { resetPassword } from '../../services'
+import AuthHeader from './AuthHeader'
 import './Login.scss'
 
-const ResetPasswordRequest = () => {
+const ResetPasswordRequest = (props) => {
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [error, setError] = useState('')
@@ -51,9 +52,7 @@ const ResetPasswordRequest = () => {
 
   return (
     <div className="d-flex align-items-center flex-column vh-100 login-page">
-      <div className="bg-danger vw-100 p-3 d-flex justify-content-center">
-        <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
-      </div>
+      <AuthHeader history={props.history} />
       <div className="text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
         <h2 className=" text-center"> Reset Password.</h2>
         <div className="form-group">

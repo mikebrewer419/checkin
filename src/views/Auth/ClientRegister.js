@@ -4,11 +4,12 @@ import { GoogleLogin } from 'react-google-login';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { register, verifyCaptcha, googleRegister } from '../../services'
 import { USER_TYPES } from '../../constants'
+import AuthHeader from './AuthHeader';
 import './Login.scss'
 
 const client_id = process.env.REACT_APP_CLIENT_ID
 
-const Register = () => {
+const Register = (props) => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -102,9 +103,7 @@ const Register = () => {
 
   return (
     <div className="d-flex align-items-center flex-column login-page">
-      <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
-        <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
-      </div>
+      <AuthHeader history={props.history} />
       <div className="register-pane text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
         <h2 className=" text-center"> Client Account Registration</h2>
         <p className="text-center mb-5 description-text mt-3">

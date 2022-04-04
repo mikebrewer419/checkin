@@ -36,7 +36,17 @@ export const NotificationComponent = ({ notificationField, notificationUpdateAtF
       // Hard refresh!
       window.location.href = window.location.href
     }
-    if (window.location.pathname.startsWith('/onboard')) { return }
+    const ignorePaths = [
+      "/onboard",
+      "/login",
+      "/reset-password-request",
+      "/reset-password",
+      "/register",
+      "/client/register",
+      "/talent/register",
+    ]
+    const ignore = ignorePaths.find(path => window.location.pathname.startsWith(path))
+    if (ignore) { return }
     let n = await getNotification()
     n = n || {}
     setNotification(n)
@@ -143,10 +153,10 @@ function App() {
           <Header logo={logo} />
           <Switch>
             <Route path="/login" component={(props) => <Login {...props} />} exact />
-            <Route path="/reset-password-request" component={() => <ResetPasswordRequest />} exact />
-            <Route path="/reset-password" component={() => <ResetPassword />} exact />
-            <Route path="/register" component={() => <Register />} exact />
-            <Route path="/client/register" component={() => <ClientRegister />} exact />
+            <Route path="/reset-password-request" component={(props) => <ResetPasswordRequest {...props} />} exact />
+            <Route path="/reset-password" component={(props) => <ResetPassword {...props} />} exact />
+            <Route path="/register" component={(props) => <Register {...props} />} exact />
+            <Route path="/client/register" component={(props) => <ClientRegister {...props} />} exact />
             <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
             {user.user_type === USER_TYPES.SUPER_ADMIN &&
               <Route path="/heyjoe-admin" component={AdminView} />

@@ -8,7 +8,7 @@ import { register, verifyCaptcha, googleRegister, uploadImage, loginApi, temp_ro
 import { USER_TYPES } from '../../constants'
 import { dataURLtoFile } from '../../utils'
 import './Login.scss'
-import { FaArrowLeft } from 'react-icons/fa';
+import AuthHeader from './AuthHeader'
 
 const client_id = process.env.REACT_APP_CLIENT_ID
 
@@ -156,14 +156,7 @@ const Register = ({ history }) => {
 
   return (
     <div className="d-flex align-items-center flex-column login-page talent-onboard">
-      <div className="bg-danger vw-100 p-3 d-flex justify-content-center header">
-        {window.is_react_native && (
-          <button className='btn btn-text btn-sm text-white back-btn' onClick={() => history.goBack() }>
-            <FaArrowLeft />
-          </button>
-        )}
-        <img src={require('../../assets/heyjoe.png')} className="heyjoe-logo white"/>
-      </div>
+      <AuthHeader history={history} />
       <div className="register-pane text-primary login-form-wrapper bg-lightgray d-flex flex-column px-5 justify-content-center">
         <h2 className=" text-center"> Talent Account Registration</h2>
 
