@@ -99,7 +99,7 @@ const Onboard = ({ history }) => {
   }, [])
 
   useEffect(() => {
-    if (!window.is_react_native) {
+    if (!window.is_react_native && isMobileSafari) {
       setShowAndroidPrompt(isMobileSafari)
     }
     if (window.is_react_native && isMobileSafari) {

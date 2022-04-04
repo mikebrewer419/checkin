@@ -121,9 +121,6 @@ const RecordMessagePage = ({ match }) => {
             </label>
             <label className="mb-0 ml-3">{meeting_id}</label>
           </div>,
-          <div className="col d-flex flex-column align-items-center">
-            {JoinButton}
-          </div>,
           <p key="message" className="d-none my-2 text-left sms-message col col-lg-4 col-12">
             <strong>Your SMS status messages</strong>
             <br/>
