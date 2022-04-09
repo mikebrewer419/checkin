@@ -42,15 +42,6 @@ const Login = ({ history }) => {
 
   const googleLoginSuccess = async (response) => {
     const googleUser = response.profileObj
-    try {
-      await googleRegister({
-        email: googleUser.email,
-        token: response.tokenId,
-        user_type: USER_TYPES.CLIENT
-      })
-    } catch (err) {
-      console.log('pass')
-    }
     googleLogin(googleUser.email, response.tokenId)
       .then(() => {
         const pUrl = window.localStorage.getItem('prev_url')
