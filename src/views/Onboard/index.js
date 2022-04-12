@@ -15,7 +15,7 @@ import {
   getUserById,
   getUser
 } from '../../services'
-import { dataURLtoFile } from '../../utils'
+import { dataURLtoFile, mobileSafariCheck, mobileChromeCheck, copyUrl } from '../../utils'
 import { RoleEditor } from '../CheckinList'
 import { NotificationComponent } from '../../App'
 import { USER_TYPES } from '../../constants'
@@ -23,20 +23,6 @@ import OnboardChoice from './OnboardChoice'
 import { FaArrowLeft } from 'react-icons/fa';
 
 import './style.scss'
-
-const mobileSafariCheck = () => {
-  const ua = window.navigator.userAgent
-  const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i)
-  const webkit = !!ua.match(/WebKit/i)
-  const iOSSafari = iOS && webkit
-  return iOSSafari
-}
-
-const mobileChromeCheck = () => {
-  const ua = window.navigator.userAgent
-  const isAndroid = ua.toLowerCase().indexOf("android") > -1
-  return isAndroid
-}
 
 const Onboard = ({ history }) => {
   const [user, setUser] = useState(null)
@@ -126,14 +112,6 @@ const Onboard = ({ history }) => {
       const file = dataURLtoFile(imageSrc, `${new Date()}.jpg`)
       setAvatarImg(file)
     }
-  }
-
-  const copyUrl = () => {
-    const copyText = document.querySelector('#urlInput')
-    copyText.value = window.location.href
-    copyText.select()
-    copyText.setSelectionRange(0, 99999)
-    navigator.clipboard.writeText(copyText.value)
   }
 
   const onSubmit = (ev) => {

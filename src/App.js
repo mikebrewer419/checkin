@@ -44,6 +44,7 @@ export const NotificationComponent = ({ notificationField, notificationUpdateAtF
       "/register",
       "/client/register",
       "/talent/register",
+      "/message"
     ]
     const ignore = ignorePaths.find(path => window.location.pathname.startsWith(path))
     if (ignore) { return }

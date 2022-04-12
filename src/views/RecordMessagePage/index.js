@@ -7,8 +7,9 @@ import {
   getStudioInfo,
   token
 } from '../../services'
-import { Button } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 import { WS_HOST } from '../../constants'
+import { mobileChromeCheck, mobileSafariCheck, copyUrl } from '../../utils'
 import './style.scss'
 import { NotificationComponent } from '../../App'
 import MeetFrame from '../HomePage/MeetFrame'
@@ -20,6 +21,8 @@ const RecordMessagePage = ({ match }) => {
   const [liveMode, setLiveMode] = useState(false)
   const [studio, setStudio] = useState(null)
   const [showMeetingFrame, setShowMeetingFrame] = useState(false)
+  const [showAppPrompt, setShowAppPrompt] =useState(false)
+  const [openAppUrl, setOpenAppUrl] = useState('')
   const prevSeen = useRef(false)
 
   const fetchData = async () => {
@@ -36,6 +39,19 @@ const RecordMessagePage = ({ match }) => {
     })
     if (newRecord.seen && !record.seen) { setLiveMode(true) }
     if (!newRecord.seen && record.seen) { setLiveMode(false) }
+
+    const onboardUrl = window.location.origin + window.location.pathname
+    const auditionData = JSON.stringify({
+      talent: newRecord,
+      studio: {
+        name: st.name,
+        logo: st.logo,
+        test_meeting_id: st.test_meeting_id,
+        jitsi_meeting_id: st.jitsi_meeting_id
+      },
+      onboard_url: onboardUrl
+    })
+    setOpenAppUrl(`org.hey.meet://#audition_data=${encodeURIComponent(auditionData)}`)
 
     const initWS = () => {
       console.log('WS connecting')
@@ -72,6 +88,14 @@ const RecordMessagePage = ({ match }) => {
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (openAppUrl) {
+      if (!window.is_react_native) {
+        setShowAppPrompt(mobileChromeCheck() || mobileSafariCheck())
+      }
+    }
+  }, [openAppUrl])
 
   useEffect(() => {
     if (!record.seen && prevSeen.current) { setLiveMode(false) }
@@ -149,6 +173,32 @@ const RecordMessagePage = ({ match }) => {
         notificationField="client_notice"
         notificationUpdateAtField="client_notice_updated_at"
       />
+
+      <Modal
+        size="xl"
+        centered
+        show={showAppPrompt}
+        onHide={() => {
+          setShowAppPrompt(false)
+        }}
+      >
+        <Modal.Body>
+          Notice: This page should be opened in the Hey Joe app for best performance
+        </Modal.Body>
+        <Modal.Footer>
+          <button className='btn text-danger btn-text' onClick={() => {
+            setShowAppPrompt(false)
+          }}>
+            Cancel
+          </button>
+          <button className='btn btn-danger' onClick={() => {
+            copyUrl(openAppUrl)
+            window.open(openAppUrl, '_self')
+          }}>
+            Open App
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }

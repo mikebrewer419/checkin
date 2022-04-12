@@ -50,3 +50,25 @@ export const humanFileSize = (bytes, si=false, dp=1) => {
 
   return bytes.toFixed(dp) + ' ' + units[u];
 }
+
+export const mobileSafariCheck = () => {
+  const ua = window.navigator.userAgent
+  const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i)
+  const webkit = !!ua.match(/WebKit/i)
+  const iOSSafari = iOS && webkit
+  return iOSSafari
+}
+
+export const mobileChromeCheck = () => {
+  const ua = window.navigator.userAgent
+  const isAndroid = ua.toLowerCase().indexOf("android") > -1
+  return isAndroid
+}
+
+export const copyUrl = (data) => {
+  const copyText = document.querySelector('#urlInput')
+  copyText.value = data || window.location.href
+  copyText.select()
+  copyText.setSelectionRange(0, 99999)
+  navigator.clipboard.writeText(copyText.value)
+}
