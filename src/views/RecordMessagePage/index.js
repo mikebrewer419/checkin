@@ -213,7 +213,7 @@ const RecordMessagePage = ({ match }) => {
         </Modal.Footer>
       </Modal>
       <Modal
-        size="xl"
+        size="md"
         centered
         show={showQRCode && qrCodeUrl}
         onHide={() => {
