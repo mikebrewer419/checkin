@@ -19,3 +19,8 @@ export * from './twr'
 export * from './heyjoe-twr'
 export * from './admin'
 export * from './sync'
+
+export const getQrCode = async (data) => {
+  const resp = await fetch(`${api_host}/qr-code?q=${encodeURIComponent(data)}`)
+  return await resp.json()
+}

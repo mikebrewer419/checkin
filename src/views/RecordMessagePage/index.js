@@ -5,6 +5,7 @@ import {
   getOneRecord,
   getOneSession,
   getStudioInfo,
+  getQrCode,
   token
 } from '../../services'
 import { Modal, Button } from 'react-bootstrap'
@@ -23,6 +24,8 @@ const RecordMessagePage = ({ match }) => {
   const [showMeetingFrame, setShowMeetingFrame] = useState(false)
   const [showAppPrompt, setShowAppPrompt] =useState(false)
   const [openAppUrl, setOpenAppUrl] = useState('')
+  const [showQRCode, setShowQRCode] = useState(false)
+  const [qrCodeUrl, setQrCodeUrl] = useState('')
   const prevSeen = useRef(false)
 
   const fetchData = async () => {
@@ -161,6 +164,16 @@ const RecordMessagePage = ({ match }) => {
           </p>,
           JoinButton
         ] : null}
+        <Button variant="danger" size="sm" className='ml-2' onClick={async () => {
+          setShowQRCode(true)
+          if (!qrCodeUrl) {
+            const url = window.location.origin + window.location.pathname
+            const res = await getQrCode(url)
+            setQrCodeUrl(res.url)
+          }
+        }}>
+          { showQRCode && !qrCodeUrl ? 'Loading' : 'Switch devices'}
+        </Button>
       </div>
       {showMeetingFrame &&
         <MeetFrame
@@ -198,6 +211,26 @@ const RecordMessagePage = ({ match }) => {
             Open App
           </button>
         </Modal.Footer>
+      </Modal>
+      <Modal
+        size="xl"
+        centered
+        show={showQRCode && qrCodeUrl}
+        onHide={() => {
+          setShowQRCode(false)
+        }}
+      >
+        <Modal.Header closeButton className="align-items-baseline">
+          <h4 className="mb-0 mr-3">
+            Switch devices
+          </h4>
+        </Modal.Header>
+        <Modal.Body>
+          <div className='d-flex flex-column mb-5'>
+            <img src={qrCodeUrl} />
+            <span>Scan this QR code on a different device to switch devices without checking in again</span>
+          </div>
+        </Modal.Body>
       </Modal>
     </div>
   )
