@@ -495,8 +495,8 @@ class List extends Component {
     twrOnboardLink.splice(1, 0, 'onboard')
     twrOnboardLink = twrOnboardLink.join('/')
 
-    const stIdx = session.start_time.findIndex(st => moment(st).isSame(moment(), 'day'))
-    const dayType = session.start_time_type[stIdx] || ''
+    const dt = session.dates.find(st => moment(st.start_time).isSame(moment(), 'day'))
+    const dayType = dt && dt.start_time_type || ''
 
     return (
       <div className={"list-view " + (testMode? 'test': '')}>

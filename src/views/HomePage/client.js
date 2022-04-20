@@ -90,8 +90,10 @@ class ClientHomePage extends Component {
 
     const pageTitle = this.state.testMode ? 'Virtual Lobby' : 'Video Chat'
     document.title = `${studio.name} ${pageTitle}`;
-    const stIdx = session.start_time.findIndex(st => moment(st).isSame(moment(), 'day'))
-    const dayType = session.start_time_type[stIdx] || ''
+
+    const dt = session.dates.find(st => moment(st.start_time).isSame(moment(), 'day'))
+    const dayType = dt && dt.start_time_type || ''
+
     document.querySelector('#header-title').innerHTML = studio.name + ' ' + dayType
     if (this.state.testMode) {
       document.querySelector('.global-header button').classList.remove('btn-danger')
