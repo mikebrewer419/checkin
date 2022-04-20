@@ -56,6 +56,7 @@ const formatHour = (time) => {
 }
 
 const StudioList = () => {
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useState({})
   const [studios, setStudios] = useState([])
   const [searchKey, setSearchKey] = useState('')
@@ -82,6 +83,14 @@ const StudioList = () => {
   const [emailProjectName, setEmailProjectName] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
   const [emailSessionParams, setEmailSessionParams] = useState(null)
+
+  useEffect(() => {
+    if (loading) {
+      document.querySelector('.loading').classList.add('show')
+    } else {
+      document.querySelector('.loading').classList.remove('show')
+    }
+  }, [loading])
 
   const searchCastingDirectors = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -126,6 +135,7 @@ const StudioList = () => {
   }
 
   const handleStudioSubmit = async (event) => {
+    setLoading(true)
     event.preventDefault()
     setErrors({})
 
@@ -173,9 +183,11 @@ const StudioList = () => {
     }
     await fetchManyStudios()
     setSelectedStudio(null)
+    setLoading(false)
   }
 
   const handleSessionSubmit = async (session = {}, studio_id) => {
+    setLoading(true)
     console.log('session: ', session)
     const name = session.name
     const names = sessions[studio_id].map(s => s.name)
@@ -191,27 +203,30 @@ const StudioList = () => {
     if (typeof session.twr === 'string') {
       formData.append('twr', session.twr)
     }
-    if (session.size_card_pdf) {
-      formData.append('size_card_pdf', session.size_card_pdf)
-    }
-    if (session.schedule_pdf) {
-      formData.append('schedule_pdf', session.schedule_pdf)
-    }
-    if (session.managers && session.managers.length > 0) {
-      formData.append('managers', session.managers)
-    }
-    if (session.lobbyManager && session.lobbyManager.length > 0) {
-      formData.append('lobbyManager', session.lobbyManager)
-    }
-    if (session.support !== undefined) {
-      formData.append('support', session.support)
-    }
-    if (session.start_time) {
-      formData.append('start_time', JSON.stringify(session.start_time))
-    }
-    if (session.start_time_type) {
-      formData.append('start_time_type', JSON.stringify(session.start_time_type))
-    }
+    let datesInfo = [];
+    (session.dates || []).forEach((date, idx) => {
+      if (date.size_card_pdf) {
+        formData.append(`size_card_pdf-${idx}`, date.size_card_pdf)
+      }
+      if (date.schedule_pdf) {
+        formData.append(`schedule_pdf-${idx}`, date.schedule_pdf)
+      }
+      const singleDate = {}
+      if (date.managers && date.managers.length > 0) {
+        singleDate.managers = date.managers.map(u => u._id)
+      }
+      if (date.lobbyManager && date.lobbyManager.length > 0) {
+        singleDate.lobbyManager = date.lobbyManager.map(u => u._id)
+      }
+      if (date.support) {
+        singleDate.support = date.support._id
+      }
+      singleDate.start_time = date.start_time
+      singleDate.start_time_type = date.start_time_type
+      singleDate.book_status = date.book_status
+      datesInfo.push(singleDate)
+    })
+    formData.append('dates', JSON.stringify(datesInfo))
     if (session._id) {
       await updateSession(session._id, formData)
     } else {
@@ -220,9 +235,11 @@ const StudioList = () => {
     }
     await fetchStudioSession(studio_id)
     setSelectedSession(null)
+    setLoading(false)
   }
 
   const handlePostingPageSubmit = async (postingPage={}, studio_id) => {
+    setLoading(true)
     const name = postingPage.name
     const names = postingPages[studio_id].map(p => p.name)
     const originalPP = postingPages[studio_id].find(p => p._id === postingPage._id)
@@ -242,6 +259,7 @@ const StudioList = () => {
     }
     await fetchStudioPostingPage(studio_id)
     setSelectedPostingPage(null)
+    setLoading(false)
   }
 
   const handlePPDelete = async (postingPage, studio_id) => {
@@ -438,22 +456,9 @@ const StudioList = () => {
             <div className="d-flex flex-column">
               {(sessions[studio._id] || []).map(session => (
                 <div key={session._id} className="row mt-1 ml-2 mr-2 align-items-center">
-                  <div className="col-2">
+                  <div className="col-1">
                     <div className='d-inline-flex align-items-end'>
                       <span className='mr-2'>{session.name}</span>
-                      {session.start_time.map((st, idx) => {
-                        const stt = session.start_time_type[idx]
-                        let sttClsName = ''
-                        switch (stt) {
-                          case SESSION_TIME_TYPE[1]:
-                            sttClsName = 'text-danger'
-                            break
-                        }
-                        return (<span className={'mr-1 ' + sttClsName}>
-                          {moment(new Date(st)).format('MM/DD')}
-                          {idx < session.start_time.length - 1 && ','}
-                        </span>)
-                      })}
                     </div>
                     {session.twr && (
                       <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />
@@ -498,21 +503,42 @@ const StudioList = () => {
                         setEmailCheckinLink(`${host}/onboard/${studio.uri}/${session._id}`)
                       }}
                     />
-                    <FaRegCopy
-                      className="mr-2" title="Copy Client Email"
-                      onClick={() => {
-                        setEmailSessionParams(session)
-                        setEmailProjectName(studio.name)
-                        setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
-                      }}
-                    />
+                  </div>
+                  <div className='d-flex'>
+                    {session.dates.map((st, idx) => {
+                      const stt = st.start_time_type
+                      let sttClsName = ''
+                      switch (stt) {
+                        case SESSION_TIME_TYPE[1]:
+                          sttClsName = 'text-danger'
+                          break
+                      }
+                      return (
+                        <div className='mr-2 d-flex'>
+                          <span className={'mr-1 ' + sttClsName}>
+                            {moment(new Date(st.start_time)).format('MM/DD')}
+                            {idx < session.dates.length - 1 && ','}
+                          </span>
+                          <div className='action-wrap'>
+                            <FaRegCopy
+                              className="mr-2" title="Copy Client Email"
+                              onClick={() => {
+                                setEmailSessionParams(st)
+                                setEmailProjectName(studio.name)
+                                setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               ))}
               {(postingPages[studio._id] || []).length > 0 && <hr className="w-100 mt-2 mb-0" />}
               {(postingPages[studio._id] || []).map(pp => (
                 <div key={pp._id} className="row mt-1 ml-2 mr-2">
-                  <div className="col-2">
+                  <div className="col-1">
                     {pp.name}
                   </div>
                   <div className="col-auto">
@@ -653,7 +679,7 @@ const StudioList = () => {
         </Modal.Footer>
       </Modal>
       <Modal
-        size="xl"
+        dialogClassName="fullscreen-modal"
         show={!!selectedStudio}
         onHide = {() => {
           setSelectedStudio(null)

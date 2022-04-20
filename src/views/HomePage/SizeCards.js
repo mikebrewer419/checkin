@@ -50,6 +50,7 @@ const SizeCards = ({
   const [ roleFilter, setRoleFilter ] = useState('all')
   const [ videoRecord, setVideoRecord ] = useState(null)
   const [ showCommentInline, setShowCommentInline ] = useState(false)
+  const [sessionDateData, setSessionDateData] = useState(null)
 
   const fetchTWRStudio = async () => {
     const { twr } = session
@@ -175,7 +176,11 @@ const SizeCards = ({
           setYesPickShow(true)
           break
       }
-      if (session.size_card_pdf || session.schedule_pdf) {
+      const dateData = session.dates.find(date => {
+        return new Date().toDateString() === new Date(date.start_time).toDateString()
+      })
+      setSessionDateData(dateData)
+      if (dateData && (dateData.size_card_pdf || dateData.schedule_pdf)) {
         const headerUserMenu = document.querySelector('.header-user-menu')
         document.querySelector('.session-files-div').style.right = `calc(100vw - ${headerUserMenu.offsetLeft}px)`
       }
@@ -357,14 +362,14 @@ const SizeCards = ({
           />
         </div>
         <div className="d-flex session-files-div">
-          {typeof session.size_card_pdf === 'string' && (
-            <a href={`${static_root}${session.size_card_pdf}`} target="_blank" className="btn btn-default text-white ml-2">
+          {sessionDateData && typeof sessionDateData.size_card_pdf === 'string' && (
+            <a href={`${static_root}${sessionDateData.size_card_pdf}`} target="_blank" className="btn btn-default text-white ml-2">
               <FaFilePdf className="mr-2" />
               Size Card PDF
             </a>
           )}
-          {typeof session.schedule_pdf === 'string' && (
-            <a href={`${static_root}${session.schedule_pdf}`} target="_blank" className="btn btn-default text-white">
+          {sessionDateData && typeof sessionDateData.schedule_pdf === 'string' && (
+            <a href={`${static_root}${sessionDateData.schedule_pdf}`} target="_blank" className="btn btn-default text-white">
               <FaFilePdf className="mr-2" />
               Schedule PDF
             </a>

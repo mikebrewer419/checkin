@@ -97,6 +97,11 @@ const SESSION_TIME_TYPE = [
   'Callback'
 ]
 
+const SESSION_BOOK_TYPE = [
+  'Book',
+  'Hold'
+]
+
 const MEETING_HOST = process.env.REACT_APP_MEETING_HOST
 
 const TINYMCE_KEY = process.env.REACT_APP_TINYMCE_KEY
@@ -114,5 +119,6 @@ export {
   TINYMCE_KEY,
   WS_HOST,
   PROJECT_TYPES,
-  SESSION_TIME_TYPE
+  SESSION_TIME_TYPE,
+  SESSION_BOOK_TYPE
 }

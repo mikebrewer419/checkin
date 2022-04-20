@@ -13,7 +13,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 30;
+  z-index: 1230;
   color: white;
 }
 .loading.show {
@@ -198,4 +198,18 @@ body {
   top: 40px;
   right: 10px;
   color: white;
+}
+
+.fullscreen-modal {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  .modal-content {
+    height: 100%;
+  }
+}
+
+.react-datetime-picker {
+  z-index: 2;
 }
