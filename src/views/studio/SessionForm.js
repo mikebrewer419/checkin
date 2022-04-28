@@ -241,7 +241,7 @@ const SessionForm = ({ session, onSubmit }) => {
           );
         })}
       </Accordion>
-      <sapn
+      <span
         className="mb-4 mt-1 cursor-pointer mr-auto"
         onClick={() => {
           setSelectedSession({
@@ -259,7 +259,7 @@ const SessionForm = ({ session, onSubmit }) => {
         }}
       >
         + Add Additional Dates/Times
-      </sapn>
+      </span>
       <label>
         The waitingroom integration.
         <FaListAlt size="11" className="ml-2" />

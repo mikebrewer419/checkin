@@ -470,6 +470,31 @@ const StudioList = () => {
                       <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />
                     )}
                   </div>
+                  <div className='d-flex'>
+                    {session.dates.map((st, idx) => {
+                      const stt = st.start_time_type
+                      let sttClsName = ''
+                      switch (stt) {
+                        case SESSION_TIME_TYPE[1]:
+                          sttClsName = 'text-danger'
+                          break
+                      }
+                      return (
+                        <a className='mr-2 d-flex align-items-center cursor-pointer' title="Copy Client Email"
+                          onClick={() => {
+                            setEmailSessionParams(st)
+                            setEmailProjectName(studio.name)
+                            setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
+                          }}
+                        >
+                          <span className={'mr-0 ' + sttClsName}>
+                            {moment(new Date(st.start_time)).format('MM/DD')}
+                            {idx < session.dates.length - 1}
+                          </span>
+                        </a>
+                      )
+                    })}
+                  </div>
                   <div className="col-auto">
                     <Link to={`/studio/${studio.uri}/${session._id}`} className="text-danger" target="_blank">
                       Session Video Chat
@@ -509,35 +534,6 @@ const StudioList = () => {
                         setEmailCheckinLink(`${host}/onboard/${studio.uri}/${session._id}`)
                       }}
                     />
-                  </div>
-                  <div className='d-flex'>
-                    {session.dates.map((st, idx) => {
-                      const stt = st.start_time_type
-                      let sttClsName = ''
-                      switch (stt) {
-                        case SESSION_TIME_TYPE[1]:
-                          sttClsName = 'text-danger'
-                          break
-                      }
-                      return (
-                        <div className='mr-2 d-flex'>
-                          <span className={'mr-1 ' + sttClsName}>
-                            {moment(new Date(st.start_time)).format('MM/DD')}
-                            {idx < session.dates.length - 1 && ','}
-                          </span>
-                          <div className='action-wrap'>
-                            <FaRegCopy
-                              className="mr-2" title="Copy Client Email"
-                              onClick={() => {
-                                setEmailSessionParams(st)
-                                setEmailProjectName(studio.name)
-                                setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )
-                    })}
                   </div>
                 </div>
               ))}
