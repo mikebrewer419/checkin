@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
+import clsx from 'classnames'
 import { Link } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
@@ -67,6 +68,7 @@ const StudioList = () => {
   const [postingPages, setPostingPages] = useState({})
   const [selectedStudio, setSelectedStudio] = useState(null)
   const [selectedSession, setSelectedSession] = useState(null)
+  const [showStudioDetailFields, setShowStudioDetailFields] = useState(false)
   const [errors, setErrors] = useState({})
   const [studioId, setStudioId] = useState(null)
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false)
@@ -339,6 +341,7 @@ const StudioList = () => {
       test_meeting_id,
       uri: project_uri
     })
+    setShowStudioDetailFields(false)
   }
 
   const confirmCancel = () => {
@@ -400,7 +403,10 @@ const StudioList = () => {
               <label className="mr-3 mb-0">{studio.jitsi_meeting_id}</label>
               <label className="mr-3 mb-0">{humanFileSize(studio.size)}</label>
               <div className="action-wrap">
-                <FaPen className="mr-2" onClick={() => setSelectedStudio(studio)}/>
+                <FaPen className="mr-2" onClick={() => {
+                  setSelectedStudio(studio)
+                  setShowStudioDetailFields(false)
+                }}/>
                 <label
                   className="mb-0"
                   onClick={() => {
@@ -679,7 +685,7 @@ const StudioList = () => {
         </Modal.Footer>
       </Modal>
       <Modal
-        dialogClassName="fullscreen-modal"
+        dialogClassName={clsx({"fullscreen-modal": showStudioDetailFields})}
         show={!!selectedStudio}
         onHide = {() => {
           setSelectedStudio(null)
@@ -688,7 +694,7 @@ const StudioList = () => {
         <Modal.Header closeButton className="align-items-baseline">
           <h4 className="mb-0 mr-3">
             {selectedStudio && selectedStudio._id? `Update ${selectedStudio.name}`: 'Create New Project'}
-            {!selectedStudio || !selectedStudio._id && <p className="h6 font-weight-normal mt-1">
+            {(!selectedStudio || !selectedStudio._id) && showStudioDetailFields && <p className="h6 font-weight-normal mt-1">
               Please make sure all credentials are preperly configured for your account.
             </p>}
           </h4>
@@ -699,9 +705,11 @@ const StudioList = () => {
             </label>
           )}
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className='overflow-auto'>
           {selectedStudio &&
             <StudioForm
+              showStudioDetailFields={showStudioDetailFields}
+              setShowStudioDetailFields={setShowStudioDetailFields}
               key={selectedStudio._id}
               {...selectedStudio}
               onSubmit={handleStudioSubmit}
