@@ -185,15 +185,21 @@ const StudioList = () => {
     }
     await fetchManyStudios()
     setSelectedStudio(null)
+
+    if (!object._id) {
+      const newSession = await handleSessionSubmit({name: 'Session'}, result._id)
+      setSelectedSession(newSession)
+      setStudioId(result._id)
+    }
     setLoading(false)
   }
 
   const handleSessionSubmit = async (session = {}, studio_id) => {
     setLoading(true)
-    console.log('session: ', session)
     const name = session.name
-    const names = sessions[studio_id].map(s => s.name)
-    const originalStudio = sessions[studio_id].find(s => s._id === session._id)
+    const studioSessions = sessions[studio_id] || []
+    const names = studioSessions.map(s => s.name)
+    const originalStudio = studioSessions.find(s => s._id === session._id)
     if (names.includes(name) && sessions[studio_id]
      && (!originalStudio || originalStudio && originalStudio.name !== session.name)
     ) {
@@ -229,15 +235,17 @@ const StudioList = () => {
       datesInfo.push(singleDate)
     })
     formData.append('dates', JSON.stringify(datesInfo))
+    let result = null
     if (session._id) {
-      await updateSession(session._id, formData)
+      result = await updateSession(session._id, formData)
     } else {
       formData.append('studio', studio_id)
-      await createSession(formData)
+      result = await createSession(formData)
     }
     await fetchStudioSession(studio_id)
     setSelectedSession(null)
     setLoading(false)
+    return result
   }
 
   const handlePostingPageSubmit = async (postingPage={}, studio_id) => {
@@ -380,7 +388,6 @@ const StudioList = () => {
         <div className="mr-auto ml-5">
           <label className="mb-0 d-flex align-items-center">
             <input type="checkbox" className="mr-2" onChange={(ev) => {
-              console.log('ev.target.checked: ', ev.target.checked);
               setArvhice(ev.target.checked)
             }} />
             <span>Show Archive</span>
@@ -461,39 +468,39 @@ const StudioList = () => {
             </div>
             <div className="d-flex flex-column">
               {(sessions[studio._id] || []).map(session => (
-                <div key={session._id} className="row mt-1 ml-2 mr-2 align-items-center">
-                  <div className="col-1">
-                    <div className='d-inline-flex align-items-end'>
+                <div key={session._id} className="row mt-1 ml-2 mr-2 align-items-start">
+                  <div className="col-2 d-flex">
+                    <div className='d-inline-flex align-items-start'>
                       <span className='mr-2'>{session.name}</span>
+                      {session.twr && (
+                        <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />
+                      )}
                     </div>
-                    {session.twr && (
-                      <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />
-                    )}
-                  </div>
-                  <div className='d-flex'>
-                    {session.dates.map((st, idx) => {
-                      const stt = st.start_time_type
-                      let sttClsName = ''
-                      switch (stt) {
-                        case SESSION_TIME_TYPE[1]:
-                          sttClsName = 'text-danger'
-                          break
-                      }
-                      return (
-                        <a className='mr-2 d-flex align-items-center cursor-pointer' title="Copy Client Email"
-                          onClick={() => {
-                            setEmailSessionParams(st)
-                            setEmailProjectName(studio.name)
-                            setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
-                          }}
-                        >
-                          <span className={'mr-0 ' + sttClsName}>
-                            {moment(new Date(st.start_time)).format('MM/DD')}
-                            {idx < session.dates.length - 1}
-                          </span>
-                        </a>
-                      )
-                    })}
+                    <div className='d-flex flex-wrap'>
+                      {session.dates.map((st, idx) => {
+                        const stt = st.start_time_type
+                        let sttClsName = ''
+                        switch (stt) {
+                          case SESSION_TIME_TYPE[1]:
+                            sttClsName = 'text-danger'
+                            break
+                        }
+                        return (
+                          <a className='mr-2 d-flex align-items-center cursor-pointer' title="Copy Client Email"
+                            onClick={() => {
+                              setEmailSessionParams(st)
+                              setEmailProjectName(studio.name)
+                              setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
+                            }}
+                          >
+                            <span className={'mr-0 ' + sttClsName}>
+                              {moment(new Date(st.start_time)).format('MM/DD')}
+                              {idx < session.dates.length - 1}
+                            </span>
+                          </a>
+                        )
+                      })}
+                    </div>
                   </div>
                   <div className="col-auto">
                     <Link to={`/studio/${studio.uri}/${session._id}`} className="text-danger" target="_blank">
@@ -540,7 +547,7 @@ const StudioList = () => {
               {(postingPages[studio._id] || []).length > 0 && <hr className="w-100 mt-2 mb-0" />}
               {(postingPages[studio._id] || []).map(pp => (
                 <div key={pp._id} className="row mt-1 ml-2 mr-2">
-                  <div className="col-1">
+                  <div className="col-2">
                     {pp.name}
                   </div>
                   <div className="col-auto">
