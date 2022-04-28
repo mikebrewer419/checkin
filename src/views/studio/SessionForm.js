@@ -186,9 +186,9 @@ const SessionForm = ({ session, onSubmit }) => {
                   <AsyncTypeahead
                     id="support-select"
                     className="mb-3"
-                    selected={oneDate.support}
+                    selected={oneDate.support ? [oneDate.support]: null}
                     onChange={(value) => {
-                      setDateField(idx, "support", value);
+                      setDateField(idx, "support", value[0]);
                     }}
                     isLoading={loadingSessionUsers}
                     labelKey="email"

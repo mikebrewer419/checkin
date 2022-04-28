@@ -471,9 +471,9 @@ const StudioList = () => {
                 <div key={session._id} className="row mt-1 ml-2 mr-2 align-items-start">
                   <div className="col-2 d-flex">
                     <div className='d-inline-flex align-items-start'>
-                      <span className='mr-2'>{session.name}</span>
+                      <span className='mr-1'>{session.name}</span>
                       {session.twr && (
-                        <FaListAlt size="11" className="ml-2" title={`TWR - ${session.twr}`} />
+                        <FaListAlt size="11" className="mr-2" title={`TWR - ${session.twr}`} />
                       )}
                     </div>
                     <div className='d-flex flex-wrap'>

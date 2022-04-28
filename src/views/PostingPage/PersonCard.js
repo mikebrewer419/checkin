@@ -342,7 +342,7 @@ const PersonCard = ({
                   }
                 }}
               >
-                <FaComment className="ml-5 no-print" />
+                <FaComment className="ml-2 no-print" />
                 <span className="ml-1 no-print">{cmts.length}</span>
                 <div className="print-only">
                   {cmts.map((comment, idx) => (
