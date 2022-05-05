@@ -79,18 +79,18 @@ const StudioForm = ({
         <div className="form-group">
           <label htmlFor="thankyou_message">Thankyou_message</label>
           <input required className="form-control form-control-sm"  type="text" name="thankyou_message" id="thankyou_message"
-            defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME. To join virtual lobby click the button below or enter 'TEST_MEETING_ID' into the app. You can always return to this page on any device with this link: TALENT_STATUS_LINK`} />
+            defaultValue={thankyou_message || `Thank you for checking in to PROJECT_NAME. To join virtual lobby click TALENT_STATUS_LINK. You may use this link on any device`} />
         </div>
         <div className="form-group">
-          <label htmlFor="position_messages1">Position back message</label>
+          {/* <label htmlFor="position_messages1">Position back message</label>
           <input className="form-control form-control-sm" type="text" name="position_back_message" id="position_back_message"
-            defaultValue={position_back_message || `Please return to virtual lobby. Enter 'TEST_MEETING_ID' or click TALENT_STATUS_LINK`} />
+            defaultValue={position_back_message || `Please return to virtual lobby. Enter 'TEST_MEETING_ID' or click TALENT_STATUS_LINK`} /> */}
           <label htmlFor="position_messages1">Position_messages 1</label>
           <input required className="form-control form-control-sm"  type="text" name="position_messages[0]" id="position_messages1"
             defaultValue={position_messages[0] || `It's now your turn to audition, please click the TALENT_STATUS_LINK. ***IMPORTANT: Click Ask to Join.`} />
           <label htmlFor="position_messages2">Position_messages 2</label>
           <input required className="form-control form-control-sm"  type="text" name="position_messages[1]" id="position_messages2"
-            defaultValue={position_messages[1] || `You are on deck! We'll text you shortly to join the casting.`} />
+            defaultValue={position_messages[1] || ``} />
           <label htmlFor="position_messages3">Position_messages 3</label>
           <input className="form-control form-control-sm"  type="text" name="position_messages[2]" id="position_messages3"
             defaultValue={position_messages[2] || ``} />
@@ -101,11 +101,11 @@ const StudioForm = ({
           <input className='form-control form-control-sm' type="text" name="good_bye_message" id="good_bye_message"
             defaultValue={good_bye_message || ''} />
         </div>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="delete_message">Delete message</label>
           <input className="form-control form-control-sm"  type="text" name="delete_message" id="delete_message"
             defaultValue={delete_message || `You arrived at the wrong time. Please come back at the correct call time and check in again.`} />
-        </div>
+        </div> */}
         <div className={clsx("form-group mt-4", {
           'mb-0': showAuditionPurchaseMsg
         })}>

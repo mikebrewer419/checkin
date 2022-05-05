@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import classnames from 'classnames'
 import {
   static_root,
@@ -115,6 +116,21 @@ const RecordMessagePage = ({ match }) => {
   const logo = studio && studio.logo ? static_root + studio.logo : require('../../assets/heyjoe.png')
   const meeting_id = !liveMode ? studio.test_meeting_id : studio.jitsi_meeting_id
   const calledIn = (record && record.groups.length > 0) || record.seen
+
+  if (record.is_deleted) {
+    return (
+      <div className='text-center h6 pt-5'>
+        Oops, you need check in again, please 
+        <Link
+          title="Session Check-In"
+          to={`/onboard/${studio.uri}/${session._id}`}
+          className="mx-3"
+        >
+          Click here
+        </Link>
+      </div>
+    )
+  }
 
   const JoinButton =  <Button
     key="join-button"
