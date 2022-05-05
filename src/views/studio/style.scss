@@ -36,6 +36,7 @@
       position: absolute;
       top: 120%;
       border: 1px solid;
+      backdrop-filter: blur(6px);
     }
     &:hover {
       img { display: block;;}
