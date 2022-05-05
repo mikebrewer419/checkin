@@ -313,7 +313,7 @@ const StudioList = () => {
   }, [searchKey, archive])
 
   useEffect(() => {
-    document.title = `Heyjoe`;
+    document.title = `Hey Joe - Virtual Casting Studio and Auditioning Platform`;
     setUser(getUser())
   }, [])
 
@@ -842,7 +842,15 @@ const StudioList = () => {
             <p>
               <b>
                 <i>
-                  Note: For best results, please access the Hey Joe web app from your laptop or desktop computer in Google Chrome or a Chromium clone like Brave. You can either create an account on the website or choose "Login with Google." Please reach out to tech support at 424.888.4735 if you have any issues connecting. For helpful tips on using the site <a href="https://heyjoe.io/hey-joe-log-on-instructions/">click here</a>.
+                  Note: Please use Google Chrome or Brave Browser. You can either click “Create Account” on the website or choose "Login with Google." For helpful tips on using the site&nbsp;
+                  <a href="https://heyjoe.io/hey-joe-log-on-instructions/" >
+                    click here. 
+                  </a>
+                  <br />
+                  Tech support: 424.888.4735 or&nbsp;
+                  <a href="mailto:hello@heyjoe.io">
+                    hello@heyjoe.io
+                  </a>
                 </i>
               </b>
             </p>
