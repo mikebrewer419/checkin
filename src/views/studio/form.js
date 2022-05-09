@@ -89,7 +89,7 @@ const StudioForm = ({
           <input required className="form-control form-control-sm"  type="text" name="position_messages[0]" id="position_messages1"
             defaultValue={position_messages[0] || `It's now your turn to audition, please click the TALENT_STATUS_LINK. ***IMPORTANT: Click Ask to Join.`} />
           <label htmlFor="position_messages2">Position_messages 2</label>
-          <input required className="form-control form-control-sm"  type="text" name="position_messages[1]" id="position_messages2"
+          <input className="form-control form-control-sm"  type="text" name="position_messages[1]" id="position_messages2"
             defaultValue={position_messages[1] || ``} />
           <label htmlFor="position_messages3">Position_messages 3</label>
           <input className="form-control form-control-sm"  type="text" name="position_messages[2]" id="position_messages3"
