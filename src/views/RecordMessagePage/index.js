@@ -119,15 +119,26 @@ const RecordMessagePage = ({ match }) => {
 
   if (record.is_deleted) {
     return (
-      <div className='text-center h6 pt-5'>
-        Oops, you need check in again, please 
-        <Link
-          title="Session Check-In"
-          to={`/onboard/${studio.uri}/${session._id}`}
-          className="mx-3"
-        >
-          Click here
-        </Link>
+      <div className='message-page pt-2'>
+        <div className="row mx-0 align-items-center flex-wrap">
+          <img src={logo} className="studio-logo col col-auto mb-2 mb-sm-0 px-2 mr-0 mx-auto mx-sm-0"/>
+          <div key="room-name" className="col col-auto">
+            <label className="mb-0 h3">
+              {studio.name}&nbsp;
+              {liveMode ? 'Room' : 'Virtual Lobby'}
+            </label>
+          </div>
+        </div>
+        <div className='text-center h6 pt-5'>
+          Oops, you need check in again, please 
+          <Link
+            title="Session Check-In"
+            to={`/onboard/${studio.uri}/${session._id}`}
+            className="mx-3"
+          >
+            Click here
+          </Link>
+        </div>
       </div>
     )
   }
@@ -156,40 +167,39 @@ const RecordMessagePage = ({ match }) => {
     <div className="message-page pt-2">
       <div className="row mx-0 align-items-center flex-wrap">
         <img src={logo} className="studio-logo col col-auto mb-2 mb-sm-0 px-2 mr-0 mx-auto mx-sm-0"/>
+        <div key="room-name" className="col col-auto">
+          <label className="mb-0 h3">
+            {studio.name}&nbsp;
+            {liveMode ? 'Room' : 'Virtual Lobby'}
+          </label>
+        </div>
         {showMeetingFrame ? [
-          <div key="room-name" className="col col-auto">
-            <label className="mb-0 h3">
-              {studio.name}&nbsp;
-              {liveMode ? 'Room' : 'Virtual Lobby'}
-            </label>
-            <label className="mb-0 ml-3">{meeting_id}</label>
-          </div>,
           <p key="message" className="d-none my-2 text-left sms-message col col-lg-4 col-12">
             <strong>Your SMS status messages</strong>
             <br/>
             {message}
           </p>
         ] : null}
-      </div>
-      <div className="container text-center ">
-        {!showMeetingFrame ? [
-          <p key="message" className="my-2 d-none">
-            <strong>Your SMS status messages</strong>
-            <br/>
-            {message}
-          </p>,
-          JoinButton
-        ] : null}
-        <Button variant="danger" size="sm" className='ml-2' onClick={async () => {
-          setShowQRCode(true)
-          if (!qrCodeUrl) {
-            const url = window.location.origin + window.location.pathname
-            const res = await getQrCode(url)
-            setQrCodeUrl(res.url)
-          }
-        }}>
-          { showQRCode && !qrCodeUrl ? 'Loading' : 'Switch devices'}
-        </Button>
+        <div className="container text-center ">
+          {!showMeetingFrame ? [
+            <p key="message" className="my-2 d-none">
+              <strong>Your SMS status messages</strong>
+              <br/>
+              {message}
+            </p>,
+            JoinButton
+          ] : null}
+          <Button variant="danger" size="sm" className='ml-2' onClick={async () => {
+            setShowQRCode(true)
+            if (!qrCodeUrl) {
+              const url = window.location.origin + window.location.pathname
+              const res = await getQrCode(url)
+              setQrCodeUrl(res.url)
+            }
+          }}>
+            { showQRCode && !qrCodeUrl ? 'Loading' : 'Switch devices'}
+          </Button>
+        </div>
       </div>
       {showMeetingFrame &&
         <MeetFrame
