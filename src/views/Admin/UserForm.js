@@ -34,7 +34,7 @@ const UserForm = ({
 
   useEffect(() => {
     const loadAttachedUsers = async () => {
-      const users = await Promise.all(attached_users.map(id => getUserById(id)))
+      const users = await Promise.all((attached_users || []).map(id => getUserById(id)))
       setAttachedUsers(users)
     }
     loadAttachedUsers()
