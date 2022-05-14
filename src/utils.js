@@ -72,3 +72,12 @@ export const copyUrl = (data) => {
   copyText.setSelectionRange(0, 99999)
   navigator.clipboard.writeText(copyText.value)
 }
+
+export const obj2Query = (obj) => {
+  const str = [];
+  for (let p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+}
