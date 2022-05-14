@@ -13,7 +13,6 @@ const SessionForm = ({ session, onSubmit }) => {
   const [selectedSession, setSelectedSession] = useState(session);
   const [selectedSessionManagers, setSelectedSessionManagers] = useState([]);
   const [selectedLobbyManagers, setSelectedLobbyManagers] = useState([]);
-  const [selectedSupport, setSelectedSupport] = useState([]);
   const [sessionUsers, setSessionUsers] = useState([]);
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false);
   const [dateIndex, setDateIndex] = useState(1)
@@ -22,9 +21,7 @@ const SessionForm = ({ session, onSubmit }) => {
     onSubmit({
       ...selectedSession,
       managers: selectedSessionManagers.map((m) => m._id),
-      lobbyManager: selectedLobbyManagers.map((m) => m._id),
-      support:
-        selectedSupport && selectedSupport[0] ? selectedSupport[0]._id : null,
+      lobbyManager: selectedLobbyManagers.map((m) => m._id)
     });
   };
 
@@ -47,12 +44,11 @@ const SessionForm = ({ session, onSubmit }) => {
   useEffect(() => {
     const fetchSessionManagers = async () => {
       setLoadingSessionUsers(true);
-      const { managers, lobbyManager, support } = await getManagers(
+      const { managers, lobbyManager } = await getManagers(
         session._id
       );
       setSelectedSessionManagers(managers);
       setSelectedLobbyManagers(lobbyManager);
-      support && setSelectedSupport([support]);
       setLoadingSessionUsers(false);
     };
     if (session && session._id) {
@@ -182,21 +178,6 @@ const SessionForm = ({ session, onSubmit }) => {
                     options={sessionUsers}
                     placeholder="Search for a Session user..."
                   />
-                  <label>Support</label>
-                  <AsyncTypeahead
-                    id="support-select"
-                    className="mb-3"
-                    selected={oneDate.support ? [oneDate.support]: null}
-                    onChange={(value) => {
-                      setDateField(idx, "support", value[0]);
-                    }}
-                    isLoading={loadingSessionUsers}
-                    labelKey="email"
-                    minLength={2}
-                    onSearch={searchSessionUsers}
-                    options={sessionUsers}
-                    placeholder="Search for a Session user..."
-                  />
                   <label>
                     Sizecard PDF
                     {typeof oneDate.size_card_pdf === "string" && (
@@ -252,7 +233,6 @@ const SessionForm = ({ session, onSubmit }) => {
               book_status: SESSION_BOOK_TYPE[0],
               managers: [],
               lobbyManager: [],
-              support: null,
             }),
           });
           setDateIndex((selectedSession.dates || []).length + 1)
