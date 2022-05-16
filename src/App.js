@@ -99,7 +99,6 @@ function App() {
       return
     }
     verityToken().then(async (email) => {
-      console.log('email: ', email)
       setEmail(email)
       window.localStorage.setItem('email', email)
       if (window.location.pathname === '/login') {
@@ -109,7 +108,6 @@ function App() {
         return
       }
       const user = getUser()
-      console.log("App -> user", user)
       if (user.logo) {
         setLogo(user.logo)
       }

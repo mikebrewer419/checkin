@@ -165,7 +165,6 @@ class PostingPage extends Component {
     const { groups } = this.state
     if (groups[gidx]) {
       const group = groups[gidx].videos[0].group
-      console.log('group: ', group)
       if (group.twr_records) {
         this.setState({ loading: true })
         twrGroupRecords = await this.fetchTWRCandidates(group.twr_records, group.session)

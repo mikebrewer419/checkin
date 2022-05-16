@@ -196,7 +196,6 @@ class VideoPage extends Component {
     if (this.state.session.twr) {
       if (groups[gidx]) {
         const group = groups[gidx].videos[0].group
-        console.log('handleGroupItemClick group: ', group);
         if (group) {
           twrGroupRecords = this.state.twrCandidates.filter(c => group.twr_records.includes(c.twr_id))
         }

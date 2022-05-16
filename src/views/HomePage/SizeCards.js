@@ -65,7 +65,6 @@ const SizeCards = ({
   }
 
   const fetchTWRCandidates = async () => {
-    console.log('twrStudio: ', twrStudio)
     if (!twrStudio) { return }
     const { twr_sync } = session
     let candidates = await twrFetchCheckInList(twrStudio)
@@ -192,7 +191,6 @@ const SizeCards = ({
     if (pickPrivate && yesPickShow) { restrict = 'yes-private' }
     if (pickPrivate && !yesPickShow) { restrict = 'full-private' }
     if (!pickPrivate && !yesPickShow) { restrict = null }
-    console.log('restrict: ', restrict)
     updateSessionFeedbacks(session._id, restrict)
   }, [pickPrivate, yesPickShow])
 

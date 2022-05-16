@@ -22,7 +22,7 @@ const ProfileForm = ({
 
   const handleSave = () => {
     const userFields = new FormData()
-    userFields.append('logo', logo)
+    if (logo) { userFields.append('logo', logo) }
     userFields.append('first_name', firstName)
     userFields.append('last_name', lastName)
     const profileFields = {
@@ -32,8 +32,6 @@ const ProfileForm = ({
       non_available_dates: nonAvailableDates.map(d => new Date(d).toISOString()),
       avability_notes: avabilityNotes
     }
-    console.log('userFields: ', userFields);
-    console.log('profileFields: ', profileFields);
     save({ userFields, profileFields })
   }
 

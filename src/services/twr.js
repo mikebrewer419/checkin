@@ -33,7 +33,6 @@ export const twrUpdateRecordField = async (id, fields) => {
 }
 
 export const twrGetStudioByTWRUri = async (twr, studio_name) => {
-  console.log('api_host: ', api_host, token);
   return await fetch(`${api_host}/studio/uri/${twr}/${studio_name}`, {
     headers: {
       'Content-Type': 'application/json',

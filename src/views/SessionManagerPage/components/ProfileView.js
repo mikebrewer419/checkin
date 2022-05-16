@@ -6,7 +6,7 @@ import { static_root } from '../../../services'
 const ProfileView = ({ user, profile, editProfile }) => {
   if (!profile || !profile._id) {
     return <div>
-      <span>You didn't create Freelancer Profile yet.</span>
+      <span>You don't have freelancer profile yet.</span>
       <a className='text-danger ml-2 cursor-pointer'
         onClick={editProfile}
       > Create Profile </a>

@@ -140,7 +140,6 @@ const Onboard = ({ history }) => {
       opt_in: optIn,
       browser_info: `${window.navigator.userAgent} - ${window.navigator.platform} - ${window.navigator.appVersion}`
     }).then(result => {
-      console.log("onSubmit -> result", result)
       setApiResult(result)
       if (result.record && result.record._id) {
         try {

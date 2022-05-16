@@ -70,7 +70,6 @@ export const verityToken = () => {
       })
         .then(res => res.json())
         .then(data => {
-          console.log(data.user)
           if (data.user.email) {
             window.localStorage.setItem('token', data.token)
             resolve(data.user.email)

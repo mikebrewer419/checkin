@@ -5,7 +5,6 @@ import { FaComment } from 'react-icons/fa'
 import Pagination from '../../../components/Pagination'
 
 const RequestTable = ({ user }) => {
-  console.log('user: ', user);
   const [requests, setRequests] = useState([])
   const [page, setPage] = useState(0)
   const [pageCount, setPageCount] = useState(0)

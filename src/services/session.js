@@ -97,7 +97,6 @@ export const assignManagers = async (id, manager_ids) => {
 }
 
 export const updateSessionFeedbacks = async (id, restrict) => {
-  console.log('restrict: ', restrict)
   const resp = await fetch(`${api_host}/sessions/private-users/${id}`, {
     method: 'POST',
     headers: {

@@ -157,7 +157,6 @@ class List extends Component {
           }, studio._id, vm.props.candidates[idx]._id)
         }
       }
-      console.log('skipped ', data)
     }).catch(err => {
       console.log("App -> setSkipped -> err", err)
     })
@@ -217,7 +216,6 @@ class List extends Component {
           }
         }
       }
-      console.log('updated ', data)
     }).catch(err => {
       console.log("App -> updateSeen -> err", err)
     })
@@ -234,7 +232,6 @@ class List extends Component {
       loading: true
     })
     removeCheckinRecord(id).then(data => {
-      console.log('removed ', data)
       if (!data.seen) {
         sendMessage({
           to: Phone,
@@ -465,7 +462,6 @@ class List extends Component {
         ? 'signed_out_time'
         : h
     }))
-    console.log('csvContent: ', csvContent);
     const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(Papa.unparse(csvContent))
 
     var link = document.createElement("a")

@@ -250,7 +250,6 @@ class HomePage extends Component {
               const feedbacks = {
                 ...record.feedbacks
               }
-              console.log('this.state.session.feedbackPrivates: ', this.state.session.feedbackPrivates);
               if (feedbackUserId === user.id || !this.state.session.feedbackPrivates[feedbackUserId] ||
                 (this.state.session.feedbackPrivates[feedbackUserId] === 'yes-private' && feedbackChoice === 'yes')) {
                   feedbacks[feedbackUserEmail] = feedbackChoice

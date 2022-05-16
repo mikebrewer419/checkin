@@ -160,7 +160,6 @@ class TwrList extends React.Component {
         })
       ))
     csvContent.unshift(row_headers)
-    console.log('csvContent: ', csvContent);
     const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(Papa.unparse(csvContent))
 
     var link = document.createElement("a")

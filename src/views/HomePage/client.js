@@ -177,7 +177,6 @@ class ClientHomePage extends Component {
           ws_connected: true
         })
         this.wsitv = setInterval(() => {
-          console.log('ping')
           try {
             this.ws.send(JSON.stringify({ token, meta: 'ping', room: session._id }))
           } catch (err) {}
@@ -263,7 +262,6 @@ class ClientHomePage extends Component {
               const feedbacks = {
                 ...record.feedbacks
               }
-              console.log('this.state.session.feedbackPrivates: ', this.state.session.feedbackPrivates);
               if (feedbackUserId === user.id || !this.state.session.feedbackPrivates[feedbackUserId] ||
                 (this.state.session.feedbackPrivates[feedbackUserId] === 'yes-private' && feedbackChoice === 'yes')) {
                   feedbacks[feedbackUserEmail] = feedbackChoice

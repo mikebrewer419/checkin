@@ -34,7 +34,6 @@ const ResetPasswordRequest = (props) => {
     try {
       const token = window.location.search.replace('?token=', '')
       const res = await resetPassword(token, password)
-      console.log('res: ', res)
       if (res.success) {
         window.alert('Password reset successfully!')
         window.location.href = '/'
