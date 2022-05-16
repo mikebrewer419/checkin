@@ -1,4 +1,4 @@
-import { api_host, token } from './index'
+import { api_host, token } from './consts'
 
 export const getAllStudios = async () => {
   const resp = await fetch(`${api_host}/studio/list`, {
@@ -105,7 +105,7 @@ export const getStudioInfo = async (studio_id) => {
   })
   const project = await resp.json()
   // Casting director logo handle
-  if (!project.logo && project.casting_directors.length > 0) {
+  if (!project.logo && project.casting_directors && project.casting_directors.length > 0) {
     project.logo = project.casting_directors[0].logo
   }
   return project
@@ -120,7 +120,7 @@ export const getStudioByUri = async (studio_name) => {
   })
   const project = await resp.json()
   // Casting director logo handle
-  if (!project.logo && project.casting_directors.length > 0) {
+  if (!project.logo && project.casting_directors && project.casting_directors.length > 0) {
     project.logo = project.casting_directors[0].logo
   }
   return project

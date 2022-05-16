@@ -1,4 +1,4 @@
-import { api_host, token } from './index'
+import { api_host, token } from './consts'
 
 export const getPagesByStudio = async (studio_id) => {
   const resp = await fetch(`${api_host}/postingpage/${studio_id}`, {

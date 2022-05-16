@@ -1,4 +1,4 @@
-import { api_host, token } from './index'
+import { api_host, token } from './consts'
 import jwtDecode from 'jwt-decode'
 
 export const loginApi = (email, password) => {

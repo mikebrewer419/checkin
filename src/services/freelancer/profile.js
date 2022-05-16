@@ -1,7 +1,7 @@
-import { api_host, token } from '../index'
+import { api_host, token } from '../consts'
 
 export const getProfileByUser = async (user_id) => {
-  const resp = await fetch(`${api_host}/freelancer/profile/${user_id}`, {
+  const resp = await fetch(`${api_host}/freelancer/profile/by-user/${user_id}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -23,7 +23,7 @@ export const createProfile = async (fields) => {
 
 export const updateProfile = async (id, fields) => {
   const resp = await fetch(`${api_host}/freelancer/profile/${id}`, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

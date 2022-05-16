@@ -3,7 +3,7 @@ import {
   twr_token as token,
   api_host as heyjoe_api_host,
   token as heyjoe_token
-} from './index'
+} from './consts'
 
 export const twrFetchCheckInList = async (studio_id) => {
   return await fetch(`${api_host}/records/${studio_id}`, {
