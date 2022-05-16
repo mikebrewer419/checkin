@@ -1,4 +1,4 @@
-import { api_host, token } from './index'
+import { api_host, token } from './consts'
 
 export const listUsers = async (query = '', userType='', skip = 0, limit = 20) => {
   const resp = await fetch(`${api_host}/auth/admin/users?email=${query}&user_type=${userType}&skip=${skip}&limit=${limit}`, {

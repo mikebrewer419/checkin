@@ -1,4 +1,4 @@
-import { token } from './index'
+import { token } from './consts'
 const sync_app_url = 'http://localhost:8888'
 
 export const checkSyncAppStatus = async () => {

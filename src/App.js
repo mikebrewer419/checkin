@@ -18,7 +18,8 @@ import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
 import PostingPage from './views/PostingPage'
 import StudioList from './views/studio/list'
-import SessionList from './views/Sessions'
+import SessionManagerPage from './views/SessionManagerPage'
+import FreelancerProfilePage from './views/SessionManagerPage/FreelancerProfile'
 import AdminView from './views/Admin'
 import TalentPage from './views/TalentPage'
 import Header from './components/Header'
@@ -168,6 +169,9 @@ function App() {
             {!(user.user_type === USER_TYPES.CLIENT) &&
               <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
             }
+            {(user.user_type === USER_TYPES.SESSION_MANAGER) && (
+              <Route path="/freelancer-profile" component={props => <FreelancerProfilePage {...props} />} />
+            )}
             <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
             <Route path="/" component={HomeBomponent} />
           </Switch>
@@ -193,7 +197,7 @@ const HomeBomponent = (props) => {
     case USER_TYPES.CLIENT:
       return <ClientHomePage />
     case USER_TYPES.SESSION_MANAGER:
-      return <SessionList {...props} />
+      return <SessionManagerPage {...props} />
     case USER_TYPES.TALENT:
       return <TalentPage {...props} />
     default:

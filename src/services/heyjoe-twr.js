@@ -1,4 +1,4 @@
-import { api_host, token } from './index'
+import { api_host, token } from './consts'
 
 export const addRecordToCurentTWRGroup = async (record_id, session_id) => {
   return await fetch(api_host+`/twr/add-to-group/${record_id}/${session_id}`, {

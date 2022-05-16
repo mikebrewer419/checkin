@@ -108,6 +108,12 @@ const TINYMCE_KEY = process.env.REACT_APP_TINYMCE_KEY
 
 const WS_HOST = process.env.REACT_APP_WS_HOST
 
+
+const FREELANCER_WORK_AS = {
+  SESSION_RUNNER: 'Session Runner',
+  LOBBY_MANAGER: 'Lobby Manager'
+}
+
 export {
   USER_TYPES,
   USER_TYPE,
@@ -120,5 +126,6 @@ export {
   WS_HOST,
   PROJECT_TYPES,
   SESSION_TIME_TYPE,
-  SESSION_BOOK_TYPE
+  SESSION_BOOK_TYPE,
+  FREELANCER_WORK_AS
 }

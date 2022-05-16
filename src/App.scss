@@ -213,3 +213,8 @@ body {
 .react-datetime-picker {
   z-index: 2;
 }
+
+.page {
+  height: calc(100vh - 60px);
+  overflow: auto;
+}

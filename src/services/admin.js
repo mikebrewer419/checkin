@@ -1,4 +1,4 @@
-import { api_host, token } from './index'
+import { api_host, token } from './consts'
 
 export const getNotification = async () => {
   const resp = await fetch(`${api_host}/admin/notification`, {

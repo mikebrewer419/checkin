@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { withRouter } from 'react-router-dom'
+import { withRouter, useHistory } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Dropdown, Navbar, Image, Modal } from 'react-bootstrap'
 import { FaInfoCircle } from 'react-icons/fa';
@@ -17,6 +17,7 @@ const Header = (props) => {
   const [user, setUser] = useState(null)
   const [editUser, setEditUser] = useState(false)
   const [needCredentials, setNeedCredentials] = useState(false)
+  const history = useHistory()
 
   useEffect(() => {
     const u = getUser()
@@ -79,6 +80,13 @@ const Header = (props) => {
 
         <Dropdown.Menu>
           <Dropdown.Item className="text-secondary">{user.user_type}</Dropdown.Item>
+          {user.user_type === USER_TYPES.SESSION_MANAGER && (
+            <Dropdown.Item onClick={() => {
+              history.push('/freelancer-profile')
+            }}>
+              Freelancer Profile
+            </Dropdown.Item>
+          )}
           <Dropdown.Item onClick={() => {
             setEditUser(!editUser)
           }}>
