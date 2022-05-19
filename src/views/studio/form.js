@@ -17,6 +17,7 @@ const StudioForm = ({
   onSubmit,
   onCancel,
   _id,
+  studio = null,
   name = '',
   uri = '',
   jitsi_meeting_id = '',
@@ -34,10 +35,12 @@ const StudioForm = ({
 }) => {
   const [showAuditionPurchaseMsg, setShowAuditionPurchaseMsg] = useState(project_type === PROJECT_TYPES.CREATOR)
   const [studioName, setStudioName] = useState(name)
-  const [selectedCastingDirector, setSelectedCastingDirector] = useState(null)
+  const [selectedCastingDirector, setSelectedCastingDirector] = useState(studio.casting_directors)
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false)
   const [castingDirectors, setCastingDirectors] = useState([])
   const [errors, setErrors] = useState({})
+
+  
   const user = getUser()
   const searchCastingDirectors = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -48,7 +51,7 @@ const StudioForm = ({
       setLoadingSessionUsers(false)
     }, 1000)
   }
-
+  
   const handleStudioSubmit = async (event) => {
     event.preventDefault()
     const form_data = new FormData(event.target)
@@ -71,7 +74,7 @@ const StudioForm = ({
       }
     })
     if(USER_TYPE.IS_SUPER_ADMIN()) {
-      object['casting_directors'] = castingDirectors
+      object['casting_directors'] = selectedCastingDirector
     }
     object.project_type = object.creator ? PROJECT_TYPES.CREATOR: PROJECT_TYPES.DEFAULT
     const result = await createOrUpdateStudio(object)

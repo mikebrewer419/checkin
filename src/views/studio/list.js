@@ -637,6 +637,7 @@ const StudioList = () => {
             <StudioForm
               showStudioDetailFields={showStudioDetailFields}
               setShowStudioDetailFields={setShowStudioDetailFields}
+              studio = {selectedStudio}
               key={selectedStudio._id}
               {...selectedStudio}
               onSubmit={handleStudioSubmit}
