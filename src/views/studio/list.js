@@ -138,13 +138,15 @@ const StudioList = () => {
   }
 
   const handleStudioSubmit = async (result, isCreate) => {
-    await fetchManyStudios()
-    setSelectedStudio(null)
+    setLoading(true)
     if (isCreate) {
       const newSession = await handleSessionSubmit({name: 'Session'}, result._id)
       setSelectedSession(newSession)
       setStudioId(result._id)
     }
+    await fetchManyStudios()
+    setSelectedStudio(null)
+    setLoading(false)
   }
 
   const handleSessionSubmit = async (session = {}, studio_id) => {
