@@ -781,9 +781,6 @@ const StudioList = () => {
                 </i>
               </b>
             </p>
-            <p>
-              Business ID: <strong>{ emailProject.casting_directors.map(c => c.business_id).join(',') || '' }</strong>
-            </p>
           </div>}
         </Modal.Body>
         <Modal.Footer>
