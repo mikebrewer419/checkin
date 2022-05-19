@@ -1,7 +1,17 @@
 import React, { useState } from 'react'
+import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import clsx from 'classnames'
-import { PROJECT_TYPES } from '../../constants'
+import { PROJECT_TYPES, USER_TYPES, USER_TYPE } from '../../constants'
 import { FaPen } from 'react-icons/fa'
+
+import {
+  searchUsers,
+  createOrUpdateStudio,
+  assignCastingDirector,
+  getUser
+} from '../../services'
+
+let fnTimeoutHandler = null
 
 const StudioForm = ({
   onSubmit,
@@ -19,31 +29,97 @@ const StudioForm = ({
   delete_message,
   project_type = PROJECT_TYPES.DEFAULT,
   logo = '',
-  errors = {},
   showStudioDetailFields = false,
   setShowStudioDetailFields = () => {}
 }) => {
   const [showAuditionPurchaseMsg, setShowAuditionPurchaseMsg] = useState(project_type === PROJECT_TYPES.CREATOR)
   const [studioName, setStudioName] = useState(name)
+  const [selectedCastingDirector, setSelectedCastingDirector] = useState(null)
+  const [loadingSessionUsers, setLoadingSessionUsers] = useState(false)
+  const [castingDirectors, setCastingDirectors] = useState([])
+  const [errors, setErrors] = useState({})
+  const user = getUser()
+  const searchCastingDirectors = async (email) => {
+    if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
+    fnTimeoutHandler = setTimeout(async () => {
+      setLoadingSessionUsers(true)
+      const users = await searchUsers(email, USER_TYPES.CASTING_DIRECTOR)
+      setCastingDirectors(users)
+      setLoadingSessionUsers(false)
+    }, 1000)
+  }
+
+  const handleStudioSubmit = async (event) => {
+    event.preventDefault()
+    const form_data = new FormData(event.target)
+    let object = {}
+    
+    form_data.forEach(function(value, key){
+      if (!value) return
+      const parsed = /(.*)\[(\d+)\]/.exec(key)
+      if (parsed) {
+        const k = parsed[1]
+        const idx = parseInt(parsed[2])
+        if (object[k]) {
+          object[k][idx] = value
+        } else {
+          object[k] = []
+          object[k][idx] = value
+        }
+      } else {
+        object[key] = value
+      }
+    })
+    if(USER_TYPE.IS_SUPER_ADMIN()) {
+      object['casting_directors'] = castingDirectors
+    }
+    object.project_type = object.creator ? PROJECT_TYPES.CREATOR: PROJECT_TYPES.DEFAULT
+    const result = await createOrUpdateStudio(object)
+    if ( USER_TYPE.CASTING_DIRECTOR() ) {
+      await assignCastingDirector(result._id, user.id)
+    }
+    onSubmit(result, !object._id)
+  }
 
   return (
-    <form onSubmit={onSubmit} id="studio-form">
+    <form onSubmit={handleStudioSubmit} id="studio-form">
       <input type="hidden" name="_id" value={_id} />
       {!showStudioDetailFields && (
-        <div className='d-flex align-items-center mb-3'>
-          <strong>Project Name</strong>
-          <div className='mx-2 flex-fill'>
-            <input required className="form-control form-control-sm"  type="text" name="name" id="name" value={studioName} onChange={ev => {
-              setStudioName(ev.target.value)
-            }} />
+        <>
+          <div className='d-flex align-items-center mb-3'>
+            <strong>Project Name</strong>
+            <div className='mx-2 flex-fill'>
+              <input required className="form-control form-control-sm"  type="text" name="name" id="name" value={studioName} onChange={ev => {
+                setStudioName(ev.target.value)
+              }} />
+            </div>
+            <div className="d-flex cursor-pointer align-items-center" onClick={() => {
+              setShowStudioDetailFields(true)
+            }}>
+              <span className='mr-2'>Advanced Details</span>
+              <FaPen />
+            </div>
           </div>
-          <div className="d-flex cursor-pointer align-items-center" onClick={() => {
-            setShowStudioDetailFields(true)
-          }}>
-            <span className='mr-2'>Advanced Details</span>
-            <FaPen />
-          </div>
-        </div>
+          {USER_TYPE.IS_SUPER_ADMIN() && (
+            <div className="my-3">
+              <label>Assign casting directors</label>
+              <AsyncTypeahead
+                id="casting-director-select"
+                selected={selectedCastingDirector}
+                onChange={value => {
+                  setSelectedCastingDirector(value)
+                }}
+                isLoading={loadingSessionUsers}
+                labelKey="email"
+                minLength={2}
+                onSearch={searchCastingDirectors}
+                options={castingDirectors}
+                placeholder="Search for a Session user..."
+                name="casting_directors"
+              />
+            </div>
+          )}
+        </>
       )}
       <div className={clsx({"d-none": !showStudioDetailFields})}>
         <div className="row">
@@ -76,6 +152,25 @@ const StudioForm = ({
             </div>
           </div>
         </div>
+        {USER_TYPE.IS_SUPER_ADMIN() && showStudioDetailFields && (
+          <div className="my-3">
+            <label>Assign casting directors</label>
+            <AsyncTypeahead
+              id="casting-director-select"
+              selected={selectedCastingDirector}
+              onChange={value => {
+                setSelectedCastingDirector(value)
+              }}
+              isLoading={loadingSessionUsers}
+              labelKey="email"
+              minLength={2}
+              onSearch={searchCastingDirectors}
+              options={castingDirectors}
+              placeholder="Search for a Session user..."
+              name="casting_directors"
+            />
+          </div>
+        )}
         <div className="form-group">
           <label htmlFor="thankyou_message">Thankyou_message</label>
           <input required className="form-control form-control-sm"  type="text" name="thankyou_message" id="thankyou_message"

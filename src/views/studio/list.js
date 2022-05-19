@@ -137,62 +137,15 @@ const StudioList = () => {
     setConfirmCallback(() => callback)
   }
 
-  const handleStudioSubmit = async (event) => {
-    setLoading(true)
-    event.preventDefault()
-    setErrors({})
-
-    const studio_uris = studios.map(s => s.uri)
-    const meeting_ids = studios.map(s => s.jitsi_meeting_id)
-
-    const form_data = new FormData(event.target)
-    let error = {}
-    let object = {}
-    form_data.forEach(function(value, key){
-      if (!value) return
-      const parsed = /(.*)\[(\d+)\]/.exec(key)
-      if (parsed) {
-        const k = parsed[1]
-        const idx = parseInt(parsed[2])
-        if (object[k]) {
-          object[k][idx] = value
-        } else {
-          object[k] = []
-          object[k][idx] = value
-        }
-
-        if (
-          k === 'jitsi_meeting_id' &&
-          meeting_ids.includes(value) &&
-          !(selectedStudio.jitsi_meeting_id !== value)
-        ) {
-          error['meeting_id'] = value
-        }
-
-      } else {
-        if (key === 'uri' && studio_uris.includes(value) && selectedStudio.uri !== value) {
-          error['uri'] = value
-        }
-        object[key] = value
-      }
-    })
-
-    setErrors(error)
-    if (Object.keys(error).length > 0) { return }
-    object.project_type = object.creator ? PROJECT_TYPES.CREATOR: PROJECT_TYPES.DEFAULT
-    const result = await createOrUpdateStudio(object)
-    if (user.user_type === USER_TYPES.CASTING_DIRECTOR) {
-      await assignCastingDirector(result._id, user.id)
-    }
+  const handleStudioSubmit = async (result, isCreate) => {
     await fetchManyStudios()
     setSelectedStudio(null)
-
-    if (!object._id) {
+    console.log(result)
+    if (isCreate) {
       const newSession = await handleSessionSubmit({name: 'Session'}, result._id)
       setSelectedSession(newSession)
       setStudioId(result._id)
     }
-    setLoading(false)
   }
 
   const handleSessionSubmit = async (session = {}, studio_id) => {
