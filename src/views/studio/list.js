@@ -632,7 +632,7 @@ const StudioList = () => {
             </label>
           )}
         </Modal.Header>
-        <Modal.Body className='overflow-auto'>
+        <Modal.Body className={showStudioDetailFields ? 'overflow-auto' : ''}>
           {selectedStudio &&
             <StudioForm
               showStudioDetailFields={showStudioDetailFields}
