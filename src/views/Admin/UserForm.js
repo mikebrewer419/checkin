@@ -24,6 +24,7 @@ const UserForm = ({
     comet_chat_auth,
     comet_api_key,
     attached_users,
+    business_id,
     logo  
   } = user || {}
 
@@ -137,6 +138,12 @@ const UserForm = ({
             options={searchUserList}
             placeholder={`Search for ${USER_TYPE_TEXT[userType]}...`}
           />
+        </div>
+      )}
+      {[USER_TYPES.CASTING_DIRECTOR].includes(userType) && (
+        <div className='form-group'>
+          <label>Business ID</label>
+          <input type="text" className='form-control form-control-sm' name="business_id" id="business_id" defaultValue={business_id} />
         </div>
       )}
       <input type="text" name="attached_users" value={JSON.stringify((attachedUsers || []).map(u => u._id))} className="d-none" />

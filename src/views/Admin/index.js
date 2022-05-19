@@ -219,9 +219,15 @@ const Admin = () => {
                           <td><strong>{user.comet_chat_auth}</strong></td>
                         </tr>
                         <tr>
-                        <td>comet_api_key: </td>
-                        <td><strong>{user.comet_api_key}</strong></td>
-                      </tr>
+                          <td>comet_api_key: </td>
+                          <td><strong>{user.comet_api_key}</strong></td>
+                        </tr>
+                        {[USER_TYPES.CASTING_DIRECTOR].includes(user.user_type) && (
+                          <tr>
+                            <td>business_id</td>
+                            <td><strong>{user.business_id}</strong></td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>}
                   </div>

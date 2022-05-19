@@ -83,7 +83,7 @@ const StudioList = () => {
   const [selectedPostingPage, setSelectedPostingPage] = useState(null)
 
   const [emailCheckinLink, setEmailCheckinLink] = useState('')
-  const [emailProjectName, setEmailProjectName] = useState('')
+  const [emailProject, setEmailProject] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
   const [emailSessionParams, setEmailSessionParams] = useState(null)
 
@@ -490,7 +490,7 @@ const StudioList = () => {
                           <a className='mr-2 d-flex align-items-center cursor-pointer' title="Copy Client Email"
                             onClick={() => {
                               setEmailSessionParams(st)
-                              setEmailProjectName(studio.name)
+                              setEmailProject(studio)
                               setEmailSessionLink(`${host}/studio/${studio.uri}/${session._id}`)
                             }}
                           >
@@ -786,9 +786,9 @@ const StudioList = () => {
       </Modal>
 
       <Modal
-        show={!!emailProjectName}
+        show={!!emailProject}
         onHide={() => {
-          setEmailProjectName(null)
+          setEmailProject(null)
           setEmailSessionLink(null)
           setEmailSessionParams(null)
         }}
@@ -808,7 +808,7 @@ const StudioList = () => {
             <p className="mb-0">SUPPORT: <strong>{ emailSessionParams.support ? emailSessionParams.support.email : 'TBD' }</strong></p>
             <br />
             <p>
-              Here is the <b>{emailProjectName}</b> Session Link:<br/>
+              Here is the <b>{emailProject.name}</b> Session Link:<br/>
               <a href={emailSessionLink}>{emailSessionLink}</a>
             </p>
             <p>
@@ -826,6 +826,9 @@ const StudioList = () => {
                 </i>
               </b>
             </p>
+            <p>
+              Business ID: <strong>{ emailProject.casting_directors.map(c => c.business_id).join(',') || '' }</strong>
+            </p>
           </div>}
         </Modal.Body>
         <Modal.Footer>
@@ -834,7 +837,7 @@ const StudioList = () => {
             className="btn btn-primary"
             onClick={() => {
               handleCopyText('#client-email-text')
-              setEmailProjectName(null)
+              setEmailProject(null)
               setEmailSessionLink(null)
             }}
           >
