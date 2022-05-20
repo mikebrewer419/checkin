@@ -15,13 +15,13 @@ const ProfileView = ({ user, profile, editProfile }) => {
   const { logo } = user || {}
 
   return (
-    <div>
+    <div className='profile-view'>
       <img
         className="w-50 mb-4 rounded-pill"
         src={logo ? static_root+logo : require('../../../assets/camera.png')}
       />
       <div className='d-flex'>
-        <label className='h5 mr-3'>
+        <label className='h4 mr-3 mb-4'>
           {user.first_name} {user.last_name}
         </label>
         <a className='ml-auto text-danger cursor-pointer' onClick={editProfile}>
@@ -29,25 +29,29 @@ const ProfileView = ({ user, profile, editProfile }) => {
           Edit
         </a>
       </div>
-      <div>
-        <label className='h6 mr-2'>Will work as</label>
+      <div className='mb-2 d-flex flex-column'>
+        <label className='label mb-0'>Will work as</label>
         <span>{profile.will_work_as.join(', ')}</span>
       </div>
-      <div>
-        <label className='h6 mr-2'>Experience</label>
+      <div className='mb-2 d-flex flex-column'>
+        <label className='label mb-0'>Experience</label>
         <span>{profile.experience}</span>
       </div>
-      <div>
-        <label className='h6 mr-2'>Available dates</label>
-        {profile.available_dates.map((dt, idx) => {
-          return<span className='mr-2' key={idx}>{moment(new Date(dt)).format('MM/DD/YY')}</span>
-        })}
+      <div className='mb-2 d-flex flex-column'>
+        <label className='label mb-0'>Available dates</label>
+        <div className='w-75 d-flex flex-wrap'>
+          {profile.available_dates.map((dt, idx) => {
+            return<span className='mr-2 mb-0' key={idx}>{moment(new Date(dt)).format('MM/DD/YY')}</span>
+          })}
+        </div>
       </div>
-      <div>
-        <label className='h6 mr-2'>Non available dates</label>
-        {profile.non_available_dates.map((dt, idx) => {
-          return<span className='mr-2' key={idx}>{moment(new Date(dt)).format('MM/DD/YY')}</span>
-        })}
+      <div className='mb-2 d-flex flex-column'>
+        <label className='label mb-0'>Unavailable dates</label>
+        <div className='w-75 d-flex flex-wrap'>
+          {profile.non_available_dates.map((dt, idx) => {
+            return<span className='mr-2 mb-0' key={idx}>{moment(new Date(dt)).format('MM/DD/YY')}</span>
+          })}
+        </div>
       </div>
       <div>
         <label className='h6 mr-2'>Avability Notes</label>
