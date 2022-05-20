@@ -99,8 +99,8 @@ const Onboard = ({ history }) => {
       const session = await getOneSession(session_id)
       const rs = await getSessionRoles(session_id)
       document.title = `${studio.name} Check In`;
-      setStudio(studio)
-      setSession(session)
+      if (studio && studio._id) { setStudio(studio) }
+      if (session && session._id) { setSession(session) }
       setRoles(rs)
     }
     process()
