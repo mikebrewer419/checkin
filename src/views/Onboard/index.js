@@ -44,6 +44,7 @@ const Onboard = ({ history }) => {
   const [avatar64, setAvatar64] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [cameraError, setCameraError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [agent, setAgent] = useState('')
   const [actualCall, setActualCall] = useState(new Date())
@@ -95,6 +96,7 @@ const Onboard = ({ history }) => {
 
   useEffect(() => {
     const process = async () => {
+      setLoading(true)
       const studio = await getStudioByUri(studio_uri)
       const session = await getOneSession(session_id)
       const rs = await getSessionRoles(session_id)
@@ -102,6 +104,7 @@ const Onboard = ({ history }) => {
       if (studio && studio._id) { setStudio(studio) }
       if (session && session._id) { setSession(session) }
       setRoles(rs)
+      setLoading(false)
     }
     process()
   }, [studio_uri, session_id])
@@ -177,11 +180,19 @@ const Onboard = ({ history }) => {
     window.location.reload(true)
   }
 
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
   if (!studio) {
     return <div>No Studio found</div>
   }
   if (!session) {
-    return <div>No Session found</div>
+    return (
+      <div>
+        This link is invalid. Try copying the link again and make sure there are no extra characters at the end. Please email <a href="mailto:hello@heyjoe.io">hello@heyjoe.io</a> if you still have trouble.
+      </div>
+    )
   }
 
   if (showMessage) {
