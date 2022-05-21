@@ -80,7 +80,7 @@ const Header = (props) => {
 
         <Dropdown.Menu>
           <Dropdown.Item className="text-secondary">{user.user_type}</Dropdown.Item>
-          {user.user_type === USER_TYPES.SESSION_MANAGER && (
+          {[USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type) && (
             <Dropdown.Item onClick={() => {
               history.push('/freelancer-profile')
             }}>
