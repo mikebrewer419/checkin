@@ -37,7 +37,8 @@ import {
   deleteSession,
   archiveStudio,
   unArchiveStudio,
-  getUser
+  getUser,
+  sendClientEmail
 } from '../../services'
 import StudioForm from './form'
 import SessionForm from './SessionForm'
@@ -75,7 +76,9 @@ const formatHour = (time) => {
 
 const SendClientEmailModal = ({
   show,
-  onHide
+  onHide,
+  studio,
+  emailSessionParams
 }) => {
   
   const [options, setOptions] = useState([])
@@ -92,8 +95,7 @@ const SendClientEmailModal = ({
     setIsLoading(false);
       
   };
-  
- 
+  if (!show) return null
   return (
     <Modal
       show={show}
@@ -107,49 +109,28 @@ const SendClientEmailModal = ({
       </Modal.Header>
       <Formik
         initialValues={{
-          sessionManager: [],
-          lobbyManager: [],
           toAdditional: [],
-          from: [],
-          cc: [],
           ccAdditional: [],
           content: ''
         }}
-        validate={values => {
-          const errors = {}
-          if (values.sessionManager.length == 0) {
-            errors.sessionManager = 'Session manager email is required'
-          }
-          if (values.lobbyManager.length == 0) {
-            errors.lobbyManager = 'Lobby manager email is required'
-          }
-          
-          if (values.from.length == 0) {
-            errors.from = 'Sender email is required'
-          }
-          if (values.cc.length == 0) {
-            errors.cc = 'CC email is required'
-          }
-          if (values.content.length == 0) {
-            errors.content = 'Email conent is required'
-          }
-          return errors
-        }}
         onSubmit={(values, {setSubmitting})=>{
           const data = {
-            to: {
-              sessionManager: values.sessionManager[0],
-              lobbyManager: values.lobbyManager[0],
-              additional: values.toAdditional,
-            },
-            from: values.from[0],
-            cc: {
-              cc: values.cc[0],
-              additional: values.ccAdditional
-            },
-            conent: values.content
+            from: studio && studio.casting_directors.length > 0 ? studio.casting_directors[0].email : 'hello@heyjoe.io',
+            to: [],
+            cc: ['hello@heyjoe.io'],
+            content: values.content,
           }
-          console.log(data)
+          if (!!emailSessionParams && emailSessionParams.managers.length > 0)
+          data.to = [...data.to, ...emailSessionParams.managers]
+          if (!!emailSessionParams && emailSessionParams.lobbyManager.length > 0)
+          data.to = [...data.to, ...emailSessionParams.lobbyManager]
+          data.to = [...data.to, ...values.toAdditional.map(it=>it.email)]
+          data.cc = [...data.cc, ...values.ccAdditional.map(it=>it.email)]
+          sendClientEmail(data).then(res=>{
+            res.json().then(t=>{
+              console.log(t)
+            })
+          })
           onHide()
         }}
       >
@@ -170,40 +151,21 @@ const SendClientEmailModal = ({
                       <legend className="d-inline-block w-auto px-2">To</legend>
                       <Form.Group>
                         <Form.Label>Session Manager</Form.Label>
-                        <AsyncTypeahead
-                          id="to-session-manager-email"
-                          selected={values.sessionManager}
-                          isLoading={isLoading}
-                          onSearch={handleSearch}
-                          labelKey="email"
-                          minLength={2}
-                          placeholder="Search for a additional emails..."
-                          options={options}
-                          onChange={value=>{setFieldValue('sessionManager', value)}}
-                          isInvalid={!!errors.sessionManager}
-                        />
-                        {errors.sessionManager && (
-                          <p className="text-danger position-absolute">{errors.sessionManager}</p>
+                        {emailSessionParams && emailSessionParams.managers.length === 0 && (
+                          <p className="px-2">-</p>
                         )}
-                        
+                        {emailSessionParams && emailSessionParams.managers.map((it,i)=>(
+                          <p key={i}>{it}</p>
+                        ))}
                       </Form.Group>
                       <Form.Group>
                         <Form.Label>Lobby Manager</Form.Label>
-                        <AsyncTypeahead
-                          id="to-lobby-manager-email"
-                          selected={values.lobbyManager}
-                          isLoading={isLoading}
-                          onSearch={handleSearch}
-                          labelKey="email"
-                          minLength={2}
-                          placeholder="Search for a additional emails..."
-                          options={options}
-                          onChange={value=>{setFieldValue('lobbyManager', value)}}
-                          isInvalid={!!errors.lobbyManager}
-                        />
-                        {errors.lobbyManager && (
-                          <p className="text-danger position-absolute">{errors.lobbyManager}</p>
+                        {emailSessionParams && emailSessionParams.lobbyManager.length === 0 && (
+                          <p className="px-2">-</p>
                         )}
+                        {emailSessionParams && emailSessionParams.lobbyManager.map((it, i)=>(
+                          <p key={i}>{it}</p>
+                        ))}
                       </Form.Group>
                       <Form.Group>
                         <Form.Label>Additional Emails</Form.Label>
@@ -223,44 +185,20 @@ const SendClientEmailModal = ({
                     </fieldset>
                   </Col>
                   <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>From</Form.Label>
-                      <AsyncTypeahead
-                        id="from-email"
-                        selected={values.from}
-                        isLoading={isLoading}
-                        onSearch={handleSearch}
-                        labelKey="email"
-                        minLength={2}
-                        placeholder="Search for a additional emails..."
-                        options={options}
-                        onChange={value=>{setFieldValue('from', value)}}
-                        isInvalid = {!!errors.from}
-                      />
-                      {errors.from && (
-                          <p className="text-danger position-absolute">{errors.from}</p>
+                    <fieldset className="border rounded-lg px-3 mb-2">
+                      <legend className="d-inline-block w-auto px-2">From</legend>
+                      <Form.Group>
+                        {studio && studio.casting_directors.length === 0 && (
+                          <p className="px-2">hello@heyjoe.io</p>
                         )}
-                    </Form.Group>
+                        {studio && studio.casting_directors.map((it, i)=>(
+                          <p key={i}>{it.email}</p>
+                        ))}
+                      </Form.Group>
+                    </fieldset>
                     <fieldset className="border rounded-lg px-3">
                       <legend className="d-inline-block w-auto px-2">CC</legend>
-                      <Form.Group>
-                        <Form.Label>CC</Form.Label>
-                        <AsyncTypeahead
-                          id="cc-email"
-                          selected={values.cc}
-                          isLoading={isLoading}
-                          onSearch={handleSearch}
-                          labelKey="email"
-                          minLength={2}
-                          placeholder="Search for a additional emails..."
-                          options={options}
-                          onChange={value=>{setFieldValue('cc', value)}}
-                          isInvalid = {!!errors.cc}
-                        />
-                        {errors.cc && (
-                          <p className="text-danger position-absolute">{errors.cc}</p>
-                        )}
-                      </Form.Group>
+                      <p>hello@heyjoe.io</p>
                       <Form.Group>
                         <Form.Label>Additional Emails</Form.Label>
                         <AsyncTypeahead
@@ -280,7 +218,7 @@ const SendClientEmailModal = ({
                     </fieldset>
                   </Col>
                 </Row>
-                <Form.Group>
+                <Form.Group className="mt-3">
                   <Form.Label>
                     Email
                   </Form.Label>
@@ -1015,6 +953,8 @@ const StudioList = () => {
           setEmailSessionLink(null)
           setEmailSessionParams(null)
         }}
+        studio = {emailProject}
+        emailSessionParams = {emailSessionParams}
       />
       <Footer/>
     </div>
