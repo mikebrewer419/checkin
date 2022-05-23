@@ -78,17 +78,6 @@ const SendClientEmailModal = ({
   onHide
 }) => {
   
-  
-  // const [sessionManager, setSessionManager] = useState([])
-  // const [lobbyManager, setLobbyManager] = useState([])
-  // const [toAdditionalEmails, setToAdditionalEmails] = useState([])
-  // const [from, setFrom] = useState([])
-  // const [ccEmail, setCcEmail] = useState([])
-  // const [ccAdditionalEmails, setCcAdditionalEmails] = useState([])
-
-  // const [emailContent, setEmailContent] = useState('')
-  
-
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
