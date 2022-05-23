@@ -2,7 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import clsx from 'classnames'
 import { Link } from 'react-router-dom'
-import { Modal } from 'react-bootstrap'
+import { 
+  Modal,
+  Form,
+  Container,
+  Row,
+  Col,
+  Button
+} from 'react-bootstrap'
+import {Formik} from 'formik'
+import { Editor } from '@tinymce/tinymce-react'
 import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
 import moment from 'moment'
 import {
@@ -34,7 +43,14 @@ import StudioForm from './form'
 import SessionForm from './SessionForm'
 import './style.scss'
 import Footer from '../../components/Footer'
-import { SESSION_TIME_TYPE, USER_TYPE, USER_TYPES, PROJECT_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
+import {
+  SESSION_TIME_TYPE,
+  USER_TYPE,
+  USER_TYPES,
+  PROJECT_TYPES,
+  STUDIO_LIST_PERMISSIONS,
+  TINYMCE_KEY
+} from '../../constants'
 import { humanFileSize }  from '../../utils'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Pagination from '../../components/Pagination'
@@ -55,6 +71,269 @@ const formatHour = (time) => {
   if (date.isValid())
     return date.format('H:mm: a')
   return ''
+}
+
+const SendClientEmailModal = ({
+  show,
+  onHide
+}) => {
+  
+  
+  // const [sessionManager, setSessionManager] = useState([])
+  // const [lobbyManager, setLobbyManager] = useState([])
+  // const [toAdditionalEmails, setToAdditionalEmails] = useState([])
+  // const [from, setFrom] = useState([])
+  // const [ccEmail, setCcEmail] = useState([])
+  // const [ccAdditionalEmails, setCcAdditionalEmails] = useState([])
+
+  // const [emailContent, setEmailContent] = useState('')
+  
+
+  const [options, setOptions] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSearch = async (query) => {
+    setIsLoading(true);
+    const sessionUsers = await searchUsers(query, [
+      USER_TYPES.SESSION_MANAGER,
+      USER_TYPES.CASTING_DIRECTOR,
+      USER_TYPES.SUPER_ADMIN,
+    ]);
+    setOptions(sessionUsers);
+    setIsLoading(false);
+      
+  };
+  
+ 
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      size='lg'
+    >
+      <Modal.Header closeButton className="align-items-baseline">
+        <h4 className="mb-0 mr-3">
+          Send Client Email
+        </h4>
+      </Modal.Header>
+      <Formik
+        initialValues={{
+          sessionManager: [],
+          lobbyManager: [],
+          toAdditional: [],
+          from: [],
+          cc: [],
+          ccAdditional: [],
+          content: ''
+        }}
+        validate={values => {
+          const errors = {}
+          if (values.sessionManager.length == 0) {
+            errors.sessionManager = 'Session manager email is required'
+          }
+          if (values.lobbyManager.length == 0) {
+            errors.lobbyManager = 'Lobby manager email is required'
+          }
+          
+          if (values.from.length == 0) {
+            errors.from = 'Sender email is required'
+          }
+          if (values.cc.length == 0) {
+            errors.cc = 'CC email is required'
+          }
+          if (values.content.length == 0) {
+            errors.content = 'Email conent is required'
+          }
+          return errors
+        }}
+        onSubmit={(values, {setSubmitting})=>{
+          const data = {
+            to: {
+              sessionManager: values.sessionManager[0],
+              lobbyManager: values.lobbyManager[0],
+              additional: values.toAdditional,
+            },
+            from: values.from[0],
+            cc: {
+              cc: values.cc[0],
+              additional: values.ccAdditional
+            },
+            conent: values.content
+          }
+          console.log(data)
+          onHide()
+        }}
+      >
+        {({
+          values,
+          errors,
+          touched,
+          setFieldValue,
+          isSubmitting,
+          handleSubmit
+        })=>(
+          <Form onSubmit={handleSubmit}>
+            <Modal.Body>
+              <Container>
+                <Row>
+                  <Col md={6}>
+                    <fieldset className="border rounded-lg px-3">
+                      <legend className="d-inline-block w-auto px-2">To</legend>
+                      <Form.Group>
+                        <Form.Label>Session Manager</Form.Label>
+                        <AsyncTypeahead
+                          id="to-session-manager-email"
+                          selected={values.sessionManager}
+                          isLoading={isLoading}
+                          onSearch={handleSearch}
+                          labelKey="email"
+                          minLength={2}
+                          placeholder="Search for a additional emails..."
+                          options={options}
+                          onChange={value=>{setFieldValue('sessionManager', value)}}
+                          isInvalid={!!errors.sessionManager}
+                        />
+                        {errors.sessionManager && (
+                          <p className="text-danger position-absolute">{errors.sessionManager}</p>
+                        )}
+                        
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label>Lobby Manager</Form.Label>
+                        <AsyncTypeahead
+                          id="to-lobby-manager-email"
+                          selected={values.lobbyManager}
+                          isLoading={isLoading}
+                          onSearch={handleSearch}
+                          labelKey="email"
+                          minLength={2}
+                          placeholder="Search for a additional emails..."
+                          options={options}
+                          onChange={value=>{setFieldValue('lobbyManager', value)}}
+                          isInvalid={!!errors.lobbyManager}
+                        />
+                        {errors.lobbyManager && (
+                          <p className="text-danger position-absolute">{errors.lobbyManager}</p>
+                        )}
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label>Additional Emails</Form.Label>
+                        <AsyncTypeahead
+                          id="to-additional-emails"
+                          multiple
+                          selected={values.toAdditional}
+                          isLoading={isLoading}
+                          onSearch={handleSearch}
+                          labelKey="email"
+                          minLength={2}
+                          placeholder="Search for a additional emails..."
+                          options={options}
+                          onChange={value=>{setFieldValue('toAdditional', value)}}
+                        />
+                      </Form.Group>
+                    </fieldset>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>From</Form.Label>
+                      <AsyncTypeahead
+                        id="from-email"
+                        selected={values.from}
+                        isLoading={isLoading}
+                        onSearch={handleSearch}
+                        labelKey="email"
+                        minLength={2}
+                        placeholder="Search for a additional emails..."
+                        options={options}
+                        onChange={value=>{setFieldValue('from', value)}}
+                        isInvalid = {!!errors.from}
+                      />
+                      {errors.from && (
+                          <p className="text-danger position-absolute">{errors.from}</p>
+                        )}
+                    </Form.Group>
+                    <fieldset className="border rounded-lg px-3">
+                      <legend className="d-inline-block w-auto px-2">CC</legend>
+                      <Form.Group>
+                        <Form.Label>CC</Form.Label>
+                        <AsyncTypeahead
+                          id="cc-email"
+                          selected={values.cc}
+                          isLoading={isLoading}
+                          onSearch={handleSearch}
+                          labelKey="email"
+                          minLength={2}
+                          placeholder="Search for a additional emails..."
+                          options={options}
+                          onChange={value=>{setFieldValue('cc', value)}}
+                          isInvalid = {!!errors.cc}
+                        />
+                        {errors.cc && (
+                          <p className="text-danger position-absolute">{errors.cc}</p>
+                        )}
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label>Additional Emails</Form.Label>
+                        <AsyncTypeahead
+                          id="cc-additional-emails"
+                          className="mb-3"
+                          multiple
+                          selected={values.ccAdditional}
+                          isLoading={isLoading}
+                          onSearch={handleSearch}
+                          labelKey="email"
+                          minLength={2}
+                          placeholder="Search for a additional emails..."
+                          options={options}
+                          onChange={value=>{setFieldValue('ccAdditional', value)}}
+                        />
+                      </Form.Group>
+                    </fieldset>
+                  </Col>
+                </Row>
+                <Form.Group>
+                  <Form.Label>
+                    Email
+                  </Form.Label>
+                  <Editor
+                    apiKey={TINYMCE_KEY}
+                    init={{
+                      height: '40vh',
+                      menubar: false,
+                      plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                      ],
+                      toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                    }}
+                    value={values.content}
+                    onEditorChange={(newValue, editor) => setFieldValue('content', newValue)}
+                  />
+                  {errors.content && (
+                    <p className="text-danger position-absolute">{errors.content}</p>
+                  )}
+                </Form.Group>
+              </Container>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                type="submit"
+                variant="primary"
+                className="mx-3 px-5"
+              >
+                Send
+              </Button>
+            </Modal.Footer>
+          </Form>
+        )}
+      </Formik>
+    </Modal>
+  )
 }
 
 const StudioList = () => {
@@ -441,7 +720,7 @@ const StudioList = () => {
                             break
                         }
                         return (
-                          <a className='mr-2 d-flex align-items-center cursor-pointer' title="Copy Client Email"
+                          <a className='mr-2 d-flex align-items-center cursor-pointer' title="Send Client Email"
                             onClick={() => {
                               setEmailSessionParams(st)
                               setEmailProject(studio)
@@ -739,65 +1018,15 @@ const StudioList = () => {
           </button>
         </Modal.Footer>
       </Modal>
-
-      <Modal
+      
+      <SendClientEmailModal
         show={!!emailProject}
         onHide={() => {
           setEmailProject(null)
           setEmailSessionLink(null)
           setEmailSessionParams(null)
         }}
-      >
-        <Modal.Header closeButton className="align-items-baseline">
-          <h4 className="mb-0 mr-3">
-            Copy Client Email
-          </h4>
-        </Modal.Header>
-        <Modal.Body className="bg-lightgray">
-          {emailSessionParams &&
-          <div id="client-email-text">
-            <p className="mb-0">DATE: <strong>{ formatDate(emailSessionParams.start_time) || 'TBD' }</strong></p>
-            <p className="mb-0">TIME: <strong>{ formatHour(emailSessionParams.start_time) || 'TBD' }</strong></p>
-            <p className="mb-0">SESSION RUNNER: <strong>{ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</strong></p>
-            <p className="mb-0">LOBBY: <strong>{ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</strong></p>
-            <p className="mb-0">SUPPORT: <strong>{ emailSessionParams.support ? emailSessionParams.support.email : 'TBD' }</strong></p>
-            <br />
-            <p>
-              Here is the <b>{emailProject.name}</b> Session Link:<br/>
-              <a href={emailSessionLink}>{emailSessionLink}</a>
-            </p>
-            <p>
-              <b>
-                <i>
-                  Note: Please use Google Chrome or Brave Browser. You can either click “Create Account” on the website or choose "Login with Google." For helpful tips on using the site&nbsp;
-                  <a href="https://heyjoe.io/hey-joe-log-on-instructions/" >
-                    click here. 
-                  </a>
-                  <br />
-                  Tech support: 424.888.4735 or&nbsp;
-                  <a href="mailto:hello@heyjoe.io">
-                    hello@heyjoe.io
-                  </a>
-                </i>
-              </b>
-            </p>
-          </div>}
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            disabled={selectedPostingPage && !selectedPostingPage.name}
-            className="btn btn-primary"
-            onClick={() => {
-              handleCopyText('#client-email-text')
-              setEmailProject(null)
-              setEmailSessionLink(null)
-            }}
-          >
-            Copy
-          </button>
-        </Modal.Footer>
-      </Modal>
-
+      />
       <Footer/>
     </div>
   )
