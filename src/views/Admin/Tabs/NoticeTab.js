@@ -33,46 +33,52 @@ const NoticeTab = () => {
   return (
     <Container fluid>
       <Row>
-        <Col md={3}>
+        <Col md={2}>
           <Button
-            variant={showNotification === 'client_notice' ?'info' : 'primary'}
+            variant={showNotification === 'client_notice' ?'danger' : 'default'}
             block
+            className="text-left"
             onClick={() => {
               setShowNotification('client_notice')
             }}
           >
-            Set Client Notice
+            Client Notice
           </Button>
       
           <Button
-            variant={showNotification === 'casting_director_notice' ?'info' : 'primary'}
+            variant={showNotification === 'casting_director_notice' ?'danger' : 'default'}
             block
+            className="text-left"
             onClick={() => {
               setShowNotification('casting_director_notice')
             }}
           >
-            Set Casting Director Notice
+            Casting Director Notice
           </Button>
         
           <Button
-            variant={showNotification === 'session_manager_notice' ?'info' : 'primary'}
+            variant={showNotification === 'session_manager_notice' ?'danger' : 'default'}
             block
+            className="text-left"
             onClick={() => {
               setShowNotification('session_manager_notice')
             }}
-          >Set Session Manager Notice</Button>
+          >
+            Session Manager Notice
+          </Button>
         
           <Button
-            variant={showNotification === 'notification' ?'info' : 'primary'}
+            variant={showNotification === 'notification' ?'danger' : 'default'}
             block
+            className="text-left"
             onClick={() => {
               setShowNotification('notification')
             }}
           >
-            Set Global Notification Content
+            Global Notification
           </Button>
         </Col>
-        <Col md={9}>
+        <Col md={10}>
           <Editor
             apiKey={TINYMCE_KEY}
             onInit={(evt, editor) => editorRef.current = editor}
