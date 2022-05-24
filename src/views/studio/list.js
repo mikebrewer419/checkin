@@ -344,7 +344,6 @@ const StudioList = () => {
     document.execCommand("copy");
     document.removeEventListener("copy", listener);
   }
-
   return (
     <div className="p-5 w-100 studios-list">
       <div className="d-flex align-items-center justify-content-between mb-5">
@@ -705,7 +704,6 @@ const StudioList = () => {
           </button>
         </Modal.Footer>
       </Modal>
-
       <Modal
         size="xl"
         show={!!emailCheckinLink}
@@ -755,7 +753,6 @@ const StudioList = () => {
           </button>
         </Modal.Footer>
       </Modal>
-      
       <SendClientEmailModal
         show={!!emailProject}
         onHide={() => {

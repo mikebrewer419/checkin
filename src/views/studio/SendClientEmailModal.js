@@ -1,6 +1,7 @@
 import React, {
   useState
 } from 'react'
+
 import {
   Form,
   Container,
@@ -9,17 +10,21 @@ import {
   Modal,
   Button
 } from 'react-bootstrap'
+
 import moment from 'moment'
 import { Editor } from '@tinymce/tinymce-react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
+
 import {
   searchUsers,
   sendClientEmail
 }from '../../services'
+
 import {
   USER_TYPES,
   TINYMCE_KEY
 } from '../../constants'
+
 const SendClientEmailModal = ({
   show,
   onHide,
@@ -93,7 +98,7 @@ const SendClientEmailModal = ({
                         <p className="px-2">-</p>
                       )}
                       {emailSessionParams && emailSessionParams.managers.map((it,i)=>(
-                        <p key={i}>{it}</p>
+                        <p key={i}>{it.email}</p>
                       ))}
                     </Form.Group>
                     <Form.Group>
@@ -102,7 +107,7 @@ const SendClientEmailModal = ({
                         <p className="px-2">-</p>
                       )}
                       {emailSessionParams && emailSessionParams.lobbyManager.map((it, i)=>(
-                        <p key={i}>{it}</p>
+                        <p key={i}>{it.email}</p>
                       ))}
                     </Form.Group>
                     <Form.Group>
