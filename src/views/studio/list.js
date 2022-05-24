@@ -37,7 +37,6 @@ import {
   archiveStudio,
   unArchiveStudio,
   getUser,
-  sendClientEmail
 } from '../../services'
 import StudioForm from './form'
 import SessionForm from './SessionForm'
@@ -47,9 +46,7 @@ import {
   SESSION_TIME_TYPE,
   USER_TYPE,
   USER_TYPES,
-  PROJECT_TYPES,
   STUDIO_LIST_PERMISSIONS,
-  TINYMCE_KEY
 } from '../../constants'
 import { humanFileSize }  from '../../utils'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
