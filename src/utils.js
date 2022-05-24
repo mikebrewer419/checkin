@@ -81,3 +81,11 @@ export const obj2Query = (obj) => {
     }
   return str.join("&");
 }
+
+export const toggleLoadingState = (state) => {
+  if (state) {
+    document.querySelector('.loading').classList.add('show')
+  } else {
+    document.querySelector('.loading').classList.remove('show')
+  }
+}

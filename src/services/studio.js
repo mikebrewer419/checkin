@@ -181,3 +181,14 @@ export const assignCastingDirector = (id, director_ids) => {
     body: JSON.stringify({casting_directors: director_ids})
   })
 }
+
+export const sendClientEmail = (email) => {
+  return fetch(api_host+`/studio/send-client-email`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(email)
+  })
+}

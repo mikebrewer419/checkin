@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import clsx from 'classnames'
 import { Link } from 'react-router-dom'
-import { Modal } from 'react-bootstrap'
+import { 
+  Modal,
+  Form,
+  Container,
+  Row,
+  Col,
+  Button
+} from 'react-bootstrap'
+
 import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
 import moment from 'moment'
 import {
@@ -28,16 +36,22 @@ import {
   deleteSession,
   archiveStudio,
   unArchiveStudio,
-  getUser
+  getUser,
 } from '../../services'
 import StudioForm from './form'
 import SessionForm from './SessionForm'
 import './style.scss'
 import Footer from '../../components/Footer'
-import { SESSION_TIME_TYPE, USER_TYPE, USER_TYPES, PROJECT_TYPES, STUDIO_LIST_PERMISSIONS } from '../../constants'
+import {
+  SESSION_TIME_TYPE,
+  USER_TYPE,
+  USER_TYPES,
+  STUDIO_LIST_PERMISSIONS,
+} from '../../constants'
 import { humanFileSize }  from '../../utils'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Pagination from '../../components/Pagination'
+import SendClientEmailModal from './SendClientEmailModal'
 
 const host = window.location.origin
 
@@ -56,6 +70,8 @@ const formatHour = (time) => {
     return date.format('H:mm: a')
   return ''
 }
+
+
 
 const StudioList = () => {
   const [loading, setLoading] = useState(false)
@@ -86,7 +102,7 @@ const StudioList = () => {
   const [emailProject, setEmailProject] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
   const [emailSessionParams, setEmailSessionParams] = useState(null)
-
+  
   useEffect(() => {
     if (loading) {
       document.querySelector('.loading').classList.add('show')
@@ -328,7 +344,6 @@ const StudioList = () => {
     document.execCommand("copy");
     document.removeEventListener("copy", listener);
   }
-
   return (
     <div className="p-5 w-100 studios-list">
       <div className="d-flex align-items-center justify-content-between mb-5">
@@ -441,7 +456,7 @@ const StudioList = () => {
                             break
                         }
                         return (
-                          <a className='mr-2 d-flex align-items-center cursor-pointer' title="Copy Client Email"
+                          <a className='mr-2 d-flex align-items-center cursor-pointer' title="Send Client Email"
                             onClick={() => {
                               setEmailSessionParams(st)
                               setEmailProject(studio)
@@ -689,7 +704,6 @@ const StudioList = () => {
           </button>
         </Modal.Footer>
       </Modal>
-
       <Modal
         size="xl"
         show={!!emailCheckinLink}
@@ -739,65 +753,17 @@ const StudioList = () => {
           </button>
         </Modal.Footer>
       </Modal>
-
-      <Modal
+      <SendClientEmailModal
         show={!!emailProject}
         onHide={() => {
           setEmailProject(null)
           setEmailSessionLink(null)
           setEmailSessionParams(null)
         }}
-      >
-        <Modal.Header closeButton className="align-items-baseline">
-          <h4 className="mb-0 mr-3">
-            Copy Client Email
-          </h4>
-        </Modal.Header>
-        <Modal.Body className="bg-lightgray">
-          {emailSessionParams &&
-          <div id="client-email-text">
-            <p className="mb-0">DATE: <strong>{ formatDate(emailSessionParams.start_time) || 'TBD' }</strong></p>
-            <p className="mb-0">TIME: <strong>{ formatHour(emailSessionParams.start_time) || 'TBD' }</strong></p>
-            <p className="mb-0">SESSION RUNNER: <strong>{ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</strong></p>
-            <p className="mb-0">LOBBY: <strong>{ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</strong></p>
-            <p className="mb-0">SUPPORT: <strong>{ emailSessionParams.support ? emailSessionParams.support.email : 'TBD' }</strong></p>
-            <br />
-            <p>
-              Here is the <b>{emailProject.name}</b> Session Link:<br/>
-              <a href={emailSessionLink}>{emailSessionLink}</a>
-            </p>
-            <p>
-              <b>
-                <i>
-                  Note: Please use Google Chrome or Brave Browser. You can either click “Create Account” on the website or choose "Login with Google." For helpful tips on using the site&nbsp;
-                  <a href="https://heyjoe.io/hey-joe-log-on-instructions/" >
-                    click here. 
-                  </a>
-                  <br />
-                  Tech support: 424.888.4735 or&nbsp;
-                  <a href="mailto:hello@heyjoe.io">
-                    hello@heyjoe.io
-                  </a>
-                </i>
-              </b>
-            </p>
-          </div>}
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            disabled={selectedPostingPage && !selectedPostingPage.name}
-            className="btn btn-primary"
-            onClick={() => {
-              handleCopyText('#client-email-text')
-              setEmailProject(null)
-              setEmailSessionLink(null)
-            }}
-          >
-            Copy
-          </button>
-        </Modal.Footer>
-      </Modal>
-
+        studio = {emailProject}
+        emailSessionParams = {emailSessionParams}
+        emailSessionLink = {emailSessionLink}
+      />
       <Footer/>
     </div>
   )

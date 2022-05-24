@@ -103,7 +103,13 @@ export const getUser = () => {
 }
 
 export const searchUsers = async (email, type) => {
-  const resp = await fetch(`${api_host}/auth/users?email=${email}&type=${type}`, {
+  let url = null
+  if(!!type){
+    url = `${api_host}/auth/users?email=${email}&type=${type}`
+  } else {
+    url = `${api_host}/auth/users?email=${email}`
+  }
+  const resp = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
