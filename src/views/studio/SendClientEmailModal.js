@@ -26,11 +26,27 @@ import {
   TINYMCE_KEY
 } from '../../constants'
 import {} from '../../utils'
+
+const formatDate = (time) => {
+  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+  if (date.isValid())
+    return date.format('M/D/YYYY')
+  return ''
+}
+
+const formatHour = (time) => {
+  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+  if (date.isValid())
+    return date.format('H:mm: a')
+  return ''
+}
+
 const SendClientEmailModal = ({
   show,
   onHide,
   studio,
-  emailSessionParams
+  emailSessionParams,
+  emailSessionLink
 }) => {
   const [toAdditional, setToAdditional] = useState([])
   const [ccAdditional, setCcAdditional] = useState([])
@@ -70,6 +86,8 @@ const SendClientEmailModal = ({
     })
     
   }
+  if (!show) return null
+
   const initialEmail = `
     <div id="client-email-text">
       <p className="mb-0">DATE: <strong>${ formatDate(emailSessionParams.start_time) || 'TBD' }</strong></p>
@@ -79,7 +97,7 @@ const SendClientEmailModal = ({
       <p className="mb-0">SUPPORT: <strong>${ emailSessionParams.support ? emailSessionParams.support.email : 'TBD' }</strong></p>
       <br />
       <p>
-        Here is the <b>{emailProject.name}</b> Session Link:<br/>
+        Here is the <b>${studio.name}</b> Session Link:<br/>
         <a href=${emailSessionLink}>${emailSessionLink}</a>
       </p>
       <p>
@@ -98,7 +116,7 @@ const SendClientEmailModal = ({
         </b>
       </p>
     </div>`
-  if (!show) return null
+  
   return (
     <Modal
       show={show}

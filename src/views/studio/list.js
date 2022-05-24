@@ -762,6 +762,7 @@ const StudioList = () => {
         }}
         studio = {emailProject}
         emailSessionParams = {emailSessionParams}
+        emailSessionLink = {emailSessionLink}
       />
       <Footer/>
     </div>
