@@ -102,7 +102,7 @@ const StudioList = () => {
   const [emailProject, setEmailProject] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
   const [emailSessionParams, setEmailSessionParams] = useState(null)
-
+  
   useEffect(() => {
     if (loading) {
       document.querySelector('.loading').classList.add('show')

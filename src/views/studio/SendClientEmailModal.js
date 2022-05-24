@@ -164,7 +164,7 @@ const SendClientEmailModal = ({
                 <Editor
                   apiKey={TINYMCE_KEY}
                   init={{
-                    height: '40vh',
+                    height: '250px',
                     menubar: false,
                     plugins: [
                       'advlist autolink lists link image charmap print preview anchor',
