@@ -40,11 +40,7 @@ const SendClientEmailModal = ({
 
   const handleSearch = async (query) => {
     setIsLoading(true);
-    const sessionUsers = await searchUsers(query, [
-      USER_TYPES.SESSION_MANAGER,
-      USER_TYPES.CASTING_DIRECTOR,
-      USER_TYPES.SUPER_ADMIN,
-    ]);
+    const sessionUsers = await searchUsers(query);
     setOptions(sessionUsers);
     setIsLoading(false);
       
