@@ -69,7 +69,7 @@ const SendClientEmailModal = ({
       from: studio && studio.casting_directors.length > 0 ? studio.casting_directors[0].email : 'hello@heyjoe.io',
       to: [],
       cc: ['hello@heyjoe.io'],
-      content: editorRef.currrent.getContent(),
+      content: editorRef.current.getContent(),
       title: `${studio && studio.name} Session Link ${moment(new Date(emailSessionParams.start_time)).format('MM/DD/YYYY')}`
     }
     if (!!emailSessionParams && emailSessionParams.managers.length > 0)
