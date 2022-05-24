@@ -1,5 +1,6 @@
 import React, {
-  useState
+  useState,
+  useRef
 } from 'react'
 
 import {
@@ -24,7 +25,7 @@ import {
   USER_TYPES,
   TINYMCE_KEY
 } from '../../constants'
-
+import {} from '../../utils'
 const SendClientEmailModal = ({
   show,
   onHide,
@@ -34,7 +35,7 @@ const SendClientEmailModal = ({
   const [toAdditional, setToAdditional] = useState([])
   const [ccAdditional, setCcAdditional] = useState([])
   const [content, setContent] = useState('')
-
+  const editorRef = useRef(null)
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -69,6 +70,34 @@ const SendClientEmailModal = ({
     })
     
   }
+  const initialEmail = `
+    <div id="client-email-text">
+      <p className="mb-0">DATE: <strong>${ formatDate(emailSessionParams.start_time) || 'TBD' }</strong></p>
+      <p className="mb-0">TIME: <strong>${ formatHour(emailSessionParams.start_time) || 'TBD' }</strong></p>
+      <p className="mb-0">SESSION RUNNER: <strong>${ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</strong></p>
+      <p className="mb-0">LOBBY: <strong>${ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</strong></p>
+      <p className="mb-0">SUPPORT: <strong>${ emailSessionParams.support ? emailSessionParams.support.email : 'TBD' }</strong></p>
+      <br />
+      <p>
+        Here is the <b>{emailProject.name}</b> Session Link:<br/>
+        <a href=${emailSessionLink}>${emailSessionLink}</a>
+      </p>
+      <p>
+        <b>
+          <i>
+            Note: Please use Google Chrome or Brave Browser. You can either click “Create Account” on the website or choose "Login with Google." For helpful tips on using the site&nbsp;
+            <a href="https://heyjoe.io/hey-joe-log-on-instructions/" >
+              click here. 
+            </a>
+            <br />
+            Tech support: 424.888.4735 or&nbsp;
+            <a href="mailto:hello@heyjoe.io">
+              hello@heyjoe.io
+            </a>
+          </i>
+        </b>
+      </p>
+    </div>`
   if (!show) return null
   return (
     <Modal
@@ -163,6 +192,8 @@ const SendClientEmailModal = ({
                 </Form.Label>
                 <Editor
                   apiKey={TINYMCE_KEY}
+                  onInit={(evt, editor) => editorRef.current = editor}
+                  initialValue={initialEmail}
                   init={{
                     height: '250px',
                     menubar: false,
@@ -177,10 +208,7 @@ const SendClientEmailModal = ({
                     'removeformat | help',
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
                   }}
-                  value={content}
-                  onEditorChange={(newValue, editor) => setContent(newValue)}
                 />
-                
               </Form.Group>
             </Container>
           </Modal.Body>
