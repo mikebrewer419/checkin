@@ -10,8 +10,7 @@ import {
   Col,
   Button
 } from 'react-bootstrap'
-import {Formik} from 'formik'
-import { Editor } from '@tinymce/tinymce-react'
+
 import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
 import moment from 'moment'
 import {
