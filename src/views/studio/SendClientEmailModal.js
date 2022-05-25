@@ -66,18 +66,20 @@ const SendClientEmailModal = ({
   const onSubmit= (e)=>{
     e.preventDefault()
     const data = {
-      from: studio && studio.casting_directors.length > 0 ? studio.casting_directors[0].email : 'hello@heyjoe.io',
+      from: 'hello@heyjoe.io',
       to: [],
-      cc: ['hello@heyjoe.io'],
+      cc: [],
       content: editorRef.current.getContent(),
       title: `${studio && studio.name} Session Link ${moment(new Date(emailSessionParams.start_time)).format('MM/DD/YYYY')}`
     }
+    data.to =[...data.to, ...(studio && studio.casting_directors || []).map(it => it.email)]
     if (!!emailSessionParams && emailSessionParams.managers.length > 0)
-    data.to = [...data.to, ...emailSessionParams.managers]
+    data.to = [...data.to, ...emailSessionParams.managers.map(it => it.email)]
     if (!!emailSessionParams && emailSessionParams.lobbyManager.length > 0)
-    data.to = [...data.to, ...emailSessionParams.lobbyManager]
+    data.to = [...data.to, ...emailSessionParams.lobbyManager.map(it => it.email)]
     data.to = [...data.to, ...toAdditional.map(it=>it.email)]
     data.cc = [...data.cc, ...ccAdditional.map(it=>it.email)]
+    console.log('data: ', data);
     
     sendClientEmail(data).then(res=>{
       res.json().then(t=>{
@@ -90,10 +92,10 @@ const SendClientEmailModal = ({
 
   const initialEmail = `
     <div id="client-email-text">
-      <p className="mb-0">DATE: <strong>${ formatDate(emailSessionParams.start_time) || 'TBD' }</strong></p>
-      <p className="mb-0">TIME: <strong>${ formatHour(emailSessionParams.start_time) || 'TBD' }</strong></p>
-      <p className="mb-0">SESSION RUNNER: <strong>${ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</strong></p>
-      <p className="mb-0">LOBBY: <strong>${ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</strong></p>
+      <p className="mb-0"><strong>DATE:</strong> ${ formatDate(emailSessionParams.start_time) || 'TBD' }</p>
+      <p className="mb-0"><strong>TIME:</strong> ${ formatHour(emailSessionParams.start_time) || 'TBD' }</p>
+      <p className="mb-0"><strong>SESSION RUNNER:</strong> ${ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</p>
+      <p className="mb-0"><strong>LOBBY:</strong> ${ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</p>
       <br />
       <p>
         Here is the <b>${studio.name}</b> Session Link:<br/>
@@ -135,6 +137,15 @@ const SendClientEmailModal = ({
                   <fieldset className="border rounded-lg px-3">
                     <legend className="d-inline-block w-auto px-2">To</legend>
                     <Form.Group>
+                    <Form.Label>Casting Director</Form.Label>
+                      {studio && studio.casting_directors.length === 0 && (
+                        <p className="px-2">hello@heyjoe.io</p>
+                      )}
+                      {studio && studio.casting_directors.map((it, i)=>(
+                        <p key={i}>{it.email}</p>
+                      ))}
+                    </Form.Group>
+                    <Form.Group>
                       <Form.Label>Session Manager</Form.Label>
                       {emailSessionParams && emailSessionParams.managers.length === 0 && (
                         <p className="px-2">-</p>
@@ -172,20 +183,11 @@ const SendClientEmailModal = ({
                 <Col md={6}>
                   <fieldset className="border rounded-lg px-3 mb-2">
                     <legend className="d-inline-block w-auto px-2">From</legend>
-                    <Form.Group>
-                      {studio && studio.casting_directors.length === 0 && (
-                        <p className="px-2">hello@heyjoe.io</p>
-                      )}
-                      {studio && studio.casting_directors.map((it, i)=>(
-                        <p key={i}>{it.email}</p>
-                      ))}
-                    </Form.Group>
+                    <p className="px-2">hello@heyjoe.io</p>
                   </fieldset>
                   <fieldset className="border rounded-lg px-3">
                     <legend className="d-inline-block w-auto px-2">CC</legend>
-                    <p>hello@heyjoe.io</p>
                     <Form.Group>
-                      <Form.Label>Additional Emails</Form.Label>
                       <AsyncTypeahead
                         id="cc-additional-emails"
                         className="mb-3"
@@ -212,7 +214,7 @@ const SendClientEmailModal = ({
                   onInit={(evt, editor) => editorRef.current = editor}
                   initialValue={initialEmail}
                   init={{
-                    height: '250px',
+                    height: '300px',
                     menubar: false,
                     plugins: [
                       'advlist autolink lists link image charmap print preview anchor',
