@@ -5,7 +5,11 @@ import React, {
 
 import {
   Form,
-  Button
+  Button,
+  Container,
+  Row,
+  Col,
+  Table
 } from 'react-bootstrap'
 import { FaCheck } from 'react-icons/fa';
 
@@ -14,88 +18,86 @@ import {
   updateAutoScalingGroup
 } from '../../../services'
 
-const AsgTr = ({asg}) => {
-  const [desiredCapacity, setDesiredCapacity] = useState(asg.DesiredCapacity)
-  const [previousCapacity, setPreviousCapacity] = useState(asg.DesiredCapacity)
+import {toggleLoadingState} from '../../../utils'
 
-  const onUpdateClick = () => {
+const ServiceTab = () => {
+  const [autoScalingGroups, setAutoScalingGroups] = useState(null)
+  useEffect(() => {
+    getServices().then(res=>{
+      setAutoScalingGroups(res.AutoScalingGroups)
+    })
+  }, [])
+  console.log(autoScalingGroups)
+  const onDcChanged = (i, value) =>{
+    const temp = [...autoScalingGroups]
+    temp[i].DesiredCapacity = value
+    setAutoScalingGroups(temp)
+  }
+  const onUpdateBtnClick = () => {
+    toggleLoadingState(true)
     updateAutoScalingGroup({
-      asg: [{
-        'AutoScalingGroupName': asg.AutoScalingGroupName,
-        'DesiredCapacity': desiredCapacity
-    }]
+      asg: autoScalingGroups
     }).then(res=>{
       console.log(res)
-      setPreviousCapacity(desiredCapacity)
+      toggleLoadingState(false)
     }).catch(err=>{
       console.log(err)
+      toggleLoadingState(false)
     })
   }
   return (
-    <tr>
-      <td className="p-2">
-        {asg.AutoScalingGroupName}
-      </td>
-      <td className="p-2">
-        <Form.Control
-          value={desiredCapacity}
-          type="number"
-          onChange={(e)=>{
-            setDesiredCapacity(e.target.value)
-          }}
-        />
-      </td>
-      <td className="p-2">
-        {asg.Instances.length}
-      </td>
-      <td>
-        {previousCapacity != desiredCapacity && (
-          <Button onClick={onUpdateClick}>
-            <FaCheck className="mr-2" />
-            Update
-          </Button>
-        )}
-      </td>
-    </tr>
-  )
-}
-const ServiceTab = () => {
-  const [services, setServices] = useState(null)
-
-  useEffect(() => {
-    getServices().then(res=>{
-      setServices(res)
-    })
-  }, [])
-  
-  return (
-    <div>
-      <div className="d-flex align-items-center justify-content-between">
-        <h2>Auto Scaling Groups</h2>
-      </div>
-      {!!services ? (
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Desired Capacity</th>
-              <th># of Instances</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {services.AutoScalingGroups.map((it, i) => (
-              <AsgTr
-                key={i}
-                asg = {it}
-              />
-            ))}
-          </tbody>
-        </table>
+    <Container fluid>
+      <h2>Auto Scaling Groups</h2>
+      {!!autoScalingGroups ? (
+        <>
+          <Row>
+            <Col lg={6}>
+              <Table borderless>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th className="p-2">Desired Capacity</th>
+                    <th className="p-2"># of Instances</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {autoScalingGroups.map((asg, i) => (
+                    <tr key={i}>
+                      <td className="p-2">
+                        {asg.AutoScalingGroupName}
+                      </td>
+                      <td className="p-2">
+                        <Form.Control 
+                          type="number"
+                          value={asg.DesiredCapacity}
+                          onChange={(e)=>{onDcChanged(i, e.target.value)}}
+                        />
+                      </td>
+                      <td className="p-2">
+                        {asg.Instances.length}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+              
+            </Col>
+          </Row>
+          <div className="d-flex justify-content-center">
+            <Button
+              variant="danger"
+              onClick = {onUpdateBtnClick}
+            >
+              <FaCheck className="mr-2" />
+              Update
+            </Button>
+        </div>
+        </>
       ) : (
         <h4 className="text-center py-5">Loading...</h4>
       )}
-    </div>
+
+    </Container>
   )
 }
 
