@@ -22,27 +22,30 @@ import {toggleLoadingState} from '../../../utils'
 
 const ServiceTab = () => {
   const [autoScalingGroups, setAutoScalingGroups] = useState(null)
+  const [isDirty, setIsDirty] = useState(false)
+
   useEffect(() => {
     getServices().then(res=>{
       setAutoScalingGroups(res.AutoScalingGroups)
     })
   }, [])
-  console.log(autoScalingGroups)
+
   const onDcChanged = (i, value) =>{
     const temp = [...autoScalingGroups]
     temp[i].DesiredCapacity = value
     setAutoScalingGroups(temp)
+    setIsDirty(true)
   }
   const onUpdateBtnClick = () => {
     toggleLoadingState(true)
     updateAutoScalingGroup({
       asg: autoScalingGroups
     }).then(res=>{
-      console.log(res)
       toggleLoadingState(false)
+      setIsDirty(false)
     }).catch(err=>{
-      console.log(err)
       toggleLoadingState(false)
+      alert('Request was not handled successfully')
     })
   }
   return (
@@ -86,6 +89,7 @@ const ServiceTab = () => {
           <div className="d-flex justify-content-center">
             <Button
               variant="danger"
+              disabled={!isDirty}
               onClick = {onUpdateBtnClick}
             >
               <FaCheck className="mr-2" />
