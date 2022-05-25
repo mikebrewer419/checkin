@@ -94,7 +94,6 @@ const SendClientEmailModal = ({
       <p className="mb-0">TIME: <strong>${ formatHour(emailSessionParams.start_time) || 'TBD' }</strong></p>
       <p className="mb-0">SESSION RUNNER: <strong>${ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</strong></p>
       <p className="mb-0">LOBBY: <strong>${ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</strong></p>
-      <p className="mb-0">SUPPORT: <strong>${ emailSessionParams.support ? emailSessionParams.support.email : 'TBD' }</strong></p>
       <br />
       <p>
         Here is the <b>${studio.name}</b> Session Link:<br/>
