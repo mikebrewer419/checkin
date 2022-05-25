@@ -78,7 +78,6 @@ const UsersTab = () => {
     setSelectedUser(null)
   }
   
-
   const submitUser = async (data) => {
     if (selectedUser._id) {
       await updateUserFields(selectedUser._id, data)
@@ -94,10 +93,7 @@ const UsersTab = () => {
     await setUserToDelete(null)
     load()
   }
-
-  const closeUserDelete = () => {
-    setUserToDelete(null)
-  }
+  
   return (
     <div>
       <div className="d-flex align-items-center justify-content-between mb-3">
@@ -227,7 +223,11 @@ const UsersTab = () => {
             }}>
               {new Array(pageCount).fill().map((_, idx) => {
                 return (
-                  <option value={idx} selected={idx === page}>
+                  <option
+                    key={idx}
+                    value={idx}
+                    selected={idx === page}
+                  >
                     { idx + 1}
                   </option>
                 )
