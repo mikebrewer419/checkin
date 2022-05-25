@@ -167,7 +167,7 @@ function App() {
             {!(user.user_type === USER_TYPES.CLIENT) &&
               <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
             }
-            {(user.user_type === USER_TYPES.SESSION_MANAGER) && (
+            {([USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type)) && (
               <Route path="/freelancer-profile" component={props => <FreelancerProfilePage {...props} />} />
             )}
             <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
