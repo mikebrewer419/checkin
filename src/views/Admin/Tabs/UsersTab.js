@@ -78,6 +78,7 @@ const UsersTab = () => {
     setSelectedUser(null)
   }
   
+
   const submitUser = async (data) => {
     if (selectedUser._id) {
       await updateUserFields(selectedUser._id, data)
@@ -93,7 +94,10 @@ const UsersTab = () => {
     await setUserToDelete(null)
     load()
   }
-  
+
+  const closeUserDelete = () => {
+    setUserToDelete(null)
+  }
   return (
     <div>
       <div className="d-flex align-items-center justify-content-between mb-3">
@@ -259,6 +263,29 @@ const UsersTab = () => {
             onSubmit={submitUser}
           />
         </Modal.Body>
+      </Modal>
+      <Modal
+        show={!!userToDelete}
+        onHide = {closeUserDelete}
+      >
+        <Modal.Header closeButton>
+          <h5 className="mb-0">
+            Do you really want to delete {userToDelete && userToDelete.email}?
+          </h5>
+        </Modal.Header>
+        <Modal.Body>
+          <h4 className="text-danger">This action cannot be reversed!</h4>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            className="btn btn-danger"
+            onClick={userDeleteConfirm}
+          >Yes.</button>
+          <button
+            className="btn btn-link"
+            onClick={closeUserDelete}
+          >No</button>
+        </Modal.Footer>
       </Modal>
     </div>
   )
