@@ -2,6 +2,7 @@ import React, {
   useState,
   useEffect,
 } from 'react'
+import clsx from 'classnames'
 
 import {
   Form,
@@ -13,6 +14,7 @@ import {
   Modal
 } from 'react-bootstrap'
 import { FaCheck } from 'react-icons/fa';
+import { MdRefresh } from 'react-icons/md';
 
 import {
   getServices,
@@ -25,8 +27,10 @@ const ServiceTab = () => {
   const [autoScalingGroups, setAutoScalingGroups] = useState(null)
   const [asgChangeState, setAsgChangeState] = useState(null)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const loadServices = () => {
+    setLoading(true)
     getServices().then(res=>{
       setAutoScalingGroups(res.AutoScalingGroups)
       const data = res.AutoScalingGroups.map(it=>{
@@ -37,6 +41,7 @@ const ServiceTab = () => {
         }
       })
       setAsgChangeState(data)
+      setLoading(false)
     })
   }
   useEffect(() => {
@@ -73,7 +78,14 @@ const ServiceTab = () => {
   }
   return (
     <Container fluid>
-      <h2>Auto Scaling Groups</h2>
+      <div className='d-flex'>
+        <h2>Auto Scaling Groups</h2>
+        <label title='Refresh' className='ml-3 mt-2 cursor-pointer h5' onClick={loadServices}>
+          <MdRefresh className={clsx({
+            'spinning': loading
+          })} />
+        </label>
+      </div>
       {!!autoScalingGroups && !!asgChangeState ? (
         <>
           <Row>
