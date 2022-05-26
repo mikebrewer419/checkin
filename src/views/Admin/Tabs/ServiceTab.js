@@ -109,10 +109,14 @@ const ServiceTab = () => {
                           type="number"
                           value={asgChangeState[i].current}
                           onChange={(e)=>{onDcChanged(i, e.target.value)}}
+                          className="form-control-sm"
                         />
                       </td>
                       <td className="p-2">
-                        {asg.Instances.length}
+                        <span className='mr-3'>{asg.Instances.length}</span>
+                        {asg.Instances.map(inst => {
+                          return `${inst.LifecycleState}`
+                        }).join(', ')}
                       </td>
                     </tr>
                   ))}
