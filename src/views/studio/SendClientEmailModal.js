@@ -68,7 +68,7 @@ const SendClientEmailModal = ({
     const data = {
       from: 'hello@heyjoe.io',
       to: [],
-      cc: [],
+      cc: ['hello@heyjoe.io'],
       content: editorRef.current.getContent(),
       title: `${studio && studio.name} Session Link ${moment(new Date(emailSessionParams.start_time)).format('MM/DD/YYYY')}`
     }
