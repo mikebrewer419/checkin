@@ -113,7 +113,7 @@ const ServiceTab = () => {
                         />
                       </td>
                       <td className="p-2">
-                        <span className='mr-3'>{asg.Instances.length}</span>
+                        <span className='mr-3 h5'>{asg.Instances.length}</span>
                         {asg.Instances.map(inst => {
                           return `${inst.LifecycleState}`
                         }).join(', ')}
