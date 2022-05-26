@@ -96,7 +96,6 @@ const SendClientEmailModal = ({
       <p className="mb-0"><strong>TIME:</strong> ${ formatHour(emailSessionParams.start_time) || 'TBD' }</p>
       <p className="mb-0"><strong>SESSION RUNNER:</strong> ${ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</p>
       <p className="mb-0"><strong>LOBBY:</strong> ${ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</p>
-      <br />
       <p>
         Here is the <b>${studio.name}</b> Session Link:<br/>
         <a href=${emailSessionLink}>${emailSessionLink}</a>
@@ -136,34 +135,34 @@ const SendClientEmailModal = ({
                 <Col md={6}>
                   <fieldset className="border rounded-lg px-3">
                     <legend className="d-inline-block w-auto px-2">To</legend>
-                    <Form.Group>
-                    <Form.Label>Casting Director</Form.Label>
+                    <Form.Group className='d-flex mb-0 justify-content-between'>
+                      <Form.Label className='mb-0 mr-3'>Casting Director</Form.Label>
                       {studio && studio.casting_directors.length === 0 && (
-                        <p className="px-2">hello@heyjoe.io</p>
+                        <p className="pr-2 mb-1">hello@heyjoe.io</p>
                       )}
                       {studio && studio.casting_directors.map((it, i)=>(
-                        <p key={i}>{it.email}</p>
+                        <p className='mb-1 mr-2' key={i}>{it.email}</p>
                       ))}
                     </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Session Manager</Form.Label>
+                    <Form.Group className='d-flex mb-0 justify-content-between'>
+                      <Form.Label className='mb-0 mr-3'>Session Manager</Form.Label>
                       {emailSessionParams && emailSessionParams.managers.length === 0 && (
-                        <p className="px-2">-</p>
+                        <p className="pr-2 mb-1">-</p>
                       )}
                       {emailSessionParams && emailSessionParams.managers.map((it,i)=>(
-                        <p key={i}>{it.email}</p>
+                        <p className='mb-1 mr-2' key={i}>{it.email}</p>
                       ))}
                     </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Lobby Manager</Form.Label>
+                    <Form.Group className='d-flex mb-0 justify-content-between'>
+                      <Form.Label className='mb-0 mr-3'>Lobby Manager</Form.Label>
                       {emailSessionParams && emailSessionParams.lobbyManager.length === 0 && (
-                        <p className="px-2">-</p>
+                        <p className="pr-2 mb-1">-</p>
                       )}
                       {emailSessionParams && emailSessionParams.lobbyManager.map((it, i)=>(
-                        <p key={i}>{it.email}</p>
+                        <p className='mb-1 mr-2' key={i}>{it.email}</p>
                       ))}
                     </Form.Group>
-                    <Form.Group>
+                    <Form.Group className='mt-2'>
                       <Form.Label>Additional Emails</Form.Label>
                       <AsyncTypeahead
                         id="to-additional-emails"
