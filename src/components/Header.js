@@ -68,7 +68,7 @@ const Header = (props) => {
       <h3 id="header-title">
       </h3>
       <button
-        className="ml-auto h5 mr-0 btn btn-danger mt-2"
+        className="ml-auto h5 mr-0 btn btn-danger mt-2 header-support-btn"
         title='Ask a question to support'
         onClick={() => {
           injectIntercom(user)

@@ -180,7 +180,7 @@ const SizeCards = ({
       })
       setSessionDateData(dateData)
       if (dateData && (dateData.size_card_pdf || dateData.schedule_pdf)) {
-        const headerUserMenu = document.querySelector('.header-user-menu')
+        const headerUserMenu = document.querySelector('.header-support-btn')
         document.querySelector('.session-files-div').style.right = `calc(100vw - ${headerUserMenu.offsetLeft}px)`
       }
     }
