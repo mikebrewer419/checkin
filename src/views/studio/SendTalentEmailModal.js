@@ -119,12 +119,12 @@ const SendClientEmailModal = ({
       </Modal.Header>
         <Modal.Body>
           <div className="d-flex justify-content-between align-items-end mb-2">
-            <h5 className="mb-0">Recipients</h5>
+            <label className="mb-0">Recipients</label>
             <div className="position-relative">
               <Button
                 variant="danger"
                 block
-                className="mt-2"
+                size='sm'
               >
                 Load from CSV
               </Button>
@@ -169,7 +169,7 @@ const SendClientEmailModal = ({
               />
             </form>
           </fieldset>
-          <h5 className="mb-0">Email Content</h5>
+          <label>Email</label>
           <Editor
             apiKey={TINYMCE_KEY}
             onInit={(evt, editor) => editorRef.current = editor}
