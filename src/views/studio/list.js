@@ -52,6 +52,7 @@ import { humanFileSize }  from '../../utils'
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Pagination from '../../components/Pagination'
 import SendClientEmailModal from './SendClientEmailModal'
+import SendTalentEmailModal from './SendTalentEmailModal'
 
 const host = window.location.origin
 
@@ -373,7 +374,7 @@ const StudioList = () => {
         </div>
       </div>
       <div className="list-group mb-4">
-        {(studios || []).map(studio => (
+        {studios.map(studio => (
           <div className="col px-5 py-2 project-item" key={studio._id}>
             <div className="d-flex align-items-lg-baseline">
               <h4 className="mr-3">{studio.name}</h4>
@@ -506,7 +507,7 @@ const StudioList = () => {
                       <FaTrash className="mr-4" onClick={() => handleSessionDelete(session, studio._id)}/>
                     )}
                     <FaCopy
-                      className="mr-2" title="Copy Talent Email"
+                      className="mr-2" title="Send Talent Email"
                       onClick={() => {
                         setEmailCheckinLink(`${host}/onboard/${studio.uri}/${session._id}`)
                       }}
@@ -704,55 +705,15 @@ const StudioList = () => {
           </button>
         </Modal.Footer>
       </Modal>
-      <Modal
-        size="xl"
+      <SendTalentEmailModal
         show={!!emailCheckinLink}
         onHide={() => {
           setEmailCheckinLink(null)
         }}
-      >
-        <Modal.Header closeButton className="align-items-baseline">
-          <h4 className="mb-0 mr-3">
-            Copy Talent Email
-          </h4>
-        </Modal.Header>
-        <Modal.Body className="bg-lightgray">
-          <div id="talent-email-text">
-            <p>You can audition from your phone or computer. Please choose the device that you believe has the best camera and internet connection (a newer smartphone usually works best).</p>
-            <p><strong>AUDITION FROM PHONE:</strong><br />
-            1. Download and open the Hey Joe app<br />
-            iOS: https://apple.co/3grIxwR<br />
-            Android: https://bit.ly/2MLDLwL<br />
-            2. 15 minutes before your call time, click the link below to check in to the session. Your device will ask if you want to open the link in the Hey Joe app, please click "OK" or "Open":<br />
-            <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a>
-            <br />
-            3. Once you are checked in, please click the "Join Virtual Lobby" button. The casting team will give you instructions for your audition in the virtual lobby<br />
-            <strong>AUDITION FROM COMPUTER:</strong><br />
-            1. Set up your computer and open Google Chrome (you must use Chrome for best results)<br />
-            2. 15 minutes before your call time, click the link below to check in to the session:<br />
-            <a rel="nofollow noreferrer noopener" target="_blank" href={emailCheckinLink}>{emailCheckinLink}</a>
-            <br />
-            3. Once you are checked in, please click the "Join Virtual Lobby" button. The casting team will give you instructions for your audition in the virtual lobby<br />
-            ***you can watch a set up best practices video here -<a href="https://heyjoe.io/actor-set-up/" target="_blank">https://heyjoe.io/actor-set-up/</a>
-            <br />
-            ***you can find troubleshooting tips here -<a href="https://heyjoe.io/troubleshooting/" target="_blank">https://heyjoe.io/troubleshooting/</a>
-            <br />
-            </p>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            disabled={selectedPostingPage && !selectedPostingPage.name}
-            className="btn btn-primary"
-            onClick={() => {
-              handleCopyText('#talent-email-text')
-              setEmailCheckinLink(null)
-            }}
-          >
-            Copy
-          </button>
-        </Modal.Footer>
-      </Modal>
+        emailCheckinLink={emailCheckinLink}
+        studio = {emailProject}
+      />
+     
       <SendClientEmailModal
         show={!!emailProject}
         onHide={() => {
