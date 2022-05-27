@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { withRouter, useHistory } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Dropdown, Navbar, Image, Modal } from 'react-bootstrap'
-import { FaInfoCircle } from 'react-icons/fa';
+import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import { getUser, getUserById, static_root } from '../services'
 import UserForm from './userForm'
 import { USER_TYPES, VERSION } from '../constants'
+import { BiSupport } from 'react-icons/bi'
+import { injectIntercom } from '../utils'
 import './Header.scss'
 
 const excludePaths = [
@@ -54,7 +56,7 @@ const Header = (props) => {
   const logoTarget = user.user_type === USER_TYPES.CLIENT ? '' : '_blank'
 
   return (
-    <Navbar className="py-4 px-5 global-header no-print" bg="danger">
+    <Navbar className="py-4 pl-5 global-header no-print" bg="danger">
       <Navbar.Brand href="#home">
         <Link to={logoLink} target={logoTarget} id="header-logo">
           {user.logo
@@ -65,10 +67,21 @@ const Header = (props) => {
       </Navbar.Brand>
       <h3 id="header-title">
       </h3>
-      <Dropdown className="ml-auto header-user-menu">
+      <button
+        className="ml-auto h5 mr-0 btn btn-danger mt-2"
+        title='Ask a question to support'
+        onClick={() => {
+          injectIntercom(user)
+        }}
+      >
+        <BiSupport size={30} />
+      </button>
+      <Dropdown className="ml-0 header-user-menu" alignRight>
         <Dropdown.Toggle variant="danger" id="dropdown-basic">
           {/* <Image src="https://loremflickr.com/50/50" roundedCircle /> */}
-          <span className="ml-2 h5">{user.email}</span>
+          <span className="ml-2 h5">
+            <FaUser />
+          </span>
           {needCredentials &&
           <FaInfoCircle
             color="white"
@@ -79,7 +92,10 @@ const Header = (props) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          <Dropdown.Item className="text-secondary">{user.user_type}</Dropdown.Item>
+          <Dropdown.Item className="text-secondary">
+            {user.email}<br/>
+            {user.user_type}
+          </Dropdown.Item>
           {[USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type) && (
             <Dropdown.Item onClick={() => {
               history.push('/freelancer-profile')
@@ -102,7 +118,12 @@ const Header = (props) => {
           <Dropdown.Item onClick={() => {
             window.localStorage.removeItem('token')
             window.location.reload(true)
-          }}>Logout</Dropdown.Item>
+          }} className="d-flex">
+            Logout
+            <small className='ml-auto'>
+              { VERSION }
+            </small>
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
 
@@ -122,9 +143,6 @@ const Header = (props) => {
           />
         </Modal.Body>
       </Modal>
-      <label className='version-display'>
-        { VERSION }
-      </label>
     </Navbar>
   )
 }

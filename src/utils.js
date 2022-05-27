@@ -89,3 +89,17 @@ export const toggleLoadingState = (state) => {
     document.querySelector('.loading').classList.remove('show')
   }
 }
+
+export const injectIntercom = (user) => {
+  window.intercomSettings = {
+    api_base: "https://api-iam.intercom.io",
+    app_id: "i0bdpyuo",
+    name: user.first_name ? `${user.first_name} ${user.last_name || ''}` : user.email,
+    email: user.email,
+    hide_default_launcher: true
+  };
+  if (window.Intercom) {
+    window.Intercom('update')
+    window.Intercom('show')
+  }
+}
