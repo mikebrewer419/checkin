@@ -86,7 +86,6 @@ const SendClientEmailModal = ({
         onHide()
       })
     })
-    
   }
   if (!show) return null
 

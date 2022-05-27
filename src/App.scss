@@ -218,3 +218,41 @@ body {
   height: calc(100vh - 60px);
   overflow: auto;
 }
+
+.send-email-container {
+  overflow: hidden;
+  .tox-tinymce{
+    border: none;
+    border-top: 1px solid #dee2e6 !important;
+  }
+}
+.text-10{
+  font-size: 1rem;
+}
+.top-0 {
+  top: 0px;
+}
+.transparent{
+  opacity: 0;
+}
+
+.send-talent-email-modal {
+  .recipient-list {
+    height: 150px;
+  }
+  .input-cursor{
+    border: none!important;
+    outline: none!important;
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover, 
+    &:-webkit-autofill:focus, 
+    &:-webkit-autofill:active  {
+      background-color: white!important;
+      box-shadow: 0 0 0 30px white inset !important;
+    }
+  }
+    
+}
+
+/* Change the white to any color ;) */
+  
