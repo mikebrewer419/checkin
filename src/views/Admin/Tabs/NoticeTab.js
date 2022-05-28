@@ -80,6 +80,7 @@ const NoticeTab = () => {
         </Col>
         <Col md={10}>
           <Editor
+            key={showNotification}
             apiKey={TINYMCE_KEY}
             onInit={(evt, editor) => editorRef.current = editor}
             init={{
