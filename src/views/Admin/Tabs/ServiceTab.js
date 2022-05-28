@@ -21,10 +21,11 @@ import {
   updateAutoScalingGroup
 } from '../../../services'
 
-import {toggleLoadingState} from '../../../utils'
+import {toggleLoadingState, getUserText} from '../../../utils'
 
 const ServiceTab = () => {
   const [autoScalingGroups, setAutoScalingGroups] = useState(null)
+  const [lastUpdateInfo, setlastUpdateInfo] = useState({})
   const [asgChangeState, setAsgChangeState] = useState(null)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -41,6 +42,10 @@ const ServiceTab = () => {
         }
       })
       setAsgChangeState(data)
+      setlastUpdateInfo({
+        by: getUserText(res.asg_updated_by),
+        at: res.asg_updated_at,
+      })
       setLoading(false)
     })
   }
@@ -125,7 +130,10 @@ const ServiceTab = () => {
               
             </Col>
           </Row>
-          <div className="d-flex justify-content-center">
+          <div className="d-flex justify-content-between w-50">
+            <div>
+              Updated by <strong>{lastUpdateInfo.by}</strong> at <strong>{lastUpdateInfo.at}</strong>
+            </div>
             <Button
               variant="danger"
               disabled={!!asgChangeState && asgChangeState.findIndex(it=>it.previous != it.current) == -1}

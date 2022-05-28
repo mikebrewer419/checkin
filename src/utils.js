@@ -1,16 +1,18 @@
-import moment from 'moment'
+import moment from 'moment-timezone'
 
-export const formatTime = (time, format = 'M/D/YYYY h:mm: a') => {
-  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+export const browserTimeZone = moment.tz.guess()
+
+export const formatTime = (time, format = 'M/D/YYYY h:mm: a', timezone = browserTimeZone) => {
+  const date = moment.tz(new Date(time), timezone)
   if (date.isValid())
     return date.format(format)
   return ''
 }
 
-export const formatHour = (time) => {
-  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
+export const formatHour = (time, format = 'H:mm: a', timezone = browserTimeZone) => {
+  const date = moment.tz(new Date(time), timezone)
   if (date.isValid())
-    return date.format('h:mm: a')
+    return date.format(format)
   return ''
 }
 
@@ -102,4 +104,12 @@ export const injectIntercom = (user) => {
     window.Intercom('update')
     window.Intercom('show')
   }
+}
+
+export const getUserText = (user) => {
+  if (!user) return ''
+  if (user.first_name) {
+    return `${user.first_name} ${user.last_name} (${user.email}) ${user.user_type}`
+  }
+  return `${user.email} ${user.user_type}`
 }

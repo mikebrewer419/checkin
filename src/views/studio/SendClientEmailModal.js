@@ -12,7 +12,7 @@ import {
   Button
 } from 'react-bootstrap'
 
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { Editor } from '@tinymce/tinymce-react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 
@@ -25,21 +25,7 @@ import {
   USER_TYPES,
   TINYMCE_KEY
 } from '../../constants'
-import {} from '../../utils'
-
-const formatDate = (time) => {
-  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
-  if (date.isValid())
-    return date.format('M/D/YYYY')
-  return ''
-}
-
-const formatHour = (time) => {
-  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
-  if (date.isValid())
-    return date.format('H:mm: a')
-  return ''
-}
+import { formatTime, formatHour } from '../../utils'
 
 const SendClientEmailModal = ({
   show,
@@ -91,8 +77,8 @@ const SendClientEmailModal = ({
 
   const initialEmail = `
     <div id="client-email-text">
-      <p className="mb-0"><strong>DATE:</strong> ${ formatDate(emailSessionParams.start_time) || 'TBD' }</p>
-      <p className="mb-0"><strong>TIME:</strong> ${ formatHour(emailSessionParams.start_time) || 'TBD' }</p>
+      <p className="mb-0"><strong>DATE:</strong> ${ formatTime(emailSessionParams.start_time, 'M/D/YYYY', 'America/Los_Angeles') || 'TBD' }</p>
+      <p className="mb-0"><strong>TIME:</strong> ${ formatHour(emailSessionParams.start_time, 'H:mm: a z', 'America/Los_Angeles') || 'TBD' }</p>
       <p className="mb-0"><strong>SESSION RUNNER:</strong> ${ emailSessionParams.managers.map(m => m.email).join(',') || 'TBD' }</p>
       <p className="mb-0"><strong>LOBBY:</strong> ${ emailSessionParams.lobbyManager.map(m => m.email).join(',') || 'TBD' }</p>
       <p>

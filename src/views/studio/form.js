@@ -74,7 +74,9 @@ const StudioForm = ({
       }
     })
     if(USER_TYPE.IS_SUPER_ADMIN()) {
-      object['casting_directors'] = selectedCastingDirector
+      if (selectedCastingDirector) {
+        object['casting_directors'] = selectedCastingDirector
+      }
     }
     object.project_type = object.creator ? PROJECT_TYPES.CREATOR: PROJECT_TYPES.DEFAULT
     const result = await createOrUpdateStudio(object)
