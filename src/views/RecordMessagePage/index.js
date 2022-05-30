@@ -11,7 +11,7 @@ import {
 } from '../../services'
 import { Modal, Button } from 'react-bootstrap'
 import { WS_HOST } from '../../constants'
-import { mobileChromeCheck, mobileSafariCheck, copyUrl } from '../../utils'
+import { mobileChromeCheck, mobileSafariCheck, copyUrl, injectIntercom } from '../../utils'
 import './style.scss'
 import { NotificationComponent } from '../../App'
 import MeetFrame from '../HomePage/MeetFrame'
@@ -56,6 +56,8 @@ const RecordMessagePage = ({ match }) => {
       onboard_url: onboardUrl
     })
     setOpenAppUrl(`org.hey.meet://#audition_data=${encodeURIComponent(auditionData)}`)
+
+    injectIntercom(newRecord, false)
 
     const initWS = () => {
       console.log('WS connecting')

@@ -15,7 +15,7 @@ import {
   getUserById,
   getUser
 } from '../../services'
-import { dataURLtoFile, mobileSafariCheck, mobileChromeCheck, copyUrl } from '../../utils'
+import { dataURLtoFile, mobileSafariCheck, mobileChromeCheck, copyUrl, injectIntercom } from '../../utils'
 import { RoleEditor } from '../CheckinList'
 import { NotificationComponent } from '../../App'
 import { USER_TYPES } from '../../constants'
@@ -73,6 +73,7 @@ const Onboard = ({ history }) => {
     if (u) {
       getUserById(u.id).then(data => {
         if (data.user_type === USER_TYPES.TALENT) {
+          injectIntercom(data, false)
           setUser(data)
           setFirstName(data.first_name)
           setLastName(data.last_name)
@@ -82,6 +83,8 @@ const Onboard = ({ history }) => {
           setOptIn(data.opt_in)
         }
       })
+    } else {
+      injectIntercom(null, false)
     }
   }, [])
 

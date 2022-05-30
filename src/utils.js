@@ -92,16 +92,22 @@ export const toggleLoadingState = (state) => {
   }
 }
 
-export const injectIntercom = (user) => {
+export const injectIntercom = (user, hideLauncher = true) => {
+  let params = {}
+  if (user) {
+    params = {
+      name: user.first_name ? `${user.first_name} ${user.last_name || ''}` : user.email,
+      email: user.email,
+    }
+  }
   window.intercomSettings = {
     api_base: "https://api-iam.intercom.io",
     app_id: "i0bdpyuo",
-    name: user.first_name ? `${user.first_name} ${user.last_name || ''}` : user.email,
-    email: user.email,
-    hide_default_launcher: true
+    hide_default_launcher: hideLauncher,
+    ...params
   };
-  if (window.Intercom) {
-    window.Intercom('update')
+  window.Intercom('update')
+  if (window.Intercom && hideLauncher) {
     window.Intercom('show')
   }
 }
