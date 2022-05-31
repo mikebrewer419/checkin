@@ -25,7 +25,7 @@ import TalentPage from './views/TalentPage'
 import Header from './components/Header'
 import { USER_TYPES, VERSION } from './constants'
 import { TitleContext } from './Context';
-
+import {ShowLoadingContext} from './Context'
 import './App.scss'
 import '../node_modules/react-big-calendar/lib/css/react-big-calendar.css'
 
@@ -92,6 +92,7 @@ function App() {
   const [email, setEmail] = useState({})
   const [refreshKey, setRefreshKey] = useState(0)
   const [title, setTitle] = useState('')
+  const [showLoadingCouner, setShowLoadingCounter] = useState(0)
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -135,57 +136,74 @@ function App() {
     })
   }, [])
 
+  useEffect(() => {
+    if (showLoadingCouner > 0) {
+      document.querySelector('.loading').classList.add('show')
+    } else {
+      document.querySelector('.loading').classList.remove('show')
+    }
+  }, [showLoadingCouner])
+  
   const recaptchaKey = process.env.REACT_APP_RECAPTCHA_KEY
   const user = getUser() || {}
 
   const HP = user.user_type === USER_TYPES.CLIENT ? ClientCheckinPage : CheckinPage
+  const toggleLoadingState = (state) => {
+    if (state) {
+      setShowLoadingCounter(showLoadingCouner + 1)
+    } else {
+      setShowLoadingCounter(showLoadingCouner - 1)
+    }
+  }
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
-      <IconContext.Provider value={{ className: "global-class-name" }}>
-        <div className={`loading`}>
-          <button className='btn btn-secondary btn-sm' onClick={() => {
-            const event = new Event('soft-refresh')
-            document.body.dispatchEvent(event)
-            document.querySelector('.loading').classList.remove('show')
-          }}>
-            Processing... <small>(click to refresh)</small>
-          </button>
-        </div>
-        <TitleContext.Provider value={{title, setTitle}}>
-          <Router>
-            <Header logo={logo} />
-            <Switch>
-              <Route path="/login" component={(props) => <Login {...props} />} exact />
-              <Route path="/reset-password-request" component={(props) => <ResetPasswordRequest {...props} />} exact />
-              <Route path="/reset-password" component={(props) => <ResetPassword {...props} />} exact />
-              <Route path="/register" component={(props) => <Register {...props} />} exact />
-              <Route path="/client/register" component={(props) => <ClientRegister {...props} />} exact />
-              <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
-              {user.user_type === USER_TYPES.SUPER_ADMIN &&
-                <Route path="/heyjoe-admin" component={AdminView} />
-              }
-              <Route path="/message/:record_id" component={RecordMessagePage} />
-              <Route path="/studio/:uri/:session_id" component={HP} />
-              <Route path="/onboard/:uri/:session_id" component={Onboard} />
-              {!(user.user_type === USER_TYPES.CLIENT) &&
-                <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
-              }
-              {([USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type)) && (
-                <Route path="/freelancer-profile" component={props => <FreelancerProfilePage {...props} />} />
-              )}
-              <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
-              <Route path="/" component={HomeBomponent} />
-            </Switch>
-          </Router>
-        </TitleContext.Provider>
-        { user && user.user_type !== USER_TYPES.CLIENT && (
-          <NotificationComponent
-            notificationField="notification"
-            notificationUpdateAtField="notification_updated_at"
-          />
-        )}
-      </IconContext.Provider>
+      <ShowLoadingContext.Provider value={toggleLoadingState}>
+        <IconContext.Provider value={{ className: "global-class-name" }}>
+          <div className={`loading`}>
+            <button className='btn btn-secondary btn-sm' onClick={() => {
+              const event = new Event('soft-refresh')
+              document.body.dispatchEvent(event)
+              document.querySelector('.loading').classList.remove('show')
+            }}>
+              Processing... <small>(click to refresh)</small>
+            </button>
+          </div>
+          <TitleContext.Provider value={{title, setTitle}}>
+            <Router>
+              <Header logo={logo} />
+              <Switch>
+                <Route path="/login" component={(props) => <Login {...props} />} exact />
+                <Route path="/reset-password-request" component={(props) => <ResetPasswordRequest {...props} />} exact />
+                <Route path="/reset-password" component={(props) => <ResetPassword {...props} />} exact />
+                <Route path="/register" component={(props) => <Register {...props} />} exact />
+                <Route path="/client/register" component={(props) => <ClientRegister {...props} />} exact />
+                <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
+                {user.user_type === USER_TYPES.SUPER_ADMIN &&
+                  <Route path="/heyjoe-admin" component={AdminView} />
+                }
+                <Route path="/message/:record_id" component={RecordMessagePage} />
+                <Route path="/studio/:uri/:session_id" component={HP} />
+                <Route path="/onboard/:uri/:session_id" component={Onboard} />
+                {!(user.user_type === USER_TYPES.CLIENT) &&
+                  <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
+                }
+                {([USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type)) && (
+                  <Route path="/freelancer-profile" component={props => <FreelancerProfilePage {...props} />} />
+                )}
+                <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
+                <Route path="/" component={HomeBomponent} />
+              </Switch>
+            </Router>
+          </TitleContext.Provider>
+          { user && user.user_type !== USER_TYPES.CLIENT && (
+            <NotificationComponent
+              notificationField="notification"
+              notificationUpdateAtField="notification_updated_at"
+            />
+          )}
+        </IconContext.Provider>
+      </ShowLoadingContext.Provider>
       <input type="text" style={{ display: 'none' }} id="urlInput" />
     </GoogleReCaptchaProvider>
   );

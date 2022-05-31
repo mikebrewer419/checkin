@@ -9,7 +9,15 @@ export const getStudioSessions = async (studio_id) => {
   })
   return await resp.json()
 }
-
+export const getAllSessions = async (studio_id) => {
+  const resp = await fetch(`${api_host}/sessions`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}
 export const getSessionsByStudios = async (studio_ids) => {
   const resp = await fetch(`${api_host}/sessions/by-studios`, {
     method: 'POST',

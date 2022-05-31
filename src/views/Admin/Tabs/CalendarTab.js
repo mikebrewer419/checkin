@@ -1,13 +1,23 @@
 import React, {
-  useState,
+  useContext,
   useEffect,
-  useReducer
+  useReducer,
+  useState,
 } from 'react'
 import {Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import { getGoogleCalendarEvents } from '../../../services'
-import { toggleLoadingState } from '../../../utils'
-
+import {
+  Modal,
+  Button,
+  Container,
+  Row,
+  Col
+} from 'react-bootstrap'
+import {
+  getGoogleCalendarEvents,
+  getAllSessions
+} from '../../../services'
+import {ShowLoadingContext} from '../../../Context'
 const initialState = [];
 
 function reducer(state, action) {
@@ -20,19 +30,59 @@ function reducer(state, action) {
 
 const CalendarTab = () => {
   const [events, dispatch] = useReducer(reducer, initialState)
-
+  const [selectedEvent, setSelectedEvent] = useState(null)
+  const toggleLoadingState = useContext(ShowLoadingContext)
+  
   const loadEvents = async (dateRange) => {
     const res = await getGoogleCalendarEvents(dateRange)
     if (Array.isArray(res)){
+      const events = []
       res.forEach(it => {
-        it.start = new Date(!!it.start.dateTime ? it.start.dateTime : it.start.date)
-        it.end = new Date(!!it.end.dateTime ? it.end.dateTime : it.end.date)
-        it.title = it.summary
+        events.push({
+          start: new Date(!!it.start.dateTime ? it.start.dateTime : it.start.date),
+          end: new Date(!!it.end.dateTime ? it.end.dateTime : it.end.date),
+          title: it.summary,
+          type: 'google-calendar-event',
+          id: 'google-calendar-event' + it.id,
+          meta: {
+            type: !!it.start.dateTime ? 'timed-event' : 'all-day-event',
+            htmlLink: it.htmlLink,
+            creator: it.creator.email,
+            organizer: it.organizer.email
+          }
+        })
+        
       })
-      dispatch({type: 'add', payload: res})
+      dispatch({type: 'add', payload: events})
     }
   }
-  
+  const loadSessions = async () => {
+    const res = await getAllSessions()
+    const eventsFromSessions = []
+    res.forEach(it=>{
+      it.dates.forEach(date => {
+        const start = new Date(date.start_time)
+        const end = new Date(date.start_time)
+        end.setMinutes(end.getMinutes() + 30)
+        eventsFromSessions.push({
+          id: `session-date-${date._id}`,
+          start,
+          end,
+          title: it.name,
+          type: 'session',
+          meta: {
+            studio: it.studio.name,
+            lobbyManager: it.lobbyManager,
+            manager: it.manager
+          }
+        })
+      })
+    })
+    dispatch({
+      type: 'add',
+      payload: eventsFromSessions
+    })
+  }
   const onDateRangeChange = async (range) => {
     let dateRange = null
     if (Array.isArray(range)) {
@@ -52,6 +102,12 @@ const CalendarTab = () => {
     await loadEvents(dateRange)
     toggleLoadingState(false)
   }
+
+  const localizer = momentLocalizer(moment)
+
+  const onSelectEvent = (e) => {
+    setSelectedEvent(e)
+  }
   useEffect(() => {
     const dateRange = {}
     let a = new Date
@@ -68,8 +124,13 @@ const CalendarTab = () => {
     loadEvents(dateRange).then((res) => {
       toggleLoadingState(false)
     })
+    toggleLoadingState(true)
+    loadSessions().then(res=>{
+      toggleLoadingState(false)  
+    })
+    
   }, [])
-  const localizer = momentLocalizer(moment)
+  
   return (
     <div className="admin-events-calendar-container">
       <Calendar
@@ -78,7 +139,105 @@ const CalendarTab = () => {
         startAccessor="start"
         endAccessor="end"
         onRangeChange={onDateRangeChange}
+        onSelectEvent={onSelectEvent}
       />
+      <Modal
+        show={!!selectedEvent}
+        onHide={()=>{setSelectedEvent(null)}}
+      >
+        {!!selectedEvent && (
+          <>
+            <Modal.Header closeButton>
+              <div>
+              <h4 className="my-0">{selectedEvent.title}</h4>
+              <p className="my-0">
+                {(()=>{
+                  if (selectedEvent.type === 'google-calendar-event') {
+                    return 'Event from google calendar'
+                  } else if (selectedEvent.type === 'session') {
+                    return 'Event from session'
+                  }
+                })()}
+              </p>
+              </div>
+            </Modal.Header>
+            <Modal.Body>
+              <Container
+                className="text-10"
+                fluid
+              >
+                <Row>
+                  <Col>
+                    <label>From</label>
+                    <p>{selectedEvent.start.toLocaleString()}</p>
+                  </Col>
+                  <Col>
+                    <label>To</label>
+                    <p>{selectedEvent.end.toLocaleString()}</p>
+                  </Col>
+                </Row>
+                {selectedEvent.type === 'google-calendar-event' && (
+                  <>
+                    <p>
+                      {selectedEvent.meta.type === 'all-day-event' ? 'All Day Event' : 'Timed Event' }
+                    </p>
+                    <p>
+                      Click&nbsp;
+                      <a
+                        className="break-word"
+                        href={selectedEvent.meta.htmlLink}
+                      >
+                        {selectedEvent.meta.htmlLink}
+                      </a>
+                      &nbsp;to see the event detail
+                    </p>
+                    <Row>
+                      <Col>
+                        <label>Creator</label>
+                        <p>{selectedEvent.meta.creator}</p>
+                      </Col>
+                      <Col>
+                        <label>Organizer</label>
+                        <p>{selectedEvent.meta.organizer}</p>
+                      </Col>
+                    </Row>
+                  </>
+                )}
+                {selectedEvent.type === 'session' && (
+                  <>
+                    <label>Studio</label>
+                    <p>{selectedEvent.meta.studio}</p>
+                    <Row>
+                      <Col>
+                        <label>Lobby Managers</label>
+                        {selectedEvent.meta.lobbyManager && selectedEvent.meta.lobbyManager.map(it=>(
+                          <p>{it.email}</p>
+                        ))}
+                      </Col>
+                      <Col>
+                        <label>Managers</label>
+                        {selectedEvent.meta.manager && selectedEvent.meta.manager.map(it=>(
+                          <p>{it.email}</p>
+                        ))}
+                      </Col>
+                    </Row>
+                  </>
+                )}
+              </Container>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={()=>{setSelectedEvent(null)}}
+                className="px-4"
+              >
+                OK
+              </Button>
+            </Modal.Footer>
+          </>
+        )}
+      </Modal>
     </div>
   )
 }
