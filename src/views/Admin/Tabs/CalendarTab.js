@@ -76,7 +76,8 @@ const CalendarTab = () => {
             lobbyManager: it.lobbyManager,
             manager: it.manager,
             startTimeType: date.start_time_type,
-            bookStatus: date.book_status
+            bookStatus: date.book_status,
+            htmlLink: `/studio/${it.studio._id}/${it._id}`
           }
         })
       })
@@ -242,6 +243,16 @@ const CalendarTab = () => {
                         <p className="text-muted">{selectedEvent.meta.bookStatus}</p>
                       </Col>
                     </Row>
+                    <p className="text-muted">
+                      Click&nbsp;
+                      <a
+                        className="break-word"
+                        href={selectedEvent.meta.htmlLink}
+                      >
+                        here
+                      </a>
+                      &nbsp;to see the event detail
+                    </p>
                   </>
                 )}
               </Container>
