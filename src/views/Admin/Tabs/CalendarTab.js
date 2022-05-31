@@ -58,6 +58,7 @@ const CalendarTab = () => {
   }
   const loadSessions = async () => {
     const res = await getAllSessions()
+    console.log(res)
     const eventsFromSessions = []
     res.forEach(it=>{
       it.dates.forEach(date => {
@@ -68,12 +69,14 @@ const CalendarTab = () => {
           id: `session-date-${date._id}`,
           start,
           end,
-          title: it.name,
+          title: `${it.studio.name} ${it.name} session ${!!it.start_time ? it.start_time : ''}`,
           type: 'session',
           meta: {
-            studio: it.studio.name,
+            studio: it.studio,
             lobbyManager: it.lobbyManager,
-            manager: it.manager
+            manager: it.manager,
+            startTimeType: date.start_time_type,
+            bookStatus: date.book_status
           }
         })
       })
@@ -168,20 +171,20 @@ const CalendarTab = () => {
               >
                 <Row>
                   <Col>
-                    <label>From</label>
-                    <p>{selectedEvent.start.toLocaleString()}</p>
+                    <label className="font-weight-bold">From</label>
+                    <p className="text-muted">{selectedEvent.start.toLocaleString()}</p>
                   </Col>
                   <Col>
-                    <label>To</label>
-                    <p>{selectedEvent.end.toLocaleString()}</p>
+                    <label className="font-weight-bold">To</label>
+                    <p className="text-muted">{selectedEvent.end.toLocaleString()}</p>
                   </Col>
                 </Row>
                 {selectedEvent.type === 'google-calendar-event' && (
                   <>
-                    <p>
+                    <p className="font-weight-bold">
                       {selectedEvent.meta.type === 'all-day-event' ? 'All Day Event' : 'Timed Event' }
                     </p>
-                    <p>
+                    <p className="text-muted">
                       Click&nbsp;
                       <a
                         className="break-word"
@@ -193,32 +196,50 @@ const CalendarTab = () => {
                     </p>
                     <Row>
                       <Col>
-                        <label>Creator</label>
-                        <p>{selectedEvent.meta.creator}</p>
+                        <label className="font-weight-bold">Creator</label>
+                        <p className="text-muted">{selectedEvent.meta.creator}</p>
                       </Col>
                       <Col>
-                        <label>Organizer</label>
-                        <p>{selectedEvent.meta.organizer}</p>
+                        <label className="font-weight-bold">Organizer</label>
+                        <p className="text-muted">{selectedEvent.meta.organizer}</p>
                       </Col>
                     </Row>
                   </>
                 )}
                 {selectedEvent.type === 'session' && (
                   <>
-                    <label>Studio</label>
-                    <p>{selectedEvent.meta.studio}</p>
+                    <label className="font-weight-bold">Studio</label>
+                    <p className="text-muted">{selectedEvent.meta.studio.name}</p>
                     <Row>
                       <Col>
-                        <label>Lobby Managers</label>
-                        {selectedEvent.meta.lobbyManager && selectedEvent.meta.lobbyManager.map(it=>(
-                          <p>{it.email}</p>
-                        ))}
+                        <label className="font-weight-bold">Lobby Managers</label>
+                        {selectedEvent.meta.lobbyManager && selectedEvent.meta.lobbyManager.length > 0
+                          ? selectedEvent.meta.lobbyManager.map(it=>(
+                            <p className="text-muted">{it.email}</p>
+                          )) : (
+                            <p className="text-muted">No entries found</p>
+                          )
+                        }
                       </Col>
                       <Col>
-                        <label>Managers</label>
-                        {selectedEvent.meta.manager && selectedEvent.meta.manager.map(it=>(
-                          <p>{it.email}</p>
-                        ))}
+                        <label className="font-weight-bold">Managers</label>
+                        {selectedEvent.meta.manager && selectedEvent.meta.manager.length > 0
+                          ? selectedEvent.meta.manager.map(it=>(
+                            <p className="text-muted">{it.email}</p>
+                          )): (
+                            <p className="text-muted">No entries found</p>
+                          )
+                        }
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <label className="font-weight-bold">Statt Time Type</label>
+                        <p className="text-muted">{selectedEvent.meta.startTimeType}</p>
+                      </Col>
+                      <Col>
+                        <label className="font-weight-bold">Book Status</label>
+                        <p className="text-muted">{selectedEvent.meta.bookStatus}</p>
                       </Col>
                     </Row>
                   </>
