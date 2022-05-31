@@ -18,8 +18,10 @@ import MeetFrame from './MeetFrame'
 import SizeCards from './SizeCards'
 import GroupVideos from './GroupVideos'
 import { formatTime } from '../../utils'
+import { TitleContext } from '../../Context'
 
 class HomePage extends Component {
+  static contextType = TitleContext
   constructor(props) {
     super(props)
     let search = window.location.search.substring(1);
@@ -74,11 +76,12 @@ class HomePage extends Component {
     const session_id = this.props.match.params.session_id
     const studio = await getStudioByUri(studio_uri)
     const session = await getOneSession(session_id)
-
     const candidates = await fetchCheckInList(session._id)
     const currentGroup = await getCurrentGroup(session._id) || {}
     const user = getUser()
-
+    const {setTitle} = this.context
+    setTitle(studio.name + '-' + session.name)
+    
     this.setState({
       user,
       studio,
@@ -349,6 +352,7 @@ class HomePage extends Component {
     const isTwr = listTab === 'twr'
 
     const rs = []
+    
     candidates.forEach(c => {
       if (c.role && !rs.includes(c.role)) {
         rs.push(c.role)

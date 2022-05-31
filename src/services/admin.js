@@ -43,3 +43,14 @@ export const updateAutoScalingGroup = async (data) => {
   })
   return await resp.json()
 }
+
+export const getGoogleCalendarEvents = async(data) => {
+  
+  const resp = await fetch(`${api_host}/admin/events?start=${data.start}&end=${data.end}`,{
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}

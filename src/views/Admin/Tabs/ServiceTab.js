@@ -18,7 +18,7 @@ import { MdRefresh } from 'react-icons/md';
 
 import {
   getServices,
-  updateAutoScalingGroup
+  updateAutoScalingGroup,
 } from '../../../services'
 
 import {toggleLoadingState, getUserText} from '../../../utils'

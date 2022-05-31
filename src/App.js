@@ -24,8 +24,10 @@ import AdminView from './views/Admin'
 import TalentPage from './views/TalentPage'
 import Header from './components/Header'
 import { USER_TYPES, VERSION } from './constants'
+import { TitleContext } from './Context';
 
 import './App.scss'
+import '../node_modules/react-big-calendar/lib/css/react-big-calendar.css'
 
 export const NotificationComponent = ({ notificationField, notificationUpdateAtField }) => {
   const [notification, setNotification] = useState({})
@@ -89,6 +91,7 @@ function App() {
   const [logo, setLogo] = useState('')
   const [email, setEmail] = useState({})
   const [refreshKey, setRefreshKey] = useState(0)
+  const [title, setTitle] = useState('')
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -149,31 +152,33 @@ function App() {
             Processing... <small>(click to refresh)</small>
           </button>
         </div>
-        <Router>
-          <Header logo={logo} />
-          <Switch>
-            <Route path="/login" component={(props) => <Login {...props} />} exact />
-            <Route path="/reset-password-request" component={(props) => <ResetPasswordRequest {...props} />} exact />
-            <Route path="/reset-password" component={(props) => <ResetPassword {...props} />} exact />
-            <Route path="/register" component={(props) => <Register {...props} />} exact />
-            <Route path="/client/register" component={(props) => <ClientRegister {...props} />} exact />
-            <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
-            {user.user_type === USER_TYPES.SUPER_ADMIN &&
-              <Route path="/heyjoe-admin" component={AdminView} />
-            }
-            <Route path="/message/:record_id" component={RecordMessagePage} />
-            <Route path="/studio/:uri/:session_id" component={HP} />
-            <Route path="/onboard/:uri/:session_id" component={Onboard} />
-            {!(user.user_type === USER_TYPES.CLIENT) &&
-              <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
-            }
-            {([USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type)) && (
-              <Route path="/freelancer-profile" component={props => <FreelancerProfilePage {...props} />} />
-            )}
-            <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
-            <Route path="/" component={HomeBomponent} />
-          </Switch>
-        </Router>
+        <TitleContext.Provider value={{title, setTitle}}>
+          <Router>
+            <Header logo={logo} />
+            <Switch>
+              <Route path="/login" component={(props) => <Login {...props} />} exact />
+              <Route path="/reset-password-request" component={(props) => <ResetPasswordRequest {...props} />} exact />
+              <Route path="/reset-password" component={(props) => <ResetPassword {...props} />} exact />
+              <Route path="/register" component={(props) => <Register {...props} />} exact />
+              <Route path="/client/register" component={(props) => <ClientRegister {...props} />} exact />
+              <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
+              {user.user_type === USER_TYPES.SUPER_ADMIN &&
+                <Route path="/heyjoe-admin" component={AdminView} />
+              }
+              <Route path="/message/:record_id" component={RecordMessagePage} />
+              <Route path="/studio/:uri/:session_id" component={HP} />
+              <Route path="/onboard/:uri/:session_id" component={Onboard} />
+              {!(user.user_type === USER_TYPES.CLIENT) &&
+                <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
+              }
+              {([USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type)) && (
+                <Route path="/freelancer-profile" component={props => <FreelancerProfilePage {...props} />} />
+              )}
+              <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
+              <Route path="/" component={HomeBomponent} />
+            </Switch>
+          </Router>
+        </TitleContext.Provider>
         { user && user.user_type !== USER_TYPES.CLIENT && (
           <NotificationComponent
             notificationField="notification"

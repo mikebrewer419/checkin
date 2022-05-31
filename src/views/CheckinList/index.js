@@ -499,9 +499,6 @@ class List extends Component {
         <div className="d-flex flex-column">
           <div className="studio-header">
             <h4 className="my-3 text-center">
-              <span>{studio.name}</span>
-              &nbsp;
-              <span>{session.name}</span>
               <span className="d-inline-block ml-2">Video Chat</span>
               {dayType && (
                 <div>{dayType}</div>
