@@ -1,6 +1,6 @@
 import  React, { useState, useEffect } from 'react'
 import { FaTimes } from 'react-icons/fa'
-import { MEETING_HOST } from '../../constants'
+import { MEETING_HOST, USER_TYPES } from '../../constants'
 import { getUser, getUserById } from '../../services'
 
 let loading = false
@@ -41,6 +41,7 @@ const MeetFrame = ({ meeting_id, record, studio }) => {
 
   useEffect(() => {
     if (api && user) {
+      const hashConfig = '&config.notifications=[] '
       api.executeCommand('displayName', `${user.first_name} ${user.last_name} (${user.user_type})`)
       if (record && studio) {
         const iframe = api.getIFrame()
@@ -50,7 +51,11 @@ const MeetFrame = ({ meeting_id, record, studio }) => {
           studio: studio,
           onboard_url: onboardUrl
         })
-        iframe.setAttribute('src', `${iframe.src}&audition_data=${encodeURIComponent(auditionData)}`)
+        let src = `${iframe.src}&audition_data=${encodeURIComponent(auditionData)}`
+        if ([USER_TYPES.CLIENT, USER_TYPES.TALENT].includes(user.user_type)) {
+          src += hashConfig
+        }
+        iframe.setAttribute('src', src)
       }
     }
   }, [api, user])
