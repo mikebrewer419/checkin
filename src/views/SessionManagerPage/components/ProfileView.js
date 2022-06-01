@@ -29,15 +29,25 @@ const ProfileView = ({ user, profile, editProfile }) => {
           Edit
         </a>
       </div>
-      <div className='mb-2 d-flex flex-column'>
+      <div className='mb-3 d-flex flex-column'>
         <label className='label mb-0'>Will work as</label>
         <span>{profile.will_work_as.join(', ')}</span>
       </div>
-      <div className='mb-2 d-flex flex-column'>
+      <div className='d-flex'>
+        <div className='mb-3 d-flex flex-column w-50'>
+          <label className='h6 mr-2'>Timezone</label>
+          <span>{profile.timezone}</span>
+        </div>
+        <div className='mb-3 d-flex flex-column w-50'>
+          <label className='h6 mr-2'>Phone</label>
+          <span>{profile.phone}</span>
+        </div>
+      </div>
+      <div className='mb-3 d-flex flex-column'>
         <label className='label mb-0'>Experience</label>
         <span>{profile.experience}</span>
       </div>
-      <div className='mb-2 d-flex flex-column'>
+      <div className='mb-3 d-flex flex-column'>
         <label className='label mb-0'>Available dates</label>
         <div className='w-75 d-flex flex-wrap'>
           {profile.available_dates.map((dt, idx) => {
@@ -45,7 +55,7 @@ const ProfileView = ({ user, profile, editProfile }) => {
           })}
         </div>
       </div>
-      <div className='mb-2 d-flex flex-column'>
+      <div className='mb-3 d-flex flex-column'>
         <label className='label mb-0'>Unavailable dates</label>
         <div className='w-75 d-flex flex-wrap'>
           {profile.non_available_dates.map((dt, idx) => {
@@ -53,9 +63,13 @@ const ProfileView = ({ user, profile, editProfile }) => {
           })}
         </div>
       </div>
-      <div>
+      <div className='mb-3 d-flex flex-column'>
         <label className='h6 mr-2'>Avability Notes</label>
         <span>{profile.avability_notes}</span>
+      </div>
+      <div className='mb-3 d-flex flex-column'>
+        <label className='h6 mr-2'>Receive Email</label>
+        <span>{profile.receive_email ? 'Yes': 'No'}</span>
       </div>
     </div>
   )

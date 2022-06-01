@@ -58,11 +58,13 @@ const SessionForm = ({ session, onSubmit }) => {
 
   const setDateField = (idx, field, value) => {
     const dates = [...(selectedSession.dates || [])];
-    dates[idx][field] = value;
-    setSelectedSession({
-      ...selectedSession,
-      dates,
-    });
+    if (value !== undefined) {
+      dates[idx][field] = value;
+      setSelectedSession({
+        ...selectedSession,
+        dates,
+      });
+    }
   };
 
   const removeDate = (idx) => {
@@ -116,7 +118,7 @@ const SessionForm = ({ session, onSubmit }) => {
               </Accordion.Toggle>
               <Accordion.Collapse eventKey={idx + 1}>
                 <Card.Body>
-                  <div className="d-flex">
+                  <div className="d-flex mb-3">
                     <DateTimePicker
                       key={idx}
                       value={oneDate.start_time && new Date(oneDate.start_time)}
@@ -149,7 +151,7 @@ const SessionForm = ({ session, onSubmit }) => {
                   <label>Session Manager</label>
                   <AsyncTypeahead
                     id="session-user-select"
-                    className="mb-3"
+                    className="mb-1"
                     selected={oneDate.managers}
                     multiple
                     onChange={(value) => {
@@ -162,10 +164,16 @@ const SessionForm = ({ session, onSubmit }) => {
                     options={sessionUsers}
                     placeholder="Search for a Session user..."
                   />
+                  <label className="d-flex align-items-center mb-3">
+                    <input defaultChecked={!!oneDate.invite_session_manager} type="checkbox" name="invite_session_manager" className="mr-2" onChange={ev => {
+                      setDateField(idx, 'invite_session_manager', ev.target.checked)
+                    }} />
+                    <span>Invite freelancer session manager</span>
+                  </label>
                   <label>Lobby Manager</label>
                   <AsyncTypeahead
                     id="lobby-manager-select"
-                    className="mb-3"
+                    className="mb-1"
                     selected={oneDate.lobbyManager}
                     multiple
                     onChange={(value) => {
@@ -178,6 +186,12 @@ const SessionForm = ({ session, onSubmit }) => {
                     options={sessionUsers}
                     placeholder="Search for a Session user..."
                   />
+                  <label className="d-flex align-items-center mb-3">
+                    <input defaultChecked={!!oneDate.invite_lobby_manager} type="checkbox" name="invite_session_manager" className="mr-2" onChange={ev => {
+                      setDateField(idx, 'invite_lobby_manager', ev.target.checked)
+                    }} />
+                    <span>Invite freelancer lobby manager</span>
+                  </label>
                   <label>
                     Sizecard PDF
                     {typeof oneDate.size_card_pdf === "string" && (

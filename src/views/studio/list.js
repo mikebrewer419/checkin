@@ -204,6 +204,8 @@ const StudioList = () => {
       singleDate.start_time = date.start_time
       singleDate.start_time_type = date.start_time_type
       singleDate.book_status = date.book_status
+      singleDate.invite_session_manager = date.invite_session_manager
+      singleDate.invite_lobby_manager = date.invite_lobby_manager
       datesInfo.push(singleDate)
     })
     formData.append('dates', JSON.stringify(datesInfo))

@@ -114,6 +114,13 @@ const FREELANCER_WORK_AS = {
   LOBBY_MANAGER: 'Lobby Manager'
 }
 
+const FREELANCER_TIMEZONE = [
+  'Pacific',
+  'Mountain',
+  'Central',
+  'Eastern'
+]
+
 export {
   USER_TYPES,
   USER_TYPE,
@@ -127,5 +134,6 @@ export {
   PROJECT_TYPES,
   SESSION_TIME_TYPE,
   SESSION_BOOK_TYPE,
-  FREELANCER_WORK_AS
+  FREELANCER_WORK_AS,
+  FREELANCER_TIMEZONE
 }
