@@ -150,9 +150,9 @@ function App() {
   const HP = user.user_type === USER_TYPES.CLIENT ? ClientCheckinPage : CheckinPage
   const toggleLoadingState = (state) => {
     if (state) {
-      setShowLoadingCounter(showLoadingCouner + 1)
+      setShowLoadingCounter(1)
     } else {
-      setShowLoadingCounter(showLoadingCouner - 1)
+      setShowLoadingCounter(0)
     }
   }
 

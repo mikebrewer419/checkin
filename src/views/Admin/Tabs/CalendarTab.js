@@ -28,6 +28,13 @@ function reducer(state, action) {
   }
 }
 
+const eventTypeColors = {
+  'session': '#ee514f',
+  'google-calendar-event': '#28a745',
+  'google-calendar-eventCasting Bookings': '#25354d'
+}
+
+
 const CalendarTab = () => {
   const [events, dispatch] = useReducer(reducer, initialState)
   const [selectedEvent, setSelectedEvent] = useState(null)
@@ -42,23 +49,22 @@ const CalendarTab = () => {
           start: new Date(!!it.start.dateTime ? it.start.dateTime : it.start.date),
           end: new Date(!!it.end.dateTime ? it.end.dateTime : it.end.date),
           title: it.summary,
-          type: 'google-calendar-event',
+          type: 'google-calendar-event' + (it.organizer.displayName || ''),
           id: 'google-calendar-event' + it.id,
+          allDay: !!it.start.dateTime,
           meta: {
             type: !!it.start.dateTime ? 'timed-event' : 'all-day-event',
             htmlLink: it.htmlLink,
             creator: it.creator.email,
-            organizer: it.organizer.email
+            organizer: it.organizer.displayName
           }
         })
-        
       })
       dispatch({type: 'add', payload: events})
     }
   }
   const loadSessions = async () => {
     const res = await getAllSessions()
-    console.log(res)
     const eventsFromSessions = []
     res.forEach(it=>{
       it.dates.forEach(date => {
@@ -69,15 +75,17 @@ const CalendarTab = () => {
           id: `session-date-${date._id}`,
           start,
           end,
-          title: `${it.studio.name} ${it.name} session ${!!it.start_time ? it.start_time : ''}`,
+          title: `${it.studio.name} ${it.name} ${date.start_time_type} (${date.book_status})`,
           type: 'session',
+          allDay: false,
           meta: {
+            type: 'timed-event',
             studio: it.studio,
             lobbyManager: it.lobbyManager,
             manager: it.manager,
             startTimeType: date.start_time_type,
             bookStatus: date.book_status,
-            htmlLink: `/studio/${it.studio._id}/${it._id}`
+            htmlLink: `/studio/${it.studio.uri}/${it._id}`
           }
         })
       })
@@ -106,6 +114,24 @@ const CalendarTab = () => {
     await loadEvents(dateRange)
     toggleLoadingState(false)
   }
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    let bgColor = 'transparent'
+    let textColor = '#000000'
+    if (+new Date(start) > +new Date()) {
+      bgColor = eventTypeColors[event.type]
+      textColor = 'white'
+      bgColor += 'DD'
+    } else {
+      textColor = eventTypeColors[event.type]
+      bgColor = textColor + '22'
+    }
+    return {
+      style: {
+        backgroundColor: bgColor,
+        color: textColor
+      }
+    }
+  }
 
   const localizer = momentLocalizer(moment)
 
@@ -124,26 +150,26 @@ const CalendarTab = () => {
     a.setDate(0)
     a.setDate(a.getDate() + 7 - a.getDay())
     dateRange.end = a.toISOString()
-    toggleLoadingState(true)
-    loadEvents(dateRange).then((res) => {
+    const loadAllEvents = async () => {
+      toggleLoadingState(true)
+      await loadEvents(dateRange)
+      await loadSessions()
       toggleLoadingState(false)
-    })
-    toggleLoadingState(true)
-    loadSessions().then(res=>{
-      toggleLoadingState(false)  
-    })
-    
+    }
+    loadAllEvents()    
   }, [])
-  
+
   return (
     <div className="admin-events-calendar-container">
       <Calendar
+        popup
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
         onRangeChange={onDateRangeChange}
         onSelectEvent={onSelectEvent}
+        eventPropGetter={eventStyleGetter}
       />
       <Modal
         show={!!selectedEvent}
@@ -173,23 +199,24 @@ const CalendarTab = () => {
                 <Row>
                   <Col>
                     <label className="font-weight-bold">From</label>
-                    <p className="text-muted">{selectedEvent.start.toLocaleString()}</p>
+                    <p>{selectedEvent.start.toLocaleString()}</p>
                   </Col>
                   <Col>
                     <label className="font-weight-bold">To</label>
-                    <p className="text-muted">{selectedEvent.end.toLocaleString()}</p>
+                    <p>{selectedEvent.end.toLocaleString()}</p>
                   </Col>
                 </Row>
-                {selectedEvent.type === 'google-calendar-event' && (
+                {selectedEvent.type !== 'session' && (
                   <>
                     <p className="font-weight-bold">
                       {selectedEvent.meta.type === 'all-day-event' ? 'All Day Event' : 'Timed Event' }
                     </p>
-                    <p className="text-muted">
+                    <p>
                       Click&nbsp;
                       <a
                         className="break-word"
                         href={selectedEvent.meta.htmlLink}
+                        target="_blank"
                       >
                         {selectedEvent.meta.htmlLink}
                       </a>
@@ -198,11 +225,11 @@ const CalendarTab = () => {
                     <Row>
                       <Col>
                         <label className="font-weight-bold">Creator</label>
-                        <p className="text-muted">{selectedEvent.meta.creator}</p>
+                        <p>{selectedEvent.meta.creator}</p>
                       </Col>
                       <Col>
                         <label className="font-weight-bold">Organizer</label>
-                        <p className="text-muted">{selectedEvent.meta.organizer}</p>
+                        <p>{selectedEvent.meta.organizer}</p>
                       </Col>
                     </Row>
                   </>
@@ -210,15 +237,15 @@ const CalendarTab = () => {
                 {selectedEvent.type === 'session' && (
                   <>
                     <label className="font-weight-bold">Studio</label>
-                    <p className="text-muted">{selectedEvent.meta.studio.name}</p>
+                    <p>{selectedEvent.meta.studio.name}</p>
                     <Row>
                       <Col>
                         <label className="font-weight-bold">Lobby Managers</label>
                         {selectedEvent.meta.lobbyManager && selectedEvent.meta.lobbyManager.length > 0
                           ? selectedEvent.meta.lobbyManager.map(it=>(
-                            <p className="text-muted">{it.email}</p>
+                            <p>{it.email}</p>
                           )) : (
-                            <p className="text-muted">No entries found</p>
+                            <p>No entries found</p>
                           )
                         }
                       </Col>
@@ -226,9 +253,9 @@ const CalendarTab = () => {
                         <label className="font-weight-bold">Managers</label>
                         {selectedEvent.meta.manager && selectedEvent.meta.manager.length > 0
                           ? selectedEvent.meta.manager.map(it=>(
-                            <p className="text-muted">{it.email}</p>
+                            <p>{it.email}</p>
                           )): (
-                            <p className="text-muted">No entries found</p>
+                            <p>No entries found</p>
                           )
                         }
                       </Col>
@@ -236,18 +263,19 @@ const CalendarTab = () => {
                     <Row>
                       <Col>
                         <label className="font-weight-bold">Statt Time Type</label>
-                        <p className="text-muted">{selectedEvent.meta.startTimeType}</p>
+                        <p>{selectedEvent.meta.startTimeType}</p>
                       </Col>
                       <Col>
                         <label className="font-weight-bold">Book Status</label>
-                        <p className="text-muted">{selectedEvent.meta.bookStatus}</p>
+                        <p>{selectedEvent.meta.bookStatus}</p>
                       </Col>
                     </Row>
-                    <p className="text-muted">
+                    <p>
                       Click&nbsp;
                       <a
                         className="break-word"
                         href={selectedEvent.meta.htmlLink}
+                        target="_blank"
                       >
                         here
                       </a>
