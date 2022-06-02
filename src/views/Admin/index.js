@@ -7,6 +7,7 @@ import {
 import UsersTab  from './Tabs/UsersTab'
 import NoticeTab from './Tabs/NoticeTab'
 import ServiceTab from './Tabs/ServiceTab'
+import CalendarTab from './Tabs/CalendarTab'
 
 import './style.scss'
 
@@ -39,6 +40,13 @@ const Admin = () => {
         >
           <ServiceTab />
         </Tab>
+        <Tab
+          eventKey="calendar"
+          title="Calendar"
+          className="py-3"
+          >
+            <CalendarTab />
+          </Tab>
       </Tabs>
     </div>
   )

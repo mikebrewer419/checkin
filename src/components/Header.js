@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useContext,
+} from 'react'
 import { withRouter, useHistory } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Dropdown, Navbar, Image, Modal } from 'react-bootstrap'
@@ -8,6 +12,8 @@ import UserForm from './userForm'
 import { USER_TYPES, VERSION } from '../constants'
 import { BiSupport } from 'react-icons/bi'
 import { injectIntercom } from '../utils'
+import {TitleContext} from '../Context'
+
 import './Header.scss'
 
 const excludePaths = [
@@ -20,7 +26,8 @@ const Header = (props) => {
   const [editUser, setEditUser] = useState(false)
   const [needCredentials, setNeedCredentials] = useState(false)
   const history = useHistory()
-
+  const {title} = useContext(TitleContext)
+  
   useEffect(() => {
     const u = getUser()
     setUser(u)
@@ -45,7 +52,7 @@ const Header = (props) => {
   if (!user) {
     return null
   }
-
+  
   const closeUserEdit = () => {
     setEditUser(false)
   }
@@ -66,6 +73,7 @@ const Header = (props) => {
         </Link>
       </Navbar.Brand>
       <h3 id="header-title">
+        {title}
       </h3>
       <button
         className="ml-auto h5 mr-0 btn btn-danger mt-2 header-support-btn"

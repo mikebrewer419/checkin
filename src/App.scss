@@ -235,6 +235,9 @@ body {
 .transparent{
   opacity: 0;
 }
+.break-word{
+  word-break: break-word;
+}
 
 .send-talent-email-modal {
   .recipient-list {
@@ -254,5 +257,8 @@ body {
     
 }
 
+.admin-events-calendar-container {
+  height: 70vh;
+}
 /* Change the white to any color ;) */
   
