@@ -113,7 +113,7 @@ const SendClientEmailModal = ({
     >
       <Modal.Header closeButton>
         <div>
-          <h4 className="mb-0 mr-3">Send Client Email</h4>
+          <h4 className="mb-0 mr-3">Send Talent Email</h4>
           <div className="ml-1">from hello@heyjoe.io</div>
         </div>
       </Modal.Header>

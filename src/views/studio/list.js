@@ -3,27 +3,19 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import clsx from 'classnames'
 import { Link } from 'react-router-dom'
 import { 
-  Modal,
-  Form,
-  Container,
-  Row,
-  Col,
-  Button
+  Modal
 } from 'react-bootstrap'
 
-import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaRegCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
 import moment from 'moment'
 import {
   static_root,
   assignCastingDirector,
-  assignManagers,
-  getManagers,
   searchUsers,
   getManyStudios,
   generateNewJitsiKey,
   generateNewProjectUri,
   deleteStudio,
-  createOrUpdateStudio,
   getStudioSessions,
   getSessionsByStudios,
   getPagesByStudio,
