@@ -6,7 +6,11 @@ import {
   Modal
 } from 'react-bootstrap'
 
-import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaUserTag, FaFilm,
+  FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
+import { IoMdVideocam } from 'react-icons/io'
+import { AiOutlineOrderedList } from 'react-icons/ai'
+import { HiOutlineMail } from 'react-icons/hi'
 import moment from 'moment'
 import {
   static_root,
@@ -467,28 +471,38 @@ const StudioList = () => {
                       })}
                     </div>
                   </div>
-                  <div className="col-auto">
-                    <Link to={`/studio/${studio.uri}/${session._id}`} className="text-danger" target="_blank">
-                      Session Video Chat
+                  <div className="col-auto" title="Session Video Chat">
+                    <Link to={`/studio/${studio.uri}/${session._id}`} className="text-danger d-flex mb-0 h4" target="_blank">
+                      <IoMdVideocam />
                     </Link>
                   </div>
-                  <div className="col-auto">
-                    <Link to={`/studio/${studio.uri}/${session._id}?test=true`} className="text-danger" target="_blank">
-                      Virtual Lobby
+                  <div className="col-auto" title="Virtual Lobby">
+                    <Link to={`/studio/${studio.uri}/${session._id}?test=true`} className="text-danger d-flex mb-0 h4" target="_blank">
+                      <FaUserTag />
                     </Link>
                   </div>
                   {STUDIO_LIST_PERMISSIONS.CAN_VIEW_ONBOARD() &&
-                  <div className="col-auto">
-                    <Link to={`/onboard/${studio.uri}/${session._id}`} className="text-danger"  target="_blank">
-                      Session Check-In
+                  <div className="col-auto" title="Session Checkin">
+                    <Link to={`/onboard/${studio.uri}/${session._id}`} className="text-danger d-flex mb-0 h4"  target="_blank">
+                      <AiOutlineOrderedList />
                     </Link>
                   </div>}
                   {STUDIO_LIST_PERMISSIONS.CAN_VIEW_VIDEO_REVIEW() &&
-                  <div className="col-auto">
-                    <Link to={`/video/${studio.uri}/${session._id}`}  className="text-danger" target="_blank">
-                      Video Review
+                  <div className="col-auto" title="Video Review">
+                    <Link to={`/video/${studio.uri}/${session._id}`}  className="text-danger d-flex mb-0 h4" target="_blank">
+                      <FaFilm />
                     </Link>
                   </div>}
+                  <div className="col-auto">
+                    <a className="text-danger h4 d-flex mb-0 cursor-pointer" title="Send Talent Email">
+                      <HiOutlineMail
+                        title="Send Talent Email"
+                        onClick={() => {
+                          setEmailCheckinLink(`${host}/onboard/${studio.uri}/${session._id}`)
+                        }}
+                      />
+                    </a>
+                  </div>
                   <div className="col-auto action-wrap">
                     <FaPen className="mr-2" onClick={() => {
                       setSelectedSession({
@@ -500,12 +514,6 @@ const StudioList = () => {
                     {USER_TYPE.IS_SUPER_ADMIN() && (
                       <FaTrash className="mr-4" onClick={() => handleSessionDelete(session, studio._id)}/>
                     )}
-                    <FaCopy
-                      className="mr-2" title="Send Talent Email"
-                      onClick={() => {
-                        setEmailCheckinLink(`${host}/onboard/${studio.uri}/${session._id}`)
-                      }}
-                    />
                   </div>
                 </div>
               ))}
