@@ -24,7 +24,11 @@ function reducer(state, action) {
   switch (action.type) {
     case 'add':
       const newEvents = action.payload.filter(itNew => state.findIndex(itOld=>itOld.id === itNew.id) === -1)
-      return [...state, ...newEvents];
+      if (newEvents.length > 0) {
+        return [...state, ...newEvents];
+      }
+      return state
+      
   }
 }
 
@@ -40,7 +44,7 @@ const CalendarTab = () => {
   const [selectedEvent, setSelectedEvent] = useState(null)
   const toggleLoadingState = useContext(ShowLoadingContext)
   
-  const loadEvents = async (dateRange) => {
+  const loadGoogleEvents = async (dateRange) => {
     const res = await getGoogleCalendarEvents(dateRange)
     if (Array.isArray(res)){
       const events = []
@@ -63,8 +67,9 @@ const CalendarTab = () => {
       dispatch({type: 'add', payload: events})
     }
   }
-  const loadSessions = async () => {
-    const res = await getAllSessions()
+  
+  const loadSessions = async (dateRange) => {
+    const res = await getAllSessions(dateRange)
     const eventsFromSessions = []
     res.forEach(it=>{
       it.dates.forEach(date => {
@@ -95,7 +100,14 @@ const CalendarTab = () => {
       payload: eventsFromSessions
     })
   }
-  const onDateRangeChange = async (range) => {
+
+  const loadAllEvents = async (dateRange) => {
+    toggleLoadingState(true)
+    await Promise.all([loadGoogleEvents(dateRange), loadSessions(dateRange)])
+    toggleLoadingState(false)
+  }
+
+  const onDateRangeChange = (range) => {
     let dateRange = null
     if (Array.isArray(range)) {
       const endDate = range[range.length - 1]
@@ -109,10 +121,7 @@ const CalendarTab = () => {
 
     dateRange.start = dateRange.start.toISOString()
     dateRange.end = dateRange.end.toISOString()
-
-    toggleLoadingState(true)
-    await loadEvents(dateRange)
-    toggleLoadingState(false)
+    loadAllEvents(dateRange)
   }
   const eventStyleGetter = (event, start, end, isSelected) => {
     let bgColor = 'transparent'
@@ -150,13 +159,7 @@ const CalendarTab = () => {
     a.setDate(0)
     a.setDate(a.getDate() + 7 - a.getDay())
     dateRange.end = a.toISOString()
-    const loadAllEvents = async () => {
-      toggleLoadingState(true)
-      await loadEvents(dateRange)
-      await loadSessions()
-      toggleLoadingState(false)
-    }
-    loadAllEvents()    
+    loadAllEvents(dateRange)    
   }, [])
 
   return (
