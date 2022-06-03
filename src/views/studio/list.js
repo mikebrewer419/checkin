@@ -6,7 +6,7 @@ import {
   Modal
 } from 'react-bootstrap'
 
-import { FaPlus, FaPen, FaTrash, FaLink, FaCopy, FaUserTag, FaFilm,
+import { FaPlus, FaPen, FaTrash, FaLink, FaFilm, FaUsers,
   FaListAlt, FaArchive, FaBackward } from 'react-icons/fa';
 import { IoMdVideocam } from 'react-icons/io'
 import { AiOutlineOrderedList } from 'react-icons/ai'
@@ -478,7 +478,7 @@ const StudioList = () => {
                   </div>
                   <div className="col-auto" title="Virtual Lobby">
                     <Link to={`/studio/${studio.uri}/${session._id}?test=true`} className="text-danger d-flex mb-0 h4" target="_blank">
-                      <FaUserTag />
+                      <FaUsers />
                     </Link>
                   </div>
                   {STUDIO_LIST_PERMISSIONS.CAN_VIEW_ONBOARD() &&
