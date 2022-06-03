@@ -1,6 +1,7 @@
 import React, {
     useState,
-    useEffect
+    useEffect,
+    useContext
 } from 'react'
 
 import {
@@ -30,7 +31,7 @@ import {
 } from '../../../constants'
 
 import UserForm from '../UserForm'
-
+import {ShowLoadingContext} from '../../../Context'
 
 let delayHandle = null
 
@@ -43,14 +44,16 @@ const UsersTab = () => {
   const [count, setCount] = useState(0)
   const [selectedUser, setSelectedUser] = useState(null)
   const [userType, setUserType] = useState('')
+  const toggleLoadingState = useContext(ShowLoadingContext)
+
   const perPage = 20
 
   const load = async () => {
-    document.querySelector('.loading').classList.add('show')
+    toggleLoadingState(true)
     const response = await listUsers(query, userType, page * perPage, perPage)
+    toggleLoadingState(false)
     setUsers(response.users)
     setCount(response.count)
-    document.querySelector('.loading').classList.remove('show')
   }
 
   useEffect(() => {

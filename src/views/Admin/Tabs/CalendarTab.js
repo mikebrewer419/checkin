@@ -3,9 +3,10 @@ import React, {
   useEffect,
   useReducer,
   useState,
+  useRef
 } from 'react'
 import {Calendar, momentLocalizer } from 'react-big-calendar'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import {
   Modal,
   Button,
@@ -24,7 +25,11 @@ function reducer(state, action) {
   switch (action.type) {
     case 'add':
       const newEvents = action.payload.filter(itNew => state.findIndex(itOld=>itOld.id === itNew.id) === -1)
-      return [...state, ...newEvents];
+      if (newEvents.length > 0) {
+        return [...state, ...newEvents];
+      }
+      return state
+      
   }
 }
 
@@ -35,23 +40,24 @@ const eventTypeColors = {
 }
 
 
-const CalendarTab = () => {
+const CalendarTab = ({ show }) => {
   const [events, dispatch] = useReducer(reducer, initialState)
   const [selectedEvent, setSelectedEvent] = useState(null)
   const toggleLoadingState = useContext(ShowLoadingContext)
+  const calendarRef = useRef(null)
   
-  const loadEvents = async (dateRange) => {
+  const loadGoogleEvents = async (dateRange) => {
     const res = await getGoogleCalendarEvents(dateRange)
     if (Array.isArray(res)){
       const events = []
       res.forEach(it => {
         events.push({
-          start: new Date(!!it.start.dateTime ? it.start.dateTime : it.start.date),
-          end: new Date(!!it.end.dateTime ? it.end.dateTime : it.end.date),
+          start: (!!it.start.dateTime ? it.start.dateTime : it.start.date),
+          end: (!!it.end.dateTime ? it.end.dateTime : it.end.date),
           title: it.summary,
           type: 'google-calendar-event' + (it.organizer.displayName || ''),
           id: 'google-calendar-event' + it.id,
-          allDay: !!it.start.dateTime,
+          allDay: !it.start.dateTime,
           meta: {
             type: !!it.start.dateTime ? 'timed-event' : 'all-day-event',
             htmlLink: it.htmlLink,
@@ -63,8 +69,9 @@ const CalendarTab = () => {
       dispatch({type: 'add', payload: events})
     }
   }
-  const loadSessions = async () => {
-    const res = await getAllSessions()
+  
+  const loadSessions = async (dateRange) => {
+    const res = await getAllSessions(dateRange)
     const eventsFromSessions = []
     res.forEach(it=>{
       it.dates.forEach(date => {
@@ -95,7 +102,14 @@ const CalendarTab = () => {
       payload: eventsFromSessions
     })
   }
-  const onDateRangeChange = async (range) => {
+
+  const loadAllEvents = async (dateRange) => {
+    toggleLoadingState(true)
+    await Promise.all([loadGoogleEvents(dateRange), loadSessions(dateRange)])
+    toggleLoadingState(false)
+  }
+
+  const onDateRangeChange = (range) => {
     let dateRange = null
     if (Array.isArray(range)) {
       const endDate = range[range.length - 1]
@@ -109,10 +123,7 @@ const CalendarTab = () => {
 
     dateRange.start = dateRange.start.toISOString()
     dateRange.end = dateRange.end.toISOString()
-
-    toggleLoadingState(true)
-    await loadEvents(dateRange)
-    toggleLoadingState(false)
+    loadAllEvents(dateRange)
   }
   const eventStyleGetter = (event, start, end, isSelected) => {
     let bgColor = 'transparent'
@@ -150,18 +161,15 @@ const CalendarTab = () => {
     a.setDate(0)
     a.setDate(a.getDate() + 7 - a.getDay())
     dateRange.end = a.toISOString()
-    const loadAllEvents = async () => {
-      toggleLoadingState(true)
-      await loadEvents(dateRange)
-      await loadSessions()
-      toggleLoadingState(false)
-    }
-    loadAllEvents()    
+    loadAllEvents(dateRange)
   }, [])
+
+  if (!show) { return null }
 
   return (
     <div className="admin-events-calendar-container">
       <Calendar
+        ref={calendarRef}
         popup
         localizer={localizer}
         events={events}
@@ -199,11 +207,11 @@ const CalendarTab = () => {
                 <Row>
                   <Col>
                     <label className="font-weight-bold">From</label>
-                    <p>{selectedEvent.start.toLocaleString()}</p>
+                    <p>{moment(selectedEvent.start).format('MM/DD/YYYY hh:mm A')}</p>
                   </Col>
                   <Col>
                     <label className="font-weight-bold">To</label>
-                    <p>{selectedEvent.end.toLocaleString()}</p>
+                    <p>{moment(selectedEvent.end).format('MM/DD/YYYY hh:mm A')}</p>
                   </Col>
                 </Row>
                 {selectedEvent.type !== 'session' && (

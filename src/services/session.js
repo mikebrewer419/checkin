@@ -9,8 +9,8 @@ export const getStudioSessions = async (studio_id) => {
   })
   return await resp.json()
 }
-export const getAllSessions = async (studio_id) => {
-  const resp = await fetch(`${api_host}/sessions`, {
+export const getAllSessions = async (data) => {
+  const resp = await fetch(`${api_host}/sessions?start=${data.start}&end=${data.end}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

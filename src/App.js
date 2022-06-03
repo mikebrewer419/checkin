@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
@@ -28,6 +28,16 @@ import { TitleContext } from './Context';
 import {ShowLoadingContext} from './Context'
 import './App.scss'
 import '../node_modules/react-big-calendar/lib/css/react-big-calendar.css'
+
+const state = 0
+const reducer = (state, action) => {
+  if (action) {
+    return state + 1
+  }
+  else{
+    return state -1
+  }
+}
 
 export const NotificationComponent = ({ notificationField, notificationUpdateAtField }) => {
   const [notification, setNotification] = useState({})
@@ -92,7 +102,7 @@ function App() {
   const [email, setEmail] = useState({})
   const [refreshKey, setRefreshKey] = useState(0)
   const [title, setTitle] = useState('')
-  const [showLoadingCouner, setShowLoadingCounter] = useState(0)
+  const [showLoadingSemaphor, dispatch] = useReducer(reducer, state)
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/onboard') !== -1) {
@@ -137,23 +147,19 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (showLoadingCouner > 0) {
+    if (showLoadingSemaphor > 0) {
       document.querySelector('.loading').classList.add('show')
     } else {
       document.querySelector('.loading').classList.remove('show')
     }
-  }, [showLoadingCouner])
+  }, [showLoadingSemaphor])
   
   const recaptchaKey = process.env.REACT_APP_RECAPTCHA_KEY
   const user = getUser() || {}
 
   const HP = user.user_type === USER_TYPES.CLIENT ? ClientCheckinPage : CheckinPage
   const toggleLoadingState = (state) => {
-    if (state) {
-      setShowLoadingCounter(1)
-    } else {
-      setShowLoadingCounter(0)
-    }
+    dispatch(state)
   }
 
   return (
