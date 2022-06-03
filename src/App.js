@@ -161,7 +161,7 @@ function App() {
   const toggleLoadingState = (state) => {
     dispatch(state)
   }
-  console.log(showLoadingSemaphor)
+
   return (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
       <ShowLoadingContext.Provider value={toggleLoadingState}>

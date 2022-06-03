@@ -44,9 +44,11 @@ const Admin = () => {
           eventKey="calendar"
           title="Calendar"
           className="py-3"
-          >
-            <CalendarTab />
-          </Tab>
+        >
+          <CalendarTab
+            show={tabKey === 'calendar'}
+          />
+        </Tab>
       </Tabs>
     </div>
   )
