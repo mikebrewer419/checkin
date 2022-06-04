@@ -43,20 +43,21 @@ const MeetFrame = ({ meeting_id, record, studio }) => {
     if (api && user) {
       const hashConfig = '&config.notifications=[] '
       api.executeCommand('displayName', `${user.first_name} ${user.last_name} (${user.user_type})`)
+      const iframe = api.getIFrame()
+      let src = iframe.src
       if (record && studio) {
-        const iframe = api.getIFrame()
         const onboardUrl = window.location.href
         const auditionData = JSON.stringify({
           talent: record,
           studio: studio,
           onboard_url: onboardUrl
         })
-        let src = `${iframe.src}&audition_data=${encodeURIComponent(auditionData)}`
-        if ([USER_TYPES.CLIENT, USER_TYPES.TALENT].includes(user.user_type)) {
-          src += hashConfig
-        }
-        iframe.setAttribute('src', src)
+        src += `&audition_data=${encodeURIComponent(auditionData)}`
       }
+      if ([USER_TYPES.CLIENT, USER_TYPES.TALENT].includes(user.user_type)) {
+        src += hashConfig
+      }
+      iframe.setAttribute('src', src)
     }
   }, [api, user])
 
