@@ -205,6 +205,7 @@ const StudioList = () => {
       datesInfo.push(singleDate)
     })
     formData.append('dates', JSON.stringify(datesInfo))
+    formData.append('description', session.description)
     let result = null
     if (session._id) {
       result = await updateSession(session._id, formData)
@@ -212,6 +213,7 @@ const StudioList = () => {
       formData.append('studio', studio_id)
       result = await createSession(formData)
     }
+    
     await fetchStudioSession(studio_id)
     setSelectedSession(null)
     setLoading(false)
@@ -514,6 +516,7 @@ const StudioList = () => {
                     {USER_TYPE.IS_SUPER_ADMIN() && (
                       <FaTrash className="mr-4" onClick={() => handleSessionDelete(session, studio._id)}/>
                     )}
+                    <Link to={`/studios/${studio._id}/sessions/${session._id}/find-freelancer`}>Invite Freelancers</Link>
                   </div>
                 </div>
               ))}
@@ -568,6 +571,7 @@ const StudioList = () => {
       </Modal>
       <Modal
         show={!!selectedSession}
+        size="xl"
         onHide = {() => {
           setSelectedSession(null)
         }}

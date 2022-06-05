@@ -260,5 +260,8 @@ body {
 .admin-events-calendar-container {
   height: 70vh;
 }
-/* Change the white to any color ;) */
+
+.invite-tab-content {
+  min-height: calc(100vh - 200px);
+}
   

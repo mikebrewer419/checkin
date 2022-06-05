@@ -24,7 +24,11 @@ const Pagination = ({
           }}>
             {new Array(pageCount).fill().map((_, idx) => {
               return (
-                <option value={idx} selected={idx === page}>
+                <option
+                  value={idx}
+                  selected={idx === page}
+                  key={idx}
+                >
                   { idx + 1}
                 </option>
               )
