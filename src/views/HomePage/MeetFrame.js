@@ -18,11 +18,11 @@ const MeetFrame = ({ meeting_id, record, studio }) => {
     }
     if (api) { api.dispose() }
     const url = new URL(MEETING_HOST)
-    window.jitsiApi = new window.JitsiMeetExternalAPI(url.host, {
-      roomName: meeting_id,
-      parentNode: document.querySelector('#iframe-wrapper')
-    })
-    setApi(window.jitsiApi)
+    // window.jitsiApi = new window.JitsiMeetExternalAPI(url.host, {
+    //   roomName: meeting_id,
+    //   parentNode: document.querySelector('#iframe-wrapper')
+    // })
+    // setApi(window.jitsiApi)
     loading = false
   }
 

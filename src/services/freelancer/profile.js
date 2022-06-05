@@ -32,3 +32,12 @@ export const updateProfile = async (id, fields) => {
   })
   return await resp.json()
 }
+
+export const listProfile = async () => {
+  const resp = await fetch(`${api_host}/freelancer/profile`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return await resp.json()
+}

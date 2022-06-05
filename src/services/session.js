@@ -1,5 +1,5 @@
 import { api_host, token } from './consts'
-
+import { obj2Query } from '../utils'
 export const getStudioSessions = async (studio_id) => {
   const resp = await fetch(`${api_host}/sessions/by-studio/${studio_id}`, {
     headers: {
@@ -31,12 +31,16 @@ export const getSessionsByStudios = async (studio_ids) => {
 }
 
 export const getOneSession = async (session_id) => {
-  const resp = await fetch(`${api_host}/sessions/${session_id}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-  return await resp.json()
+  try{
+    const resp = await fetch(`${api_host}/sessions/${session_id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    return await resp.json()
+  } catch(err){
+    throw err
+  }
 }
 
 export const updateSession = async (id, formData) => {
@@ -119,4 +123,22 @@ export const updateSessionFeedbacks = async (id, restrict) => {
 export const getSessionRoles = async (id) => {
   const resp = await fetch(`${api_host}/sessions/roles/${id}`)
   return await resp.json()
+}
+
+export const getUninvitedFreelancers = async (data) => {
+  try {
+    const resp = await fetch(`${api_host}/sessions/uninvited-freelancers?${obj2Query(data)}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    if (resp.ok) {
+      return await resp.json()
+    } else {
+      throw resp
+    }  
+  } catch (error) {
+    throw error
+  }
+  
 }

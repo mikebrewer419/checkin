@@ -112,18 +112,24 @@ export const getStudioInfo = async (studio_id) => {
 }
 
 export const getStudioByUri = async (studio_name) => {
-  const resp = await fetch(`${api_host}/studio/uri/${studio_name}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+  try{
+    const resp = await fetch(`${api_host}/studio/uri/${studio_name}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    const project = await resp.json()
+    // Casting director logo handle
+    if (!project.logo && project.casting_directors && project.casting_directors.length > 0) {
+      project.logo = project.casting_directors[0].logo
     }
-  })
-  const project = await resp.json()
-  // Casting director logo handle
-  if (!project.logo && project.casting_directors && project.casting_directors.length > 0) {
-    project.logo = project.casting_directors[0].logo
+    return project
+  } catch (err){
+    throw err
   }
-  return project
+    
 }
 
 export const createCometRoom = async (id, session_id) => {
