@@ -16,16 +16,16 @@ import {
   Col,
   Image,
   Button,
+  FormControl
 } from 'react-bootstrap'
 
-import { setUninvited } from '../../../store/freelancers'
+import { set as setProfiles } from '../../../store/freelancerProfiles'
 import {add as addRequest} from '../../../store/freelancerRequests'
 import Pagination from '../../../components/Pagination'
 
 import {
-  getUninvitedFreelancers,
   createRequest,
-  listRequests,
+  listProfiles
   
 } from '../../../services'
 
@@ -36,25 +36,26 @@ const PAGE_SIZE = 10
 export default ({session}) => {
   
   const [page, setPage] = useState(0)
+  const [willWorkAs, setWillWorkAs] = useState('')
+  const [name, setName] = useState('')
 
-  const  freelancers= useSelector(state=>state.freelancers)
+  const  freelancerProfiles= useSelector(state=>state.freelancerProfiles)
   const dispatch = useDispatch()
   
   const loadUninvited = useCallback(()=>{
-    getUninvitedFreelancers({
-      session:session._id,
-      skip: PAGE_SIZE * page,
-      take: PAGE_SIZE
+    listProfiles({
+      exclude_session: session._id,
+      name: name,
+      will_work_as: willWorkAs
     }).then(res=>{
-      dispatch(setUninvited(res))
-    }).catch(error => {
-    })
-  }, [])
+      dispatch(setProfiles(res))
+    }).catch(err=>{})
+  }, [page, name, willWorkAs])
   
   
   useEffect(()=>{
     loadUninvited()
-  }, [loadUninvited, page])
+  }, [loadUninvited])
 
   const onInviteBtnClick = (e, freelancer_id) => {
     e.stopPropagation()
@@ -62,15 +63,32 @@ export default ({session}) => {
       loadUninvited()
       dispatch(addRequest(res))
     }).catch(err=>{
-
     })
   }
 
   return (
     <div>
       <div className="invite-tab-content">
+        <Container className="my-2">
+          <Row>
+            <Col md={3}>
+              <FormControl
+                placeholder="Search by Name"
+                value={name}
+                onChange={(e)=>{setName(e.target.value)}}
+              />
+            </Col>
+            <Col md={3}>
+              <FormControl
+                placeholder="Search by Will Work As"
+                value={willWorkAs}
+                onChange={(e)=>{setWillWorkAs(e.target.value)}}
+              />
+            </Col>
+          </Row>
+        </Container>
         <Accordion className="list-group hover-highlight">
-          {freelancers.uninvited.profiles.map(it=>(
+          {freelancerProfiles.profiles.map(it=>(
             <div key={it._id}>
               <Accordion.Toggle
                 as="div"
@@ -104,6 +122,7 @@ export default ({session}) => {
                       className="d-flex justify-content-end"
                     >
                       <Button
+                        variant="danger"
                         onClick={(e)=> {onInviteBtnClick(e, it.user._id)}}
                       >
                         Invite
@@ -127,7 +146,7 @@ export default ({session}) => {
         </Accordion>
       </div>
       <Pagination
-        pageCount={20}
+        pageCount={Math.ceil(+freelancerProfiles.total / PAGE_SIZE)}
         page={page}
         setPage={(val)=>{setPage(val)}}
       />

@@ -125,20 +125,3 @@ export const getSessionRoles = async (id) => {
   return await resp.json()
 }
 
-export const getUninvitedFreelancers = async (data) => {
-  try {
-    const resp = await fetch(`${api_host}/sessions/uninvited-freelancers?${obj2Query(data)}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    if (resp.ok) {
-      return await resp.json()
-    } else {
-      throw resp
-    }  
-  } catch (error) {
-    throw error
-  }
-  
-}
