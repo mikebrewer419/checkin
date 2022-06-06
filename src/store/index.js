@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import freelancerReducer from './freelancers'
+import freelancerProfileReducer from './freelancerProfiles'
 import freelancerRequestReducer from './freelancerRequests'
 
 export default configureStore({
   reducer: {
-    freelancers: freelancerReducer,
+    freelancerProfiles: freelancerProfileReducer,
     freelancerRequests: freelancerRequestReducer 
   }
 })

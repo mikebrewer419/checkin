@@ -17,11 +17,21 @@ import {
   Button,
 } from 'react-bootstrap'
 
-import { set as setRequests } from '../../../store/freelancerRequests'
-import {listRequests} from '../../../services'
+import { 
+  set as setRequests,
+  update as updateRequestStore,
+} from '../../../store/freelancerRequests'
+import {
+  listRequests,
+  updateRequest,
+} from '../../../services'
 
 import UserImg from '../../../assets/callin.png'
 
+const responses = ['yes', 'maybe', undefined, 'no']
+const cpReq = (a, b) => {
+  return responses.indexOf(a.response) - responses.indexOf(b.response)
+}
 export default ({session}) => {
   
   const freelancerRequests = useSelector(state=>state.freelancerRequests)
@@ -39,9 +49,17 @@ export default ({session}) => {
     loadInvited()
   }, [loadInvited])
 
+  const bookOrReject = async (id, flag) => {
+    updateRequest(id, {status: flag ? 'book' : 'reject'}).then(res => {
+      dispatch(updateRequestStore(res))
+    }).catch(err => {
+      console.log(err)
+    })
+  }
+  
   return (
     <Accordion className="list-group hover-highlight">
-      {freelancerRequests.map(it=>(
+      {[...freelancerRequests].sort(cpReq).map(it=>(
         <div key={it._id}>
           <Accordion.Toggle
             as="div"
@@ -75,14 +93,26 @@ export default ({session}) => {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey={it._id}>
             <div className="p-4">
-              <div className="d-flex justify-content-end mb-2">
-                <Button
-                  variant="danger"
-                  className="px-4"
-                >
-                  Book
-                </Button>
-              </div>
+              {!it.status && (
+                <div className="d-flex justify-content-end mb-2">
+                  <Button
+                    variant="danger"
+                    className="px-4 mr-2"
+                    onClick={() => {bookOrReject(it._id, true)}}
+                  >
+                    Book
+                  </Button>
+                  <Button
+                    variant="light"
+                    className="px-4"
+                    onClick={() => {bookOrReject(it._id, false)}}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              )
+              
+              }
               <div style={{height: '180px', background: 'gray'}}></div>
             </div>
               

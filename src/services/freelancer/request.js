@@ -39,3 +39,24 @@ export const createRequest = async (session, requested_person) => {
     throw error
   }
 }
+
+export const updateRequest = async (id, data) => {
+  try{
+    const resp = await fetch(`${api_host}/freelancer/request/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    if (resp.ok) {
+      return await resp.json()  
+    } else {
+      throw resp
+    }
+    
+  } catch (error) {
+    throw error
+  }
+}

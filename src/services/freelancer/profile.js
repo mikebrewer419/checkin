@@ -1,5 +1,5 @@
 import { api_host, token } from '../consts'
-
+import { obj2Query } from '../../utils'
 export const getProfileByUser = async (user_id) => {
   const resp = await fetch(`${api_host}/freelancer/profile/by-user/${user_id}`, {
     headers: {
@@ -22,22 +22,42 @@ export const createProfile = async (fields) => {
 }
 
 export const updateProfile = async (id, fields) => {
-  const resp = await fetch(`${api_host}/freelancer/profile/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(fields)
-  })
-  return await resp.json()
+  try {
+    const resp = await fetch(`${api_host}/freelancer/profile/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(fields)
+    })
+    if (resp.ok) {
+      return await resp.json()  
+    } else {
+      throw resp
+    }
+      
+  } catch (error) {
+    throw error
+  }
+  
 }
 
-export const listProfile = async () => {
-  const resp = await fetch(`${api_host}/freelancer/profile`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+export const listProfiles = async (data) => {
+  try {
+    const resp = await fetch(`${api_host}/freelancer/profile?${obj2Query(data)}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    if (resp.ok) {
+      return await resp.json()  
+    } else {
+      throw resp
     }
-  })
-  return await resp.json()
+    
+  } catch (error) {
+    throw error
+  }
+  
 }
