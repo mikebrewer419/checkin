@@ -18,13 +18,14 @@ import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
 import PostingPage from './views/PostingPage'
-import StudioList from './views/studio/list'
+import StudioList from './views/Studio/List'
 import SessionManagerPage from './views/SessionManagerPage'
 import FreelancerProfilePage from './views/SessionManagerPage/FreelancerProfile'
 import AdminView from './views/Admin'
 import TalentPage from './views/TalentPage'
 import FindFreelancer from './views/Session/FindFreelancer';
-
+import ProjectInvite from './views/Studio/Invite'
+import Error404 from './views/Errors/404'
 import Header from './components/Header'
 import PrivateRoute from './components/PrivateRoute'
 import { USER_TYPES, VERSION } from './constants'
@@ -217,8 +218,14 @@ function App() {
                       component={props => <FreelancerProfilePage {...props} />}
                       accessTypes={[USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN]}
                     />
+                    <PrivateRoute
+                      path="/invitations/:id"
+                      component={ProjectInvite}
+                      accessTypes={[USER_TYPES.SUPER_ADMIN, USER_TYPES.SESSION_MANAGER]}
+                    />
                     <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
-                    <Route path="/" component={HomeBomponent} />
+                    <Route path="/" component={HomeBomponent} exact />
+                    <Route path="*" component={Error404} />
                   </Switch>
                 </Router>
               </TitleContext.Provider>

@@ -1,8 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const userSlice = createSlice({
-  name: 'users',
-  initialState: [],
+export const studioSlice = createSlice({
+  name: 'studios',
+  initialState: {
+    count: 0,
+    studios: []
+  },
   reducers: {
     set: (state, action) => {
       state = action.payload
@@ -26,6 +29,6 @@ export const userSlice = createSlice({
     }
   }
 })
-export const { set, add, update } = userSlice.actions
+export const { set, add, update } = studioSlice.actions
 
-export default userSlice.reducer
+export default studioSlice.reducer

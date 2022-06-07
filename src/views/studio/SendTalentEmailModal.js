@@ -22,7 +22,7 @@ import {
 } from '../../constants'
 import {} from '../../utils'
 
-const SendClientEmailModal = ({
+export default ({
   show,
   onHide,
   emailCheckinLink
@@ -204,5 +204,3 @@ const SendClientEmailModal = ({
     </Modal>
   )
 }
-
-export default SendClientEmailModal
