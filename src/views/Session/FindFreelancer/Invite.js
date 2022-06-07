@@ -25,7 +25,8 @@ import Pagination from '../../../components/Pagination'
 
 import {
   createRequest,
-  listProfiles
+  listProfiles,
+  apiListFreelancers,
   
 } from '../../../services'
 
@@ -39,19 +40,20 @@ export default ({session}) => {
   const [willWorkAs, setWillWorkAs] = useState('')
   const [name, setName] = useState('')
 
-  const  freelancerProfiles= useSelector(state=>state.freelancerProfiles)
+  const  freelancers= useSelector(state=>state.freelancerProfiles)
   const dispatch = useDispatch()
   
   const loadUninvited = useCallback(()=>{
-    listProfiles({
+    apiListFreelancers({
       exclude_session: session._id,
       name: name,
       will_work_as: willWorkAs
     }).then(res=>{
       dispatch(setProfiles(res))
-    }).catch(err=>{})
+    }).catch(err=>{
+      console.log(err)
+    })
   }, [page, name, willWorkAs])
-  
   
   useEffect(()=>{
     loadUninvited()
@@ -65,7 +67,7 @@ export default ({session}) => {
     }).catch(err=>{
     })
   }
-
+  
   return (
     <div>
       <div className="invite-tab-content">
@@ -88,7 +90,7 @@ export default ({session}) => {
           </Row>
         </Container>
         <Accordion className="list-group hover-highlight">
-          {freelancerProfiles.profiles.map(it=>(
+          {freelancers.profiles.map(it=>(
             <div key={it._id}>
               <Accordion.Toggle
                 as="div"
@@ -104,17 +106,17 @@ export default ({session}) => {
                     </Col>
                     <Col md={3}>
                       <h5 className="my-2">
-                        {it.user.first_name} {it.user.last_name}
+                        {it.first_name} {it.last_name}
                       </h5>
                     </Col>
                     <Col md={2}>
                       <h5 className="my-2">
-                        {it.timezone}
+                        {it.freelancer_profile.timezone}
                       </h5>
                     </Col>
                     <Col md={4}>
                       <h5 className="my-2">
-                        {it.will_work_as.join(', ')}
+                        {it.freelancer_profile.will_work_as.join(', ')}
                       </h5>
                     </Col>
                     <Col
@@ -123,7 +125,7 @@ export default ({session}) => {
                     >
                       <Button
                         variant="danger"
-                        onClick={(e)=> {onInviteBtnClick(e, it.user._id)}}
+                        onClick={(e)=> {onInviteBtnClick(e, it._id)}}
                       >
                         Invite
                       </Button>
@@ -146,7 +148,7 @@ export default ({session}) => {
         </Accordion>
       </div>
       <Pagination
-        pageCount={Math.ceil(+freelancerProfiles.total / PAGE_SIZE)}
+        pageCount={Math.ceil(+freelancers.total / PAGE_SIZE)}
         page={page}
         setPage={(val)=>{setPage(val)}}
       />

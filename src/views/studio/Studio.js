@@ -2,11 +2,9 @@ import React, {
   useContext,
   useEffect,
   useState,
-  useCallback,
 } from 'react'
 
 import {
-  useSelector,
   useDispatch,
 } from 'react-redux'
 
@@ -28,7 +26,7 @@ import {
 import moment from 'moment'
 import {
   static_root,
-  assignCastingDirector,
+  updateStudio,
   searchUsers,
   deleteStudio,
   getPagesByStudio,
@@ -56,7 +54,10 @@ import PostingPage from './PostingPage'
 import StudioCrupdateModal from './StudioCrupdateModal'
 import PostingPageCrupdateModal from './PostingPageCrupdateModal'
 
-const host = window.location.origin
+
+import {
+  update as updateStudioInStore,
+} from '../../store/studios'
 
 let fnTimeoutHandler = null
 
@@ -73,18 +74,14 @@ export default ({studio}) => {
   const [showCastingDirectorModal, setShowCastingDirectorModal] = useState(false)
   const [showCreatePostingPageModal, setShowCreatePostingPageModal] = useState(false)
   const [showCreateSessionModal, setShowCreateSessionModal] = useState(false)
-
+  const dispatch = useDispatch()
   const [postingPages, setPostingPages] = useState({})
-  const [selectedSession, setSelectedSession] = useState(null)
-  const [studioId, setStudioId] = useState(null)
   const [loadingSessionUsers, toggleLoadingSessionUsers] = useState(false)
   const [confirmMessage, setConfirmMessage] = useState(null)
   const [confirmCallback, setConfirmCallback] = useState(null)
 
   const [castingDirectors, setCastingDirectors] = useState([])
-  const [studioCastingDirector, setStudioCastingDirector] = useState(0)
-  const [selectedCastingDirector, setSelectedCastingDirector] = useState(null)
-  const [selectedPostingPage, setSelectedPostingPage] = useState(null)
+  const [selectedCastingDirector, setSelectedCastingDirector] = useState(studio.casting_directors)
 
   const searchCastingDirectors = async (email) => {
     if (fnTimeoutHandler) { clearTimeout(fnTimeoutHandler) }
@@ -95,85 +92,13 @@ export default ({studio}) => {
       toggleLoadingSessionUsers(false)
     }, 1000)
   }
-  const fetchStudioPostingPage = async (studio_id) => {
-    const pp = await getPagesByStudio(studio_id)
-    setPostingPages({
-      ...postingPages,
-      [studio_id]: pp
-    })
-  }
-
+  
   const handleStudioArchive = (studio) => {
     const callback = async () => {
       await archiveStudio(studio._id)
     }
     setConfirmMessage(`Want to archive ${studio.name}?`)
     setConfirmCallback(() => callback)
-  }
-  const handleStudioSubmit = async (result, isCreate) => {
-    toggleLoading(true)
-    if (isCreate) {
-      const newSession = await handleSessionSubmit({name: 'Session'}, result._id)
-    }
-    toggleLoading(false)
-  }
-
-  const handlePostingPageSubmit = async (postingPage={}, studio_id) => {
-  }
-
-  const handleSessionSubmit = async (session = {}, studio_id) => {
-    toggleLoading(true)
-    const name = session.name
-    const studioSessions = studio.sessions
-    const names = studioSessions.map(s => s.name)
-    const originalStudio = studioSessions.find(s => s._id === session._id)
-    if (names.includes(name) && studio.sessions
-     && (!originalStudio || originalStudio && originalStudio.name !== session.name)
-    ) {
-      window.alert(`You already have the session ${name}`)
-      return
-    }
-    const formData = new FormData()
-    formData.append('name', name)
-    if (typeof session.twr === 'string') {
-      formData.append('twr', session.twr)
-    }
-    let datesInfo = [];
-    (session.dates || []).forEach((date, idx) => {
-      if (date.size_card_pdf) {
-        formData.append(`size_card_pdf-${idx}`, date.size_card_pdf)
-      }
-      if (date.schedule_pdf) {
-        formData.append(`schedule_pdf-${idx}`, date.schedule_pdf)
-      }
-      const singleDate = {}
-      if (date.managers && date.managers.length > 0) {
-        singleDate.managers = date.managers.map(u => u._id)
-      }
-      if (date.lobbyManager && date.lobbyManager.length > 0) {
-        singleDate.lobbyManager = date.lobbyManager.map(u => u._id)
-      }
-      if (date.support) {
-        singleDate.support = date.support._id
-      }
-      singleDate.start_time = date.start_time
-      singleDate.start_time_type = date.start_time_type
-      singleDate.book_status = date.book_status
-      singleDate.invite_session_manager = date.invite_session_manager
-      singleDate.invite_lobby_manager = date.invite_lobby_manager
-      datesInfo.push(singleDate)
-    })
-    formData.append('dates', JSON.stringify(datesInfo))
-    formData.append('description', session.description)
-    let result = null
-    if (session._id) {
-      result = await updateSession(session._id, formData)
-    } else {
-      formData.append('studio', studio_id)
-      result = await createSession(formData)
-    }
-    toggleLoading(false)
-    return result
   }
 
   const deleteStudioHandle = async (studio) => {
@@ -197,7 +122,14 @@ export default ({studio}) => {
     confirmCallback()
     confirmCancel()
   }
-  
+  const onOKAssignCastingDirector = async () => {
+    const formData = new FormData()
+    formData.append('casting_directors', selectedCastingDirector.map(it=>it._id))
+    const res = await updateStudio(formData, studio._id)
+    dispatch(updateStudioInStore(res))
+    setShowCastingDirectorModal(false)
+  }
+
   return (
     <div className="col px-5 py-2 project-item" key={studio._id}>
       <div className="d-flex align-items-lg-baseline">
@@ -214,12 +146,14 @@ export default ({studio}) => {
           >
             <FaLink title="Assign Director"/>
             {studio.casting_directors.map(c => {
-              return <div className='casting-admin-wrap'>
-                <span key={c._id} className="ml-1">{c.email}</span>
-                {c.logo ?
-                  <img src={static_root + c.logo} />
-                : null}
-              </div>
+              return (
+                <div className='casting-admin-wrap'>
+                  <span key={c._id} className="ml-1">{c.email}</span>
+                  {c.logo ?
+                    <img src={static_root + c.logo} />
+                  : null}
+                </div>
+              )
             })}
           </label>
           {STUDIO_LIST_PERMISSIONS.CAN_ARCHIVE_STUDIO() && (
@@ -334,17 +268,13 @@ export default ({studio}) => {
           />
         </Modal.Body>
         <Modal.Footer>
-          <button
+          <Button
             disabled={!selectedCastingDirector}
             className="btn btn-primary"
-            onClick={async () => {
-              await assignCastingDirector(studioCastingDirector, selectedCastingDirector.map(c => c._id))
-              setStudioCastingDirector(0)
-              setSelectedCastingDirector([])
-            }}
+            onClick={onOKAssignCastingDirector}
           >
             Submit
-          </button>
+          </Button>
         </Modal.Footer>
       </Modal>
       <PostingPageCrupdateModal

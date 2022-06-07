@@ -40,7 +40,7 @@ export const createRequest = async (session, requested_person) => {
   }
 }
 
-export const updateRequest = async (id, data) => {
+export const apiUpdateRequest = async (id, data) => {
   try{
     const resp = await fetch(`${api_host}/freelancer/request/${id}`, {
       method: 'PATCH',
@@ -49,6 +49,44 @@ export const updateRequest = async (id, data) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
+    })
+    if (resp.ok) {
+      return await resp.json()  
+    } else {
+      throw resp
+    }
+    
+  } catch (error) {
+    throw error
+  }
+}
+
+export const apiGetRequestInfo = async (id) => {
+  try {
+    const resp = await fetch(`${api_host}/freelancer/request/info/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    if (resp.ok) {
+      return await resp.json()  
+    } else {
+      throw resp
+    }
+    
+  } catch (error) {
+    throw error
+  }
+}
+
+export const apiBookFreelancer = async function (req_id, data){
+  try {
+    const resp = await fetch(`${api_host}/freelancer/book/${req_id}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: data
     })
     if (resp.ok) {
       return await resp.json()  

@@ -219,7 +219,7 @@ function App() {
                       accessTypes={[USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN]}
                     />
                     <PrivateRoute
-                      path="/invitations/:id"
+                      path="/freelancer-requests/:id"
                       component={ProjectInvite}
                       accessTypes={[USER_TYPES.SUPER_ADMIN, USER_TYPES.SESSION_MANAGER]}
                     />
