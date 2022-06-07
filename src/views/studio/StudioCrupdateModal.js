@@ -1,9 +1,11 @@
 import React, {
-  useEffect,
   useRef,
   useState,
 } from 'react'
 
+import {
+  useDispatch
+} from 'react-redux'
 import {
   Modal,
   Form,
@@ -29,8 +31,14 @@ import {
 import {
   searchUsers,
   createStudio,
-  updateStudio
+  updateStudio,
+  getManyStudios,
 } from '../../services'
+
+import {
+  set as setStudiosInStore,
+  update as updateStudioInStore,
+} from '../../store/studios'
 
 export default function ({
   studio,
@@ -41,9 +49,9 @@ export default function ({
   const [selectedCastingDirector, setSelectedCastingDirector] = useState(studio ? studio.casting_directors : []);
   const [castingDirectors, setCastingDirectors] = useState([]);
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false);
-  const formRef = useRef(null);
   const [errors, setErrors] = useState({});
   const [showAuditionPurchaseMsg, setShowAuditionPurchaseMsg] = useState(studio && studio.type === PROJECT_TYPES.CREATOR);
+  const dispatch = useDispatch()
 
   const initialData = !!studio ? studio : {};
 
@@ -57,50 +65,57 @@ export default function ({
   const onSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-
+    if(selectedCastingDirector.length > 0) {
+      formData.append('casting_directors', selectedCastingDirector.map(it=>it._id))
+    }
     if (!!studio._id) {
       updateStudio(formData, studio._id).then(res => {
-        console.log(res);
+        
+        dispatch(updateStudioInStore(res))
       }).catch(err => {
         console.log(err);
       });
     } else {
       createStudio(formData).then(res => {
-        console.log(res);
+        getManyStudios(0, 10).then(res=>{
+          dispatch(setStudiosInStore(res))
+        })
       }).catch(err => {
         console.log(err);
       });
     }
     onHide();
   };
+ 
   return (
     <Modal
       dialogClassName={clsx({ "fullscreen-modal": showDetails })}
       show={show}
       onHide={onHide}
     >
-      <Modal.Header closeButton className="align-items-baseline">
-        <h4 className="mb-0 mr-3">
-          {studio ? `Update ${studio.name}` : 'Create New Project'}
-          {!studio && showDetails && (
-            <p className="h6 font-weight-normal mt-1">
-              Please make sure all credentials are preperly configured for your account.
-            </p>
-          )}
+      <Form
+        className="d-flex flex-column h-100"        
+        onSubmit={onSubmit}
+      >
+        <Modal.Header closeButton className="align-items-baseline">
+          <h4 className="mb-0 mr-3">
+            {(studio && studio._id) ? `Update ${studio.name}` : 'Create New Project'}
+            {!studio && showDetails && (
+              <p className="h6 font-weight-normal mt-1">
+                Please make sure all credentials are preperly configured for your account.
+              </p>
+            )}
 
-        </h4>
-        {studio && studio.casting_directors && studio.casting_directors.length > 0 && (
-          <label className="mb-0">
-            <span className="mr-1">Director: </span>
-            {studio.casting_directors.map(director => director.email).join(',')}
-          </label>
-        )}
-      </Modal.Header>
-      <Modal.Body className="overflow-auto">
-        <Form
-          onSubmit={onSubmit}
-          ref={formRef}
-        >
+          </h4>
+          {studio && studio.casting_directors && studio.casting_directors.length > 0 && (
+            <label className="mb-0">
+              <span className="mr-1">Director: </span>
+              {studio.casting_directors.map(director => director.email).join(',')}
+            </label>
+          )}
+        </Modal.Header>
+        <Modal.Body className="overflow-auto">
+        
           {!showDetails && (
             <>
               <div className='d-flex align-items-center mb-3'>
@@ -295,24 +310,23 @@ export default function ({
                 <p className="text-danger mb-1">Meeting id <strong>{errors.meeting_id}</strong> already used!</p>}
             </Form.Group>
           </Container>
-
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button
-          onClick={() => { formRef.current.requestSubmit(); } }
-          variant="primary"
-        >
-          {studio ? 'Update' : 'Create'}
-        </Button>
-        <Button
-          variant="secondary"
-          className="ml-3"
-          onClick={onHide}
-        >
-          Cancel
-        </Button>
-      </Modal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            type="submit"
+            variant="primary"
+          >
+            {(studio && studio._id) ? 'Update' : 'Create'}
+          </Button>
+          <Button
+            variant="secondary"
+            className="ml-3"
+            onClick={onHide}
+          >
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Form>
     </Modal>
   );
 }

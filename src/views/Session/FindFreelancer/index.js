@@ -23,7 +23,7 @@ export default () => {
   const [session, setSession] = useState(undefined)
   const [permitted, setPermitted] = useState(true)
   const {session_id} = useParams()
-  const [tabKey, setTabKey] = useState('invite')
+  const [tabKey, setTabKey] = useState('invited')
 
   useEffect(()=>{
     getOneSession(session_id).then(res=>{

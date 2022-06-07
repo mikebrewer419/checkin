@@ -16,13 +16,13 @@ export const studioSlice = createSlice({
       return state
     },
     update: (state, action) => {
-      const idx = state.findIndex(it=>it._id == action.payload._id)
+      const idx = state.studios.findIndex(it=>it._id == action.payload._id)
       if (idx !== -1) {
-        const temp = [...state]
-        temp[idx] = action.payload
+        const temp = {count: state.count, studios: [...(state.studios)]}
+        temp.studios[idx] = action.payload
         state = temp
       } else {
-        state = [...state, action.payload]
+        
       }
       
       return state

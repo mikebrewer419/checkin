@@ -69,7 +69,7 @@ const StudioList = () => {
     })
     
   }
-  console.log(studios)
+
   return (
     <div className="p-5 w-100 studios-list">
       <div className="d-flex align-items-center justify-content-between mb-5">

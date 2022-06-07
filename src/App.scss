@@ -265,3 +265,25 @@ body {
   min-height: calc(100vh - 200px);
 }
   
+.freelancer-request-respond-page {
+  .resp-btn{
+    width: 140px;
+  }
+  .info-table {
+    tbody {
+      tr {
+        td {
+          padding: 3px 8px;
+          &:first-child{
+            text-align: right;
+          }
+          &:nth-child(2) {
+            max-width: 3px;
+            text-align: center;
+          }
+        }
+        
+      }
+    }
+  }
+}
