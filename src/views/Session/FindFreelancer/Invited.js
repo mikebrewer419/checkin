@@ -212,7 +212,6 @@ export default ({session}) => {
   useEffect(() => {
     loadInvited()
   }, [loadInvited])
-
   return (
     <div className="my-2">
       <Accordion className="list-group hover-highlight">
