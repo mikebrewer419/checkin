@@ -212,6 +212,10 @@ body {
 
 .react-datetime-picker {
   z-index: 2;
+  .react-datetime-picker__wrapper {
+    border: none;
+    min-width: 250px;
+  }
 }
 
 .page {

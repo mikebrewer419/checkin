@@ -19,9 +19,6 @@ import {
 
 import {
   FaPen,
-  FaLink,
-  FaBackward,
-  FaArchive,
   FaTrash,
   FaListAlt,
   FaFilm,
@@ -42,17 +39,16 @@ import './style.scss'
 import {
   SESSION_TIME_TYPE,
   USER_TYPE,
-  USER_TYPES,
   STUDIO_LIST_PERMISSIONS,
 } from '../../constants'
 
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { humanFileSize } from '../../utils'
+
+import { update as updateStudioInStore} from '../../store/studios'
 
 import SessionCrupdateModal from './SessionCrupdateModal'
 import SendClientEmailModal from './SendClientEmailModal'
 import SendTalentEmailModal from './SendTalentEmailModal'
-import { ShowLoadingContext } from '../../Context'
 
 const host = window.location.origin
 
@@ -60,7 +56,6 @@ export default ({
   session,
   studio,
 }) => {
-  const toggleLoading = useContext(ShowLoadingContext)
   const [showEditModal, setShowEditModal] = useState(false)
   const [confirmMessage, setConfirmMessage] = useState(null)
   const [confirmCallback, setConfirmCallback] = useState(null)
@@ -69,68 +64,20 @@ export default ({
   const [emailProject, setEmailProject] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
   const [emailSessionParams, setEmailSessionParams] = useState(null)
-
-  const handleSessionDelete = async (session, studio_id) => {
-    const callback = async () => {
-      await deleteSession(session._id)
-    }
+  const dispatch = useDispatch()
+  
+  const onDeleteClick = ()=>{
     setConfirmMessage(`Want to delete ${session.name}?`)
-    setConfirmCallback(() => callback)
   }
-
-  const handleSessionSubmit = async (session = {}, studio_id) => {
-    toggleLoading(true)
-    const name = session.name
-    const studioSessions = studio.sessions
-    const names = studioSessions.map(s => s.name)
-    const originalStudio = studioSessions.find(s => s._id === session._id)
-    if (names.includes(name) && studio.sessions
-     && (!originalStudio || originalStudio && originalStudio.name !== session.name)
-    ) {
-      window.alert(`You already have the session ${name}`)
-      return
-    }
-    const formData = new FormData()
-    formData.append('name', name)
-    if (typeof session.twr === 'string') {
-      formData.append('twr', session.twr)
-    }
-    let datesInfo = [];
-    (session.dates || []).forEach((date, idx) => {
-      if (date.size_card_pdf) {
-        formData.append(`size_card_pdf-${idx}`, date.size_card_pdf)
-      }
-      if (date.schedule_pdf) {
-        formData.append(`schedule_pdf-${idx}`, date.schedule_pdf)
-      }
-      const singleDate = {}
-      if (date.managers && date.managers.length > 0) {
-        singleDate.managers = date.managers.map(u => u._id)
-      }
-      if (date.lobbyManager && date.lobbyManager.length > 0) {
-        singleDate.lobbyManager = date.lobbyManager.map(u => u._id)
-      }
-      if (date.support) {
-        singleDate.support = date.support._id
-      }
-      singleDate.start_time = date.start_time
-      singleDate.start_time_type = date.start_time_type
-      singleDate.book_status = date.book_status
-      singleDate.invite_session_manager = date.invite_session_manager
-      singleDate.invite_lobby_manager = date.invite_lobby_manager
-      datesInfo.push(singleDate)
-    })
-    formData.append('dates', JSON.stringify(datesInfo))
-    formData.append('description', session.description)
-    let result = null
-    if (session._id) {
-      result = await updateSession(session._id, formData)
-    } else {
-      formData.append('studio', studio_id)
-      result = await createSession(formData)
-    }
-    toggleLoading(false)
-    return result
+  const onDeleteConfirmYesClick = async () => {
+    const res = await deleteSession(session._id)
+    const idx = studio.sessions.findIndex(it=>it._id == res._id)
+    const sessions = [...studio.sessions]
+    sessions.splice(idx, 1)
+    const temp = {...studio}
+    temp.sessions = sessions
+    dispatch(updateStudioInStore(temp))
+    setConfirmMessage(null)
   }
 
   const confirmCancel = () => {
@@ -142,7 +89,7 @@ export default ({
     confirmCallback()
     confirmCancel()
   }
-
+  
   return (
     <div className="row mt-1 ml-2 mr-2 align-items-start">
       <div className="col-2 d-flex">
@@ -223,7 +170,7 @@ export default ({
           onClick={() => {setShowEditModal(true)}}
         />
         {USER_TYPE.IS_SUPER_ADMIN() && (
-          <FaTrash className="mr-2" onClick={() => handleSessionDelete(session, studio._id)}/>
+          <FaTrash className="mr-2" onClick={onDeleteClick}/>
         )}
         <Link to={`/studios/${studio._id}/sessions/${session._id}/find-freelancer`}>
           <FaSearch />
@@ -233,7 +180,6 @@ export default ({
         show={showEditModal}
         onHide = {()=>{setShowEditModal(false)}}
         session={session}
-        handleSessionSubmit = {handleSessionSubmit}
       />
       <Modal
         show={!!confirmMessage}
@@ -247,7 +193,7 @@ export default ({
         <Modal.Footer>
           <button
             className="btn btn-danger"
-            onClick={confirmYes}
+            onClick={onDeleteConfirmYesClick}
           >Yes.</button>
           <button
             className="btn btn-link"

@@ -197,7 +197,6 @@ const Request = ({request, session}) =>{
 }
 
 export default ({session}) => {
-  
   const freelancerRequests = useSelector(state=>state.freelancerRequests)
   const dispatch = useDispatch()
 
