@@ -119,3 +119,12 @@ export const getUserText = (user) => {
   }
   return `${user.email} ${user.user_type}`
 }
+
+export const getObjValue = (obj, key, fallback) => {
+  try {
+    return obj[key]
+  } catch (error) {
+    return fallback
+  }
+
+}

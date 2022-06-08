@@ -240,6 +240,7 @@ export default ({studio}) => {
       </Modal>
       <SessionCrupdateModal
         show={showCreateSessionModal}
+        studio={studio}
         onHide = {() => {setShowCreateSessionModal(false)}}
       />
       <Modal
