@@ -1,5 +1,9 @@
 import React from 'react'
 import {
+  useSelector,
+  useDispatch,
+} from 'react-redux'
+import {
   Modal,
   Button,
   Form
@@ -11,29 +15,42 @@ import {
   updatePage
 } from '../../services'
 
+import {
+  update as updateStudioInStore,
+} from '../../store/studios'
+
 export default ({
   postingPage,
   studio,
   show,
   onHide,
 }) => {
+  const dispatch = useDispatch()
+  const studios = useSelector(state=>state.studios)
   const onSubmit = (e)=>{
     e.preventDefault()
     const formData = new FormData(e.target)
     if (postingPage) {
       updatePage(postingPage._id, formData).then(res=>{
-        console.log(res)
+        const studio = { ...studios.studios.find(it=>it._id == res.studio) }
+        const idx = studio.postingPages.findIndex(it=>it._id == res._id)
+        const postingPages = [...studio.postingPages]
+        postingPages[idx] = res
+        studio.postingPages = postingPages
+        dispatch(updateStudioInStore(studio))
       })
     } else {
       formData.append('studio', studio._id)
       createPage(formData).then(res=>{
-        console.log(res)
+        const studio = { ...studios.studios.find(it=>it._id == res.studio) }
+        const postingPages = [...studio.postingPages, res]
+        studio.postingPages = postingPages
+        dispatch(updateStudioInStore(studio))
       })
     }
-    
-    
     onHide()
   }
+  
   return (
     <Modal
       show={show}

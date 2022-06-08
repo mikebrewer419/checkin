@@ -109,7 +109,6 @@ export default ({
     if (session) {
       updateSession(session._id, formData).then(res=>{
         const studio = { ...studios.studios.find(it=>it._id == res.studio) }
-        console.log(studio)
         const idx = studio.sessions.findIndex(it=>it._id == res._id)
         const sessions = [...studio.sessions]
         sessions[idx] = res
