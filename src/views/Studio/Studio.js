@@ -48,7 +48,6 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { humanFileSize } from '../../utils'
 
 import SessionCrupdateModal from './SessionCrupdateModal'
-import { ShowLoadingContext } from '../../Context'
 import Session from './Session'
 import PostingPage from './PostingPage'
 import StudioCrupdateModal from './StudioCrupdateModal'
@@ -61,15 +60,7 @@ import {
 
 let fnTimeoutHandler = null
 
-const formatDate = (time) => {
-  const date = moment(new Date(time).toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))
-  if (date.isValid())
-    return date.format('M/D/YYYY')
-  return ''
-}
-
 export default ({studio}) => {
-  const toggleLoading = useContext(ShowLoadingContext)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showCastingDirectorModal, setShowCastingDirectorModal] = useState(false)
   const [showCreatePostingPageModal, setShowCreatePostingPageModal] = useState(false)
@@ -208,8 +199,8 @@ export default ({studio}) => {
             studio={studio}
           />
         ))}
-        {(postingPages[studio._id] || []).length > 0 && <hr className="w-100 mt-2 mb-0" />}
-        {(postingPages[studio._id] || []).map(pp => (
+        {studio.postingPages.length > 0 && <hr className="w-100 mt-2 mb-0" />}
+        {studio.postingPages.map(pp => (
           <PostingPage
             studio={studio}
             postingPage={pp}
@@ -282,6 +273,7 @@ export default ({studio}) => {
         </Modal.Footer>
       </Modal>
       <PostingPageCrupdateModal
+        studio={studio}
         show={showCreatePostingPageModal}
         onHide={()=>{setShowCreatePostingPageModal(false)}}
       />
