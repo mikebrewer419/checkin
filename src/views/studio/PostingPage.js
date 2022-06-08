@@ -14,6 +14,7 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import clsx from 'classnames'
 import { Link } from 'react-router-dom'
 import { 
+  Button,
   Modal
 } from 'react-bootstrap'
 
@@ -47,27 +48,29 @@ import {
   archiveStudio,
   unArchiveStudio,
 } from '../../services'
-import { ShowLoadingContext } from '../../Context'
+
+import { update as updateStudioInStore} from '../../store/studios'
+
 import './style.scss'
+import PostingPageCrupdateModal from './PostingPageCrupdateModal'
 
 export default ({studio, postingPage}) => {
   const [showEditModal, setShowEditModal] = useState(false)
-  const [confirmMessage, setConfirmMessage] = useState(null)
-  const [confirmCallback, setConfirmCallback] = useState(null)
-  const [name, setName] = useState('')
-  const toggleLoading = useContext(ShowLoadingContext)
-
-  const handleDelete = async (postingPage, studio_id) => {
-    const callback = async () => {
-      await deletePage(postingPage._id)
-    }
-    setConfirmMessage(`Want to delete ${postingPage.name}?`)
-    setConfirmCallback(() => callback)
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false)
+  const dispatch = useDispatch()
+  
+  const onConfirmDelete = () => {
+    deletePage(postingPage._id).then(res=>{
+      const idx = studio.postingPages.findIndex(it=>it._id == res._id)
+      const postingPages = [...studio.postingPages]
+      postingPages.splice(idx, 1)
+      const temp = {...studio}
+      temp.postingPages = postingPages
+      dispatch(updateStudioInStore(temp))
+      setShowDeleteConfirmModal(false)
+    })
   }
-  const handlePostingPageSubmit = async (postingPage={}, studio_id) => {
-    toggleLoading(true)
-    toggleLoading(false)
-  }
+  
   return (
     <div key={postingPage._id} className="row mt-1 ml-2 mr-2">
       <div className="col-2">
@@ -82,36 +85,38 @@ export default ({studio, postingPage}) => {
         <FaPen
           className="mr-2"
           onClick={() => {setShowEditModal(true)}}/>
-        <FaTrash onClick={() => handleDelete(postingPage, studio._id)}/>
+        <FaTrash onClick={() => {setShowDeleteConfirmModal(true)}}/>
       </div>
-      <Modal
+      <PostingPageCrupdateModal
         show={showEditModal}
-        onHide={() => {setShowEditModal(false)}}
+        onHide={()=>{setShowEditModal(false)}}
+        postingPage={postingPage}
+        studio={studio}
+      />
+      <Modal
+        show={showDeleteConfirmModal}
+        onHide={()=>{setShowDeleteConfirmModal(false)}}
       >
-        <Modal.Header closeButton className="align-items-baseline">
-          <h4 className="mb-0 mr-3">
-            Update {postingPage.name}
-          </h4>
+        <Modal.Header>
+          <h4>Want to delete Posing Page "{postingPage.name}"</h4>
         </Modal.Header>
-        <Modal.Body>
-          <input
-            type="text"
-            className="form-control mb-3"
-            value={postingPage.name}
-            onChange={ev => {setName(ev.target.name)}}
-          />
-        </Modal.Body>
         <Modal.Footer>
-          <button
-            disabled={!!name}
-            className="btn btn-primary"
-            onClick={() => {
-              handlePostingPageSubmit(postingPage, studio._id)
-            }}
+          <Button
+            className="btn-w-md"
+            variant="danger"
+            onClick={onConfirmDelete}
           >
-            Submit
-          </button>
+            Yes
+          </Button>
+          <Button
+            variant="light"
+            className="btn-w-md"
+            onClick={()=>{setShowDeleteConfirmModal(false)}}
+          >
+            Cancel
+          </Button>
         </Modal.Footer>
+
       </Modal>
     </div>
   )

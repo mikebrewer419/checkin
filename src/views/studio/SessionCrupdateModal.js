@@ -15,9 +15,13 @@ import {
   Form,
   Button,
 } from 'react-bootstrap'
+
 import DateTimePicker from "react-datetime-picker";
 import { Editor } from '@tinymce/tinymce-react'
 import { FaListAlt, FaTimes } from "react-icons/fa";
+
+import _ from 'lodash'
+
 import {
   static_root,
   searchUsers,
@@ -31,7 +35,6 @@ import {
   USER_TYPES,
   TINYMCE_KEY,
 } from "../../constants";
-import { getObjValue } from '../../utils'
 import { update as updateStudioInStore } from '../../store/studios'
 
 let fnTimeoutHandler = null;
@@ -46,7 +49,7 @@ export default ({
   const [loadingSessionUsers, setLoadingSessionUsers] = useState(false);
   const [sessionUsers, setSessionUsers] = useState([]);
   const editorRef = useRef(null)
-  const [dates, setDates] = useState(getObjValue(session, 'dates', []))
+  const [dates, setDates] = useState(_.get(session, 'dates', []))
   
   const dispatch = useDispatch()
   const studios = useSelector(state=>state.studios)
@@ -106,7 +109,6 @@ export default ({
     if (session) {
       updateSession(session._id, formData).then(res=>{
         const studio = { ...studios.studios.find(it=>it._id == res.studio) }
-        console.log(studio)
         const idx = studio.sessions.findIndex(it=>it._id == res._id)
         const sessions = [...studio.sessions]
         sessions[idx] = res
@@ -149,7 +151,7 @@ export default ({
                   <Form.Control
                     type="text"
                     name="name"
-                    defaultValue={getObjValue(session, 'name', '')}
+                    defaultValue={_.get(session, 'name', '')}
                   />
                 </Form.Group>
                 <label>Start time</label>
@@ -316,7 +318,7 @@ export default ({
                 <input
                   type="text"
                   name="twr"
-                  defaultValue={getObjValue(session, 'twr', '')}
+                  defaultValue={_.get(session, 'twr', '')}
                   placeholder="Input room_id/studio_uri with no space."
                   className="form-control"
                 />
@@ -325,7 +327,7 @@ export default ({
                 <Editor
                   apiKey={TINYMCE_KEY}
                   onInit={(evt, editor) => editorRef.current = editor}
-                  initialValue={getObjValue(session, 'description', '')}
+                  initialValue={_.get(session, 'description', '')}
                   init={{
                     height: '300px',
                     menubar: false,
