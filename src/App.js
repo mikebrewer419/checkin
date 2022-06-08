@@ -175,7 +175,6 @@ function App() {
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
       <Provider store={store}>
         <ShowLoadingContext.Provider value={toggleLoadingState}>
-
           <IconContext.Provider value={{ className: "global-class-name" }}>
             <div className={`loading`}>
               <button className='btn btn-secondary btn-sm' onClick={() => {

@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   Button,
+  Card,
 } from 'react-bootstrap'
 import moment from 'moment'
 import {
@@ -78,86 +79,107 @@ export default () => {
       {!!info && (
         <>
           <h3 className="text-center">Request Summary</h3>
-          
           <Row className="my-3">
             <Col>
-              <h5 className="text-center">Project</h5>
-              <table className="w-100 text-10 info-table">
-                <tbody>
-                  <tr>
-                    <td>Name</td>
-                    <td>:</td>
-                    <td>{info.studio.name}</td>
-                  </tr>
-                  <tr>
-                    <td>Casting Directors</td>
-                    <td>:</td>
-                    <td>
-                      {info.studio.casting_directors.map(it=>(
-                        <div>{it.first_name} {it.last_name}</div>
-                      ))}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Project Type</td>
-                    <td>:</td>
-                    <td>{info.studio.project_type}</td>
-                  </tr>
-                  <tr>
-                    <td>Created By</td>
-                    <td>:</td>
-                    <td>{info.studio.created_by.first_name} {info.studio.created_by.last_name}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <Card className="h-100">
+                <Card.Header>
+                  <h5 className="text-center">Project</h5>
+                </Card.Header>
+                <Card.Body>
+                  <table className="w-100 text-10 info-table">
+                    <tbody>
+                      <tr>
+                        <td>Name</td>
+                        <td>:</td>
+                        <td>{info.studio.name}</td>
+                      </tr>
+                      <tr>
+                        <td>Casting Directors</td>
+                        <td>:</td>
+                        <td>
+                          {info.studio.casting_directors.map(it=>(
+                            <div>{it.first_name} {it.last_name}</div>
+                          ))}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Project Type</td>
+                        <td>:</td>
+                        <td>{info.studio.project_type}</td>
+                      </tr>
+                      <tr>
+                        <td>Created By</td>
+                        <td>:</td>
+                        <td>{info.studio.created_by.first_name} {info.studio.created_by.last_name}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
             </Col>
             <Col>
-              <h5 className="text-center">Session</h5>
-              <table className="w-100 text-10 info-table">
-                <tbody>
-                  <tr>
-                    <td>Name</td>
-                    <td>:</td>
-                    <td>{info.session.name}</td>
-                  </tr>
-                  <tr>
-                    <td>Created At</td>
-                    <td>:</td>
-                    <td>
-                      {moment(new Date(info.session.created_at)).format('MM/DD/YYYY')}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Dates</td>
-                    <td>:</td>
-                    <td>
-                      {info.session.dates.map(it=>(
-                        <div>
-                          {moment(it.start_time).format('MM/DD/YYYY T HH:mm:ss')}
-                        </div>
-                      ))}
-                    </td>
-                  </tr>
-                  
-                </tbody>
-              </table>
+              <Card className="h-100">
+                <Card.Header>
+                  <h5 className="text-center">Session</h5>
+                </Card.Header>
+                <Card.Body>
+                  <table className="w-100 text-10 info-table">
+                    <tbody>
+                      <tr>
+                        <td>Name</td>
+                        <td>:</td>
+                        <td>{info.session.name}</td>
+                      </tr>
+                      <tr>
+                        <td>Created At</td>
+                        <td>:</td>
+                        <td>
+                          {moment(new Date(info.session.created_at)).format('MM/DD/YYYY')}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Dates</td>
+                        <td>:</td>
+                        <td>
+                          {info.session.dates.map(it=>(
+                            <div>
+                              {moment(it.start_time).format('MM/DD/YYYY T HH:mm:ss')}
+                            </div>
+                          ))}
+                        </td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+              
+              
             </Col>
             <Col>
-              <h5 className="text-center">Request</h5>
-              <table className="w-100 text-10 info-table">
-                <tbody>
-                  <tr>
-                    <td>Requested By</td>
-                    <td>:</td>
-                    <td>{info.request.request_by.first_name} {info.request.request_by.last_name}</td>
-                  </tr>
-                  <tr>
-                    <td>Posted At</td>
-                    <td>:</td>
-                    <td>{moment(info.request.date).format('MM/DD/YYYY T HH:mm:ss')}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <Card className="h-100">
+                <Card.Header>
+                  <h5 className="text-center">Request</h5>
+                </Card.Header>
+                <Card.Body>
+                  <table className="w-100 text-10 info-table">
+                    <tbody>
+                      <tr>
+                        <td>Requested By</td>
+                        <td>:</td>
+                        <td>{info.request.request_by.first_name} {info.request.request_by.last_name}</td>
+                      </tr>
+                      <tr>
+                        <td>Posted At</td>
+                        <td>:</td>
+                        <td>{moment(info.request.date).format('MM/DD/YYYY T HH:mm:ss')}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+              
+              
             </Col>
           </Row>
         </>
