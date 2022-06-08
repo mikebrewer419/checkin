@@ -181,12 +181,14 @@ export default ({
         <Modal.Footer>
           <Button
             variant="danger"
+            className="btn-w-md"
             onClick={onDeleteConfirmYesClick}
           >
             Yes
           </Button>
           <Button
             variant="light"
+            className="btn-w-md"
             onClick={()=>{setShowConfirmModal(false)}}
           >
             Cancel

@@ -102,6 +102,7 @@ export default ({studio, postingPage}) => {
         </Modal.Header>
         <Modal.Footer>
           <Button
+            className="btn-w-md"
             variant="danger"
             onClick={onConfirmDelete}
           >
@@ -109,6 +110,7 @@ export default ({studio, postingPage}) => {
           </Button>
           <Button
             variant="light"
+            className="btn-w-md"
             onClick={()=>{setShowDeleteConfirmModal(false)}}
           >
             Cancel

@@ -66,7 +66,6 @@ export default ({studio}) => {
   const [showCreatePostingPageModal, setShowCreatePostingPageModal] = useState(false)
   const [showCreateSessionModal, setShowCreateSessionModal] = useState(false)
   const dispatch = useDispatch()
-  const [postingPages, setPostingPages] = useState({})
   const [loadingSessionUsers, toggleLoadingSessionUsers] = useState(false)
   const [confirmMessage, setConfirmMessage] = useState(null)
   const [confirmCallback, setConfirmCallback] = useState(null)
@@ -222,14 +221,20 @@ export default ({studio}) => {
           </h5>
         </Modal.Header>
         <Modal.Footer>
-          <button
-            className="btn btn-danger"
+          <Button
+            variant="danger"
+            className="btn-w-md"
             onClick={confirmYes}
-          >Yes.</button>
-          <button
-            className="btn btn-link"
+          >
+            Yes
+          </Button>
+          <Button
+            variant="light"
+            className="btn-w-md"
             onClick={confirmCancel}
-          >Cancel</button>
+          >
+            Cancel
+          </Button>
         </Modal.Footer>
       </Modal>
       <SessionCrupdateModal
