@@ -103,7 +103,10 @@ const StudioList = () => {
       </div>
       <div className="list-group mb-4">
         {studios.studios.map(studio => (
-          <Studio studio={studio} />
+          <Studio
+            key={studio._id}
+            studio={studio}
+          />
         ))}
       </div>
       <Pagination

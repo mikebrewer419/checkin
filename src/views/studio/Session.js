@@ -14,6 +14,7 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import clsx from 'classnames'
 import { Link } from 'react-router-dom'
 import { 
+  Button,
   Modal
 } from 'react-bootstrap'
 
@@ -30,8 +31,6 @@ import { AiOutlineOrderedList } from 'react-icons/ai'
 import { HiOutlineMail } from 'react-icons/hi'
 import moment from 'moment'
 import {
-  createSession,
-  updateSession,
   deleteSession,
 } from '../../services'
 import './style.scss'
@@ -57,17 +56,16 @@ export default ({
   studio,
 }) => {
   const [showEditModal, setShowEditModal] = useState(false)
-  const [confirmMessage, setConfirmMessage] = useState(null)
-  const [confirmCallback, setConfirmCallback] = useState(null)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
 
   const [emailCheckinLink, setEmailCheckinLink] = useState('')
   const [emailProject, setEmailProject] = useState('')
   const [emailSessionLink, setEmailSessionLink] = useState('')
   const [emailSessionParams, setEmailSessionParams] = useState(null)
   const dispatch = useDispatch()
-  
+
   const onDeleteClick = ()=>{
-    setConfirmMessage(`Want to delete ${session.name}?`)
+    setShowConfirmModal(true)
   }
   const onDeleteConfirmYesClick = async () => {
     const res = await deleteSession(session._id)
@@ -77,19 +75,9 @@ export default ({
     const temp = {...studio}
     temp.sessions = sessions
     dispatch(updateStudioInStore(temp))
-    setConfirmMessage(null)
+    setShowConfirmModal(false)
   }
 
-  const confirmCancel = () => {
-    setConfirmCallback(null)
-    setConfirmMessage('')
-  }
-
-  const confirmYes = () => {
-    confirmCallback()
-    confirmCancel()
-  }
-  
   return (
     <div className="row mt-1 ml-2 mr-2 align-items-start">
       <div className="col-2 d-flex">
@@ -182,23 +170,27 @@ export default ({
         session={session}
       />
       <Modal
-        show={!!confirmMessage}
-        onHide = {confirmCancel}
+        show={showConfirmModal}
+        onHide = {()=>{setShowConfirmModal(false)}}
       >
         <Modal.Header closeButton>
           <h5 className="mb-0">
-            {confirmMessage}
+            {`Want to delete ${session.name}?`}
           </h5>
         </Modal.Header>
         <Modal.Footer>
-          <button
-            className="btn btn-danger"
+          <Button
+            variant="danger"
             onClick={onDeleteConfirmYesClick}
-          >Yes.</button>
-          <button
-            className="btn btn-link"
-            onClick={confirmCancel}
-          >Cancel</button>
+          >
+            Yes
+          </Button>
+          <Button
+            variant="light"
+            onClick={()=>{setShowConfirmModal(false)}}
+          >
+            Cancel
+          </Button>
         </Modal.Footer>
       </Modal>
       <SendTalentEmailModal
