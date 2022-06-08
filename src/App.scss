@@ -41,8 +41,19 @@ body {
     cursor: pointer;
   }
 }
+
 .pagination li {
   cursor: pointer;
+  select {
+    min-width: 30px;
+    outline: none!important;
+    text-align: center;
+  };
+  .page-count {
+    min-width: 30px;
+    text-align: center;
+    display: inline-block;
+  }
 }
 
 .cursor-pointer {

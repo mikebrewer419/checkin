@@ -1,7 +1,8 @@
 import React, {
     useState,
     useEffect,
-    useContext
+    useContext,
+    useCallback,
 } from 'react'
 
 import {
@@ -48,17 +49,17 @@ const UsersTab = () => {
 
   const perPage = 20
 
-  const load = async () => {
+  const load = useCallback(async () => {
     toggleLoadingState(true)
     const response = await listUsers(query, userType, page * perPage, perPage)
     toggleLoadingState(false)
     setUsers(response.users)
     setCount(response.count)
-  }
+  }, [page, userType])
 
   useEffect(() => {
     load()
-  }, [page, userType])
+  }, [load])
 
   useEffect(() => {
     if (delayHandle) { clearTimeout(delayHandle) }

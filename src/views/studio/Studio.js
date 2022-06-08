@@ -147,7 +147,10 @@ export default ({studio}) => {
             <FaLink title="Assign Director"/>
             {studio.casting_directors.map(c => {
               return (
-                <div className='casting-admin-wrap'>
+                <div
+                  key={c._id}
+                  className='casting-admin-wrap'
+                >
                   <span key={c._id} className="ml-1">{c.email}</span>
                   {c.logo ?
                     <img src={static_root + c.logo} />

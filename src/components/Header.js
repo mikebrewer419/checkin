@@ -64,13 +64,16 @@ const Header = (props) => {
 
   return (
     <Navbar className="py-4 pl-5 global-header no-print" bg="danger">
-      <Navbar.Brand href="#home">
-        <Link to={logoLink} target={logoTarget} id="header-logo">
-          {user.logo
-            ? <Image className="header-logo" src={static_root+user.logo} />
-            : <label className="mb-0 h3 text-white">HeyJoe</label>
-          }
-        </Link>
+      <Navbar.Brand
+        as={Link}
+        to={logoLink}
+        target={logoTarget}
+        id="header-logo"
+      >
+        {user.logo
+          ? <Image className="header-logo" src={static_root+user.logo} />
+          : <label className="mb-0 h3 text-white">HeyJoe</label>
+        }
       </Navbar.Brand>
       <h3 id="header-title">
         {title}
