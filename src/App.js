@@ -34,7 +34,6 @@ import {ShowLoadingContext} from './Context'
 import { AuthContext } from './hooks/auth'
 
 import store from './store'
-import { getObjValue } from './utils'
 
 import './App.scss'
 import '../node_modules/react-big-calendar/lib/css/react-big-calendar.css'
