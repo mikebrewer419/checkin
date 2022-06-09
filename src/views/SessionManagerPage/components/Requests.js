@@ -60,7 +60,7 @@ const RequestTable = ({ user }) => {
           })}
           {requests.length === 0 && (
             <tr>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 No requests yet
               </td>
             </tr>

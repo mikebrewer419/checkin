@@ -178,18 +178,12 @@ export default () => {
                   </table>
                 </Card.Body>
               </Card>
-              
-              
             </Col>
           </Row>
         </>
       )}
-      
       <Row>
         <Col>
-          <div style={{background: 'gray', height: '200px'}}>
-            message panel
-          </div>
         </Col>
       </Row>
     </Container>  
