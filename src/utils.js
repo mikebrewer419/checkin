@@ -79,7 +79,13 @@ export const obj2Query = (obj) => {
   const str = [];
   for (let p in obj)
     if (obj.hasOwnProperty(p)) {
-      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      if (Array.isArray(obj[p])) {
+        obj[p].forEach(it=>{
+          str.push(encodeURIComponent(p) + "=" + encodeURIComponent(it));
+        })
+      } else {
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      }
     }
   return str.join("&");
 }

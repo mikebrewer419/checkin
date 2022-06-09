@@ -16,7 +16,8 @@ import {
   Col,
   Image,
   Button,
-  FormControl
+  FormControl,
+  Form
 } from 'react-bootstrap'
 
 import { set as setProfiles } from '../../../store/freelancerProfiles'
@@ -31,23 +32,32 @@ import {
 } from '../../../services'
 
 import UserImg from '../../../assets/callin.png'
+import { FaCheck } from 'react-icons/fa'
 
 const PAGE_SIZE = 10
 
 export default ({session}) => {
   
   const [page, setPage] = useState(0)
-  const [willWorkAs, setWillWorkAs] = useState('')
+  const [willWorkAs, setWillWorkAs] = useState([false, false])
   const [name, setName] = useState('')
 
   const  freelancers= useSelector(state=>state.freelancerProfiles)
+  const freelancerRequests = useSelector(state=>state.freelancerRequests)
+
   const dispatch = useDispatch()
   
   const loadUninvited = useCallback(()=>{
+    const temp = []
+    if (willWorkAs[0]) {
+      temp.push('session_runner')
+    }
+    if (willWorkAs[1]) {
+      temp.push('lobby_manager')
+    }
     apiListFreelancers({
-      exclude_session: session._id,
       name: name,
-      will_work_as: willWorkAs
+      will_work_as: temp
     }).then(res=>{
       dispatch(setProfiles(res))
     }).catch(err=>{
@@ -67,11 +77,14 @@ export default ({session}) => {
     }).catch(err=>{
     })
   }
-  
+
   return (
     <div>
       <div className="invite-tab-content">
-        <Container className="my-2">
+        <Container
+          className="my-2"
+          fluid
+        >
           <Row>
             <Col md={3}>
               <FormControl
@@ -80,12 +93,26 @@ export default ({session}) => {
                 onChange={(e)=>{setName(e.target.value)}}
               />
             </Col>
-            <Col md={3}>
-              <FormControl
-                placeholder="Search by Will Work As"
-                value={willWorkAs}
-                onChange={(e)=>{setWillWorkAs(e.target.value)}}
-              />
+            <Col
+              md={6}
+              className="d-flex align-items-center text-10"
+            >
+              <Form.Label className="my-0 mr-3">Will Work As</Form.Label>
+              <div>
+                <Form.Check
+                  label="Session Runner"
+                  inline
+                  onChange={(e)=>{setWillWorkAs([e.target.checked, willWorkAs[1]])}}
+                  checked={willWorkAs[0]}
+                />
+                <Form.Check
+                  label="Lobby Manager"
+                  inline
+                  onChange={(e)=>{setWillWorkAs([willWorkAs[0], e.target.checked])}}
+                  checked={willWorkAs[1]}
+                />
+              </div>
+              
             </Col>
           </Row>
         </Container>
@@ -115,20 +142,28 @@ export default ({session}) => {
                       </h5>
                     </Col>
                     <Col md={4}>
-                      <h5 className="my-2">
-                        {it.freelancer_profile.will_work_as.join(', ')}
+                      <h5 className="my-2 text-capitalize">
+                        {it.freelancer_profile.will_work_as.map(it=>it.split('_').join(' ')).join(', ')}
                       </h5>
                     </Col>
                     <Col
                       md={2}
-                      className="d-flex justify-content-end"
+                      className="d-flex justify-content-center"
                     >
-                      <Button
-                        variant="danger"
-                        onClick={(e)=> {onInviteBtnClick(e, it._id)}}
-                      >
-                        Invite
-                      </Button>
+                      {freelancerRequests.findIndex(req=>req.requested_person._id === it._id) === -1
+                        ? (
+                          <Button
+                            variant="danger"
+                            onClick={(e)=> {onInviteBtnClick(e, it._id)}}
+                          >
+                            Invite
+                          </Button>
+                        ) : (
+                          <FaCheck
+                            color="#fe0923"
+                          />
+                        )
+                      }
                     </Col>
                   </Row>
                 </Container>

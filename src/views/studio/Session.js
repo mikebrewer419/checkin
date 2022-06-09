@@ -77,6 +77,12 @@ export default ({
     dispatch(updateStudioInStore(temp))
     setShowConfirmModal(false)
   }
+  let inviteManager = false
+  session.dates.forEach(it=>{
+    if (it.invite_session_manager || it.invite_lobby_manager) {
+      inviteManager = true
+    }
+  })
 
   return (
     <div className="row mt-1 ml-2 mr-2 align-items-start">
@@ -142,6 +148,7 @@ export default ({
           <FaFilm />
         </Link>
       </div>}
+      
       <div className="col-auto">
         <a className="text-danger h4 d-flex mb-0 cursor-pointer" title="Send Talent Email">
           <HiOutlineMail
@@ -152,6 +159,18 @@ export default ({
           />
         </a>
       </div>
+      <div className="col-auto">
+        {inviteManager && (
+          <Link
+            className="text-danger h5 d-flex mb-0 cursor-pointer"
+            title="View Project Invites"
+            to={`/studios/${studio._id}/sessions/${session._id}/find-freelancer`}
+          >
+            <FaSearch />
+          </Link>
+        )}
+      </div>
+      
       <div className="col-auto action-wrap">
         <FaPen
           className="mr-2"
@@ -160,9 +179,8 @@ export default ({
         {USER_TYPE.IS_SUPER_ADMIN() && (
           <FaTrash className="mr-2" onClick={onDeleteClick}/>
         )}
-        <Link to={`/studios/${studio._id}/sessions/${session._id}/find-freelancer`}>
-          <FaSearch />
-        </Link>
+        
+        
       </div>
       <SessionCrupdateModal
         show={showEditModal}

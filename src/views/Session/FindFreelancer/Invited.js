@@ -22,8 +22,16 @@ import {
 import {
   FaThumbsUp,
   FaThumbsDown,
-  FaMinus
+  FaMinus,
+  FaQuestion,
+  FaCheck,
+  FaPlus,
+  FaFrown,
+  FaGrin
 } from 'react-icons/fa'
+
+import _ from 'lodash'
+
 import { 
   set as setRequests,
   update,
@@ -85,24 +93,84 @@ const Request = ({request, session}) =>{
             </Col>
             <Col md={2}>
               <h5 className="my-2">
-                {request.requested_person.freelancer_profile && request.requested_person.freelancer_profile.timezone}
+                {_.get(request, 'requested_person.freelancer_profile.timezone', '')}
               </h5>
             </Col>
             <Col md={5}>
               <h5 className="my-2">
-                {request.requested_person.freelancer_profile && request.requested_person.freelancer_profile.will_work_as.join(', ')}
+                {_.get(request, 'requested_person.freelancer_profile.will_work_as',[]).join(', ')}
               </h5>
             </Col>
-            <Col md={1}>
-              {(()=>{
-                if (request.response === 'yes') {
-                  return <FaThumbsUp />
-                } else if (request.response === 'no') {
-                  return <FaThumbsDown />
-                } else if (request.response === 'maybe') {
-                  return <FaMinus />
-                }
-              })()}
+            <Col
+              md={1}
+              className="d-flex"
+            >
+              <div className="w-50">
+                {(()=>{
+                  if (request.response === 'yes') {
+                    return (
+                      <FaThumbsUp
+                        size={20}
+                        color="#fe0923"
+                        title="Yes"
+                      />
+                    )
+                  } else if (request.response === 'no') {
+                    return (
+                      <FaThumbsDown
+                        size={20}
+                        color="#fe0923"
+                        title="No"
+                      />
+                    )
+                  } else if (request.response === 'maybe') {
+                    return (
+                      <FaMinus
+                        size={20}
+                        color="#fe0923"
+                        title="Maybe"
+                      />
+                    )
+                  } else {
+                    return (
+                      <FaQuestion
+                        size={20}
+                        color="#fe0923"
+                        title="Not Responded Yet"
+                      />
+                    )
+                  }
+                })()}
+              </div>
+              <div className="w-50">
+                {(()=>{
+                  if (request.status === 'book') {
+                    return (
+                      <FaGrin
+                        size={20}
+                        color="#fe0923"
+                        title="Book"
+                      />
+                    )
+                  } else if (request.status === 'reject') {
+                    return (
+                      <FaFrown
+                        size={20}
+                        color="#fe0923"
+                        title="Reject"
+                      />
+                    )
+                  } else {
+                    return (
+                      <FaQuestion
+                        size={20}
+                        color="#fe0923"
+                        title="Not determined"
+                      />
+                    )
+                  }
+                })()}
+              </div>
             </Col>
           </Row>
         </Container>
@@ -126,10 +194,7 @@ const Request = ({request, session}) =>{
                 Book
               </Button>
             </div>
-          )
-          
-          }
-          <div style={{height: '180px', background: 'gray'}}></div>
+          )}
         </div>
           
       </Accordion.Collapse>
@@ -213,6 +278,25 @@ export default ({session}) => {
   }, [loadInvited])
   return (
     <div className="my-2">
+      <div className="d-flex justify-content-end my-3">
+        <div className="mr-5">
+          <h6 className="my-0 text-center">freelancer Reponse</h6>
+          <div className="d-flex">
+            <div className="mr-2 d-flex align-items-center"><FaThumbsUp color="#fe0923" />&nbsp;:&nbsp;<span>Yes</span></div>
+            <div className="mr-2 d-flex align-items-center"><FaThumbsDown color="#fe0923" />&nbsp;:&nbsp;<span>No</span></div>
+            <div className="mr-2 d-flex align-items-center"><FaMinus color="#fe0923" /> &nbsp;:&nbsp;<span>Maybe</span></div>
+            <div className="mr-2 d-flex align-items-center"><FaQuestion color="#fe0923" />&nbsp;:&nbsp;<span>Not Responded Yet</span></div>
+          </div>
+        </div>
+        <div>
+          <h6 className="my-0 text-center">Book Status</h6>
+          <div className="d-flex">
+            <div className="mr-2 d-flex align-items-center"><FaGrin color="#fe0923" />&nbsp;:&nbsp;<span>Book</span></div>
+            <div className="mr-2 d-flex align-items-center"><FaFrown color="#fe0923" /> &nbsp;:&nbsp;<span>Reject</span></div>
+            <div className="mr-2 d-flex align-items-center"><FaQuestion color="#fe0923" />&nbsp;:&nbsp;<span>Not Determined Yet</span></div>
+          </div>
+        </div>
+      </div>
       <Accordion className="list-group hover-highlight">
         {[...freelancerRequests].sort(cpReq).map(it=>(
           <Request

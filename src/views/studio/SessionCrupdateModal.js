@@ -52,7 +52,6 @@ export default ({
   const [dates, setDates] = useState(_.get(session, 'dates', []))
   
   const dispatch = useDispatch()
-  const studios = useSelector(state=>state.studios)
 
   const searchSessionUsers = async (email) => {
     if (fnTimeoutHandler) {
@@ -108,20 +107,18 @@ export default ({
 
     if (session) {
       updateSession(session._id, formData).then(res=>{
-        const studio = { ...studios.studios.find(it=>it._id == res.studio) }
         const idx = studio.sessions.findIndex(it=>it._id == res._id)
         const sessions = [...studio.sessions]
         sessions[idx] = res
-        studio.sessions = sessions
-        dispatch(updateStudioInStore(studio))
+        const temp = {...studio, sessions}
+        dispatch(updateStudioInStore(temp))
       })
     } else {
       formData.append('studio', studio._id)
       createSession(formData).then(res=>{
-        const studio = { ...studios.studios.find(it=>it._id == res.studio) }
         const sessions = [...studio.sessions, res]
-        studio.sessions = sessions
-        dispatch(updateStudioInStore(studio))
+        const temp = {...studio, sessions}
+        dispatch(updateStudioInStore(temp))
       })
     }
     onHide()

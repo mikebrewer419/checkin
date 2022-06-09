@@ -1,12 +1,17 @@
 import { api_host, token } from '../consts'
 import { obj2Query } from '../../utils'
 export const getProfileByUser = async (user_id) => {
-  const resp = await fetch(`${api_host}/freelancer/profile/by-user/${user_id}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  })
-  return await resp.json()
+  try {
+    const resp = await fetch(`${api_host}/freelancer/profile/by-user/${user_id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    return await resp.json()  
+  } catch (error) {
+    return null
+  }
+  
 }
 
 export const createProfile = async (fields) => {

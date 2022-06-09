@@ -7,7 +7,7 @@ import './style.scss'
 
 const FreelancerProfilePage = () => {
   const [user, setUser] = useState({})
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState(null)
   const [editProfile, seteditProfile] = useState(false)
 
   useEffect(() => {

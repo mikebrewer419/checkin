@@ -4,7 +4,7 @@ import { FaPencilAlt } from 'react-icons/fa'
 import { static_root } from '../../../services'
 
 const ProfileView = ({ user, profile, editProfile }) => {
-  if (!profile || !profile._id) {
+  if (!profile) {
     return <div>
       <span>You don't have freelancer profile yet.</span>
       <a className='text-danger ml-2 cursor-pointer'
