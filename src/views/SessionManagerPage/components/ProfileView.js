@@ -2,6 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import { FaPencilAlt } from 'react-icons/fa'
 import { static_root } from '../../../services'
+import _ from 'lodash'
 
 const ProfileView = ({ user, profile, editProfile }) => {
   if (!profile) {
@@ -31,7 +32,7 @@ const ProfileView = ({ user, profile, editProfile }) => {
       </div>
       <div className='mb-3 d-flex flex-column'>
         <label className='label mb-0'>Will work as</label>
-        <span>{profile.will_work_as.join(', ')}</span>
+        <span>{_.get(profile, 'will_work_as', []).join(', ')}</span>
       </div>
       <div className='d-flex'>
         <div className='mb-3 d-flex flex-column w-50'>

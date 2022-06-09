@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import DatePicker from 'react-multi-date-picker'
 import AvatarChoose from '../../../components/avatar-choose'
+import _ from 'lodash'
 import { FREELANCER_TIMEZONE, FREELANCER_WORK_AS } from '../../../constants'
 
 const ProfileForm = ({
@@ -10,13 +11,13 @@ const ProfileForm = ({
   cancel
 }) => {
   const [logo, setLogo] = useState(null)
-  const [firstName, setFirstName] = useState(user.first_name || '')
-  const [lastName, setLastName] = useState(user.last_name || '')
-  const [willWorkAs, setWillWorkAs] = useState(profile.will_work_as || [])
-  const [experience, setExperience] = useState(profile.experience || '')
-  const [availableDates, setAvailableDates] = useState(profile.available_dates || [])
-  const [nonAvailableDates, setNonAvailableDates] = useState(profile.non_available_dates || [])
-  const [avabilityNotes, setAvabilityNotes] = useState(profile.avability_notes || '')
+  const [firstName, setFirstName] = useState(_.get(user, 'first_name',''))
+  const [lastName, setLastName] = useState(_.get(user, 'last_name', ''))
+  const [willWorkAs, setWillWorkAs] = useState(_.get(profile, 'will_work_as', []))
+  const [experience, setExperience] = useState(_.get(profile, 'experience', ''))
+  const [availableDates, setAvailableDates] = useState(_.get(profile, 'available_dates', []))
+  const [nonAvailableDates, setNonAvailableDates] = useState(_.get(profile, 'non_available_dates', []))
+  const [avabilityNotes, setAvabilityNotes] = useState(_.get(profile, 'avability_notes', ''))
   const [timezone, setTimezone] = useState(FREELANCER_TIMEZONE[0])
   const [phone, setPhone] = useState('')
   const [receiveEmail, setReceiveEmail] = useState(false)

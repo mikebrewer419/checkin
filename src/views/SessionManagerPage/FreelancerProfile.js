@@ -16,7 +16,7 @@ const FreelancerProfilePage = () => {
       const fU = await getUserById(u.id)
       const pF = await getProfileByUser(u.id)
       setUser(fU || {})
-      setProfile(pF || {})
+      setProfile(pF)
     }
     loadData()
   }, [editProfile])
