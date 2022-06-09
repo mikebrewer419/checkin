@@ -1,0 +1,18 @@
+.videos-select {
+  display: flex;
+  overflow-x: auto;
+  .video-item {
+    margin: 0 10px;
+    width: 250px;
+    cursor: pointer;
+    padding: 3px;
+    img {
+      padding: 5px;
+    }
+    &.selected {
+      img {
+        box-shadow: 0 0 2px 1px #777;
+      }
+    }
+  }
+}

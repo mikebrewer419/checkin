@@ -1,0 +1,53 @@
+@import "../../values.scss";
+
+.studios-list {
+  overflow-y: auto;
+  max-height: calc(100vh - #{$headerheight});
+  .page-item {
+    cursor: pointer;
+  }
+  .project-item {
+    position: relative;
+    .action-wrap {
+      opacity: 0;
+    }
+    &:hover .action-wrap {
+      opacity: 1;
+      z-index: 1;
+    }
+    .casting-logo {
+      height: 100%;
+      img {
+        height: 100%;
+        object-fit: contain;
+      }
+      z-index: 0;
+    }
+  }
+  .new-session-btn {
+    cursor: pointer;
+  }
+  .casting-admin-wrap {
+    display: inline-block;
+    position: relative;
+    img {
+      display: none;
+      width: 200px;
+      position: absolute;
+      top: 120%;
+      border: 1px solid;
+      backdrop-filter: blur(6px);
+    }
+    &:hover {
+      img { display: block;;}
+    }
+  }
+}
+.page-select {
+  border: none;
+  text-align: right;
+  appearance: none;
+}
+.react-datetime-picker__wrapper {
+  border: none;
+}

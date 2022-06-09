@@ -1,0 +1,49 @@
+@import "../../values.scss";
+
+.posting-person-card {
+  position: relative;
+  &.twr-card {
+    .number {
+      background-color: $danger;
+    }
+  }
+  .card-body {
+    display: flex;
+    .content {
+      flex: 1;
+    }
+  }
+  .number {
+    position: absolute;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: black;
+    border: 1px solid $lightgray;
+    color: white;
+    z-index: 1;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    top: -17px;
+    left: -16px;
+  }
+  .play-button {
+    position: absolute;
+    font-size: 32px;
+    font-weight: bold;
+    z-index: 3;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    top: -10px;
+    right: -8px;
+    svg {
+      fill: black;
+      cursor: pointer;
+      background-color: white;
+      padding: 2px;
+      border-radius: 50px;
+    }
+  }
+}

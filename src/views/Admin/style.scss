@@ -1,0 +1,17 @@
+.page-item {
+  cursor: pointer;
+  &.active {
+    font-weight: bold;
+  }
+}
+
+.user-item {
+  .user-action {
+    opacity: 0;
+  }
+  &:hover {
+    .user-action {
+      opacity: 1;
+    }
+  }
+}

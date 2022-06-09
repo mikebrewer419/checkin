@@ -1,0 +1,87 @@
+.list-view {
+  .studio-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  .logo {
+    height: 100px;
+  }
+  .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 5%;
+  }
+  .list-group {
+    padding-bottom: 250px;
+  }
+  .sms-form {
+    text-align: left;
+    padding: 1em;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(90px);
+    transition: .2s;
+    border-top: 1px solid #ccc;
+    &.active {
+      transform: translateY(0);
+      box-shadow: 0 0 10px 1px black;
+    }
+  }
+  .sms-form label {
+    display: block;
+  }
+  .sms-form input,
+  .sms-form textarea {
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .sms-form div {
+    margin-bottom: 0.5em;
+  }
+  .sms-form button {
+    font-size: 1em;
+  }
+  .sms-form.error {
+    outline: 2px solid #f00;
+  }
+  .delete-button {
+    float: right;
+  }
+  .signout-btn,
+  .logout-btn {
+    float: right;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .video-chat-person-card {
+    .edit-trigger {
+      opacity: 0;
+    }
+    &:hover {
+      .edit-trigger {
+        opacity: 1;
+      }
+    }
+    .callin-icon {
+      width: 45px;
+      cursor: pointer;
+    }
+  }
+
+  .action-row.disabled::after {
+    content: "";
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.7);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
