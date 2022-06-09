@@ -24,10 +24,8 @@ import {
   FaThumbsDown,
   FaMinus,
   FaQuestion,
-  FaCheck,
-  FaPlus,
-  FaFrown,
-  FaGrin
+  FaRegGrinBeam,
+  FaRegFrown
 } from 'react-icons/fa'
 
 import _ from 'lodash'
@@ -146,7 +144,7 @@ const Request = ({request, session}) =>{
                 {(()=>{
                   if (request.status === 'book') {
                     return (
-                      <FaGrin
+                      <FaRegGrinBeam
                         size={20}
                         color="#fe0923"
                         title="Book"
@@ -154,7 +152,7 @@ const Request = ({request, session}) =>{
                     )
                   } else if (request.status === 'reject') {
                     return (
-                      <FaFrown
+                      <FaRegFrown
                         size={20}
                         color="#fe0923"
                         title="Reject"
@@ -291,8 +289,8 @@ export default ({session}) => {
         <div>
           <h6 className="my-0 text-center">Book Status</h6>
           <div className="d-flex">
-            <div className="mr-2 d-flex align-items-center"><FaGrin color="#fe0923" />&nbsp;:&nbsp;<span>Book</span></div>
-            <div className="mr-2 d-flex align-items-center"><FaFrown color="#fe0923" /> &nbsp;:&nbsp;<span>Reject</span></div>
+            <div className="mr-2 d-flex align-items-center"><FaRegGrinBeam color="#fe0923" />&nbsp;:&nbsp;<span>Book</span></div>
+            <div className="mr-2 d-flex align-items-center"><FaRegFrown color="#fe0923" /> &nbsp;:&nbsp;<span>Reject</span></div>
             <div className="mr-2 d-flex align-items-center"><FaQuestion color="#fe0923" />&nbsp;:&nbsp;<span>Not Determined Yet</span></div>
           </div>
         </div>
