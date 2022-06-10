@@ -70,7 +70,7 @@ export default ({
   };
 
   const setDateField = (idx, field, value) => {
-    const temp = [...dates]
+    const temp = _.cloneDeep(dates)
     temp[idx][field] = value
     setDates(temp)
   };
