@@ -41,8 +41,19 @@ body {
     cursor: pointer;
   }
 }
+
 .pagination li {
   cursor: pointer;
+  select {
+    min-width: 30px;
+    outline: none!important;
+    text-align: center;
+  };
+  .page-count {
+    min-width: 30px;
+    text-align: center;
+    display: inline-block;
+  }
 }
 
 .cursor-pointer {
@@ -212,6 +223,10 @@ body {
 
 .react-datetime-picker {
   z-index: 2;
+  .react-datetime-picker__wrapper {
+    border: none;
+    min-width: 250px;
+  }
 }
 
 .page {
@@ -260,5 +275,34 @@ body {
 .admin-events-calendar-container {
   height: 70vh;
 }
-/* Change the white to any color ;) */
+
+.invite-tab-content {
+  min-height: calc(100vh - 200px);
+}
   
+.freelancer-request-respond-page {
+  .resp-btn{
+    width: 140px;
+  }
+  .info-table {
+    tbody {
+      tr {
+        td {
+          padding: 3px 8px;
+          &:first-child{
+            text-align: right;
+          }
+          &:nth-child(2) {
+            max-width: 3px;
+            text-align: center;
+          }
+        }
+        
+      }
+    }
+  }
+}
+
+.btn-w-md {
+  width: 110px;
+}

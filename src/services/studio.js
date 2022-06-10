@@ -40,27 +40,31 @@ export const generateNewProjectUri = async () => {
   return await resp.json()
 }
 
-export const createOrUpdateStudio = async (studio) => {
-  const formData = new FormData()
-  if (studio.logo) {
-    formData.append('logo', studio.logo)
-  }
+export const createStudio = async (formData) => {
+  const resp = await fetch(
+    `${api_host}/studio`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    }
+  )
+  return await resp.json()
+}
 
-  Object.keys(studio).forEach(key => {
-    if (key === 'logo') return
-    formData.append(key, JSON.stringify(studio[key]))
-  })
-
-  const url = studio._id
-    ? `${api_host}/studio/${studio._id}`
-    : `${api_host}/studio/`
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    },
-    body: formData
-  })
+export const updateStudio = async (formData, studioId) => {
+  const resp = await fetch(
+    `${api_host}/studio/${studioId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    }
+  )
   return await resp.json()
 }
 
@@ -112,18 +116,24 @@ export const getStudioInfo = async (studio_id) => {
 }
 
 export const getStudioByUri = async (studio_name) => {
-  const resp = await fetch(`${api_host}/studio/uri/${studio_name}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+  try{
+    const resp = await fetch(`${api_host}/studio/uri/${studio_name}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    const project = await resp.json()
+    // Casting director logo handle
+    if (!project.logo && project.casting_directors && project.casting_directors.length > 0) {
+      project.logo = project.casting_directors[0].logo
     }
-  })
-  const project = await resp.json()
-  // Casting director logo handle
-  if (!project.logo && project.casting_directors && project.casting_directors.length > 0) {
-    project.logo = project.casting_directors[0].logo
+    return project
+  } catch (err){
+    throw err
   }
-  return project
+    
 }
 
 export const createCometRoom = async (id, session_id) => {

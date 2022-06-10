@@ -6,7 +6,7 @@ const Pagination = ({
   setPage
 }) => {
   return (
-    <div className="d-flex align-items-center justify-content-center mb-4">
+    <div className="d-flex align-items-center justify-content-center mb-4 pagination-container">
       {/* <select value={pageSize} onChange={ev => setPageSize(parseInt(ev.target.value))}>
         <option value={5}>5</option>
         <option value={10}>10</option>
@@ -19,19 +19,24 @@ const Pagination = ({
         </li>
         <li className="mx-2">
           Page 
-          <select className="page-select ml-2 mr-1" onChange={ev => {
-            setPage(parseInt(ev.target.value))
-          }}>
+          <select
+            className="page-select ml-2 mr-1"
+            value={page}
+            onChange={ev => {setPage(parseInt(ev.target.value))}}
+          >
             {new Array(pageCount).fill().map((_, idx) => {
               return (
-                <option value={idx} selected={idx === page}>
+                <option
+                  value={idx}
+                  key={idx}
+                >
                   { idx + 1}
                 </option>
               )
             })}
           </select>
           /
-          <span className="ml-1">
+          <span className="ml-1 page-count">
             {pageCount}
           </span>
         </li>

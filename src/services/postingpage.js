@@ -34,10 +34,9 @@ export const createPage = async (fields) => {
   const resp = await fetch(`${api_host}/postingpage/`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(fields)
+    body: fields
   })
   return await resp.json()
 }
@@ -46,10 +45,9 @@ export const updatePage = async (id, fields) => {
   const resp = await fetch(`${api_host}/postingpage/${id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(fields)
+    body: fields
   })
   return await resp.json()
 }

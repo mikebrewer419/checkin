@@ -110,8 +110,8 @@ const WS_HOST = process.env.REACT_APP_WS_HOST
 
 
 const FREELANCER_WORK_AS = {
-  SESSION_RUNNER: 'Session Runner',
-  LOBBY_MANAGER: 'Lobby Manager'
+  SESSION_RUNNER: 'session_runner',
+  LOBBY_MANAGER: 'lobby_manager'
 }
 
 const FREELANCER_TIMEZONE = [

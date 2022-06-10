@@ -34,11 +34,14 @@ const AvatarChoose = ({
       // assume download takes same amount of time as upload
     }, duration)
   }
-
   return (
     <div className="avatar-choose">
       {cameraError || avatar64 ?
-        <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
+        <img
+          src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')}
+          width="250"
+          height="250"
+        />
       :
         <Webcam
           audio={false}
@@ -48,8 +51,8 @@ const AvatarChoose = ({
           screenshotFormat="image/jpeg"
           onUserMediaError={() => { setCameraError(true) }}
           videoConstraints={{ 
-            width: 4000,
-            height: 4000,
+            width: 250,
+            height: 250,
             facingMode: "user"
           }}
           className="camera-wrapper"
@@ -66,7 +69,7 @@ const AvatarChoose = ({
       </div>}
       <div className="d-flex justify-content-center">
         {!cameraError && (!avatar64 ?
-          <button className="btn btn-secondary btn-sm mr-2" onClick={takePhoto}>
+          <button className="btn btn-secondary btn-sm mr-2 btn-w-md" onClick={takePhoto}>
             Take Photo
           </button>
         :
@@ -76,7 +79,7 @@ const AvatarChoose = ({
             Retake Photo
           </button>
         )}
-        <button className="btn btn-secondary btn-sm" onClick={() => {
+        <button className="btn btn-secondary btn-sm  btn-w-md" onClick={() => {
           document.querySelector('#photo').click()
         }}>
           Browse Photo

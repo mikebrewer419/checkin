@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
+import { Provider } from 'react-redux'
 import { IconContext } from "react-icons";
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Modal } from 'react-bootstrap'
@@ -17,15 +18,23 @@ import RecordMessagePage from './views/RecordMessagePage'
 import Onboard from './views/Onboard'
 import VideoPage from './views/VideoReview'
 import PostingPage from './views/PostingPage'
-import StudioList from './views/studio/list'
+import StudioList from './views/Studio/List'
 import SessionManagerPage from './views/SessionManagerPage'
 import FreelancerProfilePage from './views/SessionManagerPage/FreelancerProfile'
 import AdminView from './views/Admin'
 import TalentPage from './views/TalentPage'
+import FindFreelancer from './views/Session/FindFreelancer';
+import ProjectInvite from './views/Studio/Invite'
+import Error404 from './views/Errors/404'
 import Header from './components/Header'
+import PrivateRoute from './components/PrivateRoute'
 import { USER_TYPES, VERSION } from './constants'
 import { TitleContext } from './Context';
 import {ShowLoadingContext} from './Context'
+import { AuthContext } from './hooks/auth'
+
+import store from './store'
+
 import './App.scss'
 import '../node_modules/react-big-calendar/lib/css/react-big-calendar.css'
 
@@ -100,7 +109,6 @@ export const NotificationComponent = ({ notificationField, notificationUpdateAtF
 function App() {
   const [logo, setLogo] = useState('')
   const [email, setEmail] = useState({})
-  const [refreshKey, setRefreshKey] = useState(0)
   const [title, setTitle] = useState('')
   const [showLoadingSemaphor, dispatch] = useReducer(reducer, state)
 
@@ -161,55 +169,76 @@ function App() {
   const toggleLoadingState = (state) => {
     dispatch(state)
   }
-
+  
   return (
     <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
-      <ShowLoadingContext.Provider value={toggleLoadingState}>
-        <IconContext.Provider value={{ className: "global-class-name" }}>
-          <div className={`loading`}>
-            <button className='btn btn-secondary btn-sm' onClick={() => {
-              const event = new Event('soft-refresh')
-              document.body.dispatchEvent(event)
-              document.querySelector('.loading').classList.remove('show')
-            }}>
-              Processing... <small>(click to refresh)</small>
-            </button>
-          </div>
-          <TitleContext.Provider value={{title, setTitle}}>
-            <Router>
-              <Header logo={logo} />
-              <Switch>
-                <Route path="/login" component={(props) => <Login {...props} />} exact />
-                <Route path="/reset-password-request" component={(props) => <ResetPasswordRequest {...props} />} exact />
-                <Route path="/reset-password" component={(props) => <ResetPassword {...props} />} exact />
-                <Route path="/register" component={(props) => <Register {...props} />} exact />
-                <Route path="/client/register" component={(props) => <ClientRegister {...props} />} exact />
-                <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
-                {user.user_type === USER_TYPES.SUPER_ADMIN &&
-                  <Route path="/heyjoe-admin" component={AdminView} />
-                }
-                <Route path="/message/:record_id" component={RecordMessagePage} />
-                <Route path="/studio/:uri/:session_id" component={HP} />
-                <Route path="/onboard/:uri/:session_id" component={Onboard} />
-                {!(user.user_type === USER_TYPES.CLIENT) &&
-                  <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
-                }
-                {([USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN].includes(user.user_type)) && (
-                  <Route path="/freelancer-profile" component={props => <FreelancerProfilePage {...props} />} />
-                )}
-                <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
-                <Route path="/" component={HomeBomponent} />
-              </Switch>
-            </Router>
-          </TitleContext.Provider>
-          { user && user.user_type !== USER_TYPES.CLIENT && (
-            <NotificationComponent
-              notificationField="notification"
-              notificationUpdateAtField="notification_updated_at"
-            />
-          )}
-        </IconContext.Provider>
-      </ShowLoadingContext.Provider>
+      <Provider store={store}>
+        <ShowLoadingContext.Provider value={toggleLoadingState}>
+          <IconContext.Provider value={{ className: "global-class-name" }}>
+            <div className={`loading`}>
+              <button className='btn btn-secondary btn-sm' onClick={() => {
+                const event = new Event('soft-refresh')
+                document.body.dispatchEvent(event)
+                document.querySelector('.loading').classList.remove('show')
+              }}>
+                Processing... <small>(click to refresh)</small>
+              </button>
+            </div>
+            
+            <AuthContext.Provider value={user}>
+              <TitleContext.Provider value={{title, setTitle}}>
+                <Router>
+                  <Header logo={logo} />
+                  <Switch>
+                    <Route path="/login" component={(props) => <Login {...props} />} exact />
+                    <Route path="/reset-password-request" component={(props) => <ResetPasswordRequest {...props} />} exact />
+                    <Route path="/reset-password" component={(props) => <ResetPassword {...props} />} exact />
+                    <Route path="/register" component={(props) => <Register {...props} />} exact />
+                    <Route path="/client/register" component={(props) => <ClientRegister {...props} />} exact />
+                    <Route path="/talent/register" component={(props) => <TalentRegister {...props} />} exact />
+                    <PrivateRoute
+                      path="/heyjoe-admin"
+                      component={AdminView}
+                      accessTypes={[USER_TYPES.SUPER_ADMIN]}
+                    />
+                    <Route path="/message/:record_id" component={RecordMessagePage} />
+                    <Route path="/studio/:uri/:session_id" component={HP} />
+                    <PrivateRoute
+                      path="/studios/:studio_uri/sessions/:session_id/find-freelancer"
+                      component={FindFreelancer}
+                      accessTypes={[USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN]}
+                    />
+                    <Route path="/onboard/:uri/:session_id" component={Onboard} />
+                    {!(user.user_type === USER_TYPES.CLIENT) &&
+                      <Route path="/video/:uri/:session_id" component={props => <VideoPage setLogo={setLogo} {...props} />} />
+                    }
+                    <PrivateRoute
+                      path="/freelancer-profile"
+                      component={props => <FreelancerProfilePage {...props} />}
+                      accessTypes={[USER_TYPES.SESSION_MANAGER, USER_TYPES.SUPER_ADMIN]}
+                    />
+                    <PrivateRoute
+                      path="/freelancer-requests/:id"
+                      component={ProjectInvite}
+                      accessTypes={[USER_TYPES.SUPER_ADMIN, USER_TYPES.SESSION_MANAGER]}
+                    />
+                    <Route path="/posting-page/:uri/:postingpage_id" component={props => <PostingPage setLogo={setLogo} {...props} />} />
+                    <Route path="/" component={HomeBomponent} exact />
+                    <Route path="*" component={Error404} />
+                  </Switch>
+                </Router>
+              </TitleContext.Provider>
+            </AuthContext.Provider>
+            
+            { user && user.user_type !== USER_TYPES.CLIENT && (
+              <NotificationComponent
+                notificationField="notification"
+                notificationUpdateAtField="notification_updated_at"
+              />
+            )}
+          </IconContext.Provider>
+        </ShowLoadingContext.Provider>
+      </Provider>
       <input type="text" style={{ display: 'none' }} id="urlInput" />
     </GoogleReCaptchaProvider>
   );

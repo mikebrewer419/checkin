@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import { listRequests } from '../../../services'
-import { FaComment } from 'react-icons/fa'
+import {
+  FaComment,
+  FaEye
+} from 'react-icons/fa'
 import Pagination from '../../../components/Pagination'
+import { Link } from 'react-router-dom'
 
 const RequestTable = ({ user }) => {
   const [requests, setRequests] = useState([])
@@ -34,6 +38,7 @@ const RequestTable = ({ user }) => {
           <th>Date</th>
           <th>Project</th>
           <th>Response</th>
+          <th></th>
         </thead>
         <tbody>
           {requests.map(req => {
@@ -45,12 +50,17 @@ const RequestTable = ({ user }) => {
                   <FaComment className='mr-2'/>
                   { req.response || 'Not responded' }
                 </td>
+                <td>
+                  <Link to={`/freelancer-requests/${req._id}`}>
+                    <FaEye />
+                  </Link>
+                </td>
               </tr>
             )
           })}
           {requests.length === 0 && (
             <tr>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 No requests yet
               </td>
             </tr>
