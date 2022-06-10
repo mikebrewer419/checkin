@@ -4,7 +4,11 @@ import { FaPencilAlt } from 'react-icons/fa'
 import { static_root } from '../../../services'
 import _ from 'lodash'
 
-const ProfileView = ({ user, profile, editProfile }) => {
+export default ({
+  user,
+  profile,
+  editProfile
+}) => {
   if (!profile) {
     return <div>
       <span>You don't have freelancer profile yet.</span>
@@ -25,10 +29,6 @@ const ProfileView = ({ user, profile, editProfile }) => {
         <label className='h4 mr-3 mb-4'>
           {user.first_name} {user.last_name}
         </label>
-        <a className='ml-auto text-danger cursor-pointer' onClick={editProfile}>
-          <FaPencilAlt className='mr-2'/>
-          Edit
-        </a>
       </div>
       <div className='mb-3 d-flex flex-column'>
         <label className='label mb-0'>Will work as</label>
@@ -76,4 +76,3 @@ const ProfileView = ({ user, profile, editProfile }) => {
   )
 }
 
-export default ProfileView

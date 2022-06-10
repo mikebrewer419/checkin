@@ -10,7 +10,9 @@ import {
   Col,
   Button,
   Card,
+  Modal,
 } from 'react-bootstrap'
+import { FaCheck } from 'react-icons/fa'
 import moment from 'moment'
 import {
   apiGetRequestInfo,
@@ -21,6 +23,9 @@ import Error500 from '../Errors/500'
 export default () => {
   const {id} = useParams()
   const [info, setInfo] = useState(undefined)
+  const [newResp, setNewResp] = useState(null)
+  const [showConfirmModal, setShowConfirmModl] = useState(false)
+
   const loadRequest = useCallback(()=>{
     apiGetRequestInfo(id).then(res=>{
       setInfo(res)
@@ -31,8 +36,11 @@ export default () => {
   useEffect(()=>{
     loadRequest()
   }, [])
-  const onRespBtnClick = (response) => {
-    apiUpdateRequest(id, {response}).then(res=>{
+  const onConfirmBtnClick = () => {
+    setNewResp(null)
+    apiUpdateRequest(id, {
+      response: newResp
+    }).then(res=>{
       console.log(res)
       loadRequest()
     }).catch(err=>{
@@ -47,37 +55,41 @@ export default () => {
       fluid
       className="my-5 freelancer-request-respond-page"
     >
-      {!!info && !info.request.response && (
-        <div className="d-flex justify-content-end my-3">
-          <Button
-            type="button"
-            variant="danger"
-            className="resp-btn"
-            onClick={()=>{onRespBtnClick('yes')}}
-          >
-            Yes
-          </Button>
-          <Button
-            type="button"
-            variant="light"
-            className="resp-btn mx-3"
-            onClick={()=>{onRespBtnClick('no')}}
-          >
-            No
-          </Button>
-          <Button
-            type="button"
-            variant="light"
-            className="resp-btn"
-            onClick={()=>{onRespBtnClick('maybe')}}
-          >
-            Second Hold
-          </Button>
-        </div>
-      )}
-      
       {!!info && (
         <>
+          <div className="d-flex justify-content-end my-3">
+            
+              <Button
+                type="button"
+                variant="danger"
+                className="resp-btn"
+                disabled={info.request.response === 'yes'}
+                onClick={()=>{setNewResp('yes')}}
+              >
+                {info.request.response === 'yes' && <FaCheck className="mr-1" /> }
+                Yes
+              </Button>  
+            <Button
+              type="button"
+              variant="warning"
+              className="resp-btn mx-3"
+              disabled={info.request.response === 'no'}
+              onClick={()=>{setNewResp('no')}}
+            >
+              {info.request.response === 'no' && <FaCheck className="mr-1" />}
+              No
+            </Button>
+            <Button
+              type="button"
+              variant="light"
+              className="resp-btn position-relative"
+              disabled={info.request.response === 'maybe'}
+              onClick={()=>{setNewResp('maybe')}}
+            >
+              {info.request.response === 'maybe' && <FaCheck className="mr-1" />}
+              Second Hold
+            </Button>
+          </div>
           <h3 className="text-center">Request Summary</h3>
           <Row className="my-3">
             <Col>
@@ -153,8 +165,6 @@ export default () => {
                   </table>
                 </Card.Body>
               </Card>
-              
-              
             </Col>
             <Col>
               <Card className="h-100">
@@ -182,10 +192,33 @@ export default () => {
           </Row>
         </>
       )}
-      <Row>
-        <Col>
-        </Col>
-      </Row>
+      <Modal
+        show={!!newResp}
+        onHide={()=>{setNewResp(null)}}
+      >
+        <Modal.Header>
+          Confirm
+        </Modal.Header>
+        <Modal.Body>
+          <h5>Are you sure you want to change the response</h5>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="danger"
+            className="btn-w-md"
+            onClick={onConfirmBtnClick}
+          >
+            Yes
+          </Button>
+          <Button
+            variant="light"
+            className="btn-w-md"
+            onClick={() => {setNewResp(null)}}
+          >
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>  
   )
 }

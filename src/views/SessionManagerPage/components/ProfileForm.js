@@ -5,8 +5,8 @@ import _ from 'lodash'
 import { FREELANCER_TIMEZONE, FREELANCER_WORK_AS } from '../../../constants'
 
 const ProfileForm = ({
-  user = {},
-  profile = {},
+  user,
+  profile,
   save,
   cancel
 }) => {
