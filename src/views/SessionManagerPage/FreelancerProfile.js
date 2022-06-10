@@ -30,7 +30,7 @@ import './style.scss'
 const FreelancerProfilePage = () => {
   const [user, setUser] = useState({})
   const [profile, setProfile] = useState(null)
-  const [editProfile, setEditProfile] = useState(false)
+  const [editProfile, setEditProfile] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {

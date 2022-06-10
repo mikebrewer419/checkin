@@ -34,11 +34,14 @@ const AvatarChoose = ({
       // assume download takes same amount of time as upload
     }, duration)
   }
-
   return (
     <div className="avatar-choose">
       {cameraError || avatar64 ?
-        <img src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')} />
+        <img
+          src={avatar64 ? `${temp_root}tmp/${avatar64}` : require('../../assets/camera.png')}
+          width="250"
+          height="250"
+        />
       :
         <Webcam
           audio={false}
@@ -48,8 +51,8 @@ const AvatarChoose = ({
           screenshotFormat="image/jpeg"
           onUserMediaError={() => { setCameraError(true) }}
           videoConstraints={{ 
-            width: 4000,
-            height: 4000,
+            width: 250,
+            height: 250,
             facingMode: "user"
           }}
           className="camera-wrapper"
