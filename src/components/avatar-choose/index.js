@@ -69,7 +69,7 @@ const AvatarChoose = ({
       </div>}
       <div className="d-flex justify-content-center">
         {!cameraError && (!avatar64 ?
-          <button className="btn btn-secondary btn-sm mr-2" onClick={takePhoto}>
+          <button className="btn btn-secondary btn-sm mr-2 btn-w-md" onClick={takePhoto}>
             Take Photo
           </button>
         :
@@ -79,7 +79,7 @@ const AvatarChoose = ({
             Retake Photo
           </button>
         )}
-        <button className="btn btn-secondary btn-sm" onClick={() => {
+        <button className="btn btn-secondary btn-sm  btn-w-md" onClick={() => {
           document.querySelector('#photo').click()
         }}>
           Browse Photo
