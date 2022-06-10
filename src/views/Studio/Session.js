@@ -186,6 +186,7 @@ export default ({
         show={showEditModal}
         onHide = {()=>{setShowEditModal(false)}}
         session={session}
+        studio={studio}
       />
       <Modal
         show={showConfirmModal}
