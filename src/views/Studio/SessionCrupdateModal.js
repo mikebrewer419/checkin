@@ -321,12 +321,13 @@ export default ({
                 />
               </Col>
               <Col>
+                <label>Description</label>
                 <Editor
                   apiKey={TINYMCE_KEY}
                   onInit={(evt, editor) => editorRef.current = editor}
                   initialValue={_.get(session, 'description', '')}
                   init={{
-                    height: '300px',
+                    height: '100%',
                     menubar: false,
                     plugins: [
                       'advlist autolink lists link image charmap print preview anchor',
