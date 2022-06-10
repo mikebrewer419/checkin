@@ -66,7 +66,7 @@ export default ({
     e.preventDefault()
     const data = {
       to: emails,
-      content: editorRef.current.getContent(),
+      content: editorRef.current.targetElm.value,
       title: `Talent Email`
     }
     

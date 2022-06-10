@@ -55,7 +55,7 @@ const SendClientEmailModal = ({
       from: 'hello@heyjoe.io',
       to: [],
       cc: ['hello@heyjoe.io'],
-      content: editorRef.current.getContent(),
+      content: editorRef.current.targetElm.value,
       title: `${studio && studio.name} Session Link ${moment(new Date(emailSessionParams.start_time)).format('MM/DD/YYYY')}`
     }
     data.to =[...data.to, ...(studio && studio.casting_directors || []).map(it => it.email)]

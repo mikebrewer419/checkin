@@ -159,17 +159,17 @@ export default ({
           />
         </a>
       </div>
-      <div className="col-auto">
-        {inviteManager && (
+      {inviteManager && (
+        <div className="col-auto" title="View Project Invites">
           <Link
-            className="text-danger h5 d-flex mb-0 cursor-pointer"
-            title="View Project Invites"
+            className="text-danger h5 d-flex mb-0 mt-1 cursor-pointer"
             to={`/studios/${studio._id}/sessions/${session._id}/find-freelancer`}
+            target="_blank"
           >
             <FaSearch />
           </Link>
-        )}
-      </div>
+        </div>
+      )}
       
       <div className="col-auto action-wrap">
         <FaPen

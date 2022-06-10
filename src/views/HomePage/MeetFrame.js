@@ -57,6 +57,9 @@ const MeetFrame = ({ meeting_id, record, studio }) => {
       if ([USER_TYPES.CLIENT, USER_TYPES.TALENT].includes(user.user_type)) {
         src += hashConfig
       }
+      if (!([USER_TYPES.TALENT].includes(user.user_type))) {
+        src += '&config.startWithAudioMuted=true&config.startWithVideoMuted=true'
+      }
       iframe.setAttribute('src', src)
     }
   }, [api, user])
