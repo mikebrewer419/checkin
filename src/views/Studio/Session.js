@@ -163,7 +163,7 @@ export default ({
         <div className="col-auto" title="View Project Invites">
           <Link
             className="text-danger h5 d-flex mb-0 mt-1 cursor-pointer"
-            to={`/studios/${studio._id}/sessions/${session._id}/find-freelancer`}
+            to={`/studios/${studio.uri}/sessions/${session._id}/find-freelancer`}
             target="_blank"
           >
             <FaSearch />

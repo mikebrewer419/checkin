@@ -94,6 +94,7 @@ export default ({
         book_status: "Book"
       }
     ])
+    setDateIndex(dates.length + 1)
   }
   const onSubmit = (e) => {
     e.preventDefault()

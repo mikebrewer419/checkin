@@ -274,6 +274,8 @@ export default ({session}) => {
   useEffect(() => {
     loadInvited()
   }, [loadInvited])
+
+  const requests = _.cloneDeep(freelancerRequests)
   return (
     <div className="my-2">
       <div className="d-flex justify-content-end my-3">
@@ -296,13 +298,18 @@ export default ({session}) => {
         </div>
       </div>
       <Accordion className="list-group hover-highlight">
-        {[...freelancerRequests].sort(cpReq).map(it=>(
+        {requests.sort(cpReq).map(it=>(
           <Request
             key={it._id}
             request={it}
             session={session}
           />
         ))}
+        {requests.length === 0 && (
+          <div className="text-center bg-white">
+            You didn't invite any freelancer yet
+          </div>
+        )}
       </Accordion>
       
     </div>

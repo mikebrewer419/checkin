@@ -12,7 +12,7 @@ import {
   Card,
   Modal,
 } from 'react-bootstrap'
-import { FaCheck } from 'react-icons/fa'
+import { FaCheck, FaArrowLeft } from 'react-icons/fa'
 import moment from 'moment'
 import {
   apiGetRequestInfo,
@@ -36,16 +36,12 @@ export default () => {
   useEffect(()=>{
     loadRequest()
   }, [])
-  const onConfirmBtnClick = () => {
-    setNewResp(null)
-    apiUpdateRequest(id, {
+  const onConfirmBtnClick = async () => {
+    await apiUpdateRequest(id, {
       response: newResp
-    }).then(res=>{
-      console.log(res)
-      loadRequest()
-    }).catch(err=>{
-      console.log(err)
     })
+    await loadRequest()
+    setNewResp(null)
   }
   if (info === null) {
     return <Error500 />
@@ -57,139 +53,77 @@ export default () => {
     >
       {!!info && (
         <>
-          <div className="d-flex justify-content-end my-3">
-            
-              <Button
-                type="button"
-                variant="danger"
-                className="resp-btn"
-                disabled={info.request.response === 'yes'}
-                onClick={()=>{setNewResp('yes')}}
-              >
-                {info.request.response === 'yes' && <FaCheck className="mr-1" /> }
-                Yes
-              </Button>  
+          <div className="d-flex my-3">
+            <div className='d-flex align-items-center mr-auto'>
+              <FaArrowLeft
+                className='mr-3 cursor-pointer'
+                onClick={() => {
+                  window.history.back()
+                }}
+              />
+              <span className='h4'>
+                {info.studio.name} {info.session.name} Request
+              </span>
+            </div>
             <Button
-              type="button"
-              variant="warning"
-              className="resp-btn mx-3"
-              disabled={info.request.response === 'no'}
+              className="px-3"
+              variant={info.request.response === 'yes' ? 'danger':"light"}
+              size="sm"
+              onClick={()=>{setNewResp('yes')}}
+            >
+              {info.request.response === 'yes' && <FaCheck className="mr-1" /> }
+              Yes
+            </Button>  
+            <Button
+              className="px-3 mx-3"
+              variant={info.request.response === 'no' ? 'danger':"light"}
+              size="sm"
               onClick={()=>{setNewResp('no')}}
             >
               {info.request.response === 'no' && <FaCheck className="mr-1" />}
               No
             </Button>
             <Button
-              type="button"
-              variant="light"
-              className="resp-btn position-relative"
-              disabled={info.request.response === 'maybe'}
+              className="px-3 position-relative"
+              variant={info.request.response === 'maybe' ? 'danger':"light"}
+              size="sm"
               onClick={()=>{setNewResp('maybe')}}
             >
               {info.request.response === 'maybe' && <FaCheck className="mr-1" />}
               Second Hold
             </Button>
           </div>
-          <h3 className="text-center">Request Summary</h3>
-          <Row className="my-3">
-            <Col>
-              <Card className="h-100">
-                <Card.Header>
-                  <h5 className="text-center">Project</h5>
-                </Card.Header>
-                <Card.Body>
-                  <table className="w-100 text-10 info-table">
-                    <tbody>
-                      <tr>
-                        <td>Name</td>
-                        <td>:</td>
-                        <td>{info.studio.name}</td>
-                      </tr>
-                      <tr>
-                        <td>Casting Directors</td>
-                        <td>:</td>
-                        <td>
-                          {info.studio.casting_directors.map(it=>(
-                            <div>{it.first_name} {it.last_name}</div>
-                          ))}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Project Type</td>
-                        <td>:</td>
-                        <td>{info.studio.project_type}</td>
-                      </tr>
-                      <tr>
-                        <td>Created By</td>
-                        <td>:</td>
-                        <td>{info.studio.created_by.first_name} {info.studio.created_by.last_name}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col>
-              <Card className="h-100">
-                <Card.Header>
-                  <h5 className="text-center">Session</h5>
-                </Card.Header>
-                <Card.Body>
-                  <table className="w-100 text-10 info-table">
-                    <tbody>
-                      <tr>
-                        <td>Name</td>
-                        <td>:</td>
-                        <td>{info.session.name}</td>
-                      </tr>
-                      <tr>
-                        <td>Created At</td>
-                        <td>:</td>
-                        <td>
-                          {moment(new Date(info.session.created_at)).format('MM/DD/YYYY')}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Dates</td>
-                        <td>:</td>
-                        <td>
-                          {info.session.dates.map(it=>(
-                            <div>
-                              {moment(it.start_time).format('MM/DD/YYYY T HH:mm:ss')}
-                            </div>
-                          ))}
-                        </td>
-                      </tr>
-                      
-                    </tbody>
-                  </table>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col>
-              <Card className="h-100">
-                <Card.Header>
-                  <h5 className="text-center">Request</h5>
-                </Card.Header>
-                <Card.Body>
-                  <table className="w-100 text-10 info-table">
-                    <tbody>
-                      <tr>
-                        <td>Requested By</td>
-                        <td>:</td>
-                        <td>{info.request.request_by.first_name} {info.request.request_by.last_name}</td>
-                      </tr>
-                      <tr>
-                        <td>Posted At</td>
-                        <td>:</td>
-                        <td>{moment(info.request.date).format('MM/DD/YYYY T HH:mm:ss')}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+          <div className='d-flex flex-column'>
+            <div className='d-flex mr-3'>
+              <label className='mr-4'>Casting Director</label>
+              {info.studio.casting_directors.map(c => {
+                return `${c.first_name} ${c.last_name} (${c.email})`
+              })}
+              {info.studio.casting_directors.length === 0 && '-'}
+            </div>
+            <div className='d-flex'>
+              <label className='mr-4'>Session Dates</label>
+              {info.session.dates.map(date => {
+                return (
+                  <div key={date.start_time}>
+                    <span className='mr-2'>{moment(new Date(date.start_time)).format('MM/DD')}</span>
+                    <span className='mr-2'>{date.book_status}</span>
+                    <span className='mr-2'>{date.start_time_type}</span>
+                  </div>
+                )
+              })}
+            </div>
+            <div>
+              <label className='mr-4'>Requestor</label>
+              <span>
+                {info.request.request_by.first_name} {info.request.request_by.last_name}&nbsp;
+                ({info.request.request_by.email})
+              </span>
+            </div>
+            <div className='mt-3'>
+              <blockquote dangerouslySetInnerHTML={{__html: info.session.description}} />
+            </div>
+          </div>
         </>
       )}
       <Modal
